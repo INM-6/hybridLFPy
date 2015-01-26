@@ -991,15 +991,14 @@ class Population(PopulationSuper):
         POPULATIONSEED + cellindex
 
         
-        Parameters:
-            ::
-                
-                cellindex : int,
-                    index of cell object
+        Parameters
+        -------
+        cellindex : int,
+            index of cell object
         
-        Returns:
-            ::
-                list
+        Returns
+        -------
+        synidx: list
         
         '''
         #create a cell instance
@@ -1029,18 +1028,16 @@ class Population(PopulationSuper):
         For each layer, the synapses are placed with probability normalized
         by membrane area of each compartment
 
-        Parameters:
-            ::
-                
-                cell : LFPy.Cell instance
-                nidx : np.ndarray, numbers of synapses per presynaptic population X
-                synParams : which synapse parameters to use
+        Parameters
+        -------    
+        cell : LFPy.Cell instance
+        nidx : np.ndarray, numbers of synapses per presynaptic population X
+        synParams : which synapse parameters to use
         
-        Returns:
-            ::
-                
-                list
-                    list of arrays of synapse placements per connection
+        Returns
+        -------  
+        list
+            list of arrays of synapse placements per connection
                 
         '''
         #segment indices in L1-L6 is stored here, list of np.array
@@ -1066,12 +1063,11 @@ class Population(PopulationSuper):
 
         Delays are rounded to dt
         
-        Returns:
-            ::
-                
-                dict
-                    output[cellindex][populationindex][layerindex] np.array of
-                    delays per connection                    
+        Returns
+        -------  
+        delays: dict
+            output[cellindex][populationindex][layerindex] np.array of
+            delays per connection                    
         
         '''
         delays = {}
@@ -1102,17 +1098,16 @@ class Population(PopulationSuper):
 
     def cellsim(self, cellindex, return_just_cell = False):
         '''
-        do the actual simulations of LFP, using synaptic spike times from
-        network simulation
+        Do the actual simulations of LFP, using synaptic spike times from
+        network simulation.
         
-        Parameters:
-            ::
-                
-                cellindex : int
-                    cell index between 0 and population size-1
-                return_just_cell : bool
-                    If True, return only the LFPy.Cell object
-                    if False, run full simulation, return None
+        Parameters
+        -------  
+        cellindex : int
+            cell index between 0 and population size-1
+        return_just_cell : bool
+            If True, return only the LFPy.Cell object
+            if False, run full simulation, return None
         
         
         '''
@@ -1220,16 +1215,15 @@ class Population(PopulationSuper):
 
     def insert_all_synapses(self, cellindex, cell):
         '''
-        insert all synaptic events from all presynaptic layers on
+        Insert all synaptic events from all presynaptic layers on
         cell object with index cellindex
         
-        Parameters:
-            ::
-                
-                cellindex : int
-                    cell index in the population
-                cell : LFPy.Cell instance
-                    postsynaptic target cell
+        Parameters
+        -------  
+        cellindex : int
+            cell index in the population
+        cell : LFPy.Cell instance
+            postsynaptic target cell
         
         
         '''
@@ -1257,27 +1251,26 @@ class Population(PopulationSuper):
                         SpCell = np.array([]), SpTimes=':memory:',
                         synDelays = None):
         '''
-        insert synapse with parameters=synparams on cell=cell, with
+        Insert synapse with parameters=synparams on cell=cell, with
         segment indexes given by idx. SpCell and SpTimes picked from Brunel
         network simulation
         
-        Parameters:
-            ::
-                
-                cell : LFPy.Cell instance
-                    postsynaptic target cell
-                cellindex : int
-                    index of cell in population
-                synParams : dict
-                    parameters passed to LFPy.Synapse
-                idx : np.ndarray
-                    postsynaptic compartment indices
-                SpCell : np.ndarray
-                    presynaptic spiking cells
-                SpTimes : str
-                    ':memory:' or path to on-disk spike time database
-                synDelays : np.ndarray
-                    Per connection specific delays
+        Parameters
+        -------  
+        cell : LFPy.Cell instance
+            postsynaptic target cell
+        cellindex : int
+            index of cell in population
+        synParams : dict
+            parameters passed to LFPy.Synapse
+        idx : np.ndarray
+            postsynaptic compartment indices
+        SpCell : np.ndarray
+            presynaptic spiking cells
+        SpTimes : str
+            ':memory:' or path to on-disk spike time database
+        synDelays : np.ndarray
+            Per connection specific delays
         
         '''
         #Insert synapses in an iterative fashion
@@ -1316,13 +1309,12 @@ class Population(PopulationSuper):
         The returned argument is a list with len = numSyn.size of np.arrays,
         assumes numSyn is a list
 
-        Parameters:
-            ::
-                
-                nodes : np.ndarray, dtype=int,
-                    node # of valid presynaptic neurons
-                numSyn : np.ndarray, dtype=int,
-                    # of synapses per connection
+        Parameters
+        -------  
+        nodes : np.ndarray, dtype=int,
+            node # of valid presynaptic neurons
+        numSyn : np.ndarray, dtype=int,
+            # of synapses per connection
 
         '''
         if MASTER_MODE:
