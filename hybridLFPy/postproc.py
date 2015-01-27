@@ -123,13 +123,11 @@ class PostProcess(object):
                     f.create_dataset('data', data=value, compression=4)
                     f.close()
 
-            #collect the soma potentials
-            self.somavs = self.collect_somavs()
         else:
             pass
 
-        #collect matrices with the single cell contributions in parallel
-        self.collectSingleContribs()
+        ##collect matrices with the single cell contributions in parallel
+        #self.collectSingleContribs()
 
 
     def _set_up_savefolder(self):
@@ -202,7 +200,6 @@ class PostProcess(object):
         return CSDdict,  CSDarray.sum(axis=0)
 
 
-
     def calc_lfp_layer(self):
         '''
         calculate the LFP from concatenated subpopulations residing in a
@@ -253,97 +250,6 @@ class PostProcess(object):
         return CSDdict
 
 
-    def collect_somavs(self):
-        '''collect the somatic traces from every subpopulation'''
-        somav = {}
-        i = 0
-        for y in self.y:
-            fil = os.path.join(self.populations_path,
-                               '%s_population_somatraces.h5' % y)
-
-            f = h5py.File(fil)
-
-            #fill in
-            somav.update({y : f['data'].value.T})
-
-            f.close()
-
-        return somav
-
-
-    def collectSingleContribs(self):
-        '''
-        collect single cell contributions and put them in 3D arrays in files
-        '''
-        for j, y in enumerate(self.y):
-            #every eight rank is used to process data:
-            if (j*8) % SIZE == RANK:
-                if os.path.isfile(os.path.join(self.populations_path,
-                                               '%s_LFPs.h5' % y)):
-                    os.remove(os.path.join(self.populations_path,
-                                           '%s_LFPs.h5' % y))
-
-                for i, fil in enumerate(glob.glob(os.path.join(self.cells_path,
-                                                    '%s_lfp_cell*.h5' % y))):
-                    print fil
-                    f = h5py.File(fil)
-                    if i == 0:
-                        shape = (len(glob.glob(os.path.join(self.cells_path,
-                                                    '%s_lfp_cell*.h5' % y))),
-                                 f['LFP'].shape[0],
-                                 f['LFP'].shape[1])
-
-                        data = np.zeros(shape)
-
-                    srate = f['srate'].value
-                    data[i, ] = f['LFP']
-                    f.close()
-
-                f0 = h5py.File(os.path.join(self.populations_path,
-                                            '%s_LFPs.h5' % y))
-                f0.create_dataset('data', data=data, compression=4)
-                f0['srate'] = srate
-                f0.close()
-
-                #free up some memory
-                del data
-
-
-        for j, y in enumerate(self.y):
-            #every eight rank is used to process data due to memory consumption:
-            if (j*8) % SIZE == RANK:
-                if os.path.isfile(os.path.join(self.populations_path,
-                                               '%s_CSDs.h5' % y)):
-                    os.remove(os.path.join(self.populations_path,
-                                           '%s_CSDs.h5' % y))
-
-                for i, fil in enumerate(glob.glob(os.path.join(self.cells_path,
-                                                    '%s_lfp_cell*.h5' % y))):
-                    print fil
-                    f = h5py.File(fil)
-
-                    if i == 0:
-                        shape = (len(glob.glob(os.path.join(self.cells_path,
-                                                    '%s_lfp_cell*.h5' % y))),
-                                 f['CSD'].shape[0],
-                                 f['CSD'].shape[1])
-
-                        data = np.zeros(shape)
-
-                    srate = f['srate'].value
-                    data[i, ] = f['CSD']
-                    f.close()
-
-                f0 = h5py.File(os.path.join(self.populations_path,
-                                            '%s_CSDs.h5' % y))
-                f0.create_dataset('data', data=data, compression=4)
-                f0['srate'] = srate
-                f0.close()
-
-                #free up some memory
-                del data
-
-
     def create_tar_archive(self):
         '''create a tar archive of the main simulation outputs'''
         #file filter
@@ -352,10 +258,6 @@ class PostProcess(object):
                                                 'populations', 'subsamples'))
         EXCLUDE_FILES += glob.glob(os.path.join(self.savefolder,
                                                 'raw_nest_output'))
-        EXCLUDE_FILES += glob.glob(os.path.join(self.savefolder,
-                                                'populations', '*syn*.h5'))
-        EXCLUDE_FILES += glob.glob(os.path.join(self.savefolder,
-                                                'populations', '*SpC*.h5'))
 
         def filter_function(tarinfo):
             print tarinfo.name

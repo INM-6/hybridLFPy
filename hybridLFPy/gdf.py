@@ -45,14 +45,14 @@ class GDF(object):
                  debug=False):
         """
 
-	Parameters:
-	    ::
+        Parameters:
+            ::
 
-		dbname : str,
-		    filename of sqlite database
-		bsize : int,
-		    number of spike times to insert
-        	new_db : bool,
+                dbname : str,
+                    filename of sqlite database
+                bsize : int,
+                    number of spike times to insert
+                new_db : bool,
                     new database with name dbname, will overwrite
                     at a time, determines memory usage
         """
@@ -72,10 +72,10 @@ class GDF(object):
         Generator yields bsize lines from gdf file
 
         Parameters:
-	    ::
+            ::
 
-		fname : str,
-		    name of gdf-file
+                fname : str,
+                    name of gdf-file
         """
         with open(fname, 'rb') as f:
             while True:
@@ -92,21 +92,27 @@ class GDF(object):
         Create db from list of gdf file glob
 
         Parameters:
-	    ::
+            ::
 
-		re : str,
-		    file glob to load
-		index : bool,
-		    create index on neurons for speed
+                re : str,
+                    file glob to load
+                index : bool,
+                    create index on neurons for speed
         """
         self.cursor.execute('CREATE TABLE IF NOT EXISTS spikes (neuron INT UNSIGNED, time REAL)')
 
         tic = now()
         for f in glob.glob(re):
             print f
-            for data in self._blockread(f):
-                self.cursor.executemany('INSERT INTO spikes VALUES (?, ?)', data)
-                self.conn.commit()
+            while True:
+                try:
+                    for data in self._blockread(f):
+                        self.cursor.executemany('INSERT INTO spikes VALUES (?, ?)', data)
+                        self.conn.commit()
+                except:
+                    continue
+                break                
+
         toc = now()
         if self.debug: print 'Inserts took %g seconds.' % (toc-tic)
 
@@ -122,12 +128,12 @@ class GDF(object):
         create db from list of arrays
 
         Parameters:
-	    ::
+            ::
 
-		re : list,
-		    index of element is cell index, and element i an array of spike times in ms
-		index : bool,
-		    create index on neurons for speed
+                re : list,
+                    index of element is cell index, and element i an array of spike times in ms
+                index : bool,
+                    create index on neurons for speed
         '''
         self.cursor.execute('CREATE TABLE IF NOT EXISTS spikes (neuron INT UNSIGNED, time REAL)')
 
@@ -154,15 +160,15 @@ class GDF(object):
         Select spike trains.
 
         Parameters:
-	    ::
+            ::
 
-		neurons : np.array or list of neurons
+                neurons : np.array or list of neurons
 
-	Returns:
-	    ::
+        Returns:
+            ::
 
-		s : list of np.array's
-		    spike times
+                s : list of np.array's
+                    spike times
 
 
         """
@@ -177,18 +183,18 @@ class GDF(object):
     def interval(self, T=[0, 1000]):
         """
         Get all spikes in a time interval T
-        
+
         Parameters:
-	    ::
+            ::
 
-		T : list,
-		    time interval
+                T : list,
+                    time interval
 
-	Returns:
-	    ::
+        Returns:
+            ::
 
-		s : list,
-		    nested list with spike times
+                s : list,
+                    nested list with spike times
         """
         self.cursor.execute('SELECT * FROM spikes WHERE time BETWEEN %f AND %f' % tuple(T))
         sel = self.cursor.fetchall()
@@ -199,16 +205,16 @@ class GDF(object):
         Get all spikes from neurons in a time interval T.
 
         Parameters:
-	    ::
+            ::
 
-		T : list,
-		    time interval
+                T : list,
+                    time interval
 
-	Returns:
-	    ::
+        Returns:
+            ::
 
-		s : list,
-		    nested list with spike times
+                s : list,
+                    nested list with spike times
 
         """
         s = []
@@ -225,12 +231,12 @@ class GDF(object):
         """
         Return list of neuron indices
 
-	Returns:
-	    ::
+        Returns:
+            ::
 
-		list
+                list
 
-	"""
+        """
         self.cursor.execute('SELECT DISTINCT neuron FROM spikes ORDER BY neuron')
         sel = self.cursor.fetchall()
         return np.array(sel).flatten()
@@ -240,9 +246,9 @@ class GDF(object):
         Return total number of spikes
 
         Returns:
-	    ::
+            ::
 
-		list
+                list
 
 
         """
@@ -266,10 +272,10 @@ class GDF(object):
         with entries on the interval T
 
         Parameters:
-	    ::
+            ::
 
-		T : list,
-		    time interval
+                T : list,
+                    time interval
 
 
         '''

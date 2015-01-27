@@ -944,6 +944,36 @@ if RANK == 0:
                 dpi=300)
 
 
+    #plot morphologies in their respective locations
+    fig, ax = plt.subplots(1,1, figsize=(5,8))
+    plot_population(ax, X=['EX', 'IN'], markers=['^', 'o'], colors=['r', 'b'],
+                    aspect='equal')
+    plot_morphologies(ax, X=['EX', 'IN'], markers=['^', 'o'], colors=['r', 'b'],
+                    isometricangle=np.pi/12, )
+
+    #keep current axes bounds, so we can put it back
+    axis = ax.axis()
+    
+    #some additional plot annotations
+    ax.text(-275, -300, 'EX', clip_on=False, va='center', zorder=200)
+    ax.add_patch(plt.Rectangle((-290, -340), fc='r', ec='k', alpha=0.5,
+        width=80, height=80, clip_on=False, zorder=200))
+    ax.arrow(-210, -300, 50, 50, head_width=10, head_length=10, fc='r',
+             lw=5, ec='k', alpha=0.5, zorder=200)
+    ax.arrow(-210, -300, 50, -50, head_width=10, head_length=10, fc='r',
+             lw=5, ec='k', alpha=0.5, zorder=200)
+    
+    ax.text(-275, -400, 'IN', clip_on=False, va='center', zorder=200)
+    ax.add_patch(plt.Rectangle((-290, -440), fc='b', ec='k', alpha=0.5,
+        width=80, height=80, clip_on=False, zorder=200))
+    ax.arrow(-210, -400, 50, 0, head_width=10, head_length=10, fc='b',
+             lw=5, ec='k', alpha=0.5, zorder=200)    
+    
+    fig.savefig(os.path.join(PS.figures_path, 'populations_vII.pdf'), dpi=300)
+
+    
+
+
 
     if SIZE == 1:
         plt.show()

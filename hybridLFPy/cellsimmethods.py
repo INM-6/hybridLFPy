@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 '''Class methods used by cellsim scripts'''
 import os
+import glob
 import numpy as np
 import h5py
 import matplotlib.pyplot as plt
@@ -97,7 +98,7 @@ class PopulationSuper(object):
                     'x': [0, 0, 0, 0, 0, 0],
                     'y': [0, 0, 0, 0, 0, 0],
                     'z': [-0.0, -100.0, -200.0, -300.0, -400.0, -500.0]},
-                 savelist=['somav', 'somapos', 'x', 'y', 'z', 'LFP', 'CSD'],
+                 savelist=['somapos', 'x', 'y', 'z', 'LFP', 'CSD'],
                  savefolder='simulation_output_example_brunel',
                  calculateCSD = True,
                  dt_output = 1.,
@@ -197,11 +198,16 @@ class PopulationSuper(object):
         self.CELLINDICES = np.arange(self.POPULATION_SIZE)
         self.RANK_CELLINDICES = self.CELLINDICES[self.CELLINDICES % SIZE
                                                  == RANK]
+        
+        #container for single-cell output generated on this rank
+        self.output = {i : {} for i in self.RANK_CELLINDICES}
 
 
     def _set_up_savefolder(self):
         '''
         Create catalogs for different file output to clean up savefolder
+        
+        Non-public method, takes no input arguments
         '''
         if self.savefolder == None:
             return
@@ -227,6 +233,8 @@ class PopulationSuper(object):
     def run(self):
         '''
         Distribute individual cell simulations across ranks
+        
+        This method takes no keyword arguments
         '''
         for cellindex in self.RANK_CELLINDICES:
             self.cellsim(cellindex)
@@ -239,15 +247,20 @@ class PopulationSuper(object):
         '''
         LFPy cell simulation without any stimulus, mostly for reference
         
-        Parameters:
+        Keyword arguments:
             ::
                 
                 cellindex : int
-                    cell index between 0 and population size-1
+                    cell index between 0 and POPULATION_SIZE-1
                 return_just_cell : bool
                     If True, return only the LFPy.Cell object
                     if False, run full simulation, return None
-        
+    
+        Returns:
+            ::
+                None, if return_just_cell is False
+                LFPy.Cell-object, if return_just_cell is True
+            
         '''
         electrode = LFPy.RecExtElectrode(**self.electrodeParams)
 
@@ -267,84 +280,41 @@ class PopulationSuper(object):
                 csdcoeff *= 1E6 #nA mum^-3 -> muA mm^-3 conversion
                 del cell.tvec, cell.imem
 
-            if self.simulationParams.has_key('to_file'):
-                if self.simulationParams['to_file']:
-                    cell.simulate(electrode, dotprodcoeffs=[csdcoeff],
-                                  file_name=os.path.join(self.cells_path,
-                            '%s_lfp_cell%.3i.h5') % (self.y, cellindex),
-                                  **self.simulationParams)
-                else:
-                    cell.simulate(electrode, dotprodcoeffs=[csdcoeff],
-                                  **self.simulationParams)
-                    cell.LFP = electrode.LFP
-                    cell.CSD = cell.dotprodresults[0]
-            else:
-                cell.simulate(electrode, dotprodcoeffs=[csdcoeff],
-                              **self.simulationParams)
-                cell.LFP = helpers.decimate(electrode.LFP,
-                                            q=self.decimatefrac)
-                cell.CSD = helpers.decimate(cell.dotprodresults[0],
-                                            q=self.decimatefrac)
 
-            #downsample somav
-            cell.somav = helpers.decimate(cell.somav,
-                                          q=self.decimatefrac)
+            cell.simulate(electrode, dotprodcoeffs=[csdcoeff],
+                          **self.simulationParams)
+            cell.LFP = helpers.decimate(electrode.LFP,
+                                        q=self.decimatefrac)
+            cell.CSD = helpers.decimate(cell.dotprodresults[0],
+                                        q=self.decimatefrac)
 
+           
             cell.x = electrode.x
             cell.y = electrode.y
             cell.z = electrode.z
             cell.electrodecoeff = electrode.electrodecoeff
 
-            #access file object
-            f = h5py.File(os.path.join(self.cells_path,
-                            '%s_lfp_cell%.3i.h5') % (self.y, cellindex),
-                          compression='gzip')
 
-            if self.simulationParams.has_key('to_file'):
-                if self.simulationParams['to_file']:
-                    f.create_dataset('LFP',
-                                     data=helpers.decimate(f['electrode000'
-                                                             ].value,
-                                                   q=self.decimatefrac),
-                                     compression=4)
-                    f.create_dataset('CSD', helpers.decimate(f['electrode001'
-                                                               ].value,
-                                                   q=self.decimatefrac),
-                                     compression=4)
-                    del f['electrode000']
-                    del f['electrode001']
-
-
-            #save stuff from savelist
-            f['srate'] = 1E3 / self.dt_output
+            #put all necessary cell output in output dict
             for attrbt in self.savelist:
-                try:
-                    del(f[attrbt])
-                except:
-                    pass
                 attr = getattr(cell, attrbt)
                 if type(attr) == np.ndarray:
-                    f[attrbt] = attr.astype('float32')
+                    self.output[cellindex][attrbt] = attr.astype('float32')
                 else:
                     try:
-                        f[attrbt] = attr
+                        self.output[cellindex][attrbt] = attr
                     except:
-                        f[attrbt] = str(attr)
-
-
-            #print some stuff
-            print 'SIZE %i, RANK %i, Cell %i, Min LFP: %.3f, Max LFP: %.3f' % \
-                        (SIZE, RANK, cellindex,
-                        f['LFP'].value.min(), f['LFP'].value.max())
-
-            f.close()
-
-            print 'Cell %s saved to file' % cellindex
-
+                        self.output[cellindex][attrbt] = str(attr)
+                self.output[cellindex]['srate'] = 1E3 / self.dt_output
+        
+            print 'cell %s output saved' % cellindex
+            
 
     def set_pop_soma_pos(self):
         '''
         Set pop_soma_pos using draw_rand_pos()
+        
+        This method takes no keyword arguments        
         '''
         if MASTER_MODE:
             pop_soma_pos = self.draw_rand_pos(
@@ -356,7 +326,11 @@ class PopulationSuper(object):
 
 
     def set_rotations(self):
-        '''Append random z-axis rotations for each cell in population'''
+        '''
+        Append random z-axis rotations for each cell in population.
+
+        This method takes no keyword arguments        
+        '''
         if MASTER_MODE:
             rotations = []
             for i in range(self.POPULATION_SIZE):
@@ -373,12 +347,12 @@ class PopulationSuper(object):
         '''
         Calculate cell interdistance from input coordinates
         
-        Parameters:
+        Keyword arguments:
             ::
         
-                x,y,z : np.ndarray
+                x, y, z : np.ndarray
                     xyz-coordinates of each cell-body
-        
+            
         
         Returns:
             ::
@@ -407,7 +381,7 @@ class PopulationSuper(object):
         Returned argument is a list of dicts [{'xpos', 'ypos', 'zpos'}, ]
         
         
-        Parameters:
+        Keyword arguments:
             ::
                 
                 radius : float
@@ -420,8 +394,8 @@ class PopulationSuper(object):
                     minimum distance to center axis as function of z
                 min_cell_interdist : float,
                     minimum cell to cell interdistance
-                args : keyword arguments
-                    simply ignoring additional inputs
+                **args : keyword arguments
+                    additional inputs that is being ignored
         
 
         Returns:
@@ -460,7 +434,6 @@ class PopulationSuper(object):
 
         print "assess somatic locations: ",
         while len(u) > 0:
-            print len(u),
             for i in range(len(u)):
                 x[u[i]] = (np.random.rand()-0.5)*radius*2
                 y[u[i]] = (np.random.rand()-0.5)*radius*2
@@ -492,9 +465,9 @@ class PopulationSuper(object):
         return soma_pos
 
 
-    def calc_lfp_el_pos(self):
+    def calc_signal_sum(self, measure='LFP'):
         '''
-        Superimpose each cell's contribution to the LFP, and store onto disc
+        Superimpose each cell's contribution to the LFP,
         
         Returns:
             ::
@@ -502,122 +475,118 @@ class PopulationSuper(object):
                 np.array
                     The populations-specific compound signal
         '''
-        for i in range(self.POPULATION_SIZE):
-            f = h5py.File(os.path.join(self.cells_path,
-                                       '%s_lfp_cell%.3i.h5' % (self.y, i)))
-            if i == 0:
-                lfp = f['LFP'].value
-            else:
-                lfp += f['LFP'].value
-            print '.',
-            f.close()
-
-        return lfp
-
-
-    def calc_csd_el_pos(self):
-        '''
-        Superimpose each cell's contribution to the CSD, and store onto disc
-        
-        Returns:
-            ::
-                
-                np.array
-                    The populations-specific compound signal
-        '''
-        for i in range(self.POPULATION_SIZE):
-            f = h5py.File(os.path.join(self.cells_path,
-                                       '%s_lfp_cell%.3i.h5' % (self.y, i)))
-            if i == 0:
-                csd = f['CSD'].value
-            else:
-                csd += f['CSD'].value
-            print '.',
-            f.close()
-
-        return csd
-
-
-    def read_lfp_cell_files(self, cellindices=None):
-        '''
-        Reconstruct base LFPy.Cell-object with simulated data from file storage
-        
-        Parameters:
-            ::
-                
-                cellindicies : np.ndarray
-                    indices of seletion of cells in the population
-        '''
-        if cellindices == None:
-            cellindices = self.CELLINDICES
-
-        cells = {}
-        for cellindex in cellindices:
-            cells[cellindex] = self.cellsim(cellindex, return_just_cell=True)
-
-            f = h5py.File(os.path.join(self.cells_path,
-                            '%s_lfp_cell%.3i.h5') % (self.y, cellindex))
-            print('open file: ' + os.path.join(self.cells_path,
-                            '%s_lfp_cell%.3i.h5') % (self.y, cellindex))
-            for k in f.iterkeys():
-                if k == 'LFP' or k == 'CSD':
-                    setattr(cells[cellindex], k, f[k])
+        #compute the total LFP of cells on this RANK
+        if self.RANK_CELLINDICES.size > 0:
+            for i, cellindex in enumerate(self.RANK_CELLINDICES):
+                if i == 0:
+                    data = self.output[cellindex][measure]
                 else:
-                    setattr(cells[cellindex], k, f[k].value)
-            #attach file object
-            setattr(cells[cellindex], 'f', f)
+                    data += self.output[cellindex][measure]
+                print '.',
+        else:
+            data = np.zeros((len(self.electrodeParams['x']),
+                             self.cellParams['tstopms']*self.dt_output + 1),
+                dtype=np.float32)
+        #container for full LFP on RANK 0
+        if RANK == 0:
+            DATA = np.zeros_like(data, dtype=np.float32)
+        else:
+            DATA = None
+                
+        #sum to RANK 0 using automatic type discovery with MPI
+        COMM.Reduce(data, DATA, op=MPI.SUM, root=0)
 
-        return cells
-
-
-    def calc_somavs(self):
-        '''
-        Put all somavs from all cells in a numpy array
+        return DATA
         
-        Returns:
+
+    def collectSingleContribs(self, measure='LFP'):
+        '''
+        collect single cell data and save them to file
+        
+        Keyword arguments:
             ::
                 
-                np.array
-                    somatic potentials of all cells in population
-        
+                measure : str,
+                    either 'LFP' or 'CSD'
+            
         '''
-        for i in range(self.POPULATION_SIZE):
-            f = h5py.File(os.path.join(self.cells_path,
-                                       '%s_lfp_cell%.3i.h5' % (self.y, i)))
+        #reconstruct RANK_CELLINDICES on RANK 0
+        if RANK == 0:
+            RANK_CELLINDICES = [self.RANK_CELLINDICES]
+            for i in range(1, SIZE):
+                RANK_CELLINDICES.append(self.CELLINDICES[self.CELLINDICES % SIZE
+                                                 == i])    
+          
+        #gather data on this RANK
+        for i, cellindex in enumerate(self.RANK_CELLINDICES):
             if i == 0:
-                somavs = f['somav'].value
-            else:
-                somavs = np.c_[somavs, f['somav'].value]
-            print '.',
+                data_temp = np.zeros([self.RANK_CELLINDICES.size] +
+                                    list(self.output[cellindex][measure].shape),
+                                    dtype=np.float32)
+            data_temp[i, ] = self.output[cellindex][measure]
+        
+        
+        if RANK == 0:
+            #container of all output
+            data = np.zeros([self.POPULATION_SIZE] + 
+                             list(self.output[cellindex][measure].shape),
+                             dtype=np.float32)
+            
+            #fill in values from this RANK
+            for j, k in enumerate(self.RANK_CELLINDICES):
+                data[k, ] = data_temp[j, ]
+            
+            #iterate over all other RANKs
+            for i in range(1, SIZE):
+                if RANK_CELLINDICES[i].size > 0:
+                    #receive on RANK 0 from all other RANK
+                    data_temp = np.zeros([RANK_CELLINDICES[i].size] +
+                                    list(self.output[cellindex][measure].shape),
+                                    dtype=np.float32)
+                    COMM.Recv([data_temp, MPI.FLOAT], source=i, tag=13)
+                    
+                    
+                    #fill in values
+                    for j, k in enumerate(RANK_CELLINDICES[i]):
+                        data[k, ] = data_temp[j, ]
+        else:
+            data = None
+            if self.RANK_CELLINDICES.size > 0:
+                #send to RANK 0
+                COMM.Send([data_temp, MPI.FLOAT], dest=0, tag=13)        
+
+        if RANK == 0:
+            #save all single-cell data to file
+            f = h5py.File(os.path.join(self.populations_path,
+                                        '%s_%ss.h5' % (self.y, measure)))
+            f.create_dataset('data', data=data, compression=4)
+            f['srate'] = self.output[0]['srate']
             f.close()
+            
+            print 'file %s_%ss.h5 ok' % (self.y, measure)
 
-        return somavs
+        COMM.Barrier() 
+        
+        return data
 
 
-    def collect_data(self, cellindices=None):
+    def collect_data(self):
         '''
         collect LFPs, CSDs and somatraces from each simulated population,
         and save to file
         '''
-
-        #simplified collection of LFPs from cell
-        #objects loaded from file, and the
-        #simulation results in terms of the total LFP
-        #is saved inside the savefolder.
+        #collect some measurements resolved per file and save to file 
+        for measure in ['LFP', 'CSD']:
+            self.collectSingleContribs(measure)
+        
+        #calculate lfp from all cell contribs
+        lfp = self.calc_signal_sum(measure='LFP')
+        
+        #calculate CSD in every lamina
+        if self.calculateCSD:
+            csd = self.calc_signal_sum(measure='CSD')
+   
         if MASTER_MODE and self.POPULATION_SIZE > 0:
-            #using cellindices throughout
-            if cellindices == None:
-                cellindices = np.arange(self.POPULATION_SIZE)
-
-
-            #calculate lfp from all cell contribs
-            lfp = self.calc_lfp_el_pos()
-            print 'lfp ok'
-
-            #calculate CSD in every lamina
-            if self.calculateCSD:
-                csd = self.calc_csd_el_pos()
-
             #saving
             f = h5py.File(os.path.join(self.populations_path,
                           '%s_population_LFP.h5' % self.y), 'w')
@@ -635,19 +604,7 @@ class PopulationSuper(object):
             f.close()
             del csd
             print 'save CSD ok'
-
-
-            somavs = self.calc_somavs()
-            print 'soma potentials ok'
-
-            f = h5py.File(os.path.join(self.populations_path,
-                          '%s_population_somatraces.h5' % self.y), 'w')
-            f.create_dataset('data', data=somavs, compression=4)
-            f['srate'] = 1E3 / self.dt_output
-            f.close()
-            del somavs
-            print 'save somatraces ok'
-
+            
 
             #save the somatic placements:
             pop_soma_pos = np.zeros((self.POPULATION_SIZE, 3))
@@ -678,7 +635,7 @@ class PopulationSuper(object):
 
         #resync threads
         COMM.Barrier()
-
+        
 
 class Population(PopulationSuper):
     '''
@@ -755,6 +712,8 @@ class Population(PopulationSuper):
                     flag for computing the ground-source CSD
                 
         '''
+        tic = time()
+        
         PopulationSuper.__init__(self, **kwargs)
         #set some class attributes
         self.X = X
@@ -786,6 +745,10 @@ class Population(PopulationSuper):
         self.synIdx = self.get_all_synIdx()
         self.SpCells = self.get_all_SpCells()
         self.synDelays = self.get_all_synDelays()
+        
+        COMM.Barrier()
+        
+        print "population initialized in %.2f seconds" % (time()-tic)
 
 
     def get_all_synIdx(self):
@@ -805,68 +768,29 @@ class Population(PopulationSuper):
                     
         '''
         tic = time() #timing
-
+        
         #containers for synapse idxs existing on this rank
         synIdx = {}
+        
 
-        #file names for synapse indices, synIdx*.h5
-        fname_all = os.path.join(self.populations_path,
-                                      self.y + 'synIdx.h5')
+        #ok then, we will draw random numbers across ranks, which have to
+        #be unique per cell. Now, we simply record the random state,
+        #change the seed per cell, and put the original state back below.
+        randomstate = np.random.get_state()
+        
+        for cellindex in self.RANK_CELLINDICES:
+            #set the random seed on for each cellindex
+            np.random.seed(self.POPULATIONSEED + cellindex)
 
-        #if files exist, will just load them without reassessing synapse sites
-        if os.path.isfile(fname_all):
-            print 'found %s, loading:' % fname_all
-            synIdx = helpers.load_dict_of_nested_lists_from_h5(fname_all,
-                                                        self.RANK_CELLINDICES)
-        #draw synapse locations in parallel
-        else:
-            #ok then, we will draw random numbers across ranks, which have to
-            #be unique per cell. Now, we simply record the random state,
-            #change the seed per cell, and put the original state back below.
-            randomstate = np.random.get_state()
+            #find synapse locations for cell in parallel
+            synidx = self.get_synidx(cellindex)
+            synIdx[cellindex] = synidx
 
-            for cellindex in self.RANK_CELLINDICES:
-                #set the random seed on for each cellindex
-                np.random.seed(self.POPULATIONSEED + cellindex)
-
-                #find synapse locations for cell in parallel
-                synidx = self.get_synidx(cellindex)
-                synIdx[cellindex] = synidx
-
-            #reset the random number generator
-            np.random.set_state(randomstate)
-
-            #generated per rank
-            fname = os.path.join(self.populations_path,
-                                  self.y + 'RANK%.6i' % RANK + 'synIdx.h5')
-
-            #dump to file for loading later
-            helpers.dump_dict_of_nested_lists_to_h5(fname, synIdx)
-
-        print 'found synapse locations in %.2f seconds' % (time()-tic)
-
-        #resync
-        COMM.Barrier()
-
-        tic = time() #timing
-
-        #create one global file with all synIdx on RANK 0
-        if MASTER_MODE:
-            if not os.path.isfile(fname_all):
-                print 'dumping synIdx*: %s' % fname
-                for rank in range(SIZE):
-                    fname = os.path.join(self.populations_path,
-                                    self.y + 'RANK%.6i' % rank + 'synIdx.h5')
-
-                    #temporary load rank files and dump to one file
-                    data = helpers.load_dict_of_nested_lists_from_h5(fname)
-                    helpers.dump_dict_of_nested_lists_to_h5(fname_all, data)
-
-                    #deleting temporary files
-                    os.remove(fname)
-
-        print 'postprocessed synapse locations in %.2f seconds' % (time()-tic)
-
+        #reset the random number generator
+        np.random.set_state(randomstate)
+        
+        if RANK == 0:
+            print 'found synapse locations in %.2f seconds' % (time()-tic)
 
         #print the number of synapses per layer from which presynapse population
         if self.verbose:
@@ -900,55 +824,46 @@ class Population(PopulationSuper):
                     output[cellindex][populationindex][layerindex] np.array of
                     presynaptic cell indices
                     
-
         '''
-        #assess the spike time sources from the network classes
+        tic = time() #timing
+        
+        #container
         SpCells = {}
+        
+        #ok then, we will draw random numbers across ranks, which have to
+        #be unique per cell. Now, we simply record the random state,
+        #change the seed per cell, and put the original state back below.
+        randomstate = np.random.get_state()
 
-        #object containers:
-        fname = os.path.join(self.populations_path,
-                              self.y + 'SpCells.h5')
+        for cellindex in self.RANK_CELLINDICES:
+            #set the random seed on for each cellindex
+            np.random.seed(self.POPULATIONSEED + cellindex + self.POPULATION_SIZE)
 
-        #if files exist, will just load them without reassessing values
-        print 'find SpCells: ',
-        if not os.path.isfile(fname):
-            if MASTER_MODE:
-                #assess SpCells for all cells in population (not costly)
-                for cellindex in range(self.POPULATION_SIZE):
-                    SpCells[cellindex] = []
-                    for i, X in enumerate(self.X):
-                        SpCells[cellindex].append(self.fetchSpCells(
-                            self.networkSim.nodes[X], self.k_yXL[:, i]))
+            SpCells[cellindex] = []
+            for i, X in enumerate(self.X):
+                SpCells[cellindex].append(self.fetchSpCells(
+                    self.networkSim.nodes[X], self.k_yXL[:, i]))
 
-                    print '.',
-                print 'done'
+        #reset the random number generator
+        np.random.set_state(randomstate)
 
-                #dump to h5 file so they can be loaded later
-                print 'dumping SpCells* to file: %s' % fname
-
-                helpers.dump_dict_of_nested_lists_to_h5(fname, SpCells)
-
-                del SpCells
+        if RANK == 0:
+            print 'found presynaptic cells in %.2f seconds' % (time()-tic)
 
         #resync
         COMM.Barrier()
-
-        print 'loading: %s' % fname
-
-        #load only data needed on this rank
-        SpCells = helpers.load_dict_of_nested_lists_from_h5(fname,
-                                                    self.RANK_CELLINDICES)
-
-        #resync
-        COMM.Barrier()
-
+    
         return SpCells
-
-
+        
 
     def get_all_synDelays(self):
         '''
         Create and load arrays of connection delays per connection on this rank
+        
+        Get random normally distributed synaptic delays,
+        returns dict of nested list of same shape as SpCells.
+    
+        Delays are rounded to dt
         
         This function takes no kwargs.
 
@@ -960,37 +875,54 @@ class Population(PopulationSuper):
                     delays per connection
         
         '''
-        print 'synaptic delays: '
-        #assign synaptic delays for every synaptic spike train
-        fnameAll = os.path.join(self.populations_path,
-                                    self.y + 'synDelays.h5')
-        if MASTER_MODE and self.synDelayLoc != None:
-            if not os.path.isfile(fnameAll):
-                synDelays = self.get_delays()
-                print 'dumping synDelays to file: %s' % fnameAll
-                helpers.dump_dict_of_nested_lists_to_h5(fnameAll, synDelays)
-            else:
-                print 'synDelays, loading: %s' % fnameAll
+        tic = time() #timing
 
-        #resync
-        COMM.Barrier()
+        #ok then, we will draw random numbers across ranks, which have to
+        #be unique per cell. Now, we simply record the random state,
+        #change the seed per cell, and put the original state back below.
+        randomstate = np.random.get_state()
 
-        #load delays on this rank
-        synDelays = helpers.load_dict_of_nested_lists_from_h5(fnameAll,
-                                                      self.RANK_CELLINDICES)
+        #container
+        delays = {}
 
-        #resync
-        COMM.Barrier()
+        for cellindex in self.RANK_CELLINDICES:
+            #set the random seed on for each cellindex
+            np.random.seed(self.POPULATIONSEED + cellindex + 2*self.POPULATION_SIZE)
 
-        return synDelays
+            delays[cellindex] = []
+            for j in range(self.k_yXL.shape[1]):
+                delays[cellindex].append([])
+                for i in self.k_yXL[:, j]:
+                    loc = self.synDelayLoc[j]
+                    loc /= self.dt
+                    scale = self.synDelayScale[j]
+                    if scale != None:
+                        scale /= self.dt
+                        delay = np.random.normal(loc, scale, i).astype(int)
+                        while np.any(delay < 1):
+                            inds = delay < 1
+                            delay[inds] = np.random.normal(loc, scale,
+                                                        inds.sum()).astype(int)
+                        delay = delay.astype(float)
+                        delay *= self.dt
+                    else:
+                        delay = np.zeros(i) + self.synDelayLoc[j]
+                    delays[cellindex][j].append(delay)
 
+        #reset the random number generator
+        np.random.set_state(randomstate)
+
+        if RANK == 0:
+            print 'found delays in %.2f seconds' % (time()-tic)
+
+        return delays
+    
 
     def get_synidx(self, cellindex):
         '''
         local function, draw and return synapse locations corresponding
         to a single cell, using a random seed set as
         POPULATIONSEED + cellindex
-
         
         Parameters:
             ::
@@ -1060,47 +992,6 @@ class Population(PopulationSuper):
         return syn_idx
 
 
-    def get_delays(self):
-        '''
-        get random normally distributed synaptic delays,
-        returns nested list of same shape as SpCells.
-
-        Delays are rounded to dt
-        
-        Returns:
-            ::
-                
-                dict
-                    output[cellindex][populationindex][layerindex] np.array of
-                    delays per connection                    
-        
-        '''
-        delays = {}
-
-        for cellindex in range(self.POPULATION_SIZE):
-            delays[cellindex] = []
-            for j in range(self.k_yXL.shape[1]):
-                delays[cellindex].append([])
-                for i in self.k_yXL[:, j]:
-                    loc = self.synDelayLoc[j]
-                    loc /= self.dt
-                    scale = self.synDelayScale[j]
-                    if scale != None:
-                        scale /= self.dt
-                        delay = np.random.normal(loc, scale, i).astype(int)
-                        while np.any(delay < 1):
-                            inds = delay < 1
-                            delay[inds] = np.random.normal(loc, scale,
-                                                        inds.sum()).astype(int)
-                        delay = delay.astype(float)
-                        delay *= self.dt
-                    else:
-                        delay = np.zeros(i) + self.synDelayLoc[j]
-                    delays[cellindex][j].append(delay)
-
-        return delays
-
-
     def cellsim(self, cellindex, return_just_cell = False):
         '''
         do the actual simulations of LFP, using synaptic spike times from
@@ -1146,77 +1037,34 @@ class Population(PopulationSuper):
                 csdcoeff *= 1E6 #nA mum^-3 -> muA mm^-3 conversion
                 del cell.tvec, cell.imem
 
-            if self.simulationParams.has_key('to_file'):
-                if self.simulationParams['to_file']:
-                    cell.simulate(electrode, dotprodcoeffs=[csdcoeff],
-                                  file_name=os.path.join(self.cells_path,
-                            '%s_lfp_cell%.3i.h5') % (self.y, cellindex),
-                                  **self.simulationParams)
-                else:
-                    cell.simulate(electrode, dotprodcoeffs=[csdcoeff],
-                                  **self.simulationParams)
-                    cell.LFP = electrode.LFP
-                    cell.CSD = cell.dotprodresults[0]
-            else:
-                cell.simulate(electrode, dotprodcoeffs=[csdcoeff],
-                              **self.simulationParams)
-                cell.LFP = helpers.decimate(electrode.LFP,
-                                            q=self.decimatefrac)
-                cell.CSD = helpers.decimate(cell.dotprodresults[0],
-                                            q=self.decimatefrac)
+        
+            cell.simulate(electrode, dotprodcoeffs=[csdcoeff],
+                          **self.simulationParams)
+            cell.LFP = helpers.decimate(electrode.LFP,
+                                        q=self.decimatefrac)
+            cell.CSD = helpers.decimate(cell.dotprodresults[0],
+                                        q=self.decimatefrac)
 
-            #downsample somav
-            cell.somav = helpers.decimate(cell.somav, q=self.decimatefrac)
-
+         
             cell.x = electrode.x
             cell.y = electrode.y
             cell.z = electrode.z
 
             cell.electrodecoeff = electrode.electrodecoeff
 
-            #access file object
-            f = h5py.File(os.path.join(self.cells_path,
-                            '%s_lfp_cell%.3i.h5') % (self.y, cellindex),
-                          'w', compression='gzip')
-
-            if self.simulationParams.has_key('to_file'):
-                if self.simulationParams['to_file']:
-                    f.create_dataset('LFP',
-                                     helpers.decimate(f['electrode000'].value,
-                                                      q=self.decimatefrac),
-                                     compression=4)
-                    f.create_dataset('CSD',
-                                     helpers.decimate(f['electrode001'].value,
-                                                      q=self.decimatefrac),
-                                     compression=4)
-                    del f['electrode000']
-                    del f['electrode001']
-
-            #save stuff from savelist
-            f['srate'] = 1E3 / self.dt_output
+            #put all necessary cell output in output dict
             for attrbt in self.savelist:
-                try:
-                    del(f[attrbt])
-                except:
-                    pass
                 attr = getattr(cell, attrbt)
                 if type(attr) == np.ndarray:
-                    f.create_dataset(attrbt, data=attr.astype('float32'),
-                                     compression=4)
+                    self.output[cellindex][attrbt] = attr.astype('float32')
                 else:
                     try:
-                        f[attrbt] = attr
+                        self.output[cellindex][attrbt] = attr
                     except:
-                        f[attrbt] = str(attr)
-
-            #print some stuff
-            print 'SIZE %i, RANK %i, Cell %i, Min LFP: %.3f, Max LFP: %.3f' % \
-                        (SIZE, RANK, cellindex,
-                        f['LFP'].value.min(), f['LFP'].value.max())
-
-            f.close()
-
-            print 'Cell %s saved to file' % cellindex
+                        self.output[cellindex][attrbt] = str(attr)
+                self.output[cellindex]['srate'] = 1E3 / self.dt_output
+        
+            print 'cell %s output saved' % cellindex
 
 
     def insert_all_synapses(self, cellindex, cell):
@@ -1326,12 +1174,10 @@ class Population(PopulationSuper):
                     # of synapses per connection
 
         '''
-        if MASTER_MODE:
-            SpCell = []
-            for size in numSyn:
-                SpCell.append(np.random.randint(nodes.min(), nodes.max(),
-                                                size=size).astype('int32'))
-            return SpCell
-        else:
-            return
+        SpCell = []
+        for size in numSyn:
+            SpCell.append(np.random.randint(nodes.min(), nodes.max(),
+                                            size=size).astype('int32'))
+        return SpCell
+
 

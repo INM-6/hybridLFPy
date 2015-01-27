@@ -236,7 +236,7 @@ class CachedNetwork(object):
 
 
     def plot_raster(self, ax, xlim, x, y, pop_names=False,
-                    markersize=1, alpha=1., legend=True, ):
+                    markersize=1., alpha=1., legend=True, ):
         '''
         plot network raster plot in subplot object
         
@@ -258,19 +258,19 @@ class CachedNetwork(object):
         
         '''
         for i, X in enumerate(self.X):
-            ax.plot(x[X], y[X], 'o',
+            ax.plot(x[X], y[X], '.',
                 markersize=markersize,
                 markerfacecolor=self.colors[i],
-                markeredgecolor='none',
+                markeredgecolor=self.colors[i],
                 alpha=alpha,
                 label=X, rasterized=True,
-                clip_on=False)
+                clip_on=True)
 
         ax.axis([xlim[0], xlim[1], 0, self.N_X.sum()])
         ax.set_ylim(ax.get_ylim()[::-1])
-        ax.set_ylabel('cell id')
-        ax.set_xlabel('time (ms)')
-        if legend == True:
+        ax.set_ylabel('cell id', labelpad=0)
+        ax.set_xlabel('$t$ (ms)', labelpad=0)
+        if legend:
             ax.legend()
         if pop_names:
             yticks = []
@@ -282,8 +282,14 @@ class CachedNetwork(object):
             ax.set_yticks(yticks)
             ax.set_yticklabels(yticklabels)
 
+        #add some horizontal lines separating the populations
+        for X in self.X:
+            if y[X].size > 0:
+                ax.plot([xlim[0], xlim[1]], [y[X].max(), y[X].max()],
+                    'k', lw=0.25)
 
-    def plot_f_rate(self, ax, X, i, xlim, x, y, yscale='linear'):
+
+    def plot_f_rate(self, ax, X, i, xlim, x, y, binsize=1, yscale='linear', plottype='fill_between', show_label=False):
         '''
         plot network firing rate plot in subplot object
         
@@ -305,15 +311,23 @@ class CachedNetwork(object):
                     linear, log, or symlog y-axes in rate plot
         '''
         
-        bins = np.arange(xlim[0], xlim[1]+1)
-
-        hist = np.histogram(x[X], bins=bins)[0]
-        ax.fill_between(bins[:-1], hist * 1000. / self.N_X[i],
-                color=self.colors[i], lw=0.5, label=X, rasterized=True,
-                clip_on=False)
-        ax.plot(bins[:-1], hist * 1000. / self.N_X[i],
-                color='k', lw=0.5, label=X, rasterized=False,
-                clip_on=False)
+        bins = np.arange(xlim[0], xlim[1]+binsize, binsize)
+        (hist, bins) = np.histogram(x[X], bins=bins)
+        
+        if plottype == 'fill_between':
+            ax.fill_between(bins[:-1], hist * 1000. / self.N_X[i],
+                    color=self.colors[i], lw=0.5, label=X, rasterized=True,
+                    clip_on=False)
+            ax.plot(bins[:-1], hist * 1000. / self.N_X[i],
+                    color='k', lw=0.5, label=X, rasterized=False,
+                    clip_on=False)
+        elif plottype == 'bar':
+            ax.bar(bins[:-1], hist * 1000. / self.N_X[i],
+                    color=self.colors[i], label=X, rasterized=True,
+                    linewidth=0.5, width=0.9, clip_on=False)
+        else:
+            mssg = "plottype={} not in ['fill_between', 'bar']".format(plottype)
+            raise Exception, mssg
 
         remove_axis_junk(ax)
 
@@ -322,8 +336,9 @@ class CachedNetwork(object):
         ax.set_yscale(yscale)
 
         ax.set_xlim(xlim[0], xlim[1])
-        ax.text(xlim[0] + .05*(xlim[1]-xlim[0]), ax.axis()[3], X,
-                va='center', ha='left')
+        if show_label:
+            ax.text(xlim[0] + .05*(xlim[1]-xlim[0]), ax.axis()[3]*1.5, X,
+                    va='center', ha='left')
 
 
     def raster_plots(self, xlim=[0, 1000], markersize=1, alpha=1.):
@@ -420,8 +435,8 @@ class CachedFixedSpikesNetwork(CachedNetwork):
         if len(activationtimes) != len(self.N_X):
             raise Exception, 'len(activationtimes != len(self.N_X))'
 
-        #create a dictionary of nodes with proper layernames
-        self.nodes = {}
+        ##create a dictionary of nodes with proper layernames
+        #self.nodes = {}
 
 
         if RANK == 0:

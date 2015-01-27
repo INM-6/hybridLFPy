@@ -16,7 +16,7 @@ with open('README.md') as file:
 
 setup(
     name = 'hybridLFPy',
-    version = '0.1',
+    version = '0.1.1',
     maintainer = 'Espen Hagen',
     maintainer_email = 'e.hagen@fz-juelich.de',
     url = 'http://www.fz-juelich.de/inm/inm-6',
