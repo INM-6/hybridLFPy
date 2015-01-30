@@ -116,7 +116,6 @@ class PopulationSuper(object):
         just here for reference
     
         Parameters
-
         ----------    
         cellParams : dict
             params for class `LFPy.Cell`
@@ -503,7 +502,7 @@ class PopulationSuper(object):
         COMM.Reduce(data, DATA, op=MPI.SUM, root=0)
         
         
-    return DATA
+        return DATA
 #=======
 #        lfp: np.array
 #            The populations-specific compound signal
@@ -681,14 +680,6 @@ class PopulationSuper(object):
         if self.calculateCSD:
             csd = self.calc_signal_sum(measure='CSD')
    
-#=======
-#        '''
-#
-#        #simplified collection of LFPs from cell
-#        #objects loaded from file, and the
-#        #simulation results in terms of the total LFP
-#        #is saved inside the savefolder.
-#>>>>>>> de467c6a79869559ead6e68d830dad9ef2c7586a
         if MASTER_MODE and self.POPULATION_SIZE > 0:
             #saving
             f = h5py.File(os.path.join(self.populations_path,
@@ -1088,49 +1079,6 @@ class Population(PopulationSuper):
 
         return syn_idx
 
-
-
-
-    def get_delays(self):
-        """
-        get random normally distributed synaptic delays,
-        returns nested list of same shape as SpCells.
-
-        Delays are rounded to dt
-        
-        Returns
-        -------  
-        delays: dict
-            output[cellindex][populationindex][layerindex] np.array of
-            delays per connection                    
-        
-        """
-        delays = {}
-
-        for cellindex in range(self.POPULATION_SIZE):
-            delays[cellindex] = []
-            for j in range(self.k_yXL.shape[1]):
-                delays[cellindex].append([])
-                for i in self.k_yXL[:, j]:
-                    loc = self.synDelayLoc[j]
-                    loc /= self.dt
-                    scale = self.synDelayScale[j]
-                    if scale != None:
-                        scale /= self.dt
-                        delay = np.random.normal(loc, scale, i).astype(int)
-                        while np.any(delay < 1):
-                            inds = delay < 1
-                            delay[inds] = np.random.normal(loc, scale,
-                                                        inds.sum()).astype(int)
-                        delay = delay.astype(float)
-                        delay *= self.dt
-                    else:
-                        delay = np.zeros(i) + self.synDelayLoc[j]
-                    delays[cellindex][j].append(delay)
-
-        return delays
-
-
     def cellsim(self, cellindex, return_just_cell = False):
         """
         Do the actual simulations of LFP, using synaptic spike times from
@@ -1313,6 +1261,3 @@ class Population(PopulationSuper):
             SpCell.append(np.random.randint(nodes.min(), nodes.max(),
                                             size=size).astype('int32'))
         return SpCell
-
-
-
