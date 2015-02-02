@@ -504,7 +504,6 @@ class PopulationSuper(object):
         
         return DATA
 
-
     def collectSingleContribs(self, measure='LFP'):
         """
         collect single cell data and save them to file
