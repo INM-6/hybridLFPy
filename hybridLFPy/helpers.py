@@ -1,9 +1,9 @@
-'''
+"""
 Documentation:
 
 This is a script containing general helper functions which can be applied
 to specialized cases.
-'''
+"""
 
 import numpy as np
 import os
@@ -31,20 +31,21 @@ RANK = COMM.Get_rank()
 
 
 def read_gdf(fname):
-    '''
-    Fast line-by-line gdf-file reader
+    """
+    Fast line-by-line gdf-file reader.
     
-    Parameters:
-        ::
-        
-            fname : str, 
-                path to gdf-file
+    Parameters
+    ----------
+    fname : str 
+        Path to gdf-file.
     
-    Returns:
-        ::
-        
-            np.array([gid, val0, val1, **]), dtype=object)
-    '''
+    Returns
+    ----------
+    np.array
+        ([gid, val0, val1, **]), dtype=object)
+            
+    """
+    
     gdf_file = open(fname, 'r')
     gdf = []
     for l in gdf_file:
@@ -59,18 +60,17 @@ def read_gdf(fname):
 
 
 def write_gdf(gdf,fname):
-    '''
+    """
     Fast line-by-line gdf-file write function
     
-    Parameters:
-        ::
-        
-            gdf : np.array, 
-                column 0 is gids, columns 1: are values
-            fname : 'str', 
-                path to gdf-file
+    Parameters
+    ----------
+    gdf : np.array
+        Column 0 is gids, columns 1: are values.
+    fname : 'str'
+        Path to gdf-file.
     
-    '''
+    """
     gdf_file = open(fname,'w')
     for line in gdf:
         for i in np.arange(len(line)):
@@ -80,35 +80,32 @@ def write_gdf(gdf,fname):
 
 
 def load_h5_data(path= '', data_type='LFP', y=None, electrode=None, warmup=0., scaling=1.):
-    '''
+    """
     Function loading results from hdf5 file
     
-    Parameters:
-        ::
-        
-            path : str,
-                path to hdf5-file
-            data_type : str,
-                signal type, yypes: 'CSD' , 'LFP', 'CSDsum', 'LFPsum'
-            y : None or str,
-                name of population
-            electrode : None or int
-                TODO: update, electrode is NOT USED
-            warmup : float,
-                lower cutoff of time series to remove possible transients
-            scaling : float,
-                scaling factor for population size that determines the amount of loaded single-cell signals
+    Parameters
+    ----------
+    path : str
+        Path to hdf5-file
+    data_type : str
+        Signal types: 'CSD' , 'LFP', 'CSDsum', 'LFPsum'.
+    y : None or str
+        Name of population.
+    electrode : None or int
+        TODO: update, electrode is NOT USED
+    warmup : float
+        Lower cutoff of time series to remove possible transients
+    scaling : float,
+        Scaling factor for population size that determines the amount of loaded single-cell signals
                 
-    Returns:
-        ::
-            
-            if y is None:
-                np.array([electrode id, compound signal])
-            else:
-                np.array([cell id, electrode, single-cell signal])
+    Returns
+    ----------
+    np.array([electrode id, compound signal])
+        if `y` is None
+    np.array([cell id, electrode, single-cell signal])
+        otherwise
     
-    
-    '''
+    """
     assert y is not None or electrode is not None
     if y is not None:
         f = h5py.File(os.path.join(path, '%s_%ss.h5' %(y,data_type)))
@@ -126,22 +123,21 @@ def load_h5_data(path= '', data_type='LFP', y=None, electrode=None, warmup=0., s
 
 
 def dump_dict_of_nested_lists_to_h5(fname, data):
-    '''
-    Take nested list structure and dump it in hdf5 file
+    """
+    Take nested list structure and dump it in hdf5 file.
 
-    Parameters:
-        ::
-            
-            fname : str, 
-                filename
-            data: dict(list(array)), 
-                dict of nested lists with variable len arrays
+    Parameters
+    ----------
+    fname : str 
+        Filename
+    data: dict(list(array))
+        Dict of nested lists with variable len arrays.
 
-    '''
-    #open file
+    """
+    # Open file
     print 'writing to file: %s' % fname
     f = h5py.File(fname)
-    #iterate over values
+    # Iterate over values
     for i, ivalue in data.items():
         igrp = f.create_group(str(i))
         for j, jvalue in enumerate(ivalue):
@@ -154,36 +150,36 @@ def dump_dict_of_nested_lists_to_h5(fname, data):
                     dset = jgrp.create_dataset(str(k), data=kvalue,
                                                maxshape=(None, ),
                                                compression='gzip')
-    #close file
+    # Close file
     f.close()
 
 
 def load_dict_of_nested_lists_from_h5(fname, toplevelkeys=None):
-    '''
-    load nested list structure from hdf5 file
+    """
+    Load nested list structure from hdf5 file
 
-    Parameters:
-        ::
+    Parameters
+    ----------
         
-            fname: str, 
-                filename
-            toplevelkeys: None or iterable, 
-                load a two(default) or three-layered structure
+    fname: str
+        Filename
+    toplevelkeys: None or iterable, 
+        Load a two(default) or three-layered structure.
 
-    Returns:
-        ::
-        
-            data: dict(list(array)), nested lists with array data of variable length
+    Returns
+    ----------
+    data: dict(list(array))
+        Nested lists with array data of variable length.
     
-    '''
+    """
     
-    #container:
+    # Container:
     data = {}
 
-    #open file object
+    # Open file object
     f = h5py.File(fname, 'r')
 
-    #iterate over partial dataset
+    # Iterate over partial dataset
     if toplevelkeys != None:
         for i in toplevelkeys:
             ivalue = f[str(i)]
@@ -201,24 +197,24 @@ def load_dict_of_nested_lists_from_h5(fname, toplevelkeys=None):
                 for k, kvalue in enumerate(jvalue.values()):
                     data[i][j].append(kvalue.value)
 
-    #close dataset
+    # Close dataset
     f.close()
 
     return data
 
 
 def setup_file_dest(params, clearDestination=True):
-    '''
+    """
     Function to set up the file catalog structure for simulation output
     
-    Parameters:
-        ::
-            
-            params : object, 
-                e.g., cellsim16popsParams.multicompartment_params()
-            clear_dest : bool, 
-                savefolder will be cleared if already existing
-    '''
+    Parameters
+    ----------  
+    params : object 
+        e.g., `cellsim16popsParams.multicompartment_params()`
+    clear_dest : bool 
+        Savefolder will be cleared if already existing.
+        
+    """
     if COMM.Get_rank() == 0:
         if not os.path.isdir(params.savefolder):
             os.mkdir(params.savefolder)
@@ -279,25 +275,24 @@ def setup_file_dest(params, clearDestination=True):
 
 
 def calculate_fft(data, tbin):
-    '''
-    Function to calculate the Fourier transform of data
+    """
+    Function to calculate the Fourier transform of data.
     
-    Parameters:
-        ::
-        
-            data : np.array,
-                1D or 2D array containing time series
-            tbin : float,
-                bin size of time series (in ms)
+    Parameters
+    ----------
+    data : np.array
+        1D or 2D array containing time series.
+    tbin : float
+        Bin size of time series (in ms).
     
-    Returns:
-        ::
+    Returns
+    ----------
+    freqs : np.array
+        Frequency axis of signal in Fourier space.         
+    fft : np.array
+        Signal in Fourier space.
         
-            freqs : np.array,
-                frequency axis of signal in Fourier space           
-            fft : np.array,
-                signal in Fourier space
-    '''
+    """
     if len(np.shape(data)) > 1:
         n = len(data[0])
         return np.fft.fftfreq(n, tbin * 1e-3), np.fft.fft(data, axis=1)
@@ -311,25 +306,24 @@ def calculate_fft(data, tbin):
 #######################################
 
 def centralize(data, time=False, units=False):
-    '''
+    """
     Function to subtract the mean across time and/or across units from data
     
-    Parameters:
-        ::
-        
-            data : np.array,
-                1D or 2D array containing time series, 1st index: unit, 2nd index: time
-            time : bool,
-                True: subtract mean across time
-            units : bool,
-                True: subtract mean across units
+    Parameters
+    ----------  
+    data : np.array
+        1D or 2D array containing time series, 1st index: unit, 2nd index: time
+    time : bool
+        True: subtract mean across time.
+    units : bool
+        True: subtract mean across units.
             
-    Returns:
-        ::
+    Returns
+    ---------- 
+    res : np.array
+        1D or 0D array of centralized signal.
         
-            res : np.array,
-                1D or 0D array of centralized signal
-    '''
+    """
     assert(time is not False or units is not False)
     res = copy.copy(data)
     if time is True:
@@ -340,15 +334,15 @@ def centralize(data, time=False, units=False):
 
 
 def normalize(data):
-    '''
+    """
     Function to normalize data to have mean 0 and unity standard deviation
     (also called z-transform)
     
-    Parameters:
-        ::
-        
-            data : np.array, 
-    '''
+    Parameters
+    ----------
+    data : np.array
+    
+    """
     data = data.astype(float)
     data -= data.mean()
     return data / data.std()
@@ -359,27 +353,26 @@ def normalize(data):
 #######################################
 
 def movav(y, Dx, dx):
-    '''
+    """
     Moving average rectangular window filter:
     calculate average of signal y by using sliding rectangular
     window of size Dx using binsize dx
     
-    Parameters:
-        ::
-        
-            y : np.array,
-                signal
-            Dx : float,
-                window length of filter
-            dx : float,
-                bin size of signal sampling
+    Parameters
+    ----------
+    y : np.array
+        Signal
+    Dx : float
+        Window length of filter.
+    dx : float
+        Bin size of signal sampling.
                 
-    Returns:
-        ::
-        
-            yf : np.array,
-                 filtered signal
-    '''
+    Returns
+    ----------
+    yf : np.array
+        Filtered signal.
+    
+    """
     if Dx <= dx:
         return y
     else:
@@ -395,29 +388,27 @@ def movav(y, Dx, dx):
 
 
 def decimate(x, q=10, n=4, k=0.8, axis=-1, filterfun=ss.cheby1):
-    '''
+    """
     scipy.signal.decimate like downsampling using filtfilt instead of lfilter,
     and filter coeffs from butterworth or chebyshev type 1.
 
-    Parameters:
-        ::
-            
-            x : np.ndarray, 
-                array to be downsampled along last axis
-            q : int, 
-                downsampling factor
-            n : int, 
-                butterworth filter order
-            k : float,
-                aliasing filter critical frequency will be set as Wn=k/q
+    Parameters
+    ----------
+    x : np.ndarray
+        Array to be downsampled along last axis.
+    q : int 
+        Downsampling factor.
+    n : int
+        Butterworth filter order.
+    k : float
+        Aliasing filter critical frequency will be set as Wn=k/q.
               
-    Returns:
-        ::
-        
-            y : np.ndarray,
-                array of downsampled signal         
+    Returns
+    ----------
+    y : np.ndarray
+        Array of downsampled signal.
               
-    '''
+    """
     if not isinstance(q, int):
         raise TypeError("q must be an integer")
 
@@ -433,7 +424,7 @@ def decimate(x, q=10, n=4, k=0.8, axis=-1, filterfun=ss.cheby1):
 
     try:
         y = ss.filtfilt(b, a, x)
-    except: # multidim array can only be processed at once for scipy version largen than 0.9.0
+    except: # Multidim array can only be processed at once for scipy version largen than 0.9.0
         y = []
         for data in x:
             y.append(ss.filtfilt(b,a,data))
@@ -451,44 +442,41 @@ def decimate(x, q=10, n=4, k=0.8, axis=-1, filterfun=ss.cheby1):
 
 
 def mean(data, units=False, time=False):
-    '''
+    """
     Function to compute mean of data
 
-    Parameters:
-        ::   
+    Parameters
+    ---------- 
+    data: numpy.ndarray
+        1st axis unit, 2nd axis time
+    units: bool
+        Average over units
+    time: bool 
+        Average over time
 
-            data: numpy.ndarray, 
-                1st axis unit, 2nd axis time
-            units: bool, 
-                average over units
-            time: bool, 
-                average over time
+    Returns
+    ----------
+    if units=False and time=False: 
+        error
+    if units=True: 
+        1 dim numpy.ndarray; time series
+    if time=True: 
+        1 dim numpy.ndarray; series of unit means across time
+    if units=True and time=True: 
+        float; unit and time mean
 
-    Returns:
-        ::
-    
-            if units=False and time=False: 
-                error
-            if units=True: 
-                1 dim numpy.ndarray; time series
-            if time=True: 
-                1 dim numpy.ndarray; series of unit means across time
-            if units=True and time=True: 
-                float; unit and time mean
+    Examples
+    ---------- 
+    >>> mean(np.array([[1,2,3],[4,5,6]]),units=True)
+    Out[1]: np.array([2.5,3.5,4.5])
 
-    Examples:
-        ::
-            
-            >>> mean(np.array([[1,2,3],[4,5,6]]),units=True)
-            Out[1]: np.array([2.5,3.5,4.5])
+    >>> mean(np.array([[1,2,3],[4,5,6]]),time=True)
+    Out[1]: np.array([2.,5.])
 
-            >>> mean(np.array([[1,2,3],[4,5,6]]),time=True)
-            Out[1]: np.array([2.,5.])
+    >>> mean(np.array([[1,2,3],[4,5,6]]),units=True,time=True)
+    Out[1]: 3.5
 
-            >>> mean(np.array([[1,2,3],[4,5,6]]),units=True,time=True)
-            Out[1]: 3.5
-
-    '''
+    """
 
     assert(units is not False or time is not False)
     if units is True and time is False:
@@ -500,70 +488,64 @@ def mean(data, units=False, time=False):
 
 
 def compound_mean(data):
-    '''
+    """
     Compute the mean of the compound/sum signal.
     Data is first summed across units and averaged across time.
 
-    Parameters:
-        ::   
+    Parameters
+    ----------
+    data: numpy.ndarray
+        1st axis unit, 2nd axis time
 
-            data: numpy.ndarray,
-                1st axis unit, 2nd axis time
+    Returns
+    ----------
+    float
+        time-averaged compound/sum signal
 
-    Returns:
-        ::
-        
-            float,
-                time-averaged compound/sum signal
+    Examples
+    ----------       
+    >>> compound_mean(np.array([[1,2,3],[4,5,6]]))
+    Out[1]: 7.0
 
-    Examples:
-        ::
-            
-            >>> compound_mean(np.array([[1,2,3],[4,5,6]]))
-            Out[1]: 7.0
-
-    '''
+    """
 
     return np.mean(np.sum(data, axis=0))
 
 
 def variance(data, units=False, time=False):
-    '''
+    """
     Compute the variance of data across time, units or both.
 
-    Parameters:
-        ::
-            
-            data: numpy.ndarray, 
-                1st axis unit, 2nd axis time
-            units: bool, 
-                variance across units
-            time: bool, 
-                average over time
+    Parameters
+    ---------- 
+    data: numpy.ndarray 
+        1st axis unit, 2nd axis time.
+    units: bool 
+        Variance across units
+    time: bool
+        Average over time
 
-    Returns:
-        ::
-        
-            if units=False and time=False: 
-                error,
-            if units=True: 
-                1 dim numpy.ndarray; time series,       
-            if time=True:  
-                1 dim numpy.ndarray; series of single unit variances across time,
-            if units=True and time=True: 
-                float; mean of single unit variances across time
+    Returns
+    ---------- 
+    if units=False and time=False: 
+        error,
+    if units=True: 
+        1 dim numpy.ndarray; time series,       
+    if time=True:  
+        1 dim numpy.ndarray; series of single unit variances across time,
+    if units=True and time=True: 
+        float; mean of single unit variances across time
 
-    Examples:
-        ::
-            
-            >>> variance(np.array([[1,2,3],[4,5,6]]),units=True)
-            Out[1]: np.array([ 2.25,  2.25,  2.25])
-            >>> variance(np.array([[1,2,3],[4,5,6]]),time=True)
-            Out[1]: np.array([ 0.66666667,  0.66666667])
-            >>> variance(np.array([[1,2,3],[4,5,6]]),units=True,time=True)
-            Out[1]: 0.66666666666666663
+    Examples
+    ----------
+    >>> variance(np.array([[1,2,3],[4,5,6]]),units=True)
+    Out[1]: np.array([ 2.25,  2.25,  2.25])
+    >>> variance(np.array([[1,2,3],[4,5,6]]),time=True)
+    Out[1]: np.array([ 0.66666667,  0.66666667])
+    >>> variance(np.array([[1,2,3],[4,5,6]]),units=True,time=True)
+    Out[1]: 0.66666666666666663
 
-    '''
+    """
 
     assert(units is not False or time is not False)
     if units is True and time is False:
@@ -575,65 +557,60 @@ def variance(data, units=False, time=False):
 
 
 def compound_variance(data):
-    '''
+    """
     Compute the variance of the compound/sum signal.
-    data is first summed across units, then the variance across time is calculated.
+    Data is first summed across units, then the variance across time is calculated.
     
-    Parameters:
-        ::
-            
-            data: numpy.ndarray, 
-                1st axis unit, 2nd axis time
+    Parameters
+    ----------
+    data: numpy.ndarray
+        1st axis unit, 2nd axis time
   
-    Returns:
-        ::
-            
-            float; variance across time of compound/sum signal
+    Returns
+    ----------   
+    float
+        variance across time of compound/sum signal
 
-    Examples:
-        ::
-        
-            >>> compound_variance(np.array([[1,2,3],[4,5,6]]))
-            Out[1]: 2.6666666666666665
+    Examples
+    ---------- 
+    >>> compound_variance(np.array([[1,2,3],[4,5,6]]))
+    Out[1]: 2.6666666666666665
 
-    '''
+    """
 
     return np.var(np.sum(data, axis=0))
 
 
 def powerspec(data, tbin, Df=None, units=False, pointProcess=False):
-    '''
+    """
     Calculate (smoothed) power spectra of all timeseries in data.
     If units=True, power spectra are averaged across units.
     Note that averaging is done on power spectra rather than data.
 
     If pointProcess=True, power spectra are normalized by the length T of the time series.
  
-    Parameters:
-        ::
-       
-            data: numpy.ndarray, 
-                1st axis unit, 2nd axis time
-            tbin: float, 
-                binsize in ms
-            Df: float/None, 
-                window width of sliding rectangular filter (smoothing), None -> no smoothing
-            units: bool, 
-                average power spectrum
-            pointProcess: bool, 
-                if set to True, powerspectrum is normalized to signal length T
+    Parameters
+    ----------
+    data: numpy.ndarray
+        1st axis unit, 2nd axis time.
+    tbin: float
+        Binsize in ms.
+    Df: float/None, 
+        Window width of sliding rectangular filter (smoothing), None -> no smoothing.
+    units: bool
+        Average power spectrum.
+    pointProcess: bool
+        If set to True, powerspectrum is normalized to signal length T.
 
-    Returns:
-        ::
-          
-            (freq, POW): tuple
-            freq: numpy.ndarray, 
-                frequencies
-            POW: 
-                if units=False: 
-                    2 dim numpy.ndarray; 1st axis unit, 2nd axis frequency
-                if units=True:  
-                    1 dim numpy.ndarray; frequency series
+    Returns
+    ----------
+    freq: tuple
+        numpy.ndarray of frequencies.
+    POW: tuple
+        if units=False: 
+            2 dim numpy.ndarray; 1st axis unit, 2nd axis frequency
+        if units=True:  
+            1 dim numpy.ndarray; frequency series
 
     Examples:
         ::
