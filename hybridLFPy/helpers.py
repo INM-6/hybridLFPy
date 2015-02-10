@@ -612,20 +612,19 @@ def powerspec(data, tbin, Df=None, units=False, pointProcess=False):
         if units=True:  
             1 dim numpy.ndarray; frequency series
 
-    Examples:
-        ::
-            
-            >>> powerspec(np.array([analog_sig1,analog_sig2]),tbin, Df=Df)
-            Out[1]: (freq,POW)
-            >>> POW.shape
-            Out[2]: (2,len(analog_sig1))
+    Examples
+    ----------     
+    >>> powerspec(np.array([analog_sig1,analog_sig2]),tbin, Df=Df)
+    Out[1]: (freq,POW)
+    >>> POW.shape
+    Out[2]: (2,len(analog_sig1))
 
-            >>> powerspec(np.array([analog_sig1,analog_sig2]),tbin, Df=Df, units=True)
-            Out[1]: (freq,POW)
-            >>> POW.shape
-            Out[2]: (len(analog_sig1),)
+    >>> powerspec(np.array([analog_sig1,analog_sig2]),tbin, Df=Df, units=True)
+    Out[1]: (freq,POW)
+    >>> POW.shape
+    Out[2]: (len(analog_sig1),)
 
-    '''
+    """
 
     freq, DATA = calculate_fft(data, tbin)
     df = freq[1] - freq[0]
@@ -642,108 +641,97 @@ def powerspec(data, tbin, Df=None, units=False, pointProcess=False):
         POW = mean(POW, units=units)
         assert(len(freq) == len(POW))
     if pointProcess:
-        POW *= 1. / T * 1e3  # normalization, power independent of T
+        POW *= 1. / T * 1e3  # Normalization, power independent of T
     return freq, POW
 
 
 def compound_powerspec(data, tbin, Df=None, pointProcess=False):
-    '''
+    """
     Calculate the power spectrum of the compound/sum signal.
     data is first summed across units, then the power spectrum is calculated.
 
     If pointProcess=True, power spectra are normalized by the length T of the time series.
 
     
-    Parameters:
-        ::
-       
-            data: numpy.ndarray, 
-                1st axis unit, 2nd axis time
-            tbin: float, 
-                binsize in ms
-            Df: float/None, 
-                window width of sliding rectangular filter (smoothing), None -> no smoothing
-            units: bool, 
-                average power spectrum
-            pointProcess: bool, 
-                if set to True, powerspectrum is normalized to signal length T
-                
-                
+    Parameters
+    ----------
+    data: numpy.ndarray, 
+        1st axis unit, 2nd axis time
+    tbin: float, 
+        binsize in ms
+    Df: float/None, 
+        window width of sliding rectangular filter (smoothing), None -> no smoothing
+    units: bool, 
+        average power spectrum
+    pointProcess: bool, 
+        if set to True, powerspectrum is normalized to signal length T
+                 
 
-    Returns:
-        ::
-          
-            (freq, POW): tuple
-            freq: numpy.ndarray, 
-                frequencies
-            POW: 
-                1 dim numpy.ndarray; frequency series
+    Returns
+    ----------
+    freq : tuple
+        numpy.ndarray of frequencies
+    POW : tuple
+        1 dim numpy.ndarray, frequency series
 
+    Examples
+    ----------
+    >>> compound_powerspec(np.array([analog_sig1,analog_sig2]),tbin, Df=Df)
+    Out[1]: (freq,POW)
+    >>> POW.shape
+    Out[2]: (len(analog_sig1),)
 
-    Examples:
-        ::
-        
-            >>> compound_powerspec(np.array([analog_sig1,analog_sig2]),tbin, Df=Df)
-            Out[1]: (freq,POW)
-            >>> POW.shape
-            Out[2]: (len(analog_sig1),)
-
-    '''
+    """
 
     return powerspec([np.sum(data, axis=0)], tbin, Df=Df, units=True, pointProcess=pointProcess)
 
 
 def crossspec(data, tbin, Df=None, units=False, pointProcess=False):
-    '''
+    """
     Calculate (smoothed) cross spectra of data.
-    If units=True, cross spectra are averaged across units.
+    If `units`=True, cross spectra are averaged across units.
     Note that averaging is done on cross spectra rather than data.
 
     Cross spectra are normalized by the length T of the time series -> no scaling with T.
 
     If pointProcess=True, power spectra are normalized by the length T of the time series.
      
-    Parameters:
-        ::
-       
-            data: numpy.ndarray, 
-                1st axis unit, 2nd axis time
-            tbin: float, 
-                binsize in ms
-            Df: float/None, 
-                window width of sliding rectangular filter (smoothing), None -> no smoothing
-            units: bool, 
-                average cross spectrum
-            pointProcess: bool, 
-                if set to True, crossspectrum is normalized to signal length T
+    Parameters
+    ----------
+    data: numpy.ndarray, 
+        1st axis unit, 2nd axis time
+    tbin: float, 
+        binsize in ms
+    Df: float/None, 
+        window width of sliding rectangular filter (smoothing), None -> no smoothing
+    units: bool, 
+        average cross spectrum
+    pointProcess: bool, 
+        if set to True, crossspectrum is normalized to signal length T
                 
     
-    Returns:
-        ::
-        
-            (freq, CRO): tuple
-            freq: numpy.ndarray,
-                frequencies
-            CRO: 
-                if units=True:  
-                    1 dim numpy.ndarray; frequency series
-                if units=False: 
-                    3 dim numpy.ndarray; 1st axis first unit, 2nd axis second unit, 3rd axis frequency
+    Returns
+    ----------
+    freq: tuple
+        numpy.ndarray of frequencies
+    CRO: tuple
+        if `units`=True: 1 dim numpy.ndarray; frequency series
+        if `units`=False:3 dim numpy.ndarray; 1st axis first unit,
+            2nd axis second unit, 3rd axis frequency
 
-    Examples:
-        ::
-        
-            >>> crossspec(np.array([analog_sig1,analog_sig2]),tbin, Df=Df)
-            Out[1]: (freq,CRO)
-            >>> CRO.shape
-            Out[2]: (2,2,len(analog_sig1))
+    Examples
+    ----------    
+    >>> crossspec(np.array([analog_sig1,analog_sig2]),tbin, Df=Df)
+    Out[1]: (freq,CRO)
+    >>> CRO.shape
+    Out[2]: (2,2,len(analog_sig1))
 
-            >>> crossspec(np.array([analog_sig1,analog_sig2]),tbin, Df=Df, units=True)
-            Out[1]: (freq,CRO)
-            >>> CRO.shape
-            Out[2]: (len(analog_sig1),)
+    >>> crossspec(np.array([analog_sig1,analog_sig2]),tbin, Df=Df, units=True)
+    Out[1]: (freq,CRO)
+    >>> CRO.shape
+    Out[2]: (len(analog_sig1),)
 
-    '''
+    """
 
     N = len(data)
     if units is True:
@@ -778,7 +766,7 @@ def crossspec(data, tbin, Df=None, units=False, pointProcess=False):
 
 
 def compound_crossspec(a_data, tbin, Df=None, pointProcess=False):
-    '''
+    """
     Calculate cross spectra of compound signals.
     a_data is a list of datasets (a_data = [data1,data2,...]).
     For each dataset in a_data, the compound signal is calculated
@@ -786,38 +774,33 @@ def compound_crossspec(a_data, tbin, Df=None, pointProcess=False):
     
     If pointProcess=True, power spectra are normalized by the length T of the time series.
      
-    Parameters:
-        ::
-       
-            a_data: list of numpy.ndarrays; 
-                array: 1st axis unit, 2nd axis time     
-            tbin: float, 
-                binsize in ms
-            Df: float/None, 
-                window width of sliding rectangular filter (smoothing), None -> no smoothing
-            pointProcess: bool, 
-                if set to True, crossspectrum is normalized to signal length T
+    Parameters
+    ----------
+    a_data: list of numpy.ndarrays; 
+        array: 1st axis unit, 2nd axis time     
+    tbin: float, 
+        binsize in ms
+    Df: float/None, 
+        window width of sliding rectangular filter (smoothing), None -> no smoothing
+    pointProcess: bool, 
+        if set to True, crossspectrum is normalized to signal length T
                 
-    
-    Returns:
-        ::
-        
-            (freq, CRO): tuple
-            freq: numpy.ndarray,
-                frequencies
-            CRO: 
-                3 dim numpy.ndarray; 1st axis first compound signal, 2nd axis second compound signal, 3rd axis frequency
+    Returns
+    ----------
+    freq: tuple
+        numpy.ndarray of frequencies
+    CRO: tuple
+        3 dim numpy.ndarray; 1st axis first compound signal, 2nd axis second compound signal, 3rd axis frequency
 
-    Examples:
-        ::
-        
-            >>> compound_crossspec([np.array([analog_sig1,analog_sig2]),np.array([analog_sig3,analog_sig4])],tbin, Df=Df)
-            Out[1]: (freq,CRO)
-            >>> CRO.shape
-            Out[2]: (2,2,len(analog_sig1))
+    Examples
+    ----------
+    >>> compound_crossspec([np.array([analog_sig1,analog_sig2]),np.array([analog_sig3,analog_sig4])],tbin, Df=Df)
+    Out[1]: (freq,CRO)
+    >>> CRO.shape
+    Out[2]: (2,2,len(analog_sig1))
 
 
-    '''
+    """
 
     a_mdata = []
     for data in a_data:
@@ -826,28 +809,24 @@ def compound_crossspec(a_data, tbin, Df=None, pointProcess=False):
 
 
 def autocorrfunc(freq, power):
-    '''
+    """
     Calculate autocorrelation function(s) for given power spectrum/spectra.
 
-    Parameters:
-        ::
-        
-            freq: 1 dim numpy.ndarray; 
-                frequencies
-            power: 2 dim numpy.ndarray; 
-                power spectra, 1st axis units, 2nd axis frequencies
+    Parameters
+    ----------
+    freq: 1 dim numpy.ndarray; 
+        frequencies
+    power: 2 dim numpy.ndarray; 
+        power spectra, 1st axis units, 2nd axis frequencies
 
-    Returns:
-        ::
-        
-            (time,autof): tuple
-            time: 1 dim numpy.ndarray; 
-                times
-            autof: 2 dim numpy.ndarray; 
-                autocorrelation functions, 1st axis units, 2nd axis times
+    Returns
+    ----------
+    time: tuple
+        1 dim numpy.ndarray of times
+    autof: tuple
+        2 dim numpy.ndarray; autocorrelation functions, 1st axis units, 2nd axis times
 
-
-    '''
+    """
     tbin = 1. / (2. * np.max(freq)) * 1e3  # tbin in ms
     time = np.arange(-len(freq) / 2. + 1, len(freq) / 2. + 1) * tbin
     # T = max(time)
@@ -872,28 +851,25 @@ def autocorrfunc(freq, power):
 
 
 def crosscorrfunc(freq, cross):
-    '''
+    """
     Calculate crosscorrelation function(s) for given cross spectra.
 
-    Parameters:
-        ::
-        
-            freq: 1 dim numpy.ndarray,
-                frequencies
-            cross: 3 dim numpy.ndarray, 
-                cross spectra, 1st axis units, 2nd axis units, 3rd axis frequencies
+    Parameters
+    ----------
+    freq: 1 dim numpy.ndarray,
+        frequencies
+    cross: 3 dim numpy.ndarray, 
+        cross spectra, 1st axis units, 2nd axis units, 3rd axis frequencies
 
-    Returns:
-        ::
-        
-            (time,crossf): tuple
-            time: 1 dim numpy.ndarray, 
-                times
-            crossf: 3 dim numpy.ndarray, 
-                crosscorrelation functions, 1st axis first unit, 2nd axis second unit, 3rd axis times
+    Returns
+    ----------
+    time: tuple
+        1 dim numpy.ndarray of times
+    crossf: tuple
+        3 dim numpy.ndarray, crosscorrelation functions,
+        1st axis first unit, 2nd axis second unit, 3rd axis times
 
-
-    '''
+    """
 
     tbin = 1. / (2. * np.max(freq)) * 1e3  # tbin in ms
     time = np.arange(-len(freq) / 2. + 1, len(freq) / 2. + 1) * tbin
@@ -922,30 +898,27 @@ def crosscorrfunc(freq, cross):
 
 
 def corrcoef(time, crossf, integration_window=0.):
-    '''
+    """
     Calculate the correlation coefficient for given auto- and crosscorrelation functions.
     Standard settings yield the zero lag correlation coefficient.
     Setting integration_window > 0 yields the correlation coefficient of integrated auto- and crosscorrelation functions.
     The correlation coefficient between a zero signal with any other signal is defined as 0.
 
-    Parameters:
-        ::
-        
-            time: 1 dim numpy.ndarray, 
-                times corresponding to signal
-            crossf: 3 dim numpy.ndarray, 
-                crosscorrelation functions, 1st axis first unit, 2nd axis second unit, 3rd axis times
-            integration_window: float
-                size of the integration window
+    Parameters
+    ----------
+    time : numpy.ndarray
+        1 dim array of times corresponding to signal
+    crossf : numpy.ndarray 
+        crosscorrelation functions, 1st axis first unit, 2nd axis second unit, 3rd axis times
+    integration_window: float
+        size of the integration window
 
-    Returns:
-        ::
-        
-            cc: 2 dim numpy.ndarray,
-                correlation coefficient between two units
+    Returns
+    ----------
+    cc: numpy.ndarray
+        2 dim array of correlation coefficient between two units
 
-
-    '''
+    """
 
     N = len(crossf)
     cc = np.zeros(np.shape(crossf)[:-1])
@@ -971,21 +944,20 @@ def corrcoef(time, crossf, integration_window=0.):
 
 
 def coherence(freq, power, cross):
-    '''
+    """
     Calculate frequency resolved coherence for given power- and crossspectra.
 
-    Parameters:
-        ::
+    Parameters
+    ----------
+    freq: numpy.ndarray
+        frequencies, 1 dim array 
+    power: numpy.ndarray
+        power spectra, 1st axis units, 2nd axis frequencies
+    cross: numpy.ndarray, 
+        cross spectra, 1st axis units, 2nd axis units, 3rd axis frequencies
 
-            freq: 1 dim numpy.ndarray, 
-                frequencies
-            power: 2 dim numpy.ndarray, 
-                power spectra, 1st axis units, 2nd axis frequencies
-            cross: 3 dim numpy.ndarray, 
-                cross spectra, 1st axis units, 2nd axis units, 3rd axis frequencies
-
-    Returns:
-        ::
+    Returns
+    ----------
             
             (freq,coh): tuple
             freq: 1 dim numpy.ndarray, 
