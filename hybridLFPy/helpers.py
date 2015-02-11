@@ -915,7 +915,7 @@ def corrcoef(time, crossf, integration_window=0.):
 
     Returns
     ----------
-    cc: numpy.ndarray
+    cc : numpy.ndarray
         2 dim array of correlation coefficient between two units
 
     """
@@ -958,15 +958,13 @@ def coherence(freq, power, cross):
 
     Returns
     ----------
-            
-            (freq,coh): tuple
-            freq: 1 dim numpy.ndarray, 
-                frequencies
-            coh: 3 dim numpy.ndarray, 
-                coherences, 1st axis units, 2nd axis units, 3rd axis frequencies
+    freq: tuple
+        1 dim numpy.ndarray of frequencies
+    coh: tuple
+        3 dim numpy.ndarray of coherences, 1st axis units, 2nd axis units, 3rd axis frequencies
 
 
-    '''
+    """
 
     N = len(power)
     coh = np.zeros(np.shape(cross))
@@ -978,35 +976,32 @@ def coherence(freq, power, cross):
 
 
 def cv(data, units=False):
-    '''
+    """
     Calculate coefficient of variation for data. Mean and standard deviation are computed across time.
 
+    Parameters
+    ----------
+    data: numpy.ndarray
+        1st axis unit, 2nd axis time
+    units: bool
+        average `cv`
 
-    Parameters:
-        ::
+    Returns
+    ----------
+    numpy.ndarray
+        if units=False, series of unit `cv`s
+    float
+        if units=True, mean `cv` across units
 
-            data: numpy.ndarray, 
-                1st axis unit, 2nd axis time
-            units: bool, 
-                average CV
+    Examples
+    ----------
+    >>> cv(np.array([[1,2,3,4,5,6],[11,2,3,3,4,5]]))
+    Out[1]: np.array([ 0.48795004,  0.63887656])
 
-    Returns:
-        ::
-        
-            if units=False: 
-                  numpy.ndarray; series of unit CVs
-            if units=True: 
-                  float; mean CV across units
+    >>> cv(np.array([[1,2,3,4,5,6],[11,2,3,3,4,5]]),units=True)
+    Out[1]: 0.56341330073710316
 
-    Examples:
-            
-            >>> cv(np.array([[1,2,3,4,5,6],[11,2,3,3,4,5]]))
-            Out[1]: np.array([ 0.48795004,  0.63887656])
-
-            >>> cv(np.array([[1,2,3,4,5,6],[11,2,3,3,4,5]]),units=True)
-            Out[1]: 0.56341330073710316
-
-    '''
+    """
 
     mu = mean(data, time=True)
     var = variance(data, time=True)
@@ -1018,36 +1013,33 @@ def cv(data, units=False):
 
 
 def fano(data, units=False):
-    '''
+    """
     Calculate fano factor for data. Mean and variance are computed across time.
 
 
-    Parameters:
-        ::
-            
-            data: numpy.ndarray, 
-                1st axis unit, 2nd axis time
-            units: bool, 
-                average FF
+    Parameters
+    ----------   
+    data: numpy.ndarray 
+        1st axis unit, 2nd axis time
+    units: bool
+        average `FF`
 
-    Returns:
-        ::
-         
-            if units=False: 
-                numpy.ndarray; series of unit FFs
-            if units=True: 
-                float; mean FF across units
+    Returns
+    ----------
+    numpy.ndarray
+        if units=False, series of unit FFs
+    float
+        if units=True, mean FF across units
 
-    Examples:
-        ::
-            
-            >>> fano(np.array([[1,2,3,4,5,6],[11,2,3,3,4,5]]))
-            Out[1]: np.array([0.83333333, 1.9047619])
+    Examples
+    ----------
+    >>> fano(np.array([[1,2,3,4,5,6],[11,2,3,3,4,5]]))
+    Out[1]: np.array([0.83333333, 1.9047619])
 
-            >>> fano(np.array([[1,2,3,4,5,6],[11,2,3,3,4,5]]),units=True)
-            Out[1]: 1.3690476190476191
+    >>> fano(np.array([[1,2,3,4,5,6],[11,2,3,3,4,5]]),units=True)
+    Out[1]: 1.3690476190476191
 
-    '''
+    """
 
     mu = mean(data, time=True)
     var = variance(data, time=True)
