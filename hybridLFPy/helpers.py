@@ -776,21 +776,21 @@ def compound_crossspec(a_data, tbin, Df=None, pointProcess=False):
      
     Parameters
     ----------
-    a_data: list of numpy.ndarrays; 
-        array: 1st axis unit, 2nd axis time     
-    tbin: float, 
-        binsize in ms
+    a_data: list of numpy.ndarrays
+        Array: 1st axis unit, 2nd axis time.     
+    tbin: float
+        Binsize in ms.
     Df: float/None, 
-        window width of sliding rectangular filter (smoothing), None -> no smoothing
-    pointProcess: bool, 
-        if set to True, crossspectrum is normalized to signal length T
+        Window width of sliding rectangular filter (smoothing), None -> no smoothing.
+    pointProcess: bool
+        If set to True, crossspectrum is normalized to signal length `T`
                 
     Returns
     ----------
     freq: tuple
-        numpy.ndarray of frequencies
+        numpy.ndarray of frequencies.
     CRO: tuple
-        3 dim numpy.ndarray; 1st axis first compound signal, 2nd axis second compound signal, 3rd axis frequency
+        3 dim numpy.ndarray; 1st axis first compound signal, 2nd axis second compound signal, 3rd axis frequency.
 
     Examples
     ----------
@@ -798,7 +798,6 @@ def compound_crossspec(a_data, tbin, Df=None, pointProcess=False):
     Out[1]: (freq,CRO)
     >>> CRO.shape
     Out[2]: (2,2,len(analog_sig1))
-
 
     """
 
@@ -814,17 +813,17 @@ def autocorrfunc(freq, power):
 
     Parameters
     ----------
-    freq: 1 dim numpy.ndarray; 
-        frequencies
-    power: 2 dim numpy.ndarray; 
-        power spectra, 1st axis units, 2nd axis frequencies
+    freq: numpy.ndarray
+        1 dimensional array of frequencies.
+    power: numpy.ndarray
+        2 dimensional power spectra, 1st axis units, 2nd axis frequencies.
 
     Returns
     ----------
     time: tuple
-        1 dim numpy.ndarray of times
+        1 dim numpy.ndarray of times.
     autof: tuple
-        2 dim numpy.ndarray; autocorrelation functions, 1st axis units, 2nd axis times
+        2 dim numpy.ndarray; autocorrelation functions, 1st axis units, 2nd axis times.
 
     """
     tbin = 1. / (2. * np.max(freq)) * 1e3  # tbin in ms
@@ -856,18 +855,18 @@ def crosscorrfunc(freq, cross):
 
     Parameters
     ----------
-    freq: 1 dim numpy.ndarray,
-        frequencies
-    cross: 3 dim numpy.ndarray, 
-        cross spectra, 1st axis units, 2nd axis units, 3rd axis frequencies
+    freq : numpy.ndarray
+        1 dimensional array of frequencies.
+    cross : numpy.ndarray 
+        2 dimensional array of cross spectra, 1st axis units, 2nd axis units, 3rd axis frequencies.
 
     Returns
     ----------
     time: tuple
-        1 dim numpy.ndarray of times
+        1 dim numpy.ndarray of times.
     crossf: tuple
         3 dim numpy.ndarray, crosscorrelation functions,
-        1st axis first unit, 2nd axis second unit, 3rd axis times
+        1st axis first unit, 2nd axis second unit, 3rd axis times.
 
     """
 
@@ -898,8 +897,7 @@ def crosscorrfunc(freq, cross):
 
 
 def corrcoef(time, crossf, integration_window=0.):
-    """
-    Calculate the correlation coefficient for given auto- and crosscorrelation functions.
+    """ Calculate the correlation coefficient for given auto- and crosscorrelation functions.
     Standard settings yield the zero lag correlation coefficient.
     Setting integration_window > 0 yields the correlation coefficient of integrated auto- and crosscorrelation functions.
     The correlation coefficient between a zero signal with any other signal is defined as 0.
@@ -907,16 +905,16 @@ def corrcoef(time, crossf, integration_window=0.):
     Parameters
     ----------
     time : numpy.ndarray
-        1 dim array of times corresponding to signal
+        1 dim array of times corresponding to signal.
     crossf : numpy.ndarray 
-        crosscorrelation functions, 1st axis first unit, 2nd axis second unit, 3rd axis times
+        Crosscorrelation functions, 1st axis first unit, 2nd axis second unit, 3rd axis times.
     integration_window: float
-        size of the integration window
+        Size of the integration window.
 
     Returns
     ----------
     cc : numpy.ndarray
-        2 dim array of correlation coefficient between two units
+        2 dim array of correlation coefficient between two units.
 
     """
 
@@ -944,25 +942,23 @@ def corrcoef(time, crossf, integration_window=0.):
 
 
 def coherence(freq, power, cross):
-    """
-    Calculate frequency resolved coherence for given power- and crossspectra.
+    """ Calculate frequency resolved coherence for given power- and crossspectra.
 
     Parameters
     ----------
     freq: numpy.ndarray
-        frequencies, 1 dim array 
+        Frequencies, 1 dim array.
     power: numpy.ndarray
-        power spectra, 1st axis units, 2nd axis frequencies
+        Power spectra, 1st axis units, 2nd axis frequencies.
     cross: numpy.ndarray, 
-        cross spectra, 1st axis units, 2nd axis units, 3rd axis frequencies
+        Cross spectra, 1st axis units, 2nd axis units, 3rd axis frequencies.
 
     Returns
     ----------
     freq: tuple
-        1 dim numpy.ndarray of frequencies
+        1 dim numpy.ndarray of frequencies.
     coh: tuple
-        3 dim numpy.ndarray of coherences, 1st axis units, 2nd axis units, 3rd axis frequencies
-
+        3 dim numpy.ndarray of coherences, 1st axis units, 2nd axis units, 3rd axis frequencies.
 
     """
 
@@ -982,16 +978,16 @@ def cv(data, units=False):
     Parameters
     ----------
     data: numpy.ndarray
-        1st axis unit, 2nd axis time
+        1st axis unit, 2nd axis time.
     units: bool
-        average `cv`
+        Average `cv`.
 
     Returns
     ----------
     numpy.ndarray
-        if units=False, series of unit `cv`s
+        If units=False, series of unit `cv`s.
     float
-        if units=True, mean `cv` across units
+        If units=True, mean `cv` across units.
 
     Examples
     ----------
@@ -1020,16 +1016,16 @@ def fano(data, units=False):
     Parameters
     ----------   
     data: numpy.ndarray 
-        1st axis unit, 2nd axis time
+        1st axis unit, 2nd axis time.
     units: bool
-        average `FF`
+        Average `FF`.
 
     Returns
     ----------
     numpy.ndarray
-        if units=False, series of unit FFs
+        If units=False, series of unit FFs.
     float
-        if units=True, mean FF across units
+        If units=True, mean FF across units.
 
     Examples
     ----------
