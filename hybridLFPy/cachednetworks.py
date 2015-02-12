@@ -1,9 +1,8 @@
 #!/usr/bin/env python
-'''
+"""
 Cached networks to use with the population classes, as the only
-variables being used is "nodes_ex" and "nodes_in" VERSION THAT WORKS
-'''
-
+variables being used is "nodes_ex" and "nodes_in" VERSION THAT WORKS.
+"""
 
 import numpy as np
 import os
@@ -26,13 +25,13 @@ RANK = COMM.Get_rank()
 
 def remove_axis_junk(ax, which=['right', 'top']):
     """
-    Remove axis lines from axes object that exist in list which
+    Remove axis lines from axes object that exist in list which.
     
     Parameters
     ----------
-    ax : matplotlib.axes.AxesSubplot object
+    ax : `matplotlib.axes.AxesSubplot` object
     which : list
-        entries in ['right', 'top', 'bottom', 'left']
+        Entries in ['right', 'top', 'bottom', 'left'].
     
     """
     for loc, spine in ax.spines.iteritems():
@@ -47,30 +46,30 @@ def remove_axis_junk(ax, which=['right', 'top']):
 class CachedNetwork(object):
     """
     Offline processing and storing of network spike events, used by other class
-    objects in the package hybridLFPy
+    objects in the package hybridLFPy.
 
     Parameters
     ----------
-    simtime : float,
-        Simulation duration
+    simtime : float
+        Simulation duration.
     dt : float,
-        Simulation timestep size
-    spike_output_path : str,
-        Path to gdf-files with spikes
-    label : str,
-        Prefix of spiking gdf-files
-    ext : str,
-        File extension of gdf-files
-    dbname : str,
-        `:memory:` or filename of new sqlite3 database
-    N_X :  np.ndarray,
-        The number of neurons in each population
+        Simulation timestep size.
+    spike_output_path : str
+        Path to gdf-files with spikes.
+    label : str
+        Prefix of spiking gdf-files.
+    ext : str
+        File extension of gdf-files.
+    dbname : str
+        `:memory:` or filename of new sqlite3 database.
+    N_X :  np.ndarray
+        The number of neurons in each population.
     X : list
-        Names of each population
+        Names of each population.
     autocollect : bool
-        If True, class init will process gdf files
-    cmap : str,
-        Name of colormap, must be in dir(plt.cm)
+        If True, class init will process gdf files.
+    cmap : str
+        Name of colormap, must be in `dir(plt.cm)`.
         
     """
 
@@ -92,26 +91,26 @@ class CachedNetwork(object):
     
         Parameters
         ----------
-        simtime : float,
-            Simulation duration
-        dt : float,
-            Simulation timestep size
-        spike_output_path : str,
-            Path to gdf-files with spikes
-        label : str,
-            Prefix of spiking gdf-files
-        ext : str,
-            File extension of gdf-files
-        dbname : str,
-            `:memory:` or filename of new sqlite3 database
-        N_X :  list,
-            The number of neurons in each population
+        simtime : float
+            Simulation duration.
+        dt : float
+            Simulation timestep size.
+        spike_output_path : str
+            Path to gdf-files with spikes.
+        label : str
+            Prefix of spiking gdf-files.
+        ext : str
+            File extension of gdf-files.
+        dbname : str
+            `:memory:` or filename of new sqlite3 database.
+        N_X :  list
+            The number of neurons in each population.
         X : list
-            Names of each population
+            Names of each population.
         autocollect : bool
-            If True, class init will process gdf files
-        cmap : str,
-            Name of colormap, must be in dir(plt.cm)
+            If True, class init will process gdf files.
+        cmap : str
+            Name of colormap, must be in dir(plt.cm).
             
         """
         # Set some attributes
@@ -192,18 +191,16 @@ class CachedNetwork(object):
         Parameters
         ----------
         xlim : list of floats
-            Spike time interval, e.g., [0., 1000.]
+            Spike time interval, e.g., [0., 1000.].
         fraction : float on [0, 1.]
-            If less than one, sample a fraction of nodes in random order
+            If less than one, sample a fraction of nodes in random order.
         
         Return
         ----------
         x : dict
-            In `x` key-value entries are population name and neuron
-        spike times
+            In `x` key-value entries are population name and neuron spike times.
         y : dict
-            Where in `y` key-value entries are population name and
-        neuron gid number
+            Where in `y` key-value entries are population name and neuron gid number.
 
         """
         if hasattr(self, 'db'):
@@ -236,22 +233,22 @@ class CachedNetwork(object):
     def plot_raster(self, ax, xlim, x, y, pop_names=False,
                     markersize=1., alpha=1., legend=True, ):
         """
-        Plot network raster plot in subplot object
+        Plot network raster plot in subplot object.
         
         Parameters
         ----------
-        ax : matplotlib.axes.AxesSubplot object
-        xlim : list of floats
-            Spike time interval, e.g., [0., 1000.]
+        ax : matplotlib.axes.AxesSubplot object.
+        xlim : list
+            List of floats. Spike time interval, e.g., [0., 1000.].
         x : dict
-            Key-value entries are population name and neuron spike times 
+            Key-value entries are population name and neuron spike times.
         y : dict
-            Key-value entries are population name and neuron gid number
+            Key-value entries are population name and neuron gid number.
         pop_names: bool
-            If True, show population names on yaxis instead of gid number
+            If True, show population names on yaxis instead of gid number.
         legend : bool
-            Switch on axes legends
-        **kwargs : see matplotlib.pyplot.plot
+            Switch on axes legends.
+        **kwargs : see matplotlib.pyplot.plot.
         
         """
         for i, X in enumerate(self.X):
@@ -288,23 +285,23 @@ class CachedNetwork(object):
 
     def plot_f_rate(self, ax, X, i, xlim, x, y, binsize=1, yscale='linear', plottype='fill_between', show_label=False):
         """
-        Plot network firing rate plot in subplot object
+        Plot network firing rate plot in subplot object.
         
         Parameters
         ----------
-        ax : matplotlib.axes.AxesSubplot object
-        X : str,
-            Population name
-        i : int,
-            Population index in class attribute `X`
+        ax : `matplotlib.axes.AxesSubplot` object.
+        X : str
+            Population name.
+        i : int
+            Population index in class attribute `X`.
         xlim : list of floats
-            Spike time interval, e.g., [0., 1000.]
+            Spike time interval, e.g., [0., 1000.].
         x : dict
-            Key-value entries are population name and neuron spike times 
+            Key-value entries are population name and neuron spike times.
         y : dict
-            Key-value entries are population name and neuron gid number
+            Key-value entries are population name and neuron gid number.
         yscale : 'str'
-            Linear, log, or symlog y-axes in rate plot
+            Linear, log, or symlog y-axes in rate plot.
         
         """
         
@@ -340,13 +337,13 @@ class CachedNetwork(object):
 
     def raster_plots(self, xlim=[0, 1000], markersize=1, alpha=1.):
         """
-        Pretty plot of the spiking output of each population as raster and rate
+        Pretty plot of the spiking output of each population as raster and rate.
         
         Parameters
         ----------
-        xlim : list of floats
-            Spike time interval, e.g., [0., 1000.]
-        **kwargs : see matplotlib.pyplot.plot
+        xlim : list
+            List of floats. Spike time interval, e.g., [0., 1000.].
+        **kwargs : see matplotlib.pyplot.plot.
         
         """
         x, y = self.get_xy(xlim)
@@ -387,7 +384,7 @@ class CachedNetwork(object):
 
 class CachedFixedSpikesNetwork(CachedNetwork):
     """
-    Subclass of CachedNetwork
+    Subclass of CachedNetwork.
     
     Fake nest output, where each cell in a subpopulation spike
     simultaneously, and each subpopulation is activated at times given in
@@ -396,8 +393,8 @@ class CachedFixedSpikesNetwork(CachedNetwork):
     Parameters
     ----------
     activationtimes : list of floats
-        Each entry set spike times of all cells in each population
-    **kwargs : see parent class CachedNetwork
+        Each entry set spike times of all cells in each population.
+    **kwargs : see parent class CachedNetwork.
     
     """
     def __init__(self,
@@ -413,9 +410,9 @@ class CachedFixedSpikesNetwork(CachedNetwork):
         
         Parameters
         ----------
-        activationtimes : list of floats
-            Each entry set spike times of all cells in each population
-        **kwargs : see class `CachedNetwork`
+        activationtimes : list
+            List of floats, each entry set spike times of all cells in each population.
+        **kwargs : see class `CachedNetwork`.
         
         """
         
@@ -428,7 +425,7 @@ class CachedFixedSpikesNetwork(CachedNetwork):
             raise Exception, 'len(activationtimes != len(self.N_X))'
 
         """ Create a dictionary of nodes with proper layernames
-         self.nodes = {}
+         self.nodes = {}.
         """
 
         if RANK == 0:
@@ -456,10 +453,10 @@ class CachedFixedSpikesNetwork(CachedNetwork):
 
 class CachedNoiseNetwork(CachedNetwork):
     """
-    Subclass of CachedNetwork
+    Subclass of CachedNetwork.
 
     Use Nest to generate N_X poisson-generators each with rate frate,
-    and record every vector, and create database with spikes
+    and record every vector, and create database with spikes.
 
     Parameters
     ----------
@@ -476,12 +473,12 @@ class CachedNoiseNetwork(CachedNetwork):
         """
         Subclass of `CachedNetwork`.
         Use Nest to generate N_X poisson-generators each with rate frate,
-        and record every vector, and create database with spikes
+        and record every vector, and create database with spikes.
     
         Parameters
         ----------
         frate : list
-            Rate of each layer, may be tuple (onset, rate, offset)
+            Rate of each layer, may be tuple (onset, rate, offset).
         **kwargs: See class `CachedNetwork`.
     
         """
@@ -544,7 +541,7 @@ class CachedNoiseNetwork(CachedNetwork):
                             {'label' : os.path.join(self.spike_output_path, self.label)})
 
             """ Create independent poisson spike trains with the some rate,
-             but each layer population should really have different rates
+             but each layer population should really have different rates.
              """
             self.noise = []
             for rate in self.frate:
