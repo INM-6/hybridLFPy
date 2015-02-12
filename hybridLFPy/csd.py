@@ -1,11 +1,11 @@
 #!/usr/bin/env python
-"""function true_lam_csd specification for calculation of true laminar CSD"""
+""" Function true_lam_csd specification for calculation of true laminar CSD
+"""
 import numpy as np
-
 
 def _PrPz(r0, z0, r1, z1, r2, z2, r3, z3):
     """
-    Intersection point for infinite lines
+    Intersection point for infinite lines.
     
     Parameters
     ----------
@@ -53,7 +53,7 @@ def true_lam_csd(cell, dr=100, z=None):
     Parameters
     ----------
     cell : `LFPy.cell.Cell` object.
-	Cell
+	Cell.
     dr : float
 	Radius of the cylindrical volume.
     z : list
