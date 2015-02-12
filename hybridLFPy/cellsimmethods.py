@@ -1,5 +1,6 @@
 #!/usr/bin/env python
-'''Class methods used by cellsim scripts'''
+""" Class methods used by cellsim scripts
+"""
 import os
 import glob
 import numpy as np
@@ -30,34 +31,34 @@ class PopulationSuper(object):
     data written to disk.
 
     Note that PopulationSuper.cellsim do not have any stimuli,
-    just here for reference
+    just here for reference.
 
     Parameters
     ----------    
     cellParams : dict
-        params for class LFPy.Cell
+        Params for class LFPy.Cell.
     rand_rot_axis : list
-        axis of which to randomly rotate morphs
+        Axis of which to randomly rotate morphs.
     simulationParams : dict
-        additional args for LFPy.Cell.simulate()
+        Additional args for LFPy.Cell.simulate().
     populationParams : dict
-        constraints for population and cell number
+        Constraints for population and cell number.
     y : str
-        population identifier string:
+        Population identifier string.
     electrodeParams : dict
-        LFPy.RecExtElectrode-params
+        LFPy.RecExtElectrode-params.
     savelist : list
-        cell args to save for each cell simulation
+        Cell args to save for each cell simulation.
     savefolder : str
-        where simulation results are stored
+        Ehere simulation results are stored.
     calculateCSD : bool
-        exctract laminar CSD
+        Exctract laminar CSD.
     dt_output : float
-        time resolution of output, e.g., LFP, CSD etc
+        Time resolution of output, e.g., LFP, CSD etc.
     POPULATIONSEED : int/float
-        random seed for population, for pos. etc
+        Random seed for population, for pos. etc.
     verbose : bool
-        verbosity flag
+        Verbosity flag.
 
     """
 
@@ -113,36 +114,36 @@ class PopulationSuper(object):
         data written to disk.
     
         Note that PopulationSuper.cellsim do not have any stimuli,
-        just here for reference
+        just here for reference.
     
         Parameters
         ----------    
         cellParams : dict
-            params for class `LFPy.Cell`
+            Params for class `LFPy.Cell`.
         rand_rot_axis : list
-            axis of which to randomly rotate morphs
+            Axis of which to randomly rotate morphs.
         simulationParams : dict
-            additional args for `LFPy.Cell.simulate()
+            Additional args for `LFPy.Cell.simulate().
         populationParams : dict
-            constraints for population and cell number
+            Constraints for population and cell number.
         y : str
-            population identifier string
+            Population identifier string.
         layerBoundaries : list or np.ndarray
-            for each layer, specify upper/lower boundaries
+            For each layer, specify upper/lower boundaries.
         electrodeParams : dict
-            `LFPy.RecExtElectrode`-params
+            `LFPy.RecExtElectrode`-params.
         savelist : list
-            cell args to save for each cell simulation
+            Cell args to save for each cell simulation.
         savefolder : str
-            where simulation results are stored
+            Where simulation results are stored.
         calculateCSD : bool
-            exctract laminar CSD
+            Exctract laminar CSD.
         dt_output : float
-            time resolution of output, e.g., LFP, CSD etc
+            Time resolution of output, e.g., LFP, CSD etc.
         POPULATIONSEED : int/float
-            random seed for population, for pos. etc
+            Random seed for population, for pos. etc.
         verbose : bool
-            verbosity flag
+            Verbosity flag.
 
         """
 
@@ -206,9 +207,9 @@ class PopulationSuper(object):
 
     def _set_up_savefolder(self):
         """
-        Create catalogs for different file output to clean up savefolder
+        Create catalogs for different file output to clean up savefolder.
         
-        Non-public method, takes no input arguments
+        Non-public method, takes no input arguments.
         
         """
         if self.savefolder == None:
@@ -234,9 +235,9 @@ class PopulationSuper(object):
 
     def run(self):
         """
-        Distribute individual cell simulations across ranks
+        Distribute individual cell simulations across ranks.
         
-        This method takes no keyword arguments
+        This method takes no keyword arguments.
         
         """
         for cellindex in self.RANK_CELLINDICES:
@@ -248,15 +249,15 @@ class PopulationSuper(object):
 
     def cellsim(self, cellindex, return_just_cell=False):
         """
-        LFPy cell simulation without any stimulus, mostly for reference
+        LFPy cell simulation without any stimulus, mostly for reference.
         
         Parameters
         ----------       
         cellindex : int
-            cell index between 0 and POPULATION_SIZE-1
+            cell index between 0 and POPULATION_SIZE-1.
         return_just_cell : bool
             If True, return only the LFPy.Cell object
-            if False, run full simulation, return None
+            if False, run full simulation, return None.
     
         Returns
         ---------- 
@@ -317,9 +318,9 @@ class PopulationSuper(object):
 
     def set_pop_soma_pos(self):
         """
-        Set `pop_soma_pos` using draw_rand_pos()
+        Set `pop_soma_pos` using draw_rand_pos().
         
-        This method takes no keyword arguments
+        This method takes no keyword arguments.
         
         """
         if MASTER_MODE:
@@ -355,17 +356,17 @@ class PopulationSuper(object):
 
     def calc_min_cell_interdist(self, x, y, z):
         """
-        Calculate cell interdistance from input coordinates
+        Calculate cell interdistance from input coordinates.
         
         Parameters
         ---------- 
         x, y, z : np.ndarray
-            xyz-coordinates of each cell-body
+            xyz-coordinates of each cell-body.
             
         Returns
         ----------        
         min_cell_interdist: np.nparray
-            For each cell-body, the distance to nearest neighbor cell
+            For each cell-body, the distance to nearest neighbor cell.
         
         """
         min_cell_interdist = np.zeros(self.POPULATION_SIZE)
@@ -385,31 +386,30 @@ class PopulationSuper(object):
         """
         Draw some random location within radius, z_min, z_max,
         and constrained by min_r and the minimum cell interdistance.
-        Returned argument is a list of dicts [{'xpos', 'ypos', 'zpos'}, ]
+        Returned argument is a list of dicts [{'xpos', 'ypos', 'zpos'},].
         
         
         Parameters
         ----------        
         radius : float
-            radius of population
+            Radius of population.
         z_min : float
-            lower z-boundary of population
+            Lower z-boundary of population.
         z_mx : float
-            upper z-boundary of population
+            Upper z-boundary of population.
         min_r : np.ndarray
-            minimum distance to center axis as function of z
-        min_cell_interdist : float,
-            minimum cell to cell interdistance
-
+            Minimum distance to center axis as function of z.
+        min_cell_interdist : float
+            Minimum cell to cell interdistance.
         **args : keyword arguments
-            additional inputs that is being ignored
+            Additional inputs that is being ignored.
       
         Returns
         ----------  
         soma_pos : list
             List of dicts of len population size
             where dict have keys xpos, ypos, zpos specifying
-            xyz-coordinates of cell at list entry `i`
+            xyz-coordinates of cell at list entry `i`.
                     
         """
         x = (np.random.rand(self.POPULATION_SIZE)-0.5)*radius*2
@@ -472,12 +472,12 @@ class PopulationSuper(object):
 
     def calc_signal_sum(self, measure='LFP'):
         """
-        Superimpose each cell's contribution to the LFP,
+        Superimpose each cell's contribution to the LFP.
         
         Returns
         ----------
         DATA : np.array
-            The populations-specific compound signal
+            The populations-specific compound signal.
             
         """
         #compute the total LFP of cells on this RANK
@@ -506,12 +506,12 @@ class PopulationSuper(object):
 
     def collectSingleContribs(self, measure='LFP'):
         """
-        collect single cell data and save them to file
+        Collect single cell data and save them to file.
         
         Parameters
         ----------        
-        measure : {'LFP', 'CSD'},
-            Either 'LFP' or 'CSD'
+        measure : str
+            {'LFP', 'CSD'}: Either 'LFP' or 'CSD'.
             
         """
         #reconstruct RANK_CELLINDICES on RANK 0
@@ -576,7 +576,7 @@ class PopulationSuper(object):
     def collect_data(self):
         """
         Collect LFPs, CSDs and soma traces from each simulated population,
-        and save to file
+        and save to file.
         
         """
         #collect some measurements resolved per file and save to file 
@@ -652,21 +652,21 @@ class Population(PopulationSuper):
     Parameters
     ----------            
     X : list of strings
-        Each element denote name of presynaptic populations
+        Each element denote name of presynaptic populations.
     networkSim : `hybridLFPy.cachednetworks.Cached*Network` object
-        Container of network spike events resolved per population
+        Container of network spike events resolved per population.
     k_yXL : np.array
         Num layers x num presynapse populations array specifying the
-        number of incoming connections per layer and per population type
+        number of incoming connections per layer and per population type.
     synParams : dict of dicts
         Each toplevel key denote each presynaptic population,
-        bottom-level dicts are parameters passed to LFPy.Synapse
-    synDelayLoc : list,
-        Average synapse delay for each presynapse connection
+        bottom-level dicts are parameters passed to `LFPy.Synapse`.
+    synDelayLoc : list
+        Average synapse delay for each presynapse connection.
     synDelayScale : list
-        Synapse delay std for each presynapse connection
+        Synapse delay std for each presynapse connection.
     calculateCSD : bool
-        Flag for computing the ground-source CSD
+        Flag for computing the ground-source CSD.
             
     """
 
@@ -698,21 +698,21 @@ class Population(PopulationSuper):
         Parameters
         ----------
         X : list of strings
-            Each element denote name of presynaptic populations
+            Each element denote name of presynaptic populations.
         networkSim : `hybridLFPy.cachednetworks.Cached*Network` object
-            Container of network spike events resolved per population
+            Container of network spike events resolved per population.
         k_yXL : list/np.ndarray
             Num layers x num presynapse populations array specifying the
-            number of incoming connections per layer and per population type
+            number of incoming connections per layer and per population type.
         synParams : dict of dicts
             Each toplevel key denote each presynaptic population,
-            bottom-level dicts are parameters passed to LFPy.Synapse
+            bottom-level dicts are parameters passed to LFPy.Synapse.
         synDelayLoc : list,
-            Average synapse delay for each presynapse connection
+            Average synapse delay for each presynapse connection.
         synDelayScale : list
-            Synapse delay std for each presynapse connection
+            Synapse delay std for each presynapse connection.
         calculateCSD : bool
-            Flag for computing the ground-source CSD
+            Flag for computing the ground-source CSD.
                 
         """
         tic = time()
@@ -766,8 +766,7 @@ class Population(PopulationSuper):
         ----------        
         synIdx : dict
             `output[cellindex][populationindex][layerindex]` np.ndarray of
-            compartment indices
-                    
+            compartment indices.
         """
         tic = time() #timing
         
@@ -823,7 +822,7 @@ class Population(PopulationSuper):
         ---------- 
         SpCells : dict
             `output[cellindex][populationindex][layerindex]`, np.array of
-            presynaptic cell indices
+            presynaptic cell indices.
                     
         """
         tic = time() #timing
@@ -864,7 +863,7 @@ class Population(PopulationSuper):
         Get random normally distributed synaptic delays,
         returns dict of nested list of same shape as SpCells.
     
-        Delays are rounded to dt
+        Delays are rounded to dt.
         
         This function takes no kwargs.
 
@@ -872,7 +871,7 @@ class Population(PopulationSuper):
         ----------
         dict
             output[cellindex][populationindex][layerindex]`, np.array of
-            delays per connection
+            delays per connection.
         
         """
         tic = time() #timing
@@ -926,8 +925,8 @@ class Population(PopulationSuper):
         
         Parameters
         ----------
-        cellindex : int,
-            Index of cell object
+        cellindex : int
+            Index of cell object.
         
         Returns
         ----------
@@ -963,14 +962,15 @@ class Population(PopulationSuper):
 
         Parameters
         ----------
-        cell : LFPy.Cell` instance
-        nidx : np.ndarray, numbers of synapses per presynaptic population X
-        synParams : which synapse parameters to use
+        cell : `LFPy.Cell` instance
+        nidx : np.ndarray
+            Numbers of synapses per presynaptic population X.
+        synParams : which synapse parameters to use.
         
         Returns
         ----------
         syn_idx : list
-            List of arrays of synapse placements per connection
+            List of arrays of synapse placements per connection.
                 
         """
 
@@ -997,10 +997,10 @@ class Population(PopulationSuper):
         Parameters
         -------  
         cellindex : int
-            cell index between 0 and population size-1
+            cell index between 0 and population size-1.
         return_just_cell : bool
-            If True, return only the LFPy.Cell object
-            if False, run full simulation, return None
+            If True, return only the `LFPy.Cell` object
+            if False, run full simulation, return None.
         
         """
         cell = LFPy.Cell(**self.cellParams)
@@ -1071,9 +1071,9 @@ class Population(PopulationSuper):
         Parameters
         ----------
         cellindex : int
-            Cell index in the population
+            Cell index in the population.
         cell : `LFPy.Cell` instance
-            Postsynaptic target cell
+            Postsynaptic target cell.
         
         """
         for X in range(self.k_yXL.shape[1]):
@@ -1107,19 +1107,19 @@ class Population(PopulationSuper):
         Parameters
         ----------
         cell : `LFPy.Cell` instance
-            Postsynaptic target cell
+            Postsynaptic target cell.
         cellindex : int
-            Index of cell in population
+            Index of cell in population.
         synParams : dict
-            Parameters passed to `LFPy.Synapse`
+            Parameters passed to `LFPy.Synapse`.
         idx : np.ndarray
-            Postsynaptic compartment indices
+            Postsynaptic compartment indices.
         SpCell : np.ndarray
-            Presynaptic spiking cells
+            Presynaptic spiking cells.
         SpTimes : str
-            ':memory:' or path to on-disk spike time database
+            ':memory:' or path to on-disk spike time database.
         synDelays : np.ndarray
-            Per connection specific delays
+            Per connection specific delays.
         
         """
         #Insert synapses in an iterative fashion
@@ -1160,10 +1160,10 @@ class Population(PopulationSuper):
 
         Parameters
         ----------
-        nodes : np.ndarray, dtype=int,
-            Node # of valid presynaptic neurons
-        numSyn : np.ndarray, dtype=int,
-            # of synapses per connection
+        nodes : np.ndarray, dtype=int
+            Node # of valid presynaptic neurons.
+        numSyn : np.ndarray, dtype=int
+            # of synapses per connection.
 
         """
         SpCell = []
