@@ -36,9 +36,9 @@ plt.rcParams.update({
 
 class GDF(object):
     """
-    1. Read from gdf files
-    2. Create sqlite db of (neuron, spike time)
-    3. Query spike times for neurons
+    1. Read from gdf files.
+    2. Create sqlite db of (neuron, spike time).
+    3. Query spike times for neurons.
     """
 
     def __init__(self, dbname, bsize=int(1e6), new_db=True,
@@ -69,7 +69,7 @@ class GDF(object):
 
     def _blockread(self, fname):
         """
-        Generator yields bsize lines from gdf file
+        Generator yields bsize lines from gdf file.
 
         Parameters
         ----------
@@ -130,7 +130,7 @@ class GDF(object):
         Parameters
         ----------
         re : list
-            Index of element is cell index, and element `i` an array of spike times in ms
+            Index of element is cell index, and element `i` an array of spike times in ms.
         index : bool
             Create index on neurons for speed.
             
@@ -185,7 +185,7 @@ class GDF(object):
         Parameters
         ----------
         T : list
-            Time interval
+            Time interval.
 
         Returns
         ----------
@@ -204,7 +204,7 @@ class GDF(object):
         Parameters
         ----------
         T : list
-            Time interval
+            Time interval.
 
         Returns
         ----------
@@ -266,7 +266,7 @@ class GDF(object):
         Parameters
         ----------
         T : list
-            Time interval
+            Time interval.
 
         """
 
@@ -290,7 +290,7 @@ class GDF(object):
 
 def test1():
     """ Need have a bunch of gdf files in current directory.
-    Delete old db
+    Delete old db.
     """
     os.system('rm test.db')
 
