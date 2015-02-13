@@ -13,26 +13,28 @@ SIZE = COMM.Get_size()
 RANK = COMM.Get_rank()
 
 class PostProcess(object):
-    '''
-    class PostProcess:
-    Methods to deal with the contributions of every
-    postsynaptic sub-population
+    """
+    class `PostProcess`: Methods to deal with the contributions of every
+    postsynaptic sub-population.
 
-    Parameters:
-        ::
-            
-            y : list of postsynaptic cell-type or population-names
-            dt_output : float, time resolution of output data
-            savefolder : str, path to main output folder
-            mapping_Yy : list of tuples, each tuple pairing population with cell
-                        type, e.g., [('L4E', 'p4'), ('L4E', 'ss4')]
-            cells_subfolder : str, folder under 'savefolder' containing cell
-                        output
-            populations_subfolder : str, folder under 'savefolder' containing
-                        population specific output
-            figures_subfolder : str, folder under 'savefolder' containing figs
+    Parameters
+    ----------
+    y : list
+        Postsynaptic cell-type or population-names.
+    dt_output : float
+        Time resolution of output data.
+    savefolder : str
+        Path to main output folder.
+    mapping_Yy : list
+        List of tuples, each tuple pairing population with cell type, e.g., [('L4E', 'p4'), ('L4E', 'ss4')].
+    cells_subfolder : str
+        Folder under `savefolder` containing cell output.
+    populations_subfolder : str
+        Folder under `savefolder` containing population specific output.
+    figures_subfolder : str
+        Folder under `savefolder` containing figs.
 
-    '''
+    """
     def __init__(self,
                  y = ['EX', 'IN'],
                  dt_output = 1.,
@@ -43,26 +45,28 @@ class PostProcess(object):
                  populations_subfolder = 'populations',
                  figures_subfolder = 'figures',
                  ):
-        '''
-        class PostProcess:
-        Methods to deal with the contributions of every
-        postsynaptic sub-population
+        """
+        class `PostProcess`: Methods to deal with the contributions of every
+        postsynaptic sub-population.
     
-        Parameters:
-            ::
-                
-                y : list of postsynaptic cell-type or population-names
-                dt_output : float, time resolution of output data
-                savefolder : str, path to main output folder
-                mapping_Yy : list of tuples, each tuple pairing population with cell
-                            type, e.g., [('L4E', 'p4'), ('L4E', 'ss4')]
-                cells_subfolder : str, folder under 'savefolder' containing cell
-                            output
-                populations_subfolder : str, folder under 'savefolder' containing
-                            population specific output
-                figures_subfolder : str, folder under 'savefolder' containing figs
+        Parameters
+        ----------
+        y : list
+            List of postsynaptic cell-type or population-names.
+        dt_output : float
+            Time resolution of output data.
+        savefolder : str
+            Path to main output folder.
+        mapping_Yy : list
+            List of tuples, each tuple pairing population with cell type, e.g., [('L4E', 'p4'), ('L4E', 'ss4')].
+        cells_subfolder : str
+            Folder under `savefolder` containing cell output.
+        populations_subfolder : str
+            Folder under `savefolder` containing population specific output.
+        figures_subfolder : str
+            Folder under `savefolder` containing figs.
     
-        '''
+        """
         #set some attributes
         self.y = y
         self.dt_output = dt_output
@@ -80,8 +84,9 @@ class PostProcess(object):
 
 
     def run(self):
-        '''perform the postprocessing steps, computing compound signals from
-        cell-specific output files'''
+        """ Perform the postprocessing steps, computing compound signals from
+        cell-specific output files.
+        """
         if RANK == 0:
             #get the per population LFPs and total LFP from all populations:
             self.LFPdict, self.LFPsum = self.calc_lfp()
@@ -131,7 +136,8 @@ class PostProcess(object):
 
 
     def _set_up_savefolder(self):
-        '''Create catalogs for different file output to clean up savefolder'''
+        """ Create catalogs for different file output to clean up savefolder.
+        """
         if not os.path.isdir(self.cells_path):
             os.mkdir(self.cells_path)
 
@@ -143,7 +149,8 @@ class PostProcess(object):
 
 
     def calc_lfp(self):
-        '''sum all the LFP contributions from every cell type'''
+        """ Sum all the LFP contributions from every cell type.
+        """
 
         LFParray = np.array([])
         LFPdict = {}
@@ -172,7 +179,8 @@ class PostProcess(object):
 
 
     def calc_csd(self):
-        '''sum all the CSD contributions from every layer'''
+        """ Sum all the CSD contributions from every layer.
+        """
 
         CSDarray = np.array([])
         CSDdict = {}
@@ -201,11 +209,11 @@ class PostProcess(object):
 
 
     def calc_lfp_layer(self):
-        '''
-        calculate the LFP from concatenated subpopulations residing in a
-        certain layer, e.g all L4E pops are summed, according to the mapping_Yy
-        attribute of the hybridLFPy.Population objects
-        '''
+        """
+        Calculate the LFP from concatenated subpopulations residing in a
+        certain layer, e.g all L4E pops are summed, according to the `mapping_Yy`
+        attribute of the `hybridLFPy.Population` objects.
+        """
         LFPdict = {}
 
         lastY = None
@@ -226,11 +234,11 @@ class PostProcess(object):
 
 
     def calc_csd_layer(self):
-        '''
-        calculate the CSD from concatenated subpopulations residing in a
-        certain layer, e.g all L4E pops are summed, according to the mapping_Yy
-        attribute of the hybridLFPy.Population objects
-        '''
+        """
+        Calculate the CSD from concatenated subpopulations residing in a
+        certain layer, e.g all L4E pops are summed, according to the `mapping_Yy`
+        attribute of the `hybridLFPy.Population` objects.
+        """
         CSDdict = {}
 
         lastY = None
@@ -251,7 +259,8 @@ class PostProcess(object):
 
 
     def create_tar_archive(self):
-        '''create a tar archive of the main simulation outputs'''
+        """ Create a tar archive of the main simulation outputs.
+        """
         #file filter
         EXCLUDE_FILES = glob.glob(os.path.join(self.savefolder, 'cells'))
         EXCLUDE_FILES += glob.glob(os.path.join(self.savefolder,

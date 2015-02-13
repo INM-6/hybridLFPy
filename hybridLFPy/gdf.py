@@ -36,25 +36,25 @@ plt.rcParams.update({
 
 class GDF(object):
     """
-    1. Read from gdf files
-    2. Create sqlite db of (neuron, spike time)
-    3. Query spike times for neurons
+    1. Read from gdf files.
+    2. Create sqlite db of (neuron, spike time).
+    3. Query spike times for neurons.
     """
 
     def __init__(self, dbname, bsize=int(1e6), new_db=True,
                  debug=False):
         """
 
-        Parameters:
-            ::
-
-                dbname : str,
-                    filename of sqlite database
-                bsize : int,
-                    number of spike times to insert
-                new_db : bool,
-                    new database with name dbname, will overwrite
-                    at a time, determines memory usage
+        Parameters
+        ----------
+        dbname : str
+            Filename of sqlite database.
+        bsize : int
+            Number of spike times to insert.
+        new_db : bool
+            New database with name dbname, will overwrite
+            at a time, determines memory usage.
+            
         """
         if new_db:
             try:
@@ -69,13 +69,13 @@ class GDF(object):
 
     def _blockread(self, fname):
         """
-        Generator yields bsize lines from gdf file
+        Generator yields bsize lines from gdf file.
 
-        Parameters:
-            ::
-
-                fname : str,
-                    name of gdf-file
+        Parameters
+        ----------
+        fname : str
+            Name of gdf-file.
+            
         """
         with open(fname, 'rb') as f:
             while True:
@@ -91,13 +91,13 @@ class GDF(object):
         """
         Create db from list of gdf file glob
 
-        Parameters:
-            ::
-
-                re : str,
-                    file glob to load
-                index : bool,
-                    create index on neurons for speed
+        Parameters
+        ----------
+                re : str
+                    File glob to load.
+                index : bool
+                    Create index on neurons for speed.
+                    
         """
         self.cursor.execute('CREATE TABLE IF NOT EXISTS spikes (neuron INT UNSIGNED, time REAL)')
 
@@ -116,7 +116,7 @@ class GDF(object):
         toc = now()
         if self.debug: print 'Inserts took %g seconds.' % (toc-tic)
 
-        # optionally, create index for speed
+        # Optionally, create index for speed
         if index:
             tic = now()
             self.cursor.execute('CREATE INDEX neuron_index on spikes (neuron)')
@@ -124,17 +124,17 @@ class GDF(object):
             if self.debug: print 'Indexed db in %g seconds.' % (toc-tic)
 
     def create_from_list(self, re=[], index=True):
-        '''
-        create db from list of arrays
+        """
+        Create db from list of arrays.
 
-        Parameters:
-            ::
-
-                re : list,
-                    index of element is cell index, and element i an array of spike times in ms
-                index : bool,
-                    create index on neurons for speed
-        '''
+        Parameters
+        ----------
+        re : list
+            Index of element is cell index, and element `i` an array of spike times in ms.
+        index : bool
+            Create index on neurons for speed.
+            
+        """
         self.cursor.execute('CREATE TABLE IF NOT EXISTS spikes (neuron INT UNSIGNED, time REAL)')
 
         tic = now()
@@ -147,7 +147,7 @@ class GDF(object):
         toc = now()
         if self.debug: print 'Inserts took %g seconds.' % (toc-tic)
 
-        # optionally, create index for speed
+        # Optionally, create index for speed
         if index:
             tic = now()
             self.cursor.execute('CREATE INDEX neuron_index on spikes (neuron)')
@@ -159,17 +159,15 @@ class GDF(object):
         """
         Select spike trains.
 
-        Parameters:
-            ::
+        Parameters
+        ----------
+        neurons : np.array or list
+            Array of list of neurons.
 
-                neurons : np.array or list of neurons
-
-        Returns:
-            ::
-
-                s : list of np.array's
-                    spike times
-
+        Returns
+        ----------
+        s : list
+            List of np.array's spike times.
 
         """
         s = []
@@ -182,19 +180,18 @@ class GDF(object):
 
     def interval(self, T=[0, 1000]):
         """
-        Get all spikes in a time interval T
+        Get all spikes in a time interval T.
 
-        Parameters:
-            ::
+        Parameters
+        ----------
+        T : list
+            Time interval.
 
-                T : list,
-                    time interval
-
-        Returns:
-            ::
-
-                s : list,
-                    nested list with spike times
+        Returns
+        ----------
+        s : list
+            Nested list with spike times.
+            
         """
         self.cursor.execute('SELECT * FROM spikes WHERE time BETWEEN %f AND %f' % tuple(T))
         sel = self.cursor.fetchall()
@@ -204,17 +201,15 @@ class GDF(object):
         """
         Get all spikes from neurons in a time interval T.
 
-        Parameters:
-            ::
+        Parameters
+        ----------
+        T : list
+            Time interval.
 
-                T : list,
-                    time interval
-
-        Returns:
-            ::
-
-                s : list,
-                    nested list with spike times
+        Returns
+        ----------
+        s : list
+            Nested list with spike times.
 
         """
         s = []
@@ -229,12 +224,11 @@ class GDF(object):
 
     def neurons(self):
         """
-        Return list of neuron indices
+        Return list of neuron indices.
 
-        Returns:
-            ::
-
-                list
+        Returns
+        ----------
+        list
 
         """
         self.cursor.execute('SELECT DISTINCT neuron FROM spikes ORDER BY neuron')
@@ -243,13 +237,11 @@ class GDF(object):
 
     def num_spikes(self):
         """
-        Return total number of spikes
+        Return total number of spikes.
 
-        Returns:
-            ::
-
-                list
-
+        Returns
+        ----------
+        list
 
         """
         self.cursor.execute('SELECT Count(*) from spikes')
@@ -267,18 +259,16 @@ class GDF(object):
         self.conn.close()
 
     def plotstuff(self, T=[0, 1000]):
-        '''
-        create a scatter plot of the contents of the database,
-        with entries on the interval T
+        """
+        Create a scatter plot of the contents of the database,
+        with entries on the interval T.
 
-        Parameters:
-            ::
+        Parameters
+        ----------
+        T : list
+            Time interval.
 
-                T : list,
-                    time interval
-
-
-        '''
+        """
 
         fig = plt.figure(figsize=(10,10))
 
@@ -299,19 +289,20 @@ class GDF(object):
 
 
 def test1():
-    # need have a bunch of gdf files in current directory
-    # delete old db
+    """ Need have a bunch of gdf files in current directory.
+    Delete old db.
+    """
     os.system('rm test.db')
 
-    # create db from excitatory files
+    # Create db from excitatory files
     gdb = GDF('test.db', debug=True)
     gdb.create(re='brunel-py-ex-*.gdf', index=True)
 
-    # get spikes for neurons 1,2,3
+    # Get spikes for neurons 1,2,3
     spikes = gdb.select([1,2,3])
 
-    # wont get any spikes for these neurons
-    # cause they dont exist
+    """ Wont get any spikes for these neurons
+    cause they dont exist"""
     bad = gdb.select([100000,100001])
 
     gdb.close()

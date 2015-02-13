@@ -1,35 +1,32 @@
 #!/usr/bin/env python
-'''function true_lam_csd specification for calculation of true laminar CSD'''
+""" Function true_lam_csd specification for calculation of true laminar CSD
+"""
 import numpy as np
 
-
 def _PrPz(r0, z0, r1, z1, r2, z2, r3, z3):
-    '''
-    intersection point for infinite lines
+    """
+    Intersection point for infinite lines.
     
-    Parameters:
-        ::
-        
-	    r0 : 
-	    z0 :
-	    r1 :
-	    z1 :
-	    r2 :
-	    z2 :
-	    r3 :
-	    z3 :
-	    
-    Returns:
-	::
-	
-	    [Pr, Pz, hit] : list
-	    Pr :
-	    
-	    Pz : 
-	    
-	    hit :
-	  
-    '''
+    Parameters
+    ----------
+    r0 : 
+    z0 :
+    r1 :
+    z1 :
+    r2 :
+    z2 :
+    r3 :
+    z3 :
+
+    Returns
+    ----------
+    Pr : list
+    
+    Pz : list
+    
+    hit : list
+
+    """
     Pr = ((r0*z1 - z0*r1)*(r2 - r3) - (r0 - r1)*(r2*z3 - r3*z2)) / \
                         ((r0 - r1)*(z2 - z3) - (z0 - z1)*(r2-r3))
     Pz = ((r0*z1 - z0*r1)*(z2 - z3) - (z0 - z1)*(r2*z3 - r3*z2)) / \
@@ -49,28 +46,25 @@ def _PrPz(r0, z0, r1, z1, r2, z2, r3, z3):
     return [Pr, Pz, hit]
 
 def true_lam_csd(cell, dr=100, z=None):
-    '''
+    """
     Return CSD from membrane currents as function along the coordinates
     of the electrode along z-axis. 
   
-    
-    Parameters:
-        ::
-    
-	    cell : LFPy.cell.Cell object,
-		cell
-	    dr : float,
-		radius of the cylindrical volume
-	    z : list,
-		z-coordinates of electrode.
+    Parameters
+    ----------
+    cell : `LFPy.cell.Cell` object.
+	Cell.
+    dr : float
+	Radius of the cylindrical volume.
+    z : list
+	Z-coordinates of electrode.
 		
-    Returns:
-	::
-	
-	    CSD : numpy.ndarray
-		Current-source density (in pA * mum^-3)
+    Returns
+    ----------
+    CSD : numpy.ndarray
+	Current-source density (in pA * mum^-3).
     
-    '''
+    """
     if type(z) != type(np.ndarray(shape=0)):
         raise ValueError, 'type(z) should be a np.ndarray'
 
@@ -87,15 +81,15 @@ def true_lam_csd(cell, dr=100, z=None):
         bb1 = cell.zend >= z[i] - dz/2
         cc0 = r_start < dr
         cc1 = r_end < dr
-        ii = aa0 & bb0 & cc0 #startpoint inside volume
-        jj = aa1 & bb1 & cc1 #endpoint inside volume
+        ii = aa0 & bb0 & cc0 # startpoint inside volume
+        jj = aa1 & bb1 & cc1 # endpoint inside volume
 
         for j in xrange(cell.zstart.size):
-            #calc fraction of source being inside control volume from 0-1
-            #both start and endpoint in volume
+            # Calc fraction of source being inside control volume from 0-1
+            # both start and endpoint in volume
             if ii[j] and jj[j]:
                 CSD[i,] = CSD[i, ] + cell.imem[j, ] / volume
-            #startpoint in volume:
+            # Startpoint in volume:
             elif ii[j] and not jj[j]: 
                 z0 = cell.zstart[j]
                 r0 = r_start[j]
@@ -104,10 +98,10 @@ def true_lam_csd(cell, dr=100, z=None):
                 r1 = r_end[j]
 
                 if r0 == r1:
-                    #segment is parallel with z-axis
+                    # Segment is parallel with z-axis
                     frac = -(z0 - z[i]-dz/2) / (z1 - z0)
                 else:
-                    #not parallel with z-axis                    
+                    # Not parallel with z-axis                    
                     L2 = (r1 - r0)**2 + (z1 - z0)**2
     
                     z2 = [z[i]-dz/2, z[i]+dz/2, z[i]-dz/2]
@@ -123,7 +117,7 @@ def true_lam_csd(cell, dr=100, z=None):
                             vL2 = (P[k][0] - r0)**2 + (P[k][1] -z0)**2
                             frac = np.sqrt(vL2 / L2)
                 CSD[i,] = CSD[i, ] + frac * cell.imem[j, ] / volume
-            #endpoint in volume:
+            # Endpoint in volume:
             elif jj[j] and not ii[j]: 
                 z0 = cell.zstart[j]
                 r0 = r_start[j]
@@ -132,10 +126,10 @@ def true_lam_csd(cell, dr=100, z=None):
                 r1 = r_end[j]
                 
                 if r0 == r1:
-                    #segment is parallel with z-axis
+                    # Segment is parallel with z-axis
                     frac = (z1 - z[i]+dz/2) / (z1 - z0)
                 else:
-                    #not parallel with z-axis
+                    # Not parallel with z-axis
                     L2 = (r1 - r0)**2 + (z1 - z0)**2
     
                     z2 = [z[i]-dz/2, z[i]+dz/2, z[i]-dz/2]
