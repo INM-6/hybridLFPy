@@ -260,7 +260,7 @@ class PopulationSuper(object):
             if False, run full simulation, return None.
     
         Returns
-        ---------- 
+        -------
         None
             if `return_just_cell is False
         LFPy.Cell-object
@@ -364,7 +364,7 @@ class PopulationSuper(object):
             xyz-coordinates of each cell-body.
             
         Returns
-        ----------        
+        -------      
         min_cell_interdist: np.nparray
             For each cell-body, the distance to nearest neighbor cell.
         
@@ -405,7 +405,7 @@ class PopulationSuper(object):
             Additional inputs that is being ignored.
       
         Returns
-        ----------  
+        -------
         soma_pos : list
             List of dicts of len population size
             where dict have keys xpos, ypos, zpos specifying
@@ -474,8 +474,14 @@ class PopulationSuper(object):
         """
         Superimpose each cell's contribution to the LFP.
         
-        Returns
+        Parameters
         ----------
+        measure : str
+            {'LFP', 'CSD'}: Either 'LFP' or 'CSD'.
+
+
+        Returns
+        -------
         DATA : np.array
             The populations-specific compound signal.
             
@@ -763,7 +769,7 @@ class Population(PopulationSuper):
         
         
         Returns
-        ----------        
+        -------     
         synIdx : dict
             `output[cellindex][populationindex][layerindex]` np.ndarray of
             compartment indices.
@@ -819,7 +825,7 @@ class Population(PopulationSuper):
         This function takes no kwargs.
 
         Returns
-        ---------- 
+        -------
         SpCells : dict
             `output[cellindex][populationindex][layerindex]`, np.array of
             presynaptic cell indices.
@@ -868,7 +874,7 @@ class Population(PopulationSuper):
         This function takes no kwargs.
 
         Returns
-        ----------
+        -------
         dict
             output[cellindex][populationindex][layerindex]`, np.array of
             delays per connection.
@@ -929,7 +935,7 @@ class Population(PopulationSuper):
             Index of cell object.
         
         Returns
-        ----------
+        -------
         synidx : list
         
         """
@@ -968,7 +974,7 @@ class Population(PopulationSuper):
         synParams : which synapse parameters to use.
         
         Returns
-        ----------
+        -------
         syn_idx : list
             List of arrays of synapse placements per connection.
                 
@@ -995,12 +1001,16 @@ class Population(PopulationSuper):
         network simulation.
         
         Parameters
-        -------  
+        ----------  
         cellindex : int
             cell index between 0 and population size-1.
         return_just_cell : bool
             If True, return only the `LFPy.Cell` object
             if False, run full simulation, return None.
+        
+        Returns
+        -------
+        DATA : 
         
         """
         cell = LFPy.Cell(**self.cellParams)

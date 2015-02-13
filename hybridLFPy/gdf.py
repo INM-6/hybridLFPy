@@ -39,6 +39,16 @@ class GDF(object):
     1. Read from gdf files.
     2. Create sqlite db of (neuron, spike time).
     3. Query spike times for neurons.
+
+    Parameters
+    ----------
+    dbname : str
+        Filename of sqlite database.
+    bsize : int
+        Number of spike times to insert.
+    new_db : bool
+        New database with name dbname, will overwrite
+        at a time, determines memory usage.
     """
 
     def __init__(self, dbname, bsize=int(1e6), new_db=True,
