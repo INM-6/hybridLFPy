@@ -202,7 +202,7 @@ class PopulationSuper(object):
                                                  == RANK]
         
         #container for single-cell output generated on this rank
-        self.output = {i : {} for i in self.RANK_CELLINDICES}
+        self.output = dict((i, {}) for i in self.RANK_CELLINDICES)
 
 
     def _set_up_savefolder(self):
