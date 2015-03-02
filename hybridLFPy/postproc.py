@@ -17,6 +17,7 @@ class PostProcess(object):
     class `PostProcess`: Methods to deal with the contributions of every
     postsynaptic sub-population.
 
+
     Parameters
     ----------
     y : list
@@ -48,6 +49,7 @@ class PostProcess(object):
         """
         class `PostProcess`: Methods to deal with the contributions of every
         postsynaptic sub-population.
+
     
         Parameters
         ----------
