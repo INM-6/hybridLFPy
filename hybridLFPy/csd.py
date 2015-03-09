@@ -53,16 +53,16 @@ def true_lam_csd(cell, dr=100, z=None):
     Parameters
     ----------
     cell : `LFPy.cell.Cell` object.
-	Cell.
+        Cell.
     dr : float
-	Radius of the cylindrical volume.
+        Radius of the cylindrical volume.
     z : list
-	Z-coordinates of electrode.
-		
+        Z-coordinates of electrode.
+
     Returns
     ----------
     CSD : numpy.ndarray
-	Current-source density (in pA * mum^-3).
+        Current-source density (in pA * mum^-3).
     
     """
     if type(z) != type(np.ndarray(shape=0)):
