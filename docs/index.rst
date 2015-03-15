@@ -7,7 +7,7 @@ Welcome to hybridLFPy's documentation!
 ======================================
 
 
-
+.. include:: ../README.md
 
 ========================
 Module :mod:`hybridLFPy`

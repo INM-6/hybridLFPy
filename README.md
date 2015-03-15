@@ -10,19 +10,19 @@ neuron network simulations.
 Development
 -----------
 
-The module hybridLFPy was developed in the Computational Neuroscience Group (http://compneuro.umb.no),
-Department of Mathemathical Sciences and Technology (http://www.nmbu.no/imt),
-at the Norwegian University of Life Sciences (http://www.nmbu.no), Aas, Norway, in
-collaboration with Institute of Neuroscience and Medicine (INM-6)
-and Institute for Advanced Simulation (IAS-6), Juelich Research Centre and JARA,
-Juelich, Germany
-
+The module hybridLFPy was mainly developed in the Computational Neuroscience
+Group (http://compneuro.umb.no), Department of Mathemathical Sciences and
+Technology (http://www.nmbu.no/imt), at the Norwegian University of Life
+Sciences (http://www.nmbu.no), Aas, Norway, in collaboration with Institute of
+Neuroscience and Medicine (INM-6) and Institute for Advanced Simulation (IAS-6),
+Juelich Research Centre and JARA, Juelich, Germany
+(http://www.fz-juelich.de/inm/inm-6/EN/).
 
 
 License
 -------
 
-This software is released under the General Public License v3 (GPLv3),
+This software is released under the General Public License (see LICENSE file).
 
 
 Warranty
@@ -31,17 +31,27 @@ Warranty
 This software comes without any form of warranty. 
 
 
-=====
-Usage
-=====
+============
+Installation
+============
 
-To use from any working folder without installing files, add this path to
-$PYTHONPATH. Edit your .bash_profile or similar file, and put in:
+First download all the ``hybridLFPy`` source files using ``git``
+(http://git-scm.com). Open a terminal window and type:
+::
+    
+    cd $HOME/where/to/put/hybridLFPy
+    git clone https://github.com/INM-6/hybridLFPy.git
+    
+
+To use ``hybridLFPy`` from any working folder without installing files, add this
+path to ``$PYTHONPATH``. Edit your ``.bash_profile`` or similar file, and add:
+::    
     
     export $PYTHONPATH=$PYTHONPATH:/PATH/TO/THIS/FOLDER:
     
 Installing it is also possible, but not recommended as things might change with
 any pull request from the repository:
+::    
     
     (sudo) python setup.py install (--user)
 

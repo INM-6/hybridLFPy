@@ -1,7 +1,11 @@
 #!/usr/bin/env python
-""" Function true_lam_csd specification for calculation of true laminar CSD
+"""
+Function true_lam_csd specification for calculation of true laminar CSD
+from the current-distribution on `LFPy.cell.Cell` objects, assuming line
+sources for each individual compartment, including the soma.
 """
 import numpy as np
+
 
 def _PrPz(r0, z0, r1, z1, r2, z2, r3, z3):
     """
@@ -9,22 +13,20 @@ def _PrPz(r0, z0, r1, z1, r2, z2, r3, z3):
     
     Parameters
     ----------
-    r0 : 
-    z0 :
-    r1 :
-    z1 :
-    r2 :
-    z2 :
-    r3 :
-    z3 :
+    r0 : float
+    z0 : float
+    r1 : float
+    z1 : float
+    r2 : float
+    z2 : float
+    r3 : float
+    z3 : float
 
     Returns
     ----------
-    Pr : list
-    
-    Pz : list
-    
-    hit : list
+    Pr : float    
+    Pz : float
+    hit : bool
 
     """
     Pr = ((r0*z1 - z0*r1)*(r2 - r3) - (r0 - r1)*(r2*z3 - r3*z2)) / \
@@ -45,19 +47,22 @@ def _PrPz(r0, z0, r1, z1, r2, z2, r3, z3):
         
     return [Pr, Pz, hit]
 
+
 def true_lam_csd(cell, dr=100, z=None):
     """
     Return CSD from membrane currents as function along the coordinates
     of the electrode along z-axis. 
-  
+
+
     Parameters
     ----------
-    cell : `LFPy.cell.Cell` object.
+    cell : `LFPy.cell.Cell` or `LFPy.cell.TemplateCell` object.
         Cell.
     dr : float
-        Radius of the cylindrical volume.
-    z : list
+        Radius of the cylindrical CSD volume.
+    z : numpy.ndarray
         Z-coordinates of electrode.
+
 
     Returns
     ----------
@@ -66,7 +71,7 @@ def true_lam_csd(cell, dr=100, z=None):
     
     """
     if type(z) != type(np.ndarray(shape=0)):
-        raise ValueError, 'type(z) should be a np.ndarray'
+        raise ValueError, 'type(z) should be a numpy.ndarray'
 
     dz = abs(z[1] - z[0])
     CSD = np.zeros((z.size, cell.tvec.size,))
@@ -149,3 +154,8 @@ def true_lam_csd(cell, dr=100, z=None):
                 pass
 
     return CSD
+
+
+if __name__ == "__main__":
+    import doctest
+    doctest.testmod()

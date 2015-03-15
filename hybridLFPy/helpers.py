@@ -64,7 +64,7 @@ def read_gdf(fname):
     return np.array(gdf)
 
 
-def write_gdf(gdf,fname):
+def write_gdf(gdf, fname):
     """
     Fast line-by-line gdf-file write function
     
@@ -76,16 +76,22 @@ def write_gdf(gdf,fname):
     fname : str
         Path to gdf-file.
     
+    
+    Returns
+    -------
+    None
+    
     """
-    gdf_file = open(fname,'w')
+    gdf_file = open(fname, 'w')
     for line in gdf:
         for i in np.arange(len(line)):
             gdf_file.write(str(line[i]) + '\t')
         gdf_file.write('\n')
+    
     return None
 
 
-def load_h5_data(path= '', data_type='LFP', y=None, electrode=None,
+def load_h5_data(path='', data_type='LFP', y=None, electrode=None,
                  warmup=0., scaling=1.):
     """
     Function loading results from hdf5 file
@@ -96,7 +102,7 @@ def load_h5_data(path= '', data_type='LFP', y=None, electrode=None,
     path : str
         Path to hdf5-file
     data_type : str
-        Signal types: 'CSD' , 'LFP', 'CSDsum', 'LFPsum'.
+        Signal types in ['CSD' , 'LFP', 'CSDsum', 'LFPsum'].
     y : None or str
         Name of population.
     electrode : None or int
@@ -143,6 +149,11 @@ def dump_dict_of_nested_lists_to_h5(fname, data):
         Filename
     data : dict(list(numpy.ndarray))
         Dict of nested lists with variable len arrays.
+    
+    
+    Returns
+    -------
+    None
 
     """
     # Open file
@@ -226,7 +237,12 @@ def setup_file_dest(params, clearDestination=True):
         e.g., `cellsim16popsParams.multicompartment_params()`
     clear_dest : bool 
         Savefolder will be cleared if already existing.
-        
+    
+    
+    Returns
+    -------
+    None
+    
     """
     if COMM.Get_rank() == 0:
         if not os.path.isdir(params.savefolder):
@@ -417,7 +433,7 @@ def movav(y, Dx, dx):
         return yf
 
 
-def decimate(x, q=10, n=4, k=0.8, axis=-1, filterfun=ss.cheby1):
+def decimate(x, q=10, n=4, k=0.8, filterfun=ss.cheby1):
     """
     scipy.signal.decimate like downsampling using filtfilt instead of lfilter,
     and filter coeffs from butterworth or chebyshev type 1.
@@ -433,7 +449,9 @@ def decimate(x, q=10, n=4, k=0.8, axis=-1, filterfun=ss.cheby1):
         Butterworth filter order.
     k : float
         Aliasing filter critical frequency will be set as Wn=k/q.
-     
+    filterfun : function
+        `scipy.signal.filter_design.cheby1` or
+        `scipy.signal.filter_design.butter` function
 
     Returns
     -------
@@ -459,7 +477,7 @@ def decimate(x, q=10, n=4, k=0.8, axis=-1, filterfun=ss.cheby1):
     except: # Multidim array can only be processed at once for scipy >= 0.9.0
         y = []
         for data in x:
-            y.append(ss.filtfilt(b,a,data))
+            y.append(ss.filtfilt(b, a, data))
         y = np.array(y)
 
     try:
@@ -716,8 +734,6 @@ def compound_powerspec(data, tbin, Df=None, pointProcess=False):
     Df : float/None, 
         window width of sliding rectangular filter (smoothing),
         None -> no smoothing
-    units : bool, 
-        average power spectrum
     pointProcess : bool, 
         if set to True, powerspectrum is normalized to signal length T
                  
@@ -1087,7 +1103,7 @@ def cv(data, units=False):
 
     Examples
     --------
-    >>> cv(np.array([[1, 2, 3, 4, 5, 6],[11, 2, 3, 3, 4, 5]]))
+    >>> cv(np.array([[1, 2, 3, 4, 5, 6], [11, 2, 3, 3, 4, 5]]))
     array([ 0.48795004,  0.63887656])
 
     >>> cv(np.array([[1, 2, 3, 4, 5, 6], [11, 2, 3, 3, 4, 5]]), units=True)
