@@ -19,6 +19,7 @@ Documentation is available in two forms:
         
         in the root folder of the package sources
 
+
 Available classes
 -----------------
 `CachedNetwork`
@@ -45,6 +46,7 @@ Available classes
 
 `PostProcess`
     Methods for processing output of multiple instances of class Population
+
 
 Available utilities
 -------------------

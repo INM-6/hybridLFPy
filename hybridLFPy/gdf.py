@@ -40,31 +40,55 @@ class GDF(object):
     2. Create sqlite db of (neuron, spike time).
     3. Query spike times for neurons.
 
+
     Parameters
     ----------
     dbname : str
-        Filename of sqlite database.
+        Filename of sqlite database, see `sqlite3.connect`
     bsize : int
         Number of spike times to insert.
     new_db : bool
         New database with name dbname, will overwrite
         at a time, determines memory usage.
+        
+    
+    Returns
+    -------
+    `hybridLFPy.gdf.GDF` object
+    
+    
+    See also
+    --------
+    sqlite3, sqlite3.connect, sqlite3.connect.cursor
     """
 
     def __init__(self, dbname, bsize=int(1e6), new_db=True,
                  debug=False):
         """
-
+        1. Read from gdf files.
+        2. Create sqlite db of (neuron, spike time).
+        3. Query spike times for neurons.
+    
+    
         Parameters
         ----------
         dbname : str
-            Filename of sqlite database.
+            Filename of sqlite database, see `sqlite3.connect`
         bsize : int
             Number of spike times to insert.
         new_db : bool
             New database with name dbname, will overwrite
             at a time, determines memory usage.
             
+        
+        Returns
+        -------
+        `hybridLFPy.gdf.GDF` object
+        
+        
+        See also
+        --------
+        sqlite3, sqlite3.connect, sqlite3.connect.cursor
         """
         if new_db:
             try:
@@ -77,14 +101,23 @@ class GDF(object):
         self.bsize = bsize
         self.debug = debug
 
+
     def _blockread(self, fname):
         """
         Generator yields bsize lines from gdf file.
+        Hidden method.
+
 
         Parameters
         ----------
         fname : str
             Name of gdf-file.
+            
+        
+        Yields
+        ------
+        list
+            file contents
             
         """
         with open(fname, 'rb') as f:
@@ -101,6 +134,7 @@ class GDF(object):
         """
         Create db from list of gdf file glob
 
+
         Parameters
         ----------
                 re : str
@@ -108,6 +142,16 @@ class GDF(object):
                 index : bool
                     Create index on neurons for speed.
                     
+        
+        Returns
+        -------
+        None
+        
+        
+        See also
+        --------
+        sqlite3.connect.cursor, sqlite3.connect
+        
         """
         self.cursor.execute('CREATE TABLE IF NOT EXISTS spikes (neuron INT UNSIGNED, time REAL)')
 
@@ -133,9 +177,11 @@ class GDF(object):
             toc = now()
             if self.debug: print 'Indexed db in %g seconds.' % (toc-tic)
 
+
     def create_from_list(self, re=[], index=True):
         """
         Create db from list of arrays.
+
 
         Parameters
         ----------
@@ -143,7 +189,17 @@ class GDF(object):
             Index of element is cell index, and element `i` an array of spike times in ms.
         index : bool
             Create index on neurons for speed.
-            
+        
+        
+        Returns
+        -------
+        None
+        
+        
+        See also
+        --------
+        sqlite3.connect.cursor, sqlite3.connect
+        
         """
         self.cursor.execute('CREATE TABLE IF NOT EXISTS spikes (neuron INT UNSIGNED, time REAL)')
 
@@ -169,16 +225,23 @@ class GDF(object):
         """
         Select spike trains.
 
+
         Parameters
         ----------
-        neurons : np.array or list
+        neurons : numpy.ndarray or list
             Array of list of neurons.
 
-        Returns
-        ----------
-        s : list
-            List of np.array's spike times.
 
+        Returns
+        -------
+        list
+            List of numpy.ndarray objects containing spike times.
+
+
+        See also
+        --------
+        sqlite3.connect.cursor
+        
         """
         s = []
         for neuron in neurons:
@@ -188,39 +251,58 @@ class GDF(object):
             s.append(spikes)
         return s
 
+
     def interval(self, T=[0, 1000]):
         """
         Get all spikes in a time interval T.
+
 
         Parameters
         ----------
         T : list
             Time interval.
 
+
         Returns
-        ----------
+        -------
         s : list
             Nested list with spike times.
-            
+
+
+
+        See also
+        --------
+        sqlite3.connect.cursor
+        
         """
         self.cursor.execute('SELECT * FROM spikes WHERE time BETWEEN %f AND %f' % tuple(T))
         sel = self.cursor.fetchall()
         return sel
 
+
     def select_neurons_interval(self, neurons, T=[0, 1000]):
         """
         Get all spikes from neurons in a time interval T.
 
+
         Parameters
         ----------
+        neurons : list
+            network neuron indices
         T : list
             Time interval.
 
+        
         Returns
         ----------
         s : list
             Nested list with spike times.
 
+        
+        See also
+        --------
+        sqlite3.connect.cursor
+        
         """
         s = []
         for neuron in neurons:
@@ -232,25 +314,45 @@ class GDF(object):
 
         return s
 
+
     def neurons(self):
         """
         Return list of neuron indices.
 
-        Returns
-        ----------
-        list
 
+        Parameters
+        ----------
+        None
+        
+
+        Returns
+        -------
+        list
+            list of neuron indices
+        
+        
+        See also
+        --------
+        sqlite3.connect.cursor
+        
         """
         self.cursor.execute('SELECT DISTINCT neuron FROM spikes ORDER BY neuron')
         sel = self.cursor.fetchall()
         return np.array(sel).flatten()
 
+
     def num_spikes(self):
         """
         Return total number of spikes.
 
-        Returns
+
+        Parameters
         ----------
+        None
+        
+        
+        Returns
+        -------
         list
 
         """
@@ -260,24 +362,51 @@ class GDF(object):
         if self.debug: print 'DB has %d spikes' % rows
         return rows
 
+
     def close(self):
         """
-
+        Close `sqlite3.connect.cursor` and `sqlite3.connect` objects
+        
+        
+        Parameters
+        ----------
+        None
+        
+        
+        Returns
+        -------
+        None
+        
+        
+        See also
+        --------
+        sqlite3.connect.cursor, sqlite3.connect
 
         """
         self.cursor.close()
         self.conn.close()
+
 
     def plotstuff(self, T=[0, 1000]):
         """
         Create a scatter plot of the contents of the database,
         with entries on the interval T.
 
+
         Parameters
         ----------
         T : list
             Time interval.
-
+        
+        
+        Returns
+        -------
+        None
+        
+        
+        See also
+        --------
+        GDF.select_neurons_interval
         """
 
         fig = plt.figure(figsize=(10,10))
@@ -321,4 +450,6 @@ def test1():
     print bad
 
 if __name__ == '__main__':
-    test1()
+    #test1()
+    import doctest
+    doctest.testmod()
