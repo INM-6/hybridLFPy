@@ -82,7 +82,11 @@ class CachedNetwork(object):
     Returns
     -------
     `hybridLFPy.cachednetworks.CachedNetwork` object
-    
+
+
+    See also
+    --------
+    CachedFixedSpikesNetwork, CachedNoiseNetwork
     """
 
     def __init__(self,
@@ -130,6 +134,10 @@ class CachedNetwork(object):
         -------
         `hybridLFPy.cachednetworks.CachedNetwork` object
 
+
+        See also
+        --------
+        CachedFixedSpikesNetwork, CachedNoiseNetwork
             
         """
         # Set some attributes

@@ -6,7 +6,6 @@ hybridLFPy
 Provides methods for estimating extracellular potentials of simplified spiking
 neuron network models.
 
-This software comes with no warranties.
 
 How to use the documentation
 ----------------------------
@@ -22,40 +21,40 @@ Documentation is available in two forms:
 
 Available classes
 -----------------
-CachedNetwork
+`CachedNetwork`
     Offline interface between network spike events and used by class Population
 
-CachedNoiseNetwork
+`CachedNoiseNetwork`
     Creation of Poisson spiketrains of a putative network model, interfaces
     class Population
     
-CachedFixedSpikesNetwork
+`CachedFixedSpikesNetwork`
     Creation of identical spiketrains per population of a putative network
     model, interface to class Population
 
-GDF
+`GDF`
     Class using sqlite to efficiently store and enquire large amounts of spike
     output data, used by Cached*Network
 
-PopulationSuper
+`PopulationSuper`
     Parent class setting up a base population of multicompartment neurons
 
-Population
+`Population`
     Daughter of PopulationSuper, using CachedNetwork spike events as synapse
     activation times with layer and cell type connection specificity
 
-PostProcess
+`PostProcess`
     Methods for processing output of multiple instances of class Population
 
 Available utilities
 -------------------
-csd
+`csd`
     Ground truth current-source density estimation from multicompartment models
 
-helpers
+`helpers`
     Various methods used throughout simulations
 
-setup_file_dest
+`setup_file_dest`
     Setup destination folders of simulation output files
 
 '''
