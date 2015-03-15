@@ -68,7 +68,7 @@ class PopulationSuper(object):
         
     Returns
     -------
-    hybridLFPy.cellsimmethods.PopulationSuper object
+    hybridLFPy.population.PopulationSuper object
     
     
     See also
@@ -165,7 +165,7 @@ class PopulationSuper(object):
             
         Returns
         -------
-        hybridLFPy.cellsimmethods.PopulationSuper object
+        hybridLFPy.population.PopulationSuper object
         
         
         See also
@@ -796,7 +796,7 @@ class Population(PopulationSuper):
 
     Returns
     -------
-    `hybridLFPy.cellsimmethods.Population` object
+    `hybridLFPy.population.Population` object
     
     
     See also
@@ -857,7 +857,7 @@ class Population(PopulationSuper):
     
         Returns
         -------
-        `hybridLFPy.cellsimmethods.Population` object
+        `hybridLFPy.population.Population` object
         
         
         See also

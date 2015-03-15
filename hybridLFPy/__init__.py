@@ -61,7 +61,7 @@ Available utilities
 
 from cachednetworks import CachedNetwork, CachedNoiseNetwork, CachedFixedSpikesNetwork
 from gdf import GDF
-from cellsimmethods import PopulationSuper, Population
+from population import PopulationSuper, Population
 from postproc import PostProcess
 import csd
 import helpers
