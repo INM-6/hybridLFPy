@@ -203,7 +203,7 @@ def load_dict_of_nested_lists_from_h5(fname, toplevelkeys=None):
     f = h5py.File(fname, 'r')
 
     # Iterate over partial dataset
-    if toplevelkeys != None:
+    if toplevelkeys is not None:
         for i in toplevelkeys:
             ivalue = f[str(i)]
             data[i] = []

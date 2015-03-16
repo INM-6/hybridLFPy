@@ -193,7 +193,7 @@ class PopulationSuper(object):
         self.POPULATIONSEED = POPULATIONSEED
         self.verbose = verbose
         #put revision info in savefolder
-        if self.savefolder != None:
+        if self.savefolder is not None:
             os.system('git rev-parse HEAD -> %s/populationRevision.txt' % \
                     self.savefolder)
 
@@ -1076,7 +1076,7 @@ class Population(PopulationSuper):
                     loc = self.synDelayLoc[j]
                     loc /= self.dt
                     scale = self.synDelayScale[j]
-                    if scale != None:
+                    if scale is not None:
                         scale /= self.dt
                         delay = np.random.normal(loc, scale, i).astype(int)
                         while np.any(delay < 1):
@@ -1299,7 +1299,7 @@ class Population(PopulationSuper):
                 'weight' : self.J_yX[X]
                 })
             for j in range(len(self.synIdx[cellindex][X])):
-                if self.synDelays != None:
+                if self.synDelays is not None:
                     synDelays = self.synDelays[cellindex][X][j]
                 else:
                     synDelays = None
@@ -1359,7 +1359,7 @@ class Population(PopulationSuper):
             db.close()
 
         #apply synaptic delays
-        if synDelays != None and idx.size > 0:
+        if synDelays is not None and idx.size > 0:
             for i, delay in enumerate(synDelays):
                 if spikes[i].size > 0:
                     spikes[i] += delay
