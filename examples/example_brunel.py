@@ -39,7 +39,7 @@ scale compute facility is strongly discouraged.
 '''
 import os
 import numpy as np
-if not os.environ.has_key('DISPLAY'):
+if 'DISPLAY' not in os.environ:
     import matplotlib
     matplotlib.use('Agg')
 import matplotlib.pyplot as plt
@@ -280,7 +280,7 @@ PS.update(dict(
 #putative mappting between population type and cell type specificity,
 #but here all presynaptic senders are also postsynaptic targets
 PS.update(dict(
-    mapping_Yy = zip(PS.X, PS.X)
+    mapping_Yy = list(zip(PS.X, PS.X))
 ))
 
 ################################################################################
@@ -318,7 +318,7 @@ networkSim = CachedNetwork(
 
 
 toc = time() - tic
-print 'NEST simulation and gdf file processing done in  %.3f seconds' % toc
+print('NEST simulation and gdf file processing done in  %.3f seconds' % toc)
 
 
 ####### Set up populations #####################################################
@@ -386,7 +386,7 @@ if properrun:
 COMM.Barrier()
 
 #tic toc
-print 'Execution time: %.3f seconds' %  (time() - tic)
+print('Execution time: %.3f seconds' %  (time() - tic))
 
 
 
@@ -399,7 +399,7 @@ print 'Execution time: %.3f seconds' %  (time() - tic)
 
 def remove_axis_junk(ax, which=['right', 'top']):
     '''remove upper and right axis'''
-    for loc, spine in ax.spines.iteritems():
+    for loc, spine in ax.spines.items():
         if loc in which:
             spine.set_color('none')            
     ax.xaxis.set_ticks_position('bottom')
@@ -469,7 +469,7 @@ def plot_signal_sum(ax, fname='LFPsum.h5', unit='mV',
     else:
         ax.yaxis.set_ticklabels([])
 
-    for loc, spine in ax.spines.iteritems():
+    for loc, spine in ax.spines.items():
         if loc in ['right', 'top']:
             spine.set_color('none')            
     ax.xaxis.set_ticks_position('bottom')
@@ -624,7 +624,7 @@ def plot_morphologies(ax, X, isometricangle, markers, colors):
                              '%s_population_rotations.h5' % pop)
         f = h5py.File(fname, 'r')
         
-        for key, value in f.items():
+        for key, value in list(f.items()):
             for i, rot in enumerate(value.value):
                 rotations[i].update({key : rot})
         
@@ -642,7 +642,7 @@ def plot_morphologies(ax, X, isometricangle, markers, colors):
             #set up a polycollection
             zips = []
             for x, z in cell.get_idx_polygons():
-                zips.append(zip(x, z-somapos[j, 1] * np.sin(isometricangle)))
+                zips.append(list(zip(x, z-somapos[j, 1] * np.sin(isometricangle))))
             
             polycol = PolyCollection(zips,
                                      edgecolors='k',
@@ -671,7 +671,7 @@ def plot_two_cells(ax, X, isometricangle, markers, colors):
         #set up a polycollection
         zips = []
         for x, z in cell.get_idx_polygons():
-            zips.append(zip(x, z-somapos[i, 1] * np.sin(isometricangle)))
+            zips.append(list(zip(x, z-somapos[i, 1] * np.sin(isometricangle))))
         
         polycol = PolyCollection(zips,
                                  edgecolors='k',

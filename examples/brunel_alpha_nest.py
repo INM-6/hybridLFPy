@@ -137,8 +137,8 @@ if __name__ == '__main__':
     nodes_ex=nest.Create("iaf_psc_alpha",NE)
     nodes_in=nest.Create("iaf_psc_alpha",NI)
 
-    print "first exc node: {}".format(nodes_ex[0])
-    print "first inh node: {}".format(nodes_in[0])
+    print("first exc node: {}".format(nodes_ex[0]))
+    print("first inh node: {}".format(nodes_in[0]))
 
     #distribute membrane potentials
     nest.SetStatus(nodes_ex, "V_m",
@@ -216,14 +216,14 @@ if __name__ == '__main__':
     sim_time   = endsimulate-endbuild
 
     print("Brunel network simulation (Python)")
-    print("Number of neurons : {0}".format(N_neurons))
-    print("Number of synapses: {0}".format(num_synapses))
-    print("       Exitatory  : {0}".format(int(CE * N_neurons) + N_neurons))
-    print("       Inhibitory : {0}".format(int(CI * N_neurons)))
-    print("Excitatory rate   : %.2f Hz" % rate_ex)
-    print("Inhibitory rate   : %.2f Hz" % rate_in)
-    print("Building time     : %.2f s" % build_time)
-    print("Simulation time   : %.2f s" % sim_time)
+    print(("Number of neurons : {0}".format(N_neurons)))
+    print(("Number of synapses: {0}".format(num_synapses)))
+    print(("       Exitatory  : {0}".format(int(CE * N_neurons) + N_neurons)))
+    print(("       Inhibitory : {0}".format(int(CI * N_neurons))))
+    print(("Excitatory rate   : %.2f Hz" % rate_ex))
+    print(("Inhibitory rate   : %.2f Hz" % rate_in))
+    print(("Building time     : %.2f s" % build_time))
+    print(("Simulation time   : %.2f s" % sim_time))
 
 
     #don't wanna look at this right now
