@@ -789,8 +789,6 @@ class Population(PopulationSuper):
     J_yX : list of floats
         Synapse weights for connections of each presynaptic population, see
         class `LFPy.Synapse`
-    #calculateCSD : bool
-    #    Flag for computing the ground-source CSD.
             
 
     Returns
