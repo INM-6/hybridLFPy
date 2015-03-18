@@ -94,7 +94,7 @@ class GDF(object):
             try:
                 os.unlink(dbname)
             except:
-                print 'creating new database file %s' % dbname
+                print('creating new database file %s' % dbname)
 
         self.conn = sqlite.connect(dbname)
         self.cursor = self.conn.cursor()
@@ -123,7 +123,7 @@ class GDF(object):
         with open(fname, 'rb') as f:
             while True:
                 a = []
-                for i in xrange(self.bsize):
+                for i in range(self.bsize):
                     line = f.readline()
                     if not line: break
                     a.append(line.split())
@@ -157,7 +157,7 @@ class GDF(object):
 
         tic = now()
         for f in glob.glob(re):
-            print f
+            print(f)
             while True:
                 try:
                     for data in self._blockread(f):
@@ -168,14 +168,14 @@ class GDF(object):
                 break                
 
         toc = now()
-        if self.debug: print 'Inserts took %g seconds.' % (toc-tic)
+        if self.debug: print('Inserts took %g seconds.' % (toc-tic))
 
         # Optionally, create index for speed
         if index:
             tic = now()
             self.cursor.execute('CREATE INDEX neuron_index on spikes (neuron)')
             toc = now()
-            if self.debug: print 'Indexed db in %g seconds.' % (toc-tic)
+            if self.debug: print('Indexed db in %g seconds.' % (toc-tic))
 
 
     def create_from_list(self, re=[], index=True):
@@ -206,19 +206,19 @@ class GDF(object):
         tic = now()
         i = 0
         for x in re:
-            data = zip([i] * len(x), x)
+            data = list(zip([i] * len(x), x))
             self.cursor.executemany('INSERT INTO spikes VALUES (?, ?)', data)
             i += 1
         self.conn.commit()
         toc = now()
-        if self.debug: print 'Inserts took %g seconds.' % (toc-tic)
+        if self.debug: print('Inserts took %g seconds.' % (toc-tic))
 
         # Optionally, create index for speed
         if index:
             tic = now()
             self.cursor.execute('CREATE INDEX neuron_index on spikes (neuron)')
             toc = now()
-            if self.debug: print 'Indexed db in %g seconds.' % (toc-tic)
+            if self.debug: print('Indexed db in %g seconds.' % (toc-tic))
 
 
     def select(self, neurons):
@@ -359,7 +359,7 @@ class GDF(object):
         self.cursor.execute('SELECT Count(*) from spikes')
         rows = self.cursor.fetchall()[0]
         # Check against 'wc -l *ex*.gdf'
-        if self.debug: print 'DB has %d spikes' % rows
+        if self.debug: print('DB has %d spikes' % rows)
         return rows
 
 
@@ -446,8 +446,8 @@ def test1():
 
     gdb.close()
 
-    print spikes
-    print bad
+    print(spikes)
+    print(bad)
 
 if __name__ == '__main__':
     #test1()

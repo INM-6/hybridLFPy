@@ -157,10 +157,10 @@ def dump_dict_of_nested_lists_to_h5(fname, data):
 
     """
     # Open file
-    print 'writing to file: %s' % fname
+    print('writing to file: %s' % fname)
     f = h5py.File(fname)
     # Iterate over values
-    for i, ivalue in data.items():
+    for i, ivalue in list(data.items()):
         igrp = f.create_group(str(i))
         for j, jvalue in enumerate(ivalue):
             jgrp = igrp.create_group(str(j))
@@ -212,7 +212,7 @@ def load_dict_of_nested_lists_from_h5(fname, toplevelkeys=None):
                 for k, kvalue in enumerate(jvalue.values()):
                     data[i][j].append(kvalue.value)
     else:
-        for i, ivalue in f.items():
+        for i, ivalue in list(f.items()):
             i = int(i)
             data[i] = []
             for j, jvalue in enumerate(ivalue.values()):
@@ -249,7 +249,7 @@ def setup_file_dest(params, clearDestination=True):
             os.mkdir(params.savefolder)
         else:
             if clearDestination:
-                print 'removing folder tree %s' % params.savefolder
+                print('removing folder tree %s' % params.savefolder)
                 try:
                     os.system('find %s -delete' % params.savefolder)
                 except:
@@ -257,29 +257,29 @@ def setup_file_dest(params, clearDestination=True):
                 os.mkdir(params.savefolder)
         
         if not os.path.isdir(params.sim_scripts_path):
-            print 'creating %s' % params.sim_scripts_path
+            print('creating %s' % params.sim_scripts_path)
             os.mkdir(params.sim_scripts_path)
         
         if not os.path.isdir(params.cells_path):
-            print 'creating %s' % params.cells_path
+            print('creating %s' % params.cells_path)
             os.mkdir(params.cells_path)
         
         if not os.path.isdir(params.figures_path):
-            print 'creating %s' % params.figures_path
+            print('creating %s' % params.figures_path)
             os.mkdir(params.figures_path)
         if not os.path.isdir(params.populations_path):
-            print 'creating %s' % params.populations_path
+            print('creating %s' % params.populations_path)
             os.mkdir(params.populations_path)
         
         try:
             if not os.path.isdir(params.raw_nest_output_path):
-                print 'creating %s' % params.raw_nest_output_path
+                print('creating %s' % params.raw_nest_output_path)
                 os.mkdir(params.raw_nest_output_path)
         except:
             pass
         
         if not os.path.isdir(params.spike_output_path):
-            print 'creating %s' % params.spike_output_path
+            print('creating %s' % params.spike_output_path)
             os.mkdir(params.spike_output_path)
     
         for f in ['cellsim16popsParams.py',
@@ -470,7 +470,7 @@ def decimate(x, q=10, n=4, k=0.8, filterfun=ss.cheby1):
     elif filterfun == ss.cheby1:
         b, a = filterfun(n, 0.05, k / q)
     else:
-        raise Exception, 'only ss.butter or ss.cheby1 supported'
+        raise Exception('only ss.butter or ss.cheby1 supported')
 
     try:
         y = ss.filtfilt(b, a, x)
@@ -831,8 +831,8 @@ def crossspec(data, tbin, Df=None, units=False, pointProcess=False):
             cut = int(Df / df)
             freq = freq[cut:]
         CRO = np.zeros((N, N, len(freq)), dtype=complex)
-        for i in xrange(N):
-            for j in xrange(i + 1):
+        for i in range(N):
+            for j in range(i + 1):
                 tempij = DATA[i] * DATA[j].conj()
                 if Df is not None:
                     tempij = movav(tempij, Df, df)[cut:]
@@ -924,7 +924,7 @@ def autocorrfunc(freq, power):
     if multidata:
         N = len(power)
         autof = np.zeros((N, len(freq)))
-        for i in xrange(N):
+        for i in range(N):
             raw_autof = np.real(np.fft.ifft(power[i]))
             mid = int(len(raw_autof) / 2.)
             autof[i] = np.hstack([raw_autof[mid + 1:], raw_autof[:mid + 1]])
@@ -972,7 +972,7 @@ def crosscorrfunc(freq, cross):
     if multidata:
         N = len(cross)
         crossf = np.zeros((N, N, len(freq)))
-        for i in xrange(N):
+        for i in range(N):
             for j in range(N):
                 raw_crossf = np.real(np.fft.ifft(cross[i, j]))
                 mid = int(len(raw_crossf) / 2.)
@@ -1025,10 +1025,10 @@ def corrcoef(time, crossf, integration_window=0.):
     else:
         mid = np.floor(len(time)/2.)
     
-    for i in xrange(N):
+    for i in range(N):
         ai = np.sum(crossf[i, i][mid - lim:mid + lim + 1])
         offset_autoi = np.mean(crossf[i,i][:mid-1])
-        for j in xrange(N):
+        for j in range(N):
             cij = np.sum(crossf[i, j][mid - lim:mid + lim + 1])
             offset_cross = np.mean(crossf[i,j][:mid-1])
             aj = np.sum(crossf[j, j][mid - lim:mid + lim + 1])
@@ -1070,8 +1070,8 @@ def coherence(freq, power, cross):
     N = len(power)
     coh = np.zeros(np.shape(cross))
     
-    for i in xrange(N):
-        for j in xrange(N):
+    for i in range(N):
+        for j in range(N):
             coh[i, j] = cross[i, j] / np.sqrt(power[i] * power[j])
     
     assert(len(freq) == len(coh[0, 0]))

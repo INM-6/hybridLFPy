@@ -8,9 +8,9 @@ import numpy as np
 import h5py
 import matplotlib.pyplot as plt
 from mpi4py import MPI
-from gdf import GDF
-import csd
-import helpers
+from .gdf import GDF
+from . import csd
+from . import helpers
 import LFPy
 import neuron
 from time import time
@@ -369,7 +369,7 @@ class PopulationSuper(object):
                         self.output[cellindex][attrbt] = str(attr)
                 self.output[cellindex]['srate'] = 1E3 / self.dt_output
         
-            print 'cell %s output saved' % cellindex
+            print('cell %s output saved' % cellindex)
             
 
     def set_pop_soma_pos(self):
@@ -530,7 +530,7 @@ class PopulationSuper(object):
         [u] = np.where(np.logical_or((R_z < minrz) != (R_z > radius),
             cell_interdist < min_cell_interdist))
 
-        print "assess somatic locations: ",
+        print("assess somatic locations: ")
         while len(u) > 0:
             for i in range(len(u)):
                 x[u[i]] = (np.random.rand()-0.5)*radius*2
@@ -554,7 +554,7 @@ class PopulationSuper(object):
             [u] = np.where(np.logical_or((R_z < minrz) != (R_z > radius),
                 cell_interdist < min_cell_interdist))
 
-        print 'done!'
+        print('done!')
 
         soma_pos = []
         for i in range(self.POPULATION_SIZE):
@@ -588,7 +588,6 @@ class PopulationSuper(object):
                     data = self.output[cellindex][measure]
                 else:
                     data += self.output[cellindex][measure]
-                print '.',
         else:
             data = np.zeros((len(self.electrodeParams['x']),
                              self.cellParams['tstopms']*self.dt_output + 1),
@@ -676,7 +675,7 @@ class PopulationSuper(object):
             f['srate'] = self.output[0]['srate']
             f.close()
             
-            print 'file %s_%ss.h5 ok' % (self.y, measure)
+            print('file %s_%ss.h5 ok' % (self.y, measure))
 
         COMM.Barrier() 
         
@@ -718,7 +717,7 @@ class PopulationSuper(object):
             f.create_dataset('data', data=lfp, compression=4)
             f.close()
             del lfp
-            print 'save lfp ok'
+            print('save lfp ok')
 
 
             f = h5py.File(os.path.join(self.populations_path,
@@ -727,7 +726,7 @@ class PopulationSuper(object):
             f.create_dataset('data', data=csd, compression=4)
             f.close()
             del csd
-            print 'save CSD ok'
+            print('save CSD ok')
             
 
             #save the somatic placements:
@@ -739,7 +738,7 @@ class PopulationSuper(object):
             np.savetxt(os.path.join(self.populations_path,
                                 '%s_population_somapos.gdf' % self.y),
                        pop_soma_pos)
-            print 'save somapos ok'
+            print('save somapos ok')
 
 
             #save rotations using hdf5
@@ -751,10 +750,10 @@ class PopulationSuper(object):
             f.create_dataset('z', (len(self.rotations),))
 
             for i, rot in enumerate(self.rotations):
-                for key, value in rot.items():
+                for key, value in list(rot.items()):
                     f[key][i] = value
             f.close()
-            print 'save rotations ok'
+            print('save rotations ok')
 
 
         #resync threads
@@ -888,7 +887,7 @@ class Population(PopulationSuper):
         # - number of synapses in each z-interval (from layerbounds)
         # - placement of synapses in each z-interval
         if MASTER_MODE:
-            print 'find synapse locations: ',
+            print('find synapse locations: ')
 
         #get in this order, the
         # - postsynaptic compartment indices
@@ -900,7 +899,7 @@ class Population(PopulationSuper):
         
         COMM.Barrier()
         
-        print "population initialized in %.2f seconds" % (time()-tic)
+        print("population initialized in %.2f seconds" % (time()-tic))
 
 
     def get_all_synIdx(self):
@@ -950,19 +949,19 @@ class Population(PopulationSuper):
         np.random.set_state(randomstate)
         
         if RANK == 0:
-            print 'found synapse locations in %.2f seconds' % (time()-tic)
+            print('found synapse locations in %.2f seconds' % (time()-tic))
 
         #print the number of synapses per layer from which presynapse population
         if self.verbose:
             for cellindex in self.RANK_CELLINDICES:
                 for i, synidx in enumerate(synIdx[cellindex]):
-                    print 'to:\t%s\tcell:\t%i\tfrom:\t%s:' % (self.y,
-                                                cellindex, self.X[i]),
+                    print('to:\t%s\tcell:\t%i\tfrom:\t%s:' % (self.y,
+                                                cellindex, self.X[i]),)
                     idxcount = 0
                     for idx in synidx:
                         idxcount += idx.size
-                        print '\t%i' % idx.size,
-                    print '\ttotal %i' % idxcount
+                        print('\t%i' % idx.size,)
+                    print('\ttotal %i' % idxcount)
 
         #resync
         COMM.Barrier()
@@ -1018,7 +1017,7 @@ class Population(PopulationSuper):
         np.random.set_state(randomstate)
 
         if RANK == 0:
-            print 'found presynaptic cells in %.2f seconds' % (time()-tic)
+            print('found presynaptic cells in %.2f seconds' % (time()-tic))
 
         #resync
         COMM.Barrier()
@@ -1093,7 +1092,7 @@ class Population(PopulationSuper):
         np.random.set_state(randomstate)
 
         if RANK == 0:
-            print 'found delays in %.2f seconds' % (time()-tic)
+            print('found delays in %.2f seconds' % (time()-tic))
 
         return delays
     
@@ -1265,7 +1264,7 @@ class Population(PopulationSuper):
                         self.output[cellindex][attrbt] = str(attr)
                 self.output[cellindex]['srate'] = 1E3 / self.dt_output
         
-            print 'cell %s output saved' % cellindex
+            print('cell %s output saved' % cellindex)
             
 
     def insert_all_synapses(self, cellindex, cell):

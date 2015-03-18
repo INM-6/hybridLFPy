@@ -71,7 +71,7 @@ def true_lam_csd(cell, dr=100, z=None):
     
     """
     if type(z) != type(np.ndarray(shape=0)):
-        raise ValueError, 'type(z) should be a numpy.ndarray'
+        raise ValueError('type(z) should be a numpy.ndarray')
 
     dz = abs(z[1] - z[0])
     CSD = np.zeros((z.size, cell.tvec.size,))
@@ -79,7 +79,7 @@ def true_lam_csd(cell, dr=100, z=None):
     r_start = np.sqrt(cell.xstart**2 + cell.ystart**2)
     volume = dz * np.pi * dr**2
 
-    for i in xrange(len(z)):
+    for i in range(len(z)):
         aa0 = cell.zstart < z[i] + dz/2
         aa1 = cell.zend < z[i] + dz/2
         bb0 = cell.zstart >= z[i] - dz/2
@@ -89,7 +89,7 @@ def true_lam_csd(cell, dr=100, z=None):
         ii = aa0 & bb0 & cc0 # startpoint inside volume
         jj = aa1 & bb1 & cc1 # endpoint inside volume
 
-        for j in xrange(cell.zstart.size):
+        for j in range(cell.zstart.size):
             # Calc fraction of source being inside control volume from 0-1
             # both start and endpoint in volume
             if ii[j] and jj[j]:
@@ -116,7 +116,7 @@ def true_lam_csd(cell, dr=100, z=None):
                     r3 = [dr, dr, dr]
     
                     P = []
-                    for k in xrange(3):
+                    for k in range(3):
                         P.append(_PrPz(r0, z0, r1, z1, r2[k], z2[k], r3[k], z3[k]))
                         if P[k][2]:
                             vL2 = (P[k][0] - r0)**2 + (P[k][1] -z0)**2
@@ -144,7 +144,7 @@ def true_lam_csd(cell, dr=100, z=None):
                     r3 = [dr, dr, dr]
     
                     P = []
-                    for k in xrange(3):
+                    for k in range(3):
                         P.append(_PrPz(r0, z0, r1, z1, r2[k], z2[k], r3[k], z3[k]))
                         if P[k][2]:
                             vL2 = (r1 - P[k][0])**2 + (z1 - P[k][1])**2

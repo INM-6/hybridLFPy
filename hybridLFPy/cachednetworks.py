@@ -7,10 +7,10 @@ variables being used is "nodes_ex" and "nodes_in" VERSION THAT WORKS.
 import numpy as np
 import os
 import glob
-if not os.environ.has_key('DISPLAY'):
+if 'DISPLAY' not in os.environ:
     import matplotlib
     matplotlib.use('Agg')
-from gdf import GDF
+from .gdf import GDF
 import matplotlib.pyplot as plt
 from mpi4py import MPI
 
@@ -40,7 +40,7 @@ def remove_axis_junk(ax, which=['right', 'top']):
     None
     
     """
-    for loc, spine in ax.spines.iteritems():
+    for loc, spine in ax.spines.items():
         if loc in which:
             spine.set_color('none')            
     ax.xaxis.set_ticks_position('bottom')
@@ -250,7 +250,7 @@ class CachedNetwork(object):
         x = {}
         y = {}
 
-        for layer, nodes in self.nodes.iteritems():
+        for layer, nodes in self.nodes.items():
             x[layer] = np.array([])
             y[layer] = np.array([])
 
@@ -383,7 +383,7 @@ class CachedNetwork(object):
                     linewidth=0.5, width=0.9, clip_on=False)
         else:
             mssg = "plottype={} not in ['fill_between', 'bar']".format(plottype)
-            raise Exception, mssg
+            raise Exception(mssg)
 
         remove_axis_junk(ax)
 
@@ -518,7 +518,7 @@ class CachedFixedSpikesNetwork(CachedNetwork):
         self.activationtimes = activationtimes
         
         if len(activationtimes) != len(self.N_X):
-            raise Exception, 'len(activationtimes != len(self.N_X))'
+            raise Exception('len(activationtimes != len(self.N_X))')
 
         """ Create a dictionary of nodes with proper layernames
          self.nodes = {}.
@@ -527,8 +527,8 @@ class CachedFixedSpikesNetwork(CachedNetwork):
         if RANK == 0:
             for i, N in enumerate(self.N_X):
                 nodes = self.nodes[self.X[i]]
-                val = zip(nodes, [self.activationtimes[i]
-                                  for x in range(nodes.size)])
+                val = list(zip(nodes, [self.activationtimes[i]
+                                  for x in range(nodes.size)]))
                 val = np.array(val, dtype=[('a', int), ('b', float)])
                 if i == 0:
                     cell_spt = val
@@ -615,7 +615,7 @@ class CachedNoiseNetwork(CachedNetwork):
         #set some attributes:
         self.frate = frate
         if len(self.frate) != self.N_X.size:
-            raise Exception, 'self.frate.size != self.N_X.size'
+            raise Exception('self.frate.size != self.N_X.size')
 
         self.spike_output_path = spike_output_path
 
@@ -656,7 +656,7 @@ class CachedNoiseNetwork(CachedNetwork):
 
         if os.path.isfile(os.path.join(self.spike_output_path, self.dbname)):
             mystring = os.path.join(self.spike_output_path, self.dbname)
-            print 'db %s exist, will not rerun sim or collect gdf!' % mystring
+            print('db %s exist, will not rerun sim or collect gdf!' % mystring)
         else:
             # Create spike detector
             self.spikes = nest.Create("spike_detector", 1,
@@ -694,7 +694,7 @@ class CachedNoiseNetwork(CachedNetwork):
             self.collect_gdf()
 
             # Nodes need to be collected in np.ndarrays:
-            for key in self.nodes.keys():
+            for key in list(self.nodes.keys()):
                 self.nodes[key] = np.array(self.nodes[key])
 
 

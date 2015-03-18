@@ -101,7 +101,7 @@ class PostProcess(object):
                 f.create_dataset('data', data=self.LFPsum, compression=4)
                 f.close()
 
-            for key, value in self.LFPdictLayer.items():
+            for key, value in list(self.LFPdictLayer.items()):
                 if not os.path.isfile(os.path.join(self.populations_path,
                                                 '%s_population_LFP.h5' % key)):
                     f = h5py.File(os.path.join(self.populations_path,
@@ -121,7 +121,7 @@ class PostProcess(object):
                 f.create_dataset('data', data=self.CSDsum, compression=4)
                 f.close()
 
-            for key, value in self.CSDdictLayer.items():
+            for key, value in list(self.CSDdictLayer.items()):
                 if not os.path.isfile(os.path.join(self.populations_path,
                                             '%s_population_CSD.h5' % key)):
                     f = h5py.File(os.path.join(self.populations_path,
@@ -271,19 +271,19 @@ class PostProcess(object):
                                                 'raw_nest_output'))
 
         def filter_function(tarinfo):
-            print tarinfo.name
+            print(tarinfo.name)
             if len([f for f in EXCLUDE_FILES if os.path.split(tarinfo.name)[-1]
                     in os.path.split(f)[-1]]) > 0 or \
                len([f for f in EXCLUDE_FILES if os.path.split(tarinfo.path)[-1]
                     in os.path.split(f)[-1]]) > 0:
-                print 'excluding %s' % tarinfo.name
+                print('excluding %s' % tarinfo.name)
 
                 return None
             else:
                 return tarinfo
 
         if RANK == 0:
-            print 'creating archive %s' % (self.savefolder + '.tar')
+            print('creating archive %s' % (self.savefolder + '.tar'))
             #open file
             f = tarfile.open(self.savefolder + '.tar', 'w')
             #avoid adding files to repo as /scratch/$USER/hybrid_model/...

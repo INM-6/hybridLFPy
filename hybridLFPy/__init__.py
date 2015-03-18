@@ -61,10 +61,10 @@ Available utilities
 
 '''
 
-from cachednetworks import CachedNetwork, CachedNoiseNetwork, CachedFixedSpikesNetwork
-from gdf import GDF
-from population import PopulationSuper, Population
-from postproc import PostProcess
-import csd
-import helpers
-from helpers import setup_file_dest
+from .cachednetworks import CachedNetwork, CachedNoiseNetwork, CachedFixedSpikesNetwork
+from .gdf import GDF
+from .population import PopulationSuper, Population
+from .postproc import PostProcess
+from . import csd
+from . import helpers
+from .helpers import setup_file_dest
