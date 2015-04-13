@@ -211,29 +211,6 @@ class CachedNetwork(object):
                     X : db
                 })
       
-        ## old, to be removed
-        #self.db = GDF(os.path.join(self.dbname),
-        #         debug=True, new_db=True)
-        #self.db.create(re=os.path.join(self.spike_output_path,
-        #                               self.label + '*.'+ self.ext),
-        #          index=True)
-        ## If creating in memory db, do across ranks
-        #if self.dbname == ':memory:':
-        #    self.db = GDF(os.path.join(self.dbname),
-        #             debug=True, new_db=True)
-        #    self.db.create(re=os.path.join(self.spike_output_path,
-        #                                   self.label + '*.'+ self.ext),
-        #              index=True)
-        #else:
-        #    if RANK == 0:
-        #        # Put results in db
-        #        db = GDF(os.path.join(self.spike_output_path, self.dbname),
-        #                 debug=True, new_db=True)
-        #        db.create(re=os.path.join(self.spike_output_path,
-        #                                  self.label + '*.'+ self.ext),
-        #                  index=True)
-        #        db.close()
-
         COMM.Barrier()
 
 
@@ -258,11 +235,6 @@ class CachedNetwork(object):
             Where in `y` key-value entries are population name and neuron gid number.
 
         """
-        #if hasattr(self, 'db'):
-        #    db = self.db
-        #else:
-        #    db = GDF(os.path.join(self.spike_output_path, self.dbname),
-        #             new_db=False)
         x = {}
         y = {}
 
@@ -280,10 +252,7 @@ class CachedNetwork(object):
                 x[X] = np.r_[x[X], times]
                 y[X] = np.r_[y[X], np.zeros(times.size) + nodes[i]]
                 i += 1
-        
-        #if not hasattr(self, 'db'):
-        #    db.close()
-        
+                
         return x, y
 
 
