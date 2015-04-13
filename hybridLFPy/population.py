@@ -940,8 +940,7 @@ class Population(PopulationSuper):
             np.random.seed(self.POPULATIONSEED + cellindex)
 
             #find synapse locations for cell in parallel
-            synidx = self.get_synidx(cellindex)
-            synIdx[cellindex] = synidx
+            synIdx[cellindex] = self.get_synidx(cellindex)
 
         #reset the random number generator
         np.random.set_state(randomstate)
@@ -983,7 +982,7 @@ class Population(PopulationSuper):
         Returns
         -------
         SpCells : dict
-            `output[cellindex][populationindex][layerindex]`, np.array of
+            `output[cellindex][populationname][layerindex]`, np.array of
             presynaptic cell indices.
         
         
@@ -1006,10 +1005,10 @@ class Population(PopulationSuper):
             #set the random seed on for each cellindex
             np.random.seed(self.POPULATIONSEED + cellindex + self.POPULATION_SIZE)
 
-            SpCells[cellindex] = []
+            SpCells[cellindex] = {}
             for i, X in enumerate(self.X):
-                SpCells[cellindex].append(self.fetchSpCells(
-                    self.networkSim.nodes[X], self.k_yXL[:, i]))
+                SpCells[cellindex][X] = self.fetchSpCells(
+                    self.networkSim.nodes[X], self.k_yXL[:, i])
 
         #reset the random number generator
         np.random.set_state(randomstate)
@@ -1043,7 +1042,7 @@ class Population(PopulationSuper):
         Returns
         -------
         dict
-            output[cellindex][populationindex][layerindex]`, np.array of
+            output[cellindex][populationname][layerindex]`, np.array of
             delays per connection.
         
         
@@ -1066,9 +1065,9 @@ class Population(PopulationSuper):
             #set the random seed on for each cellindex
             np.random.seed(self.POPULATIONSEED + cellindex + 2*self.POPULATION_SIZE)
 
-            delays[cellindex] = []
-            for j in range(self.k_yXL.shape[1]):
-                delays[cellindex].append([])
+            delays[cellindex] = {}
+            for j, X in enumerate(self.X):
+                delays[cellindex][X] = []
                 for i in self.k_yXL[:, j]:
                     loc = self.synDelayLoc[j]
                     loc /= self.dt
@@ -1084,7 +1083,7 @@ class Population(PopulationSuper):
                         delay *= self.dt
                     else:
                         delay = np.zeros(i) + self.synDelayLoc[j]
-                    delays[cellindex][j].append(delay)
+                    delays[cellindex][X].append(delay)
 
         #reset the random number generator
         np.random.set_state(randomstate)
@@ -1110,7 +1109,7 @@ class Population(PopulationSuper):
         
         Returns
         -------
-        synidx : list
+        synidx : dict
             `LFPy.Cell` compartment indices
         
         
@@ -1124,14 +1123,14 @@ class Population(PopulationSuper):
 
 
         #local containers
-        synidx = []
+        synidx = {}
 
         #get synaptic placements and cells from the network,
         #then set spike times,
-        for i in range(len(self.X)):
-            synidx += [self.fetchSynIdxCell(cell=cell,
-                                            nidx=self.k_yXL[:, i],
-                                            synParams=self.synParams.copy())]
+        for i, X in enumerate(self.X):
+            synidx[X] = self.fetchSynIdxCell(cell=cell,
+                                             nidx=self.k_yXL[:, i],
+                                             synParams=self.synParams.copy())
 
         return synidx
 
@@ -1167,7 +1166,7 @@ class Population(PopulationSuper):
         
         """
 
-        #segment indices in L1-L6 is stored here, list of np.array
+        #segment indices in each layer is stored here, list of np.array
         syn_idx = []
         #loop over layer bounds, find synapse locations
         for i, zz in enumerate(self.layerBoundaries):
@@ -1290,10 +1289,10 @@ class Population(PopulationSuper):
         Population.insert_synapse
         
         """
-        for X in range(self.k_yXL.shape[1]):
+        for i, X in enumerate(self.X): #range(self.k_yXL.shape[1]):
             synParams = self.synParams
             synParams.update({
-                'weight' : self.J_yX[X]
+                'weight' : self.J_yX[i]
                 })
             for j in range(len(self.synIdx[cellindex][X])):
                 if self.synDelays is not None:
@@ -1304,13 +1303,13 @@ class Population(PopulationSuper):
                                 cellindex = cellindex,
                                 synParams = synParams,
                                 idx = self.synIdx[cellindex][X][j],
+                                X=X,
                                 SpCell = self.SpCells[cellindex][X][j],
                                 synDelays = synDelays)
 
 
     def insert_synapses(self, cell, cellindex, synParams, idx = np.array([]),
-                        SpCell = np.array([]),
-                        #SpTimes=':memory:',
+                        X='EX', SpCell = np.array([]),
                         synDelays = None):
         """
         Insert synapse with `parameters`=`synparams` on cell=cell, with
@@ -1328,6 +1327,8 @@ class Population(PopulationSuper):
             Parameters passed to `LFPy.Synapse`.
         idx : numpy.ndarray
             Postsynaptic compartment indices.
+        X : str
+            presynaptic population name
         SpCell : numpy.ndarray
             Presynaptic spiking cells.
         synDelays : numpy.ndarray
@@ -1345,8 +1346,11 @@ class Population(PopulationSuper):
         
         """
         #Insert synapses in an iterative fashion
-        if hasattr(self.networkSim, 'db'):
-            spikes = self.networkSim.db.select(SpCell[:idx.size])
+        try:
+            spikes = self.networkSim.dbs[X].select(SpCell[:idx.size])
+        except AttributeError:
+            raise Exception, 'could not open CachedNetwork database objects'
+    
 
         #apply synaptic delays
         if synDelays is not None and idx.size > 0:

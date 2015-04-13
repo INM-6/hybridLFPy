@@ -320,9 +320,6 @@ networkSim = CachedNetwork(
 toc = time() - tic
 print('NEST simulation and gdf file processing done in  %.3f seconds' % toc)
 
-networkSim.raster_plots()
-
-raise Exception
 
 ####### Set up populations #####################################################
 
@@ -356,13 +353,15 @@ if properrun:
         pop.run()
         pop.collect_data()
     
-        ##object no longer needed
-        #del pop
+        #object no longer needed
+        del pop
 
 
 
-#done with in memory spike output database
-networkSim.db.close()
+#close in memory spike output databases
+for db in networkSim.dbs.values():
+    db.close()
+
 
 ####### Postprocess the simulation output ######################################
 
