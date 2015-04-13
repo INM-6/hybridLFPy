@@ -1305,13 +1305,14 @@ class Population(PopulationSuper):
                                 synParams = synParams,
                                 idx = self.synIdx[cellindex][X][j],
                                 SpCell = self.SpCells[cellindex][X][j],
-                                SpTimes = os.path.join(self.savefolder,
-                                               self.networkSim.dbname),
+                                #SpTimes = os.path.join(self.savefolder,
+                                #               self.networkSim.dbname),
                                 synDelays = synDelays)
 
 
     def insert_synapses(self, cell, cellindex, synParams, idx = np.array([]),
-                        SpCell = np.array([]), SpTimes=':memory:',
+                        SpCell = np.array([]),
+                        #SpTimes=':memory:',
                         synDelays = None):
         """
         Insert synapse with `parameters`=`synparams` on cell=cell, with
@@ -1331,8 +1332,8 @@ class Population(PopulationSuper):
             Postsynaptic compartment indices.
         SpCell : numpy.ndarray
             Presynaptic spiking cells.
-        SpTimes : str
-            ':memory:' or path to on-disk spike time database.
+        #SpTimes : str
+        #    ':memory:' or path to on-disk spike time database.
         synDelays : numpy.ndarray
             Per connection specific delays.
             
@@ -1350,10 +1351,10 @@ class Population(PopulationSuper):
         #Insert synapses in an iterative fashion
         if hasattr(self.networkSim, 'db'):
             spikes = self.networkSim.db.select(SpCell[:idx.size])
-        else:
-            db = GDF(SpTimes, new_db=False)
-            spikes = db.select(SpCell[:idx.size])
-            db.close()
+        #else:
+        #    db = GDF(SpTimes, new_db=False)
+        #    spikes = db.select(SpCell[:idx.size])
+        #    db.close()
 
         #apply synaptic delays
         if synDelays is not None and idx.size > 0:

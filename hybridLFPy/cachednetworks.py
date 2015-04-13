@@ -67,8 +67,6 @@ class CachedNetwork(object):
         Prefix of spiking gdf-files.
     ext : str
         File extension of gdf-files.
-    dbname : str
-        `:memory:` or filename of new sqlite3 database.
     N_X :  np.ndarray
         The number of neurons in each population.
     X : list
@@ -95,7 +93,6 @@ class CachedNetwork(object):
                  spike_output_path='spike_output_path',
                  label = 'spikes',
                  ext = 'gdf',
-                 dbname = ':memory:',
                  N_X=np.array([400, 100]),
                  X=['EX', 'IN'],
                  autocollect=True,
@@ -118,8 +115,6 @@ class CachedNetwork(object):
             Prefix of spiking gdf-files.
         ext : str
             File extension of gdf-files.
-        dbname : str
-            `:memory:` or filename of new sqlite3 database.
         N_X :  list
             The number of neurons in each population.
         X : list
@@ -146,7 +141,7 @@ class CachedNetwork(object):
         self.spike_output_path = spike_output_path
         self.label = label
         self.ext = ext
-        self.dbname = dbname
+        self.dbname = ':memory:'
         self.N_X = np.array(N_X, dtype=int)
         self.X = X
         self.autocollect = autocollect
