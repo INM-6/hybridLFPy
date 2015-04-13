@@ -320,7 +320,9 @@ networkSim = CachedNetwork(
 toc = time() - tic
 print('NEST simulation and gdf file processing done in  %.3f seconds' % toc)
 
-#raise Exception
+networkSim.raster_plots()
+
+raise Exception
 
 ####### Set up populations #####################################################
 

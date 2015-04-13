@@ -196,22 +196,43 @@ class CachedNetwork(object):
                                       self.label + '*.'+ self.ext))) == 0:
             raise Exception('path to files contain no gdf-files!')
 
-        # If creating in memory db, do across ranks
-        if self.dbname == ':memory:':
-            self.db = GDF(os.path.join(self.dbname),
+        #create in-memory databases of spikes
+        if not hasattr(self, 'dbs'):
+            self.dbs = {}
+        
+        for X in self.X:
+            db = GDF(os.path.join(self.dbname),
                      debug=True, new_db=True)
-            self.db.create(re=os.path.join(self.spike_output_path,
-                                           self.label + '*.'+ self.ext),
+            db.create(re=os.path.join(self.spike_output_path,
+                                      '{0}*{1}*{2}'.format(self.label, X,
+                                                           self.ext)),
                       index=True)
-        else:
-            if RANK == 0:
-                # Put results in db
-                db = GDF(os.path.join(self.spike_output_path, self.dbname),
-                         debug=True, new_db=True)
-                db.create(re=os.path.join(self.spike_output_path,
-                                          self.label + '*.'+ self.ext),
-                          index=True)
-                db.close()
+            self.dbs.update({
+                    X : db
+                })
+      
+        ## old, to be removed
+        #self.db = GDF(os.path.join(self.dbname),
+        #         debug=True, new_db=True)
+        #self.db.create(re=os.path.join(self.spike_output_path,
+        #                               self.label + '*.'+ self.ext),
+        #          index=True)
+        ## If creating in memory db, do across ranks
+        #if self.dbname == ':memory:':
+        #    self.db = GDF(os.path.join(self.dbname),
+        #             debug=True, new_db=True)
+        #    self.db.create(re=os.path.join(self.spike_output_path,
+        #                                   self.label + '*.'+ self.ext),
+        #              index=True)
+        #else:
+        #    if RANK == 0:
+        #        # Put results in db
+        #        db = GDF(os.path.join(self.spike_output_path, self.dbname),
+        #                 debug=True, new_db=True)
+        #        db.create(re=os.path.join(self.spike_output_path,
+        #                                  self.label + '*.'+ self.ext),
+        #                  index=True)
+        #        db.close()
 
         COMM.Barrier()
 
@@ -237,37 +258,37 @@ class CachedNetwork(object):
             Where in `y` key-value entries are population name and neuron gid number.
 
         """
-        if hasattr(self, 'db'):
-            db = self.db
-        else:
-            db = GDF(os.path.join(self.spike_output_path, self.dbname),
-                     new_db=False)
+        #if hasattr(self, 'db'):
+        #    db = self.db
+        #else:
+        #    db = GDF(os.path.join(self.spike_output_path, self.dbname),
+        #             new_db=False)
         x = {}
         y = {}
 
-        for layer, nodes in self.nodes.items():
-            x[layer] = np.array([])
-            y[layer] = np.array([])
+        for X, nodes in self.nodes.items():
+            x[X] = np.array([])
+            y[X] = np.array([])
 
             if fraction != 1:
                 nodes = np.random.permutation(nodes)[:int(nodes.size*fraction)]
                 nodes.sort()
 
-            spiketimes = db.select_neurons_interval(nodes, T=xlim)
+            spiketimes = self.dbs[X].select_neurons_interval(nodes, T=xlim)
             i = 0
             for times in spiketimes:
-                x[layer] = np.r_[x[layer], times]
-                y[layer] = np.r_[y[layer], np.zeros(times.size) + nodes[i]]
+                x[X] = np.r_[x[X], times]
+                y[X] = np.r_[y[X], np.zeros(times.size) + nodes[i]]
                 i += 1
         
-        if not hasattr(self, 'db'):
-            db.close()
+        #if not hasattr(self, 'db'):
+        #    db.close()
         
         return x, y
 
 
     def plot_raster(self, ax, xlim, x, y, pop_names=False,
-                    markersize=1., alpha=1., legend=True, ):
+                    markersize=20., alpha=1., legend=True, ):
         """
         Plot network raster plot in subplot object.
         
@@ -298,14 +319,14 @@ class CachedNetwork(object):
         
         """
         for i, X in enumerate(self.X):
-            ax.plot(x[X], y[X], '.',
+            ax.plot(x[X], y[X], 'o',
                 markersize=markersize,
                 markerfacecolor=self.colors[i],
                 markeredgecolor=self.colors[i],
                 alpha=alpha,
                 label=X, rasterized=True,
                 clip_on=True)
-
+        
         ax.axis([xlim[0], xlim[1], 0, self.N_X.sum()])
         ax.set_ylim(ax.get_ylim()[::-1])
         ax.set_ylabel('cell id', labelpad=0)
