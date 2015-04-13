@@ -155,14 +155,14 @@ if __name__ == '__main__':
     ispikes=nest.Create("spike_detector")
 
     nest.SetStatus(espikes,[{
-                       "label": os.path.join(spike_output_path, label + "-ex"),
+                       "label": os.path.join(spike_output_path, label + "-EX"),
                        "withtime": True,
                        "withgid": True,
                        "to_file": True,
                        }])
 
     nest.SetStatus(ispikes,[{
-                       "label": os.path.join(spike_output_path, label + "-in"),
+                       "label": os.path.join(spike_output_path, label + "-IN"),
                        "withtime": True,
                        "withgid": True,
                        "to_file": True,}])
