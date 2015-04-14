@@ -20,7 +20,6 @@ from time import time
 COMM = MPI.COMM_WORLD
 SIZE = COMM.Get_size()
 RANK = COMM.Get_rank()
-MASTER_MODE = COMM.rank == 0
 
 
 ############ class objects #####################################################
@@ -395,7 +394,7 @@ class PopulationSuper(object):
         PopulationSuper.draw_rand_pos
         
         """
-        if MASTER_MODE:
+        if RANK == 0:
             pop_soma_pos = self.draw_rand_pos(
                 min_r = self.electrodeParams['r_z'],
                 **self.populationParams)
@@ -427,7 +426,7 @@ class PopulationSuper(object):
 
         """
 
-        if MASTER_MODE:
+        if RANK == 0:
             rotations = []
             for i in range(self.POPULATION_SIZE):
                 defaultrot = {}
@@ -709,7 +708,7 @@ class PopulationSuper(object):
         if self.calculateCSD:
             csd = self.calc_signal_sum(measure='CSD')
    
-        if MASTER_MODE and self.POPULATION_SIZE > 0:
+        if RANK == 0 and self.POPULATION_SIZE > 0:
             #saving
             f = h5py.File(os.path.join(self.populations_path,
                           '%s_population_LFP.h5' % self.y), 'w')
@@ -884,7 +883,7 @@ class Population(PopulationSuper):
         #Now loop over all cells in the population and assess
         # - number of synapses in each z-interval (from layerbounds)
         # - placement of synapses in each z-interval
-        if MASTER_MODE:
+        if RANK == 0:
             print('find synapse locations: ')
 
         #get in this order, the
