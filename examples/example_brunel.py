@@ -376,6 +376,7 @@ if properrun:
                            dt_output = PS.dt_output,
                            savefolder = PS.savefolder,
                            mapping_Yy = PS.mapping_Yy,
+                           savelist = PS.savelist
                            )
     
     #run through the procedure

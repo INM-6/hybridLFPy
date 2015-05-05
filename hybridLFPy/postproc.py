@@ -41,6 +41,7 @@ class PostProcess(object):
                  dt_output = 1.,
                  mapping_Yy = [('EX', 'EX'),
                                ('IN', 'IN')],
+                 savelist=['somav', 'somapos', 'x', 'y', 'z', 'LFP', 'CSD'],
                  savefolder = 'simulation_output_example_brunel',
                  cells_subfolder = 'cells',
                  populations_subfolder = 'populations',
@@ -57,10 +58,13 @@ class PostProcess(object):
             List of postsynaptic cell-type or population-names.
         dt_output : float
             Time resolution of output data.
+        mapping_Yy : list
+            List of tuples, each tuple pairing population with cell type,
+            e.g., [('L4E', 'p4'), ('L4E', 'ss4')].
+        savelist : list
+            List of strings, each corresponding to LFPy.Cell attributes
         savefolder : str
             Path to main output folder.
-        mapping_Yy : list
-            List of tuples, each tuple pairing population with cell type, e.g., [('L4E', 'p4'), ('L4E', 'ss4')].
         cells_subfolder : str
             Folder under `savefolder` containing cell output.
         populations_subfolder : str
@@ -73,6 +77,7 @@ class PostProcess(object):
         self.y = y
         self.dt_output = dt_output
         self.mapping_Yy = mapping_Yy
+        self.savelist = savelist
         self.savefolder = savefolder
         self.cells_path = os.path.join(savefolder, cells_subfolder)
         self.populations_path = os.path.join(savefolder, populations_subfolder)
@@ -90,45 +95,47 @@ class PostProcess(object):
         cell-specific output files.
         """
         if RANK == 0:
-            #get the per population LFPs and total LFP from all populations:
-            self.LFPdict, self.LFPsum = self.calc_lfp()
-            self.LFPdictLayer = self.calc_lfp_layer()
-
-            #save global LFP sum, and from L23E, L4I etc.:
-            if not os.path.isfile(os.path.join(self.savefolder, 'LFPsum.h5')):
-                f = h5py.File(os.path.join(self.savefolder, 'LFPsum.h5'))
-                f['srate'] = 1E3 / self.dt_output
-                f.create_dataset('data', data=self.LFPsum, compression=4)
-                f.close()
-
-            for key, value in list(self.LFPdictLayer.items()):
-                if not os.path.isfile(os.path.join(self.populations_path,
-                                                '%s_population_LFP.h5' % key)):
-                    f = h5py.File(os.path.join(self.populations_path,
-                                               '%s_population_LFP.h5' % key))
+            if 'LFP' in self.savelist:
+                #get the per population LFPs and total LFP from all populations:
+                self.LFPdict, self.LFPsum = self.calc_lfp()
+                self.LFPdictLayer = self.calc_lfp_layer()
+    
+                #save global LFP sum, and from L23E, L4I etc.:
+                if not os.path.isfile(os.path.join(self.savefolder, 'LFPsum.h5')):
+                    f = h5py.File(os.path.join(self.savefolder, 'LFPsum.h5'))
                     f['srate'] = 1E3 / self.dt_output
-                    f.create_dataset('data', data=value, compression=4)
+                    f.create_dataset('data', data=self.LFPsum, compression=4)
                     f.close()
+    
+                for key, value in list(self.LFPdictLayer.items()):
+                    if not os.path.isfile(os.path.join(self.populations_path,
+                                                    '%s_population_LFP.h5' % key)):
+                        f = h5py.File(os.path.join(self.populations_path,
+                                                   '%s_population_LFP.h5' % key))
+                        f['srate'] = 1E3 / self.dt_output
+                        f.create_dataset('data', data=value, compression=4)
+                        f.close()
 
-            #get the per population LFPs and total LFP from all populations:
-            self.CSDdict, self.CSDsum = self.calc_csd()
-            self.CSDdictLayer = self.calc_csd_layer()
-
-            #save global CSD sum, and from L23E, L4I etc.:
-            if not os.path.isfile(os.path.join(self.savefolder, 'CSDsum.h5')):
-                f = h5py.File(os.path.join(self.savefolder, 'CSDsum.h5'))
-                f['srate'] = 1E3 / self.dt_output
-                f.create_dataset('data', data=self.CSDsum, compression=4)
-                f.close()
-
-            for key, value in list(self.CSDdictLayer.items()):
-                if not os.path.isfile(os.path.join(self.populations_path,
-                                            '%s_population_CSD.h5' % key)):
-                    f = h5py.File(os.path.join(self.populations_path,
-                                            '%s_population_CSD.h5' % key))
+            if 'CSD' in self.savelist:
+                #get the per population CSDs and total CSD from all populations:
+                self.CSDdict, self.CSDsum = self.calc_csd()
+                self.CSDdictLayer = self.calc_csd_layer()
+    
+                #save global CSD sum, and from L23E, L4I etc.:
+                if not os.path.isfile(os.path.join(self.savefolder, 'CSDsum.h5')):
+                    f = h5py.File(os.path.join(self.savefolder, 'CSDsum.h5'))
                     f['srate'] = 1E3 / self.dt_output
-                    f.create_dataset('data', data=value, compression=4)
+                    f.create_dataset('data', data=self.CSDsum, compression=4)
                     f.close()
+    
+                for key, value in list(self.CSDdictLayer.items()):
+                    if not os.path.isfile(os.path.join(self.populations_path,
+                                                '%s_population_CSD.h5' % key)):
+                        f = h5py.File(os.path.join(self.populations_path,
+                                                '%s_population_CSD.h5' % key))
+                        f['srate'] = 1E3 / self.dt_output
+                        f.create_dataset('data', data=value, compression=4)
+                        f.close()
 
         else:
             pass

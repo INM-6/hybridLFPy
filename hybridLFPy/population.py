@@ -701,7 +701,8 @@ class PopulationSuper(object):
         """
         #collect some measurements resolved per file and save to file 
         for measure in ['LFP', 'CSD']:
-            self.collectSingleContribs(measure)
+            if measure in self.savelist:
+                self.collectSingleContribs(measure)
         
         #calculate lfp from all cell contribs
         lfp = self.calc_signal_sum(measure='LFP')
@@ -712,22 +713,23 @@ class PopulationSuper(object):
    
         if RANK == 0 and self.POPULATION_SIZE > 0:
             #saving
-            f = h5py.File(os.path.join(self.populations_path,
-                          '%s_population_LFP.h5' % self.y), 'w')
-            f['srate'] = 1E3 / self.dt_output
-            f.create_dataset('data', data=lfp, compression=4)
-            f.close()
-            del lfp
-            print('save lfp ok')
+            if 'LFP' in self.savelist:
+                f = h5py.File(os.path.join(self.populations_path,
+                              '%s_population_LFP.h5' % self.y), 'w')
+                f['srate'] = 1E3 / self.dt_output
+                f.create_dataset('data', data=lfp, compression=4)
+                f.close()
+                del lfp
+                print('save lfp ok')
 
-
-            f = h5py.File(os.path.join(self.populations_path,
-                          '%s_population_CSD.h5' % self.y), 'w')
-            f['srate'] = 1E3 / self.dt_output
-            f.create_dataset('data', data=csd, compression=4)
-            f.close()
-            del csd
-            print('save CSD ok')
+            if 'CSD' in self.savelist:
+                f = h5py.File(os.path.join(self.populations_path,
+                              '%s_population_CSD.h5' % self.y), 'w')
+                f['srate'] = 1E3 / self.dt_output
+                f.create_dataset('data', data=csd, compression=4)
+                f.close()
+                del csd
+                print('save CSD ok')
             
 
             #save the somatic placements:
