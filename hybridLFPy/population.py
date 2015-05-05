@@ -340,13 +340,15 @@ class PopulationSuper(object):
                                 self.populationParams['radius'], electrode.z)
                 csdcoeff *= 1E6 #nA mum^-3 -> muA mm^-3 conversion
                 del cell.tvec, cell.imem
+                cell.simulate(electrode, dotprodcoeffs=[csdcoeff],
+                              **self.simulationParams)
+                cell.CSD = helpers.decimate(cell.dotprodresults[0],
+                                            q=self.decimatefrac)
+            else:
+                cell.simulate(electrode,
+                              **self.simulationParams)
 
-
-            cell.simulate(electrode, dotprodcoeffs=[csdcoeff],
-                          **self.simulationParams)
             cell.LFP = helpers.decimate(electrode.LFP,
-                                        q=self.decimatefrac)
-            cell.CSD = helpers.decimate(cell.dotprodresults[0],
                                         q=self.decimatefrac)
 
            
@@ -1232,13 +1234,15 @@ class Population(PopulationSuper):
                                 self.populationParams['radius'], electrode.z)
                 csdcoeff *= 1E6 #nA mum^-3 -> muA mm^-3 conversion
                 del cell.tvec, cell.imem
+                cell.simulate(electrode, dotprodcoeffs=[csdcoeff],
+                              **self.simulationParams)
+                cell.CSD = helpers.decimate(cell.dotprodresults[0],
+                                            q=self.decimatefrac)
+            else:
+                cell.simulate(electrode,
+                              **self.simulationParams)
 
-        
-            cell.simulate(electrode, dotprodcoeffs=[csdcoeff],
-                          **self.simulationParams)
             cell.LFP = helpers.decimate(electrode.LFP,
-                                        q=self.decimatefrac)
-            cell.CSD = helpers.decimate(cell.dotprodresults[0],
                                         q=self.decimatefrac)
 
          
