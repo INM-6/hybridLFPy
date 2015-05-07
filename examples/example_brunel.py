@@ -312,8 +312,7 @@ networkSim = CachedNetwork(
     spike_output_path = BN.spike_output_path,
     label = BN.label,
     ext = 'gdf',
-    N_X = [BN.NE, BN.NI],
-    X = PS.X,
+    GIDs = {'EX' : [1, BN.NE], 'IN' : [BN.NE+1, BN.NI]},
 )
 
 
@@ -758,8 +757,7 @@ networkSim = CachedNetwork(
     spike_output_path = BN.spike_output_path,
     label = BN.label,
     ext = 'gdf',
-    N_X = np.array([BN.NE, BN.NI]),
-    X = PS.X,
+    GIDs = {'EX' : [1, BN.NE], 'IN' : [BN.NE+1, BN.NI]},
     cmap='rainbow_r'
 )
 

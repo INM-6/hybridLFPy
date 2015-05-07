@@ -93,8 +93,7 @@ class CachedNetwork(object):
                  spike_output_path='spike_output_path',
                  label = 'spikes',
                  ext = 'gdf',
-                 N_X=np.array([400, 100]),
-                 X=['EX', 'IN'],
+                 GIDs={'EX' : [1, 400], 'EX' : [401, 100]},
                  autocollect=True,
                  cmap='rainbow',
                  ):
@@ -115,10 +114,9 @@ class CachedNetwork(object):
             Prefix of spiking gdf-files.
         ext : str
             File extension of gdf-files.
-        N_X :  list
-            The number of neurons in each population.
-        X : list
-            Names of each population.
+        GIDs : dict
+            dictionary keys are population names and item a list with first
+            GID in population and population size            
         autocollect : bool
             If True, class init will process gdf files.
         cmap : str
@@ -142,18 +140,18 @@ class CachedNetwork(object):
         self.label = label
         self.ext = ext
         self.dbname = ':memory:'
-        self.N_X = np.array(N_X, dtype=int)
-        self.X = X
+        self.GIDs = GIDs
+        self.X = GIDs.keys()
+        self.X.sort()
         self.autocollect = autocollect
 
         # Create a dictionary of nodes with proper layernames
         self.nodes = {}
-        for i, N in enumerate(self.N_X):
-            if i == 0:
-                self.nodes[self.X[i]] = np.arange(N) + 1
-            else:
-                self.nodes[self.X[i]] = np.arange(N) + \
-                                            self.N_X.cumsum()[i-1] + 1
+        for X in self.X:
+            self.nodes[X] = np.arange(self.GIDs[X][1]) + self.GIDs[X][0]
+
+        #list population sizes
+        self.N_X = np.array([self.GIDs[X][1] for X in self.X])
 
         if self.autocollect:
             #collect the gdf files
