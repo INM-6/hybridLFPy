@@ -375,7 +375,10 @@ if properrun:
                            dt_output = PS.dt_output,
                            savefolder = PS.savefolder,
                            mapping_Yy = PS.mapping_Yy,
-                           savelist = PS.savelist
+                           savelist = PS.savelist,
+                           cells_subfolder = PS.cells_path,
+                           populations_subfolder = PS.populations_path,
+                           figures_subfolder = PS.figures_path
                            )
     
     #run through the procedure

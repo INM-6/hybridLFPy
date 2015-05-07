@@ -286,6 +286,8 @@ def setup_file_dest(params, clearDestination=True):
                   'cellsim16pops.py',
                   'example_brunel.py',
                   'brunel_alpha_nest.py',
+                  'mesocircuit.sli',
+                  'mesocircuit_LFP_model.py',
                   'binzegger_connectivity_table.json', 
                   'nest_simulation.py',
                   'microcircuit.sli']:
