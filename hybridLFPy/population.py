@@ -900,7 +900,8 @@ class Population(PopulationSuper):
         
         COMM.Barrier()
         
-        print("population initialized in %.2f seconds" % (time()-tic))
+        if RANK == 0:
+            print("population initialized in %.2f seconds" % (time()-tic))
 
 
     def get_all_synIdx(self):

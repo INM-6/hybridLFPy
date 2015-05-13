@@ -316,8 +316,9 @@ networkSim = CachedNetwork(
 )
 
 
-toc = time() - tic
-print('NEST simulation and gdf file processing done in  %.3f seconds' % toc)
+if RANK == 0:
+    toc = time() - tic
+    print('NEST simulation and gdf file processing done in  %.3f seconds' % toc)
 
 
 ####### Set up populations #####################################################
