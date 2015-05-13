@@ -121,13 +121,13 @@ spike_output_path = os.path.join('simulation_output_example_brunel',
 #file prefix for spike detectors
 label = 'brunel-py'
 
-
-if __name__ == '__main__':
+def run():
+    '''instantiate and execute network simulation'''
     #separate model execution from parameters for safer import from other files
     nest.ResetKernel()
 
-    nest.SetKernelStatus({"resolution": dt, "print_time": True,
-                          'local_num_threads': 1, "overwrite_files": True,})
+    nest.SetKernelStatus({"resolution" : dt, "print_time" : True,
+                          "overwrite_files" : True,})
 
     print("Building network")
 
@@ -231,3 +231,6 @@ if __name__ == '__main__':
         nest.raster_plot.from_device(espikes, hist=True)
         nest.raster_plot.from_device(ispikes, hist=True)
         nest.raster_plot.show()
+
+if __name__ == '__main__':
+    run()

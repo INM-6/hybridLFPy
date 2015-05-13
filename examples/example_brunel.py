@@ -46,6 +46,7 @@ import matplotlib.pyplot as plt
 from matplotlib import gridspec
 from matplotlib.collections import PolyCollection
 from time import time
+import nest #not used, but load order determine if network is run in parallel
 from hybridLFPy import PostProcess, Population, CachedNetwork, setup_file_dest
 from NeuroTools.parameters import ParameterSet
 import h5py
@@ -296,9 +297,9 @@ if properrun:
     setup_file_dest(PS, clearDestination=True)
 
 if properrun:
-    if RANK == 0:
-        os.system("python brunel_alpha_nest.py")
-    
+    #execute network simulation
+    BN.run()
+
 #wait for the network simulation to finish, resync MPI threads
 COMM.Barrier()
 
