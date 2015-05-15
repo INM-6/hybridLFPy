@@ -51,7 +51,7 @@ from hybridLFPy import PostProcess, Population, CachedNetwork, setup_file_dest
 from NeuroTools.parameters import ParameterSet
 import h5py
 import LFPy
-nrn = LFPy.cell.neuron
+import neuron
 from mpi4py import MPI
 
 ########## matplotlib settings #################################################
@@ -76,11 +76,11 @@ properrun = True
 
 
 #check if mod file for synapse model specified in alphaisyn.mod is loaded
-if not hasattr(nrn.h, 'AlphaISyn'):
+if not hasattr(neuron.h, 'AlphaISyn'):
     if RANK == 0:
         os.system('nrnivmodl')
     COMM.Barrier()
-    nrn.load_mechanisms('.')
+    neuron.load_mechanisms('.')
 
 
 ################################################################################
@@ -378,9 +378,9 @@ if properrun:
                            savefolder = PS.savefolder,
                            mapping_Yy = PS.mapping_Yy,
                            savelist = PS.savelist,
-                           cells_subfolder = PS.cells_path,
-                           populations_subfolder = PS.populations_path,
-                           figures_subfolder = PS.figures_path
+                           cells_subfolder = os.path.split(PS.cells_path)[-1],
+                           populations_subfolder = os.path.split(PS.populations_path)[-1],
+                           figures_subfolder = os.path.split(PS.figures_path)[-1]
                            )
     
     #run through the procedure

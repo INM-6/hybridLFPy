@@ -79,9 +79,9 @@ class PostProcess(object):
         self.mapping_Yy = mapping_Yy
         self.savelist = savelist
         self.savefolder = savefolder
-        self.cells_path = cells_subfolder
-        self.populations_path = populations_subfolder
-        self.figures_path = populations_subfolder
+        self.cells_path = os.path.join(savefolder, cells_subfolder)
+        self.populations_path = os.path.join(savefolder, populations_subfolder)
+        self.figures_path = os.path.join(savefolder, figures_subfolder)
         
         #set up subfolders
         if RANK == 0:

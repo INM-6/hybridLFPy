@@ -244,7 +244,7 @@ def setup_file_dest(params, clearDestination=True):
     None
     
     """
-    if COMM.Get_rank() == 0:
+    if RANK == 0:
         if not os.path.isdir(params.savefolder):
             os.mkdir(params.savefolder)
         else:
