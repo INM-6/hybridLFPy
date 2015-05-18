@@ -591,8 +591,9 @@ class PopulationSuper(object):
                     data += self.output[cellindex][measure]
         else:
             data = np.zeros((len(self.electrodeParams['x']),
-                             self.cellParams['tstopms']*self.dt_output + 1),
+                             self.cellParams['tstopms']/self.dt_output + 1),
                 dtype=np.float32)
+        
         #container for full LFP on RANK 0
         if RANK == 0:
             DATA = np.zeros_like(data, dtype=np.float32)
@@ -601,7 +602,6 @@ class PopulationSuper(object):
                 
         #sum to RANK 0 using automatic type discovery with MPI
         COMM.Reduce(data, DATA, op=MPI.SUM, root=0)
-        
         
         return DATA
 
@@ -629,15 +629,16 @@ class PopulationSuper(object):
             RANK_CELLINDICES = [self.RANK_CELLINDICES]
             for i in range(1, SIZE):
                 RANK_CELLINDICES.append(self.CELLINDICES[self.CELLINDICES % SIZE
-                                                 == i])    
-          
+                                                 == i])
+
         #gather data on this RANK
-        for i, cellindex in enumerate(self.RANK_CELLINDICES):
-            if i == 0:
-                data_temp = np.zeros([self.RANK_CELLINDICES.size] +
-                                    list(self.output[cellindex][measure].shape),
-                                    dtype=np.float32)
-            data_temp[i, ] = self.output[cellindex][measure]
+        if self.RANK_CELLINDICES.size > 0:
+            for i, cellindex in enumerate(self.RANK_CELLINDICES):
+                if i == 0:
+                    data_temp = np.zeros([self.RANK_CELLINDICES.size] +
+                                        list(self.output[cellindex][measure].shape),
+                                        dtype=np.float32)
+                data_temp[i, ] = self.output[cellindex][measure]
         
         if RANK == 0:
             #container of all output
@@ -646,11 +647,12 @@ class PopulationSuper(object):
                              dtype=np.float32)
             
             #fill in values from this RANK
-            for j, k in enumerate(self.RANK_CELLINDICES):
-                data[k, ] = data_temp[j, ]
+            if self.RANK_CELLINDICES.size > 0:
+                for j, k in enumerate(self.RANK_CELLINDICES):
+                    data[k, ] = data_temp[j, ]
             
             #iterate over all other RANKs
-            for i in range(1, SIZE):
+            for i in range(1, len(RANK_CELLINDICES)):
                 if RANK_CELLINDICES[i].size > 0:
                     #receive on RANK 0 from all other RANK
                     data_temp = np.zeros([RANK_CELLINDICES[i].size] +
@@ -666,7 +668,7 @@ class PopulationSuper(object):
             data = None
             if self.RANK_CELLINDICES.size > 0:
                 #send to RANK 0
-                COMM.Send([data_temp, MPI.FLOAT], dest=0, tag=13)        
+                COMM.Send([data_temp, MPI.FLOAT], dest=0, tag=13)
 
         if RANK == 0:
             #save all single-cell data to file
@@ -706,6 +708,7 @@ class PopulationSuper(object):
             if measure in self.savelist:
                 self.collectSingleContribs(measure)
         
+        
         #calculate lfp from all cell contribs
         lfp = self.calc_signal_sum(measure='LFP')
         
@@ -738,9 +741,7 @@ class PopulationSuper(object):
                 del csd
                 assert(os.path.isfile(fname))
                 print('save CSD ok')
-                
 
-            
 
             #save the somatic placements:
             pop_soma_pos = np.zeros((self.POPULATION_SIZE, 3))
