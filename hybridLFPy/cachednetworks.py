@@ -510,17 +510,13 @@ class CachedFixedSpikesNetwork(CachedNetwork):
         if RANK == 0:
             for i, N in enumerate(self.N_X):
                 nodes = self.nodes[self.X[i]]
-                val = list(zip(nodes, [self.activationtimes[i]
+                cell_spt = list(zip(nodes, [self.activationtimes[i]
                                   for x in range(nodes.size)]))
-                val = np.array(val, dtype=[('a', int), ('b', float)])
-                if i == 0:
-                    cell_spt = val
-                else:
-                    cell_spt = np.r_[cell_spt, val]
+                cell_spt = np.array(cell_spt, dtype=[('a', int), ('b', float)])
 
-            np.savetxt(os.path.join(self.spike_output_path,
-                                    'population_spikes.gdf'),
-                       cell_spt, fmt=['%i', '%.1f'])
+                np.savetxt(os.path.join(self.spike_output_path,
+                                        'population_spikes_{}.gdf'.format(self.X[i])),
+                           cell_spt, fmt=['%i', '%.1f'])
 
         # Resync
         COMM.barrier()
