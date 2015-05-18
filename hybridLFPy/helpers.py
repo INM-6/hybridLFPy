@@ -247,14 +247,17 @@ def setup_file_dest(params, clearDestination=True):
     if RANK == 0:
         if not os.path.isdir(params.savefolder):
             os.mkdir(params.savefolder)
+            assert(os.path.isdir(params.savefolder))
         else:
             if clearDestination:
                 print('removing folder tree %s' % params.savefolder)
-                try:
-                    os.system('find %s -delete' % params.savefolder)
-                except:
-                    shutil.rmtree(params.savefolder)
+                while os.path.isdir(params.savefolder):
+                    try:
+                        os.system('find %s -delete' % params.savefolder)
+                    except:
+                        shutil.rmtree(params.savefolder)
                 os.mkdir(params.savefolder)
+                assert(os.path.isdir(params.savefolder))
         
         if not os.path.isdir(params.sim_scripts_path):
             print('creating %s' % params.sim_scripts_path)
@@ -267,6 +270,7 @@ def setup_file_dest(params, clearDestination=True):
         if not os.path.isdir(params.figures_path):
             print('creating %s' % params.figures_path)
             os.mkdir(params.figures_path)
+        
         if not os.path.isdir(params.populations_path):
             print('creating %s' % params.populations_path)
             os.mkdir(params.populations_path)
