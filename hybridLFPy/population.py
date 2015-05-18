@@ -670,11 +670,13 @@ class PopulationSuper(object):
 
         if RANK == 0:
             #save all single-cell data to file
-            f = h5py.File(os.path.join(self.populations_path,
-                                        '%s_%ss.h5' % (self.y, measure)))
+            fname = os.path.join(self.populations_path,
+                                 '%s_%ss.h5' % (self.y, measure))
+            f = h5py.File(fname, 'w')
             f.create_dataset('data', data=data, compression=4)
             f['srate'] = self.output[0]['srate']
             f.close()
+            assert(os.path.isfile(fname))
             
             print('file %s_%ss.h5 ok' % (self.y, measure))
 
