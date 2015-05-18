@@ -712,24 +712,32 @@ class PopulationSuper(object):
             csd = self.calc_signal_sum(measure='CSD')
    
         if RANK == 0 and self.POPULATION_SIZE > 0:
-            #saving
+            #saving LFPs
             if 'LFP' in self.savelist:
-                f = h5py.File(os.path.join(self.populations_path,
-                              '%s_population_LFP.h5' % self.y), 'w')
+                fname = os.path.join(self.populations_path,
+                                     '{}_population_LFP.h5'.format(self.y))
+                f = h5py.File(fname, 'w')
                 f['srate'] = 1E3 / self.dt_output
                 f.create_dataset('data', data=lfp, compression=4)
                 f.close()
                 del lfp
+                assert(os.path.isfile(fname))
                 print('save lfp ok')
+                
 
-            if 'CSD' in self.savelist:
-                f = h5py.File(os.path.join(self.populations_path,
-                              '%s_population_CSD.h5' % self.y), 'w')
+            #saving CSDs
+            if 'CSD' in self.savelist and self.calculateCSD:
+                fname = os.path.join(self.populations_path,
+                                     '{}_population_CSD.h5'.format(self.y))
+                f = h5py.File(fname, 'w')
                 f['srate'] = 1E3 / self.dt_output
                 f.create_dataset('data', data=csd, compression=4)
                 f.close()
                 del csd
+                assert(os.path.isfile(fname))
                 print('save CSD ok')
+                
+
             
 
             #save the somatic placements:
@@ -738,11 +746,11 @@ class PopulationSuper(object):
             for i in range(self.POPULATION_SIZE):
                 for j in range(3):
                     pop_soma_pos[i, j] = self.pop_soma_pos[i][keys[j]]
-            np.savetxt(os.path.join(self.populations_path,
-                                '%s_population_somapos.gdf' % self.y),
-                       pop_soma_pos)
+            fname = os.path.join(self.populations_path,
+                                 '{}_population_somapos.gdf'.format(self.y))
+            np.savetxt(fname, pop_soma_pos)
+            assert(os.path.isfile(fname))
             print('save somapos ok')
-
 
             #save rotations using hdf5
             fname = os.path.join(self.populations_path,
@@ -756,6 +764,7 @@ class PopulationSuper(object):
                 for key, value in list(rot.items()):
                     f[key][i] = value
             f.close()
+            assert(os.path.isfile(fname))
             print('save rotations ok')
 
 
