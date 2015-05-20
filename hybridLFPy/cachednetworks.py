@@ -160,14 +160,19 @@ class CachedNetwork(object):
 
         # Specify some colors used for each population:
         if 'TC' in self.X:
-            self.colors = ['k']
+            #self.colors = ['k']
             numcolors = len(self.X)-1
         else:
-            self.colors = []
+            #self.colors = []
             numcolors = len(self.X)
             
+        self.colors = []
         for i in range(numcolors):
-            self.colors.append(plt.get_cmap(cmap, numcolors)(i))
+            self.colors += [plt.get_cmap(cmap, numcolors)(i)]
+
+        if 'TC' in self.X:
+            self.colors += ['k']
+            #self.colors.append(plt.get_cmap(cmap, numcolors)(i))
         
 
     def collect_gdf(self):
