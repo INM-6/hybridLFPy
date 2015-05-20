@@ -961,19 +961,19 @@ if RANK == 0:
     axis = ax.axis()
     
     #some additional plot annotations
-    ax.text(-275, -300, 'EX', clip_on=False, va='center', zorder=200)
+    ax.text(-275, -300, 'EX', clip_on=False, va='center', zorder=500)
     ax.add_patch(plt.Rectangle((-290, -340), fc='r', ec='k', alpha=0.5,
-        width=80, height=80, clip_on=False, zorder=200))
-    ax.arrow(-210, -300, 50, 50, head_width=10, head_length=10, fc='r',
-             lw=5, ec='k', alpha=0.5, zorder=200)
-    ax.arrow(-210, -300, 50, -50, head_width=10, head_length=10, fc='r',
-             lw=5, ec='k', alpha=0.5, zorder=200)
+        width=80, height=80, clip_on=False, zorder=500))
+    ax.arrow(-210, -300, 50, 50, head_width=20, head_length=20, width=10, fc='r',
+             lw=1, ec='w', alpha=1, zorder=500)
+    ax.arrow(-210, -300, 50, -50, head_width=20, head_length=20, width=10, fc='r',
+             lw=1, ec='w', alpha=1, zorder=500)
     
-    ax.text(-275, -400, 'IN', clip_on=False, va='center', zorder=200)
+    ax.text(-275, -400, 'IN', clip_on=False, va='center', zorder=500)
     ax.add_patch(plt.Rectangle((-290, -440), fc='b', ec='k', alpha=0.5,
-        width=80, height=80, clip_on=False, zorder=200))
-    ax.arrow(-210, -400, 50, 0, head_width=10, head_length=10, fc='b',
-             lw=5, ec='k', alpha=0.5, zorder=200)    
+        width=80, height=80, clip_on=False, zorder=500))
+    ax.arrow(-210, -400, 50, 0, head_width=20, head_length=20, width=10, fc='b',
+             lw=1, ec='w', alpha=1, zorder=500)    
     
     fig.savefig(os.path.join(PS.figures_path, 'populations_vII.pdf'), dpi=300)
 
