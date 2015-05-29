@@ -59,6 +59,9 @@ class PopulationSuper(object):
         Exctract laminar CSD from transmembrane currents
     dt_output : float
         Time resolution of output, e.g., LFP, CSD etc.
+    recordSingleContribFrac : float
+        fraction  in [0, 1] of individual neurons in population which output
+        will be stored
     POPULATIONSEED : int/float
         Random seed for population, for positions etc.
     verbose : bool
