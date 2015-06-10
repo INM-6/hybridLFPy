@@ -68,3 +68,4 @@ from .postproc import PostProcess
 from . import csd
 from . import helpers
 from .helpers import setup_file_dest
+from .testing import test

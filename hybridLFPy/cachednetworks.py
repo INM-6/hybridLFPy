@@ -67,10 +67,9 @@ class CachedNetwork(object):
         Prefix of spiking gdf-files.
     ext : str
         File extension of gdf-files.
-    N_X :  np.ndarray
-        The number of neurons in each population.
-    X : list
-        Names of each population.
+    GIDs : dict
+        dictionary keys are population names and item a list with first
+        GID in population and population size            
     autocollect : bool
         If True, class init will process gdf files.
     cmap : str
@@ -93,7 +92,7 @@ class CachedNetwork(object):
                  spike_output_path='spike_output_path',
                  label = 'spikes',
                  ext = 'gdf',
-                 GIDs={'EX' : [1, 400], 'EX' : [401, 100]},
+                 GIDs={'EX' : [1, 400], 'IN' : [401, 100]},
                  autocollect=True,
                  cmap='rainbow',
                  ):

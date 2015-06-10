@@ -22,6 +22,7 @@ setup(
     url = 'http://www.fz-juelich.de/inm/inm-6',
     packages = ['hybridLFPy'],
     provides = ['hybridLFPy'],
+    package_data = {'hybridLFPy' : [os.path.join('testing', 'testing-X-0.gdf')]},
     description = 'methods to calculate LFPs with spike events from network sim',
     long_description = long_description,
     license='LICENSE',
