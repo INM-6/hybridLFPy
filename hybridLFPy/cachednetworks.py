@@ -367,7 +367,7 @@ class CachedNetwork(object):
         elif plottype == 'bar':
             ax.bar(bins[:-1], hist * 1000. / self.N_X[i],
                     color=self.colors[i], label=X, rasterized=True,
-                    linewidth=0.5, width=0.9, clip_on=False)
+                    linewidth=0.25, width=0.9, clip_on=False)
         else:
             mssg = "plottype={} not in ['fill_between', 'bar']".format(plottype)
             raise Exception(mssg)

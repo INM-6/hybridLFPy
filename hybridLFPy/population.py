@@ -1005,9 +1005,6 @@ class Population(PopulationSuper):
                         print('\t%i' % idx.size,)
                     print('\ttotal %i' % idxcount)
 
-        #resync
-        COMM.Barrier()
-
         return synIdx
 
 
@@ -1060,9 +1057,6 @@ class Population(PopulationSuper):
 
         if RANK == 0:
             print('found presynaptic cells in %.2f seconds' % (time()-tic))
-
-        #resync
-        COMM.Barrier()
 
         return SpCells
 
