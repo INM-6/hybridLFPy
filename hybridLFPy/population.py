@@ -195,11 +195,17 @@ class PopulationSuper(object):
         self.calculateCSD = calculateCSD
         self.dt_output = dt_output
         self.recordSingleContribFrac = recordSingleContribFrac
+        
         #check that decimate fraction is actually a whole number
-        assert int(self.dt_output / self.dt) == self.dt_output / self.dt
+        try:
+            assert int(self.dt_output / self.dt) == self.dt_output / self.dt
+        except AssertionError as ae:
+            raise ae, 'dt_output not an integer multiple of dt'
+        
         self.decimatefrac = int(self.dt_output / self.dt)
         self.POPULATIONSEED = POPULATIONSEED
         self.verbose = verbose
+        
         #put revision info in savefolder
         if self.savefolder is not None:
             os.system('git rev-parse HEAD -> %s/populationRevision.txt' % \
@@ -236,7 +242,7 @@ class PopulationSuper(object):
         self.RANK_CELLINDICES = self.CELLINDICES[self.CELLINDICES % SIZE
                                                  == RANK]
 
-        #container for single-cell output generated on this rank
+        #container for single-cell output generated on this RANK
         self.output = dict((i, {}) for i in self.RANK_CELLINDICES)
 
 
@@ -261,17 +267,17 @@ class PopulationSuper(object):
             return
 
         self.cells_path = os.path.join(self.savefolder, 'cells')
-        if COMM.rank == 0:
+        if RANK == 0:
             if not os.path.isdir(self.cells_path):
                 os.mkdir(self.cells_path)
 
         self.figures_path = os.path.join(self.savefolder, 'figures')
-        if COMM.rank == 0:
+        if RANK == 0:
             if not os.path.isdir(self.figures_path):
                 os.mkdir(self.figures_path)
 
         self.populations_path = os.path.join(self.savefolder, 'populations')
-        if COMM.rank == 0:
+        if RANK == 0:
             if not os.path.isdir(self.populations_path):
                 os.mkdir(self.populations_path)
 
@@ -298,7 +304,6 @@ class PopulationSuper(object):
         for cellindex in self.RANK_CELLINDICES:
             self.cellsim(cellindex)
 
-        #resync
         COMM.Barrier()
 
 
@@ -396,7 +401,7 @@ class PopulationSuper(object):
 
         Returns
         -------
-        np.ndarray
+        numpy.ndarray
             (x,y,z) coordinates of each neuron in the population
 
 
@@ -405,12 +410,17 @@ class PopulationSuper(object):
         PopulationSuper.draw_rand_pos
 
         """
+        tic = time()
         if RANK == 0:
             pop_soma_pos = self.draw_rand_pos(
                 min_r = self.electrodeParams['r_z'],
                 **self.populationParams)
         else:
             pop_soma_pos = None
+
+        if RANK == 0:
+            print('found cell positions in %.2f s' % (time()-tic))
+
         return COMM.bcast(pop_soma_pos, root=0)
 
 
@@ -430,13 +440,13 @@ class PopulationSuper(object):
 
         Returns
         -------
-        np.ndarray
+        numpyp.ndarray
             Rotation angle around axis `Population.rand_rot_axis` of each neuron
             in the population
 
 
         """
-
+        tic = time()
         if RANK == 0:
             rotations = []
             for i in range(self.POPULATION_SIZE):
@@ -446,6 +456,10 @@ class PopulationSuper(object):
                 rotations.append(defaultrot)
         else:
             rotations = None
+
+        if RANK == 0:
+            print('found cell rotations in %.2f s' % (time()-tic))
+
         return COMM.bcast(rotations, root=0)
 
 
@@ -456,7 +470,7 @@ class PopulationSuper(object):
 
         Parameters
         ----------
-        x, y, z : np.ndarray
+        x, y, z : numpy.ndarray
             xyz-coordinates of each cell-body.
 
 
@@ -494,7 +508,7 @@ class PopulationSuper(object):
             Lower z-boundary of population.
         z_max : float
             Upper z-boundary of population.
-        min_r : np.ndarray
+        min_r : numpy.ndarray
             Minimum distance to center axis as function of z.
         min_cell_interdist : float
             Minimum cell to cell interdistance.
@@ -540,7 +554,6 @@ class PopulationSuper(object):
         [u] = np.where(np.logical_or((R_z < minrz) != (R_z > radius),
             cell_interdist < min_cell_interdist))
 
-        print("assess somatic locations: ")
         while len(u) > 0:
             for i in range(len(u)):
                 x[u[i]] = (np.random.rand()-0.5)*radius*2
@@ -564,8 +577,7 @@ class PopulationSuper(object):
             [u] = np.where(np.logical_or((R_z < minrz) != (R_z > radius),
                 cell_interdist < min_cell_interdist))
 
-        print('done!')
-
+        
         soma_pos = []
         for i in range(self.POPULATION_SIZE):
             soma_pos.append({'xpos' : x[i], 'ypos' : y[i], 'zpos' : z[i]})
@@ -638,7 +650,7 @@ class PopulationSuper(object):
                    self.recordSingleContribFrac >= 0)
         except AssertionError as ae:
             raise ae, 'recordSingleContribFrac {} not in [0, 1]'.format(
-                self.recordSingleContribFrac)
+                                                self.recordSingleContribFrac)
 
         if not self.recordSingleContribFrac:
             return
@@ -904,7 +916,8 @@ class Population(PopulationSuper):
         See also
         --------
         PopulationSuper, CachedNetwork, CachedFixedSpikesNetwork,
-        CachedNoiseNetwork, LFPy.Cell, LFPy.RecExtElectrode        """
+        CachedNoiseNetwork, LFPy.Cell, LFPy.RecExtElectrode
+        """
         tic = time()
 
         PopulationSuper.__init__(self, **kwargs)
@@ -921,15 +934,9 @@ class Population(PopulationSuper):
         self.J_yX = J_yX
 
 
-        ##CSD calculation flag
-        #self.calculateCSD = calculateCSD
-
-
         #Now loop over all cells in the population and assess
         # - number of synapses in each z-interval (from layerbounds)
         # - placement of synapses in each z-interval
-        if RANK == 0:
-            print('find synapse locations: ')
 
         #get in this order, the
         # - postsynaptic compartment indices
@@ -938,8 +945,6 @@ class Population(PopulationSuper):
         self.synIdx = self.get_all_synIdx()
         self.SpCells = self.get_all_SpCells()
         self.synDelays = self.get_all_synDelays()
-
-        COMM.Barrier()
 
         if RANK == 0:
             print("population initialized in %.2f seconds" % (time()-tic))
@@ -961,7 +966,7 @@ class Population(PopulationSuper):
         Returns
         -------
         synIdx : dict
-            `output[cellindex][populationindex][layerindex]` np.ndarray of
+            `output[cellindex][populationindex][layerindex]` numpy.ndarray of
             compartment indices.
 
 
@@ -969,7 +974,7 @@ class Population(PopulationSuper):
         --------
         Population.get_synidx, Population.fetchSynIdxCell
         """
-        tic = time() #timing
+        tic = time()
 
         #containers for synapse idxs existing on this rank
         synIdx = {}
@@ -1033,7 +1038,7 @@ class Population(PopulationSuper):
         Population.fetchSpCells
 
         """
-        tic = time() #timing
+        tic = time()
 
         #container
         SpCells = {}
@@ -1090,7 +1095,7 @@ class Population(PopulationSuper):
         numpy.random.normal
 
         """
-        tic = time() #timing
+        tic = time()
 
         #ok then, we will draw random numbers across ranks, which have to
         #be unique per cell. Now, we simply record the random state,
@@ -1389,8 +1394,8 @@ class Population(PopulationSuper):
         #Insert synapses in an iterative fashion
         try:
             spikes = self.networkSim.dbs[X].select(SpCell[:idx.size])
-        except AttributeError:
-            raise Exception, 'could not open CachedNetwork database objects'
+        except AttributeError as ae:
+            raise ae, 'could not open CachedNetwork database objects'
 
 
         #apply synaptic delays
@@ -1423,9 +1428,9 @@ class Population(PopulationSuper):
 
         Parameters
         ----------
-        nodes : np.ndarray, dtype=int
+        nodes : numpy.ndarray, dtype=int
             Node # of valid presynaptic neurons.
-        numSyn : np.ndarray, dtype=int
+        numSyn : numpy.ndarray, dtype=int
             # of synapses per connection.
 
 

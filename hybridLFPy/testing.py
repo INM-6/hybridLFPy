@@ -17,7 +17,7 @@ class TestHybridLFPy(unittest.TestCase):
         self.networkSim = hybridLFPy.CachedNetwork(
             simtime=1000.,
             dt=0.1,
-            spike_output_path='testing',
+            spike_output_path=os.path.join(hybridLFPy.__path__[0], 'testing'),
             label='testing',
             ext='gdf',
             GIDs={'X' : [1, 100]}   
