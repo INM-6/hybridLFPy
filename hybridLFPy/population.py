@@ -336,7 +336,8 @@ class PopulationSuper(object):
 
 
         """
-
+        tic = time()
+        
         electrode = LFPy.RecExtElectrode(**self.electrodeParams)
 
         cellParams = self.cellParams.copy()
@@ -384,7 +385,8 @@ class PopulationSuper(object):
                         self.output[cellindex][attrbt] = str(attr)
                 self.output[cellindex]['srate'] = 1E3 / self.dt_output
 
-            print('cell %s output saved' % cellindex)
+            print('cell %s population %s in %.2f s' % (cellindex, self.y,
+                                                              time()-tic))
 
 
     def set_pop_soma_pos(self):
@@ -1249,6 +1251,8 @@ class Population(PopulationSuper):
         --------
         hybridLFPy.csd, LFPy.Cell, LFPy.Synapse, LFPy.RecExtElectrode
         """
+        tic = time()
+        
         cell = LFPy.Cell(**self.cellParams)
         cell.set_pos(**self.pop_soma_pos[cellindex])
         cell.set_rotation(**self.rotations[cellindex])
@@ -1307,7 +1311,8 @@ class Population(PopulationSuper):
                         self.output[cellindex][attrbt] = str(attr)
                 self.output[cellindex]['srate'] = 1E3 / self.dt_output
 
-            print('cell %s output saved' % cellindex)
+            print('cell %s population %s in %.2f s' % (cellindex, self.y,
+                                                              time()-tic))
 
 
     def insert_all_synapses(self, cellindex, cell):
