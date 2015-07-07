@@ -75,9 +75,8 @@ To compile documentation source files in this directory using sphinx, use:
     sphinx-build -b html docs documentation
     
 
-documentation folder
+online documentation
 --------------------
 
-See above, documentation/index.html will contain the sphinx-generated
-documentation.
-
+The sphinx-generated html documentation can be accessed at
+http://INM-6.github.io/hybridLFPy
