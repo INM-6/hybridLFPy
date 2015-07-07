@@ -1,0 +1,179 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>hybridLFPy.testing &mdash; hybridLFPy 0.1.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.1.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="hybridLFPy 0.1.1 documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">hybridLFPy 0.1.1 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for hybridLFPy.testing</h1><div class="highlight"><pre>
+<span class="c">#!/usr/bin/env python</span>
+<span class="sd">&#39;&#39;&#39;Tests for hybridLFPy classes and methods&#39;&#39;&#39;</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">numpy.testing</span> <span class="kn">as</span> <span class="nn">nt</span>
+<span class="kn">import</span> <span class="nn">unittest</span>
+<span class="kn">import</span> <span class="nn">hybridLFPy</span>
+
+
+<span class="k">class</span> <span class="nc">TestHybridLFPy</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    hybridLFPy test class</span>
+<span class="sd">    </span>
+<span class="sd">    To run tests, simply issue</span>
+<span class="sd">    &gt;&gt;&gt;import hybridLFPy</span>
+<span class="sd">    &gt;&gt;&gt;hybridLFPy.test()</span>
+<span class="sd">    </span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">TestHybridLFPy</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    
+        <span class="bp">self</span><span class="o">.</span><span class="n">networkSim</span> <span class="o">=</span> <span class="n">hybridLFPy</span><span class="o">.</span><span class="n">CachedNetwork</span><span class="p">(</span>
+            <span class="n">simtime</span><span class="o">=</span><span class="mf">1000.</span><span class="p">,</span>
+            <span class="n">dt</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+            <span class="n">spike_output_path</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">hybridLFPy</span><span class="o">.</span><span class="n">__path__</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s">&#39;testing&#39;</span><span class="p">),</span>
+            <span class="n">label</span><span class="o">=</span><span class="s">&#39;testing&#39;</span><span class="p">,</span>
+            <span class="n">ext</span><span class="o">=</span><span class="s">&#39;gdf&#39;</span><span class="p">,</span>
+            <span class="n">GIDs</span><span class="o">=</span><span class="p">{</span><span class="s">&#39;X&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">100</span><span class="p">]}</span>   
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">test_CachedNetwork_01</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;test CachedNetwork 01&#39;&#39;&#39;</span>
+        <span class="k">assert</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">networkSim</span><span class="o">.</span><span class="n">X</span> <span class="o">==</span> <span class="p">[</span><span class="s">&#39;X&#39;</span><span class="p">])</span>
+
+    <span class="k">def</span> <span class="nf">test_CachedNetwork_02</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;test CachedNetwork 02&#39;&#39;&#39;</span>
+        <span class="n">nt</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">networkSim</span><span class="o">.</span><span class="n">N_X</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">100</span><span class="p">]))</span>
+
+    <span class="k">def</span> <span class="nf">test_CachedNetwork_03</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;test CachedNetwork 01&#39;&#39;&#39;</span>
+        <span class="n">nt</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">networkSim</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="s">&#39;X&#39;</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">test_CachedNetwork_04</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;test CachedNetwork 04&#39;&#39;&#39;</span> 
+        <span class="n">nt</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">networkSim</span><span class="o">.</span><span class="n">dbs</span><span class="p">[</span><span class="s">&#39;X&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">neurons</span><span class="p">(),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">50</span><span class="p">]))</span>
+
+    <span class="k">def</span> <span class="nf">test_CachedNetwork_05</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;test CachedNetwork 05&#39;&#39;&#39;</span>
+        <span class="n">nt</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">networkSim</span><span class="o">.</span><span class="n">dbs</span><span class="p">[</span><span class="s">&#39;X&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">interval</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)),</span> <span class="p">[(</span><span class="mi">50</span><span class="p">,</span> <span class="mf">100.0</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mf">200.0</span><span class="p">)])</span>
+
+    <span class="k">def</span> <span class="nf">test_CachedNetwork_06</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;test CachedNetwork 06&#39;&#39;&#39;</span>
+        <span class="n">nt</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">networkSim</span><span class="o">.</span><span class="n">dbs</span><span class="p">[</span><span class="s">&#39;X&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">interval</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">100</span><span class="p">)),</span> <span class="p">[(</span><span class="mi">50</span><span class="p">,</span> <span class="mf">100.0</span><span class="p">)])</span>
+
+    <span class="k">def</span> <span class="nf">test_CachedNetwork_07</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;test CachedNetwork 07&#39;&#39;&#39;</span>
+        <span class="n">nt</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">networkSim</span><span class="o">.</span><span class="n">dbs</span><span class="p">[</span><span class="s">&#39;X&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">interval</span><span class="p">((</span><span class="mi">200</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)),</span> <span class="p">[(</span><span class="mi">1</span><span class="p">,</span> <span class="mf">200.0</span><span class="p">)])</span>
+        
+    <span class="k">def</span> <span class="nf">test_CachedNetwork_08</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;test CachedNetwork 08&#39;&#39;&#39;</span>
+        <span class="n">nt</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">networkSim</span><span class="o">.</span><span class="n">dbs</span><span class="p">[</span><span class="s">&#39;X&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">select_neurons_interval</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">networkSim</span><span class="o">.</span><span class="n">dbs</span><span class="p">[</span><span class="s">&#39;X&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">neurons</span><span class="p">(),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1000</span><span class="p">)),</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span> <span class="mf">200.</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span> <span class="mf">100.</span><span class="p">])])</span>
+
+
+<div class="viewcode-block" id="test"><a class="viewcode-back" href="../../index.html#hybridLFPy.test">[docs]</a><span class="k">def</span> <span class="nf">test</span><span class="p">(</span><span class="n">verbosity</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Run unittests for the CSD toolbox</span>
+<span class="sd">    </span>
+<span class="sd">    </span>
+<span class="sd">    Arguments</span>
+<span class="sd">    ---------</span>
+<span class="sd">    verbosity : int</span>
+<span class="sd">        verbosity level</span>
+<span class="sd">    </span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    None</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">suite</span> <span class="o">=</span> <span class="n">unittest</span><span class="o">.</span><span class="n">TestLoader</span><span class="p">()</span><span class="o">.</span><span class="n">loadTestsFromTestCase</span><span class="p">(</span><span class="n">TestHybridLFPy</span><span class="p">)</span>
+    <span class="n">unittest</span><span class="o">.</span><span class="n">TextTestRunner</span><span class="p">(</span><span class="n">verbosity</span><span class="o">=</span><span class="n">verbosity</span><span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">suite</span><span class="p">)</span>
+    
+
+</div>
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">test</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">hybridLFPy 0.1.1 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2015, Espen Hagen.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+    </div>
+  </body>
+</html>

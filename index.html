@@ -1,0 +1,2745 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Welcome to the documentation of hybridLFPy! &mdash; hybridLFPy 0.1.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.1.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="hybridLFPy 0.1.1 documentation" href="#" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="#">hybridLFPy 0.1.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="welcome-to-the-documentation-of-hybridlfpy">
+<h1>Welcome to the documentation of <strong>hybridLFPy</strong>!<a class="headerlink" href="#welcome-to-the-documentation-of-hybridlfpy" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-hybridlfpy">
+<h2>Module <strong>hybridLFPy</strong><a class="headerlink" href="#module-hybridlfpy" title="Permalink to this headline">¶</a></h2>
+<p>Python module implementating a hybrid model scheme for predictions of
+extracellular potentials (local field potentials, LFPs) of spiking
+neuron network simulations.</p>
+<div class="section" id="development">
+<h3>Development<a class="headerlink" href="#development" title="Permalink to this headline">¶</a></h3>
+<p>The module hybridLFPy was mainly developed in the Computational Neuroscience
+Group (<a class="reference external" href="http://compneuro.umb.no">http://compneuro.umb.no</a>), Department of Mathemathical Sciences and
+Technology (<a class="reference external" href="http://www.nmbu.no/imt">http://www.nmbu.no/imt</a>), at the Norwegian University of Life
+Sciences (<a class="reference external" href="http://www.nmbu.no">http://www.nmbu.no</a>), Aas, Norway, in collaboration with Institute of
+Neuroscience and Medicine (INM-6) and Institute for Advanced Simulation (IAS-6),
+Juelich Research Centre and JARA, Juelich, Germany
+(<a class="reference external" href="http://www.fz-juelich.de/inm/inm-6/EN/">http://www.fz-juelich.de/inm/inm-6/EN/</a>).</p>
+</div>
+<div class="section" id="license">
+<h3>License<a class="headerlink" href="#license" title="Permalink to this headline">¶</a></h3>
+<p>This software is released under the General Public License (see LICENSE file).</p>
+</div>
+<div class="section" id="warranty">
+<h3>Warranty<a class="headerlink" href="#warranty" title="Permalink to this headline">¶</a></h3>
+<p>This software comes without any form of warranty.</p>
+</div>
+</div>
+<div class="section" id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+<p>First download all the <code class="docutils literal"><span class="pre">hybridLFPy</span></code> source files using <code class="docutils literal"><span class="pre">git</span></code>
+(<a class="reference external" href="http://git-scm.com">http://git-scm.com</a>). Open a terminal window and type:</p>
+<div class="highlight-python"><div class="highlight"><pre>cd $HOME/where/to/put/hybridLFPy
+git clone https://github.com/INM-6/hybridLFPy.git
+</pre></div>
+</div>
+<p>To use <code class="docutils literal"><span class="pre">hybridLFPy</span></code> from any working folder without installing files, add this
+path to <code class="docutils literal"><span class="pre">$PYTHONPATH</span></code>. Edit your <code class="docutils literal"><span class="pre">.bash_profile</span></code> or similar file, and add:</p>
+<div class="highlight-python"><div class="highlight"><pre>export $PYTHONPATH=$PYTHONPATH:/PATH/TO/THIS/FOLDER:
+</pre></div>
+</div>
+<p>Installing it is also possible, but not recommended as things might change with
+any pull request from the repository:</p>
+<div class="highlight-python"><div class="highlight"><pre>(sudo) python setup.py install (--user)
+</pre></div>
+</div>
+<div class="section" id="examples-folder">
+<h3>examples folder<a class="headerlink" href="#examples-folder" title="Permalink to this headline">¶</a></h3>
+<p>Some example script(s) on how to use this module</p>
+</div>
+<div class="section" id="docs-folder">
+<h3>docs folder<a class="headerlink" href="#docs-folder" title="Permalink to this headline">¶</a></h3>
+<p>Source files for autogenerated documentation using Sphinx.</p>
+<p>To compile documentation source files in this directory using sphinx, use:</p>
+<div class="highlight-python"><div class="highlight"><pre>sphinx-build -b html docs documentation
+</pre></div>
+</div>
+</div>
+<div class="section" id="documentation-folder">
+<h3>documentation folder<a class="headerlink" href="#documentation-folder" title="Permalink to this headline">¶</a></h3>
+<p>See above, documentation/index.html will contain the sphinx-generated
+documentation.</p>
+</div>
+</div>
+<div class="section" id="id1">
+<h2>Module <a class="reference internal" href="#module-hybridLFPy" title="hybridLFPy"><code class="xref py py-mod docutils literal"><span class="pre">hybridLFPy</span></code></a><a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<span class="target" id="module-hybridLFPy"></span><div class="section" id="hybridlfpy">
+<h3><strong>hybridLFPy</strong><a class="headerlink" href="#hybridlfpy" title="Permalink to this headline">¶</a></h3>
+<p>Provides methods for estimating extracellular potentials of simplified spiking
+neuron network models.</p>
+<div class="section" id="how-to-use-the-documentation">
+<h4>How to use the documentation<a class="headerlink" href="#how-to-use-the-documentation" title="Permalink to this headline">¶</a></h4>
+<dl class="docutils">
+<dt>Documentation is available in two forms:</dt>
+<dd><ol class="first last arabic">
+<li><p class="first">Docstrings provided with the code, e.g., as hybridLFPy? within IPython</p>
+</li>
+<li><p class="first">Autogenerated sphinx-built output, compiled issuing:</p>
+<div class="highlight-python"><div class="highlight"><pre>sphinx-build -b html docs documentation
+</pre></div>
+</div>
+<p>in the root folder of the package sources</p>
+</li>
+</ol>
+</dd>
+</dl>
+</div>
+<div class="section" id="available-classes">
+<h4>Available classes<a class="headerlink" href="#available-classes" title="Permalink to this headline">¶</a></h4>
+<dl class="docutils">
+<dt><code class="docutils literal"><span class="pre">CachedNetwork</span></code></dt>
+<dd>Offline interface between network spike events and used by class Population</dd>
+<dt><code class="docutils literal"><span class="pre">CachedNoiseNetwork</span></code></dt>
+<dd>Creation of Poisson spiketrains of a putative network model, interfaces
+class Population</dd>
+<dt><code class="docutils literal"><span class="pre">CachedFixedSpikesNetwork</span></code></dt>
+<dd>Creation of identical spiketrains per population of a putative network
+model, interface to class Population</dd>
+<dt><code class="docutils literal"><span class="pre">GDF</span></code></dt>
+<dd>Class using sqlite to efficiently store and enquire large amounts of spike
+output data, used by Cached*Network</dd>
+<dt><code class="docutils literal"><span class="pre">PopulationSuper</span></code></dt>
+<dd>Parent class setting up a base population of multicompartment neurons</dd>
+<dt><code class="docutils literal"><span class="pre">Population</span></code></dt>
+<dd>Daughter of PopulationSuper, using CachedNetwork spike events as synapse
+activation times with layer and cell type connection specificity</dd>
+<dt><code class="docutils literal"><span class="pre">PostProcess</span></code></dt>
+<dd>Methods for processing output of multiple instances of class Population</dd>
+</dl>
+</div>
+<div class="section" id="available-utilities">
+<h4>Available utilities<a class="headerlink" href="#available-utilities" title="Permalink to this headline">¶</a></h4>
+<dl class="docutils">
+<dt><code class="docutils literal"><span class="pre">csd</span></code></dt>
+<dd>Ground truth current-source density estimation from multicompartment models</dd>
+<dt><code class="docutils literal"><span class="pre">helpers</span></code></dt>
+<dd>Various methods used throughout simulations</dd>
+<dt><code class="docutils literal"><span class="pre">setup_file_dest</span></code></dt>
+<dd>Setup destination folders of simulation output files</dd>
+<dt><code class="docutils literal"><span class="pre">test</span></code></dt>
+<dd>Run a series of unit tests</dd>
+</dl>
+</div>
+</div>
+<div class="section" id="class-cachednetwork">
+<h3>class <a class="reference internal" href="#hybridLFPy.CachedNetwork" title="hybridLFPy.CachedNetwork"><code class="xref py py-class docutils literal"><span class="pre">CachedNetwork</span></code></a><a class="headerlink" href="#class-cachednetwork" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="hybridLFPy.CachedNetwork">
+<em class="property">class </em><code class="descclassname">hybridLFPy.</code><code class="descname">CachedNetwork</code><span class="sig-paren">(</span><em>simtime=1000.0, dt=0.1, spike_output_path='spike_output_path', label='spikes', ext='gdf', GIDs={'EX': [1, 400], 'IN': [401, 100]}, autocollect=True, cmap='rainbow'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hybridLFPy/cachednetworks.html#CachedNetwork"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hybridLFPy.CachedNetwork" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="http://docs.python.org/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
+<p>Offline processing and storing of network spike events, used by other
+class objects in the package hybridLFPy.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>simtime</strong> : float</p>
+<blockquote>
+<div><p>Simulation duration.</p>
+</div></blockquote>
+<p><strong>dt</strong> : float,</p>
+<blockquote>
+<div><p>Simulation timestep size.</p>
+</div></blockquote>
+<p><strong>spike_output_path</strong> : str</p>
+<blockquote>
+<div><p>Path to gdf-files with spikes.</p>
+</div></blockquote>
+<p><strong>label</strong> : str</p>
+<blockquote>
+<div><p>Prefix of spiking gdf-files.</p>
+</div></blockquote>
+<p><strong>ext</strong> : str</p>
+<blockquote>
+<div><p>File extension of gdf-files.</p>
+</div></blockquote>
+<p><strong>GIDs</strong> : dict</p>
+<blockquote>
+<div><p>dictionary keys are population names and item a list with first
+GID in population and population size</p>
+</div></blockquote>
+<p><strong>autocollect</strong> : bool</p>
+<blockquote>
+<div><p>If True, class init will process gdf files.</p>
+</div></blockquote>
+<p><strong>cmap</strong> : str</p>
+<blockquote>
+<div><p>Name of colormap, must be in <cite>dir(plt.cm)</cite>.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><cite>hybridLFPy.cachednetworks.CachedNetwork</cite> object</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="#hybridLFPy.CachedFixedSpikesNetwork" title="hybridLFPy.CachedFixedSpikesNetwork"><code class="xref py py-obj docutils literal"><span class="pre">CachedFixedSpikesNetwork</span></code></a>, <a class="reference internal" href="#hybridLFPy.CachedNoiseNetwork" title="hybridLFPy.CachedNoiseNetwork"><code class="xref py py-obj docutils literal"><span class="pre">CachedNoiseNetwork</span></code></a></p>
+</div>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+</tbody>
+</table>
+<dl class="method">
+<dt id="hybridLFPy.CachedNetwork.collect_gdf">
+<code class="descname">collect_gdf</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hybridLFPy/cachednetworks.html#CachedNetwork.collect_gdf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hybridLFPy.CachedNetwork.collect_gdf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Collect the gdf-files from network sim in folder <cite>spike_output_path</cite>
+into sqlite database, using the GDF-class.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>None</strong></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="hybridLFPy.CachedNetwork.get_xy">
+<code class="descname">get_xy</code><span class="sig-paren">(</span><em>xlim</em>, <em>fraction=1.0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hybridLFPy/cachednetworks.html#CachedNetwork.get_xy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hybridLFPy.CachedNetwork.get_xy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get pairs of node units and spike trains on specific time interval.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>xlim</strong> : list of floats</p>
+<blockquote>
+<div><p>Spike time interval, e.g., [0., 1000.].</p>
+</div></blockquote>
+<p><strong>fraction</strong> : float in [0, 1.]</p>
+<blockquote>
+<div><p>If less than one, sample a fraction of nodes in random order.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>x</strong> : dict</p>
+<blockquote>
+<div><p>In <cite>x</cite> key-value entries are population name and neuron spike times.</p>
+</div></blockquote>
+<p><strong>y</strong> : dict</p>
+<blockquote class="last">
+<div><p>Where in <cite>y</cite> key-value entries are population name and neuron gid number.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="hybridLFPy.CachedNetwork.plot_f_rate">
+<code class="descname">plot_f_rate</code><span class="sig-paren">(</span><em>ax</em>, <em>X</em>, <em>i</em>, <em>xlim</em>, <em>x</em>, <em>y</em>, <em>binsize=1</em>, <em>yscale='linear'</em>, <em>plottype='fill_between'</em>, <em>show_label=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hybridLFPy/cachednetworks.html#CachedNetwork.plot_f_rate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hybridLFPy.CachedNetwork.plot_f_rate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot network firing rate plot in subplot object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>ax</strong> : <cite>matplotlib.axes.AxesSubplot</cite> object.</p>
+<p><strong>X</strong> : str</p>
+<blockquote>
+<div><p>Population name.</p>
+</div></blockquote>
+<p><strong>i</strong> : int</p>
+<blockquote>
+<div><p>Population index in class attribute <cite>X</cite>.</p>
+</div></blockquote>
+<p><strong>xlim</strong> : list of floats</p>
+<blockquote>
+<div><p>Spike time interval, e.g., [0., 1000.].</p>
+</div></blockquote>
+<p><strong>x</strong> : dict</p>
+<blockquote>
+<div><p>Key-value entries are population name and neuron spike times.</p>
+</div></blockquote>
+<p><strong>y</strong> : dict</p>
+<blockquote>
+<div><p>Key-value entries are population name and neuron gid number.</p>
+</div></blockquote>
+<p><strong>yscale</strong> : &#8216;str&#8217;</p>
+<blockquote>
+<div><p>Linear, log, or symlog y-axes in rate plot.</p>
+</div></blockquote>
+<p><strong>plottype</strong> : str</p>
+<blockquote>
+<div><p>plot type string in <cite>[&#8216;fill_between&#8217;, &#8216;bar&#8217;]</cite></p>
+</div></blockquote>
+<p><strong>show_label</strong> : bool</p>
+<blockquote>
+<div><p>whether or not to show labels</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">None</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="hybridLFPy.CachedNetwork.plot_raster">
+<code class="descname">plot_raster</code><span class="sig-paren">(</span><em>ax</em>, <em>xlim</em>, <em>x</em>, <em>y</em>, <em>pop_names=False</em>, <em>markersize=20.0</em>, <em>alpha=1.0</em>, <em>legend=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hybridLFPy/cachednetworks.html#CachedNetwork.plot_raster"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hybridLFPy.CachedNetwork.plot_raster" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot network raster plot in subplot object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>ax</strong> : <cite>matplotlib.axes.AxesSubplot</cite> object</p>
+<blockquote>
+<div><p>plot axes</p>
+</div></blockquote>
+<p><strong>xlim</strong> : list</p>
+<blockquote>
+<div><p>List of floats. Spike time interval, e.g., [0., 1000.].</p>
+</div></blockquote>
+<p><strong>x</strong> : dict</p>
+<blockquote>
+<div><p>Key-value entries are population name and neuron spike times.</p>
+</div></blockquote>
+<p><strong>y</strong> : dict</p>
+<blockquote>
+<div><p>Key-value entries are population name and neuron gid number.</p>
+</div></blockquote>
+<p><strong>pop_names: bool</strong></p>
+<blockquote>
+<div><p>If True, show population names on yaxis instead of gid number.</p>
+</div></blockquote>
+<p><strong>markersize</strong> : float</p>
+<blockquote>
+<div><p>raster plot marker size</p>
+</div></blockquote>
+<p><strong>alpha</strong> : float in [0, 1]</p>
+<blockquote>
+<div><p>transparency of marker</p>
+</div></blockquote>
+<p><strong>legend</strong> : bool</p>
+<blockquote>
+<div><p>Switch on axes legends.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">None</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="hybridLFPy.CachedNetwork.raster_plots">
+<code class="descname">raster_plots</code><span class="sig-paren">(</span><em>xlim=[0, 1000], markersize=1, alpha=1.0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hybridLFPy/cachednetworks.html#CachedNetwork.raster_plots"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hybridLFPy.CachedNetwork.raster_plots" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pretty plot of the spiking output of each population as raster and rate.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>xlim</strong> : list</p>
+<blockquote>
+<div><p>List of floats. Spike time interval, e.g., <cite>[0., 1000.]</cite>.</p>
+</div></blockquote>
+<p><strong>markersize</strong> : float</p>
+<blockquote>
+<div><p>marker size for plot, see <cite>matplotlib.pyplot.plot</cite></p>
+</div></blockquote>
+<p><strong>alpha</strong> : float</p>
+<blockquote>
+<div><p>transparency for markers, see <cite>matplotlib.pyplot.plot</cite></p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><strong>fig</strong> : <cite>matplotlib.figure.Figure</cite> object</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="class-cachednoisenetwork">
+<h3>class <a class="reference internal" href="#hybridLFPy.CachedNoiseNetwork" title="hybridLFPy.CachedNoiseNetwork"><code class="xref py py-class docutils literal"><span class="pre">CachedNoiseNetwork</span></code></a><a class="headerlink" href="#class-cachednoisenetwork" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="hybridLFPy.CachedNoiseNetwork">
+<em class="property">class </em><code class="descclassname">hybridLFPy.</code><code class="descname">CachedNoiseNetwork</code><span class="sig-paren">(</span><em>frate=[(200.0, 15.0, 210.0), 0.992, 3.027, 4.339, 5.962, 7.628, 8.669, 1.118, 7.859], autocollect=False, **kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hybridLFPy/cachednetworks.html#CachedNoiseNetwork"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hybridLFPy.CachedNoiseNetwork" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">hybridLFPy.cachednetworks.CachedNetwork</span></code></p>
+<p>Subclass of CachedNetwork.</p>
+<p>Use Nest to generate N_X poisson-generators each with rate frate,
+and record every vector, and create database with spikes.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>frate</strong> : list</p>
+<blockquote>
+<div><p>Rate of each layer, may be tuple (onset, rate, offset)</p>
+</div></blockquote>
+<p><strong>autocollect</strong> : bool</p>
+<blockquote>
+<div><p>whether or not to automatically gather gdf file output</p>
+</div></blockquote>
+<p><strong>**kwargs</strong> : see parent class <cite>hybridLFPy.cachednetworks.CachedNetwork</cite></p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><cite>hybridLFPy.cachednetworks.CachedNoiseNetwork</cite> object</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="#hybridLFPy.CachedNetwork" title="hybridLFPy.CachedNetwork"><code class="xref py py-obj docutils literal"><span class="pre">CachedNetwork</span></code></a>, <a class="reference internal" href="#hybridLFPy.CachedFixedSpikesNetwork" title="hybridLFPy.CachedFixedSpikesNetwork"><code class="xref py py-obj docutils literal"><span class="pre">CachedFixedSpikesNetwork</span></code></a></p>
+</div>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="hybridLFPy.CachedNoiseNetwork.spikes">
+<code class="descname">spikes</code><em class="property"> = None</em><a class="headerlink" href="#hybridLFPy.CachedNoiseNetwork.spikes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create independent poisson spike trains with the some rate,
+but each layer population should really have different rates.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="class-cachedfixedspikesnetwork">
+<h3>class <a class="reference internal" href="#hybridLFPy.CachedFixedSpikesNetwork" title="hybridLFPy.CachedFixedSpikesNetwork"><code class="xref py py-class docutils literal"><span class="pre">CachedFixedSpikesNetwork</span></code></a><a class="headerlink" href="#class-cachedfixedspikesnetwork" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="hybridLFPy.CachedFixedSpikesNetwork">
+<em class="property">class </em><code class="descclassname">hybridLFPy.</code><code class="descname">CachedFixedSpikesNetwork</code><span class="sig-paren">(</span><em>activationtimes=[200, 300, 400, 500, 600, 700, 800, 900, 1000], autocollect=False, **kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hybridLFPy/cachednetworks.html#CachedFixedSpikesNetwork"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hybridLFPy.CachedFixedSpikesNetwork" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">hybridLFPy.cachednetworks.CachedNetwork</span></code></p>
+<p>Subclass of CachedNetwork.</p>
+<p>Fake nest output, where each cell in a subpopulation spike
+simultaneously, and each subpopulation is activated at times given in
+kwarg activationtimes.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>activationtimes</strong> : list of floats</p>
+<blockquote>
+<div><p>Each entry set spike times of all cells in each population</p>
+</div></blockquote>
+<p><strong>autocollect</strong> : bool</p>
+<blockquote>
+<div><p>whether or not to automatically gather gdf file output</p>
+</div></blockquote>
+<p><strong>**kwargs</strong> : see parent class <cite>hybridLFPy.cachednetworks.CachedNetwork</cite></p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><cite>hybridLFPy.cachednetworks.CachedFixedSpikesNetwork</cite> object</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="#hybridLFPy.CachedNetwork" title="hybridLFPy.CachedNetwork"><code class="xref py py-obj docutils literal"><span class="pre">CachedNetwork</span></code></a>, <a class="reference internal" href="#hybridLFPy.CachedNoiseNetwork" title="hybridLFPy.CachedNoiseNetwork"><code class="xref py py-obj docutils literal"><span class="pre">CachedNoiseNetwork</span></code></a></p>
+</div>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="class-populationsuper">
+<h3>class <a class="reference internal" href="#hybridLFPy.PopulationSuper" title="hybridLFPy.PopulationSuper"><code class="xref py py-class docutils literal"><span class="pre">PopulationSuper</span></code></a><a class="headerlink" href="#class-populationsuper" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="hybridLFPy.PopulationSuper">
+<em class="property">class </em><code class="descclassname">hybridLFPy.</code><code class="descname">PopulationSuper</code><span class="sig-paren">(</span><em>cellParams={'verbose': False, 'cm': 1.0, 'nsegs_method': 'lambda_f', 'tstartms': 0, 'timeres_python': 0.1, 'Ra': 150, 'morphology': 'morphologies/ex.hoc', 'timeres_NEURON': 0.1, 'v_init': 0.0, 'lambda_f': 100, 'e_pas': 0.0, 'rm': 20000.0, 'tstopms': 1000.0}, rand_rot_axis=[], simulationParams={}, populationParams={'z_min': -450, 'z_max': -350, 'min_cell_interdist': 1.0, 'radius': 100, 'number': 400}, y='EX', layerBoundaries=[[0.0, -300], [-300, -500]], electrodeParams={'r_z': [[-1e+199, -600, -550, 1e+99], [0, 0, 10, 10]], 'r': 5, 'z': [-0.0, -100.0, -200.0, -300.0, -400.0, -500.0], 'seedvalue': None, 'y': [0, 0, 0, 0, 0, 0], 'x': [0, 0, 0, 0, 0, 0], 'n': 20, 'sigma': 0.3, 'method': 'som_as_point', 'N': [[1, 0, 0], [1, 0, 0], [1, 0, 0], [1, 0, 0], [1, 0, 0], [1, 0, 0]]}, savelist=['somapos', 'x', 'y', 'z', 'LFP', 'CSD'], savefolder='simulation_output_example_brunel', calculateCSD=True, dt_output=1.0, recordSingleContribFrac=0, POPULATIONSEED=123456, verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hybridLFPy/population.html#PopulationSuper"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hybridLFPy.PopulationSuper" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="http://docs.python.org/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
+<p>Main population class object, let one set up simulations, execute, and
+compile the results. This class is suitable for subclassing for
+custom cell simulation procedures, inherit things like gathering of
+data written to disk.</p>
+<p>Note that <cite>PopulationSuper.cellsim</cite> do not have any stimuli,
+its main purpose is to gather common methods for inherited Population
+objects.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>cellParams</strong> : dict</p>
+<blockquote>
+<div><p>Parameters for class <cite>LFPy.Cell</cite></p>
+</div></blockquote>
+<p><strong>rand_rot_axis</strong> : list</p>
+<blockquote>
+<div><p>Axis of which to randomly rotate morphs.</p>
+</div></blockquote>
+<p><strong>simulationParams</strong> : dict</p>
+<blockquote>
+<div><p>Additional args for <cite>LFPy.Cell.simulate()</cite>.</p>
+</div></blockquote>
+<p><strong>populationParams</strong> : dict</p>
+<blockquote>
+<div><p>Constraints for population and cell number.</p>
+</div></blockquote>
+<p><strong>y</strong> : str</p>
+<blockquote>
+<div><p>Population identifier string.</p>
+</div></blockquote>
+<p><strong>layerBoundaries</strong> : list of lists</p>
+<blockquote>
+<div><p>Each element is a list setting upper and lower layer boundary (floats)</p>
+</div></blockquote>
+<p><strong>electrodeParams</strong> : dict</p>
+<blockquote>
+<div><p>parameters for class <cite>LFPy.RecExtElectrode</cite></p>
+</div></blockquote>
+<p><strong>savelist</strong> : list</p>
+<blockquote>
+<div><p><cite>LFPy.Cell</cite> arguments to save for each single-cell simulation.</p>
+</div></blockquote>
+<p><strong>savefolder</strong> : str</p>
+<blockquote>
+<div><p>path to where simulation results are stored.</p>
+</div></blockquote>
+<p><strong>calculateCSD</strong> : bool</p>
+<blockquote>
+<div><p>Exctract laminar CSD from transmembrane currents</p>
+</div></blockquote>
+<p><strong>dt_output</strong> : float</p>
+<blockquote>
+<div><p>Time resolution of output, e.g., LFP, CSD etc.</p>
+</div></blockquote>
+<p><strong>recordSingleContribFrac</strong> : float</p>
+<blockquote>
+<div><p>fraction  in [0, 1] of individual neurons in population which output
+will be stored</p>
+</div></blockquote>
+<p><strong>POPULATIONSEED</strong> : int/float</p>
+<blockquote>
+<div><p>Random seed for population, for positions etc.</p>
+</div></blockquote>
+<p><strong>verbose</strong> : bool</p>
+<blockquote>
+<div><p>Verbosity flag.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">hybridLFPy.population.PopulationSuper object</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="#hybridLFPy.Population" title="hybridLFPy.Population"><code class="xref py py-obj docutils literal"><span class="pre">Population</span></code></a>, <code class="xref py py-obj docutils literal"><span class="pre">LFPy.Cell</span></code>, <code class="xref py py-obj docutils literal"><span class="pre">LFPy.RecExtElectrode</span></code></p>
+</div>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+</tbody>
+</table>
+<dl class="method">
+<dt id="hybridLFPy.PopulationSuper.calc_min_cell_interdist">
+<code class="descname">calc_min_cell_interdist</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>z</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hybridLFPy/population.html#PopulationSuper.calc_min_cell_interdist"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hybridLFPy.PopulationSuper.calc_min_cell_interdist" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate cell interdistance from input coordinates.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>x, y, z</strong> : numpy.ndarray</p>
+<blockquote>
+<div><p>xyz-coordinates of each cell-body.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>min_cell_interdist</strong> : np.nparray</p>
+<blockquote class="last">
+<div><p>For each cell-body center, the distance to nearest neighboring cell</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="hybridLFPy.PopulationSuper.calc_signal_sum">
+<code class="descname">calc_signal_sum</code><span class="sig-paren">(</span><em>measure='LFP'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hybridLFPy/population.html#PopulationSuper.calc_signal_sum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hybridLFPy.PopulationSuper.calc_signal_sum" title="Permalink to this definition">¶</a></dt>
+<dd><p>Superimpose each cell&#8217;s contribution to the compound population signal,
+i.e., the population CSD or LFP</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>measure</strong> : str</p>
+<blockquote>
+<div><p>{&#8216;LFP&#8217;, &#8216;CSD&#8217;}: Either &#8216;LFP&#8217; or &#8216;CSD&#8217;.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">numpy.ndarray</p>
+<blockquote class="last">
+<div><p>The populations-specific compound signal.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="hybridLFPy.PopulationSuper.cellsim">
+<code class="descname">cellsim</code><span class="sig-paren">(</span><em>cellindex</em>, <em>return_just_cell=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hybridLFPy/population.html#PopulationSuper.cellsim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hybridLFPy.PopulationSuper.cellsim" title="Permalink to this definition">¶</a></dt>
+<dd><p>Single-cell <cite>LFPy.Cell</cite> simulation without any stimulus, mostly for
+reference, as no stimulus is added</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>cellindex</strong> : int</p>
+<blockquote>
+<div><p>cell index between 0 and POPULATION_SIZE-1.</p>
+</div></blockquote>
+<p><strong>return_just_cell</strong> : bool</p>
+<blockquote>
+<div><p>If True, return only the LFPy.Cell object
+if False, run full simulation, return None.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">None</p>
+<blockquote>
+<div><p>if <a href="#id2"><span class="problematic" id="id3">`</span></a>return_just_cell is False</p>
+</div></blockquote>
+<p><strong>cell</strong> : <cite>LFPy.Cell</cite> instance</p>
+<blockquote class="last">
+<div><p>if <cite>return_just_cell</cite> is True</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><code class="xref py py-obj docutils literal"><span class="pre">LFPy.Cell</span></code>, <code class="xref py py-obj docutils literal"><span class="pre">LFPy.Synapse</span></code>, <code class="xref py py-obj docutils literal"><span class="pre">LFPy.RecExtElectrode</span></code></p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="hybridLFPy.PopulationSuper.collectSingleContribs">
+<code class="descname">collectSingleContribs</code><span class="sig-paren">(</span><em>measure='LFP'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hybridLFPy/population.html#PopulationSuper.collectSingleContribs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hybridLFPy.PopulationSuper.collectSingleContribs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Collect single cell data and save them to HDF5 file.
+The function will also return signals generated by all cells</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>measure</strong> : str</p>
+<blockquote>
+<div><p>{&#8216;LFP&#8217;, &#8216;CSD&#8217;}: Either &#8216;LFP&#8217; or &#8216;CSD&#8217;.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">numpy.ndarray</p>
+<blockquote class="last">
+<div><p>output of all neurons in population, axis 0 correspond to neuron ind</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="hybridLFPy.PopulationSuper.collect_data">
+<code class="descname">collect_data</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hybridLFPy/population.html#PopulationSuper.collect_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hybridLFPy.PopulationSuper.collect_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Collect LFPs, CSDs and soma traces from each simulated population,
+and save to file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>None</strong></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="hybridLFPy.PopulationSuper.draw_rand_pos">
+<code class="descname">draw_rand_pos</code><span class="sig-paren">(</span><em>radius</em>, <em>z_min</em>, <em>z_max</em>, <em>min_r=array([0])</em>, <em>min_cell_interdist=10.0</em>, <em>**args</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hybridLFPy/population.html#PopulationSuper.draw_rand_pos"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hybridLFPy.PopulationSuper.draw_rand_pos" title="Permalink to this definition">¶</a></dt>
+<dd><p>Draw some random location within radius, z_min, z_max,
+and constrained by min_r and the minimum cell interdistance.
+Returned argument is a list of dicts [{&#8216;xpos&#8217;, &#8216;ypos&#8217;, &#8216;zpos&#8217;},].</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>radius</strong> : float</p>
+<blockquote>
+<div><p>Radius of population.</p>
+</div></blockquote>
+<p><strong>z_min</strong> : float</p>
+<blockquote>
+<div><p>Lower z-boundary of population.</p>
+</div></blockquote>
+<p><strong>z_max</strong> : float</p>
+<blockquote>
+<div><p>Upper z-boundary of population.</p>
+</div></blockquote>
+<p><strong>min_r</strong> : numpy.ndarray</p>
+<blockquote>
+<div><p>Minimum distance to center axis as function of z.</p>
+</div></blockquote>
+<p><strong>min_cell_interdist</strong> : float</p>
+<blockquote>
+<div><p>Minimum cell to cell interdistance.</p>
+</div></blockquote>
+<p><strong>**args</strong> : keyword arguments</p>
+<blockquote>
+<div><p>Additional inputs that is being ignored.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>soma_pos</strong> : list</p>
+<blockquote class="last">
+<div><p>List of dicts of len population size
+where dict have keys xpos, ypos, zpos specifying
+xyz-coordinates of cell at list entry <cite>i</cite>.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="#hybridLFPy.PopulationSuper.calc_min_cell_interdist" title="hybridLFPy.PopulationSuper.calc_min_cell_interdist"><code class="xref py py-obj docutils literal"><span class="pre">PopulationSuper.calc_min_cell_interdist</span></code></a></p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="hybridLFPy.PopulationSuper.run">
+<code class="descname">run</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hybridLFPy/population.html#PopulationSuper.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hybridLFPy.PopulationSuper.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Distribute individual cell simulations across ranks.</p>
+<p>This method takes no keyword arguments.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>None</strong></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="hybridLFPy.PopulationSuper.set_pop_soma_pos">
+<code class="descname">set_pop_soma_pos</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hybridLFPy/population.html#PopulationSuper.set_pop_soma_pos"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hybridLFPy.PopulationSuper.set_pop_soma_pos" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set <cite>pop_soma_pos</cite> using draw_rand_pos().</p>
+<p>This method takes no keyword arguments.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>None</strong></p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">numpy.ndarray</p>
+<blockquote class="last">
+<div><p>(x,y,z) coordinates of each neuron in the population</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="#hybridLFPy.PopulationSuper.draw_rand_pos" title="hybridLFPy.PopulationSuper.draw_rand_pos"><code class="xref py py-obj docutils literal"><span class="pre">PopulationSuper.draw_rand_pos</span></code></a></p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="hybridLFPy.PopulationSuper.set_rotations">
+<code class="descname">set_rotations</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hybridLFPy/population.html#PopulationSuper.set_rotations"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hybridLFPy.PopulationSuper.set_rotations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Append random z-axis rotations for each cell in population.</p>
+<p>This method takes no keyword arguments</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>None</strong></p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">numpyp.ndarray</p>
+<blockquote class="last">
+<div><p>Rotation angle around axis <cite>Population.rand_rot_axis</cite> of each neuron
+in the population</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="class-population">
+<h3>class <a class="reference internal" href="#hybridLFPy.Population" title="hybridLFPy.Population"><code class="xref py py-class docutils literal"><span class="pre">Population</span></code></a><a class="headerlink" href="#class-population" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="hybridLFPy.Population">
+<em class="property">class </em><code class="descclassname">hybridLFPy.</code><code class="descname">Population</code><span class="sig-paren">(</span><em>X=['EX', 'IN'], networkSim='hybridLFPy.cachednetworks.CachedNetwork', k_yXL=[[20, 0], [20, 10]], synParams={'EX': {'syntype': 'AlphaISyn', 'section': ['apic', 'dend'], 'tau': 0.5}, 'IN': {'syntype': 'AlphaISyn', 'section': ['dend'], 'tau': 0.5}}, synDelayLoc=[1.5, 1.5], synDelayScale=[None, None], J_yX=[0.20680155243678455, -1.2408093146207075], **kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hybridLFPy/population.html#Population"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hybridLFPy.Population" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">hybridLFPy.population.PopulationSuper</span></code></p>
+<p>Class <cite>hybridLFPy.Population</cite>, inherited from class <cite>PopulationSuper</cite>.</p>
+<p>This class rely on spiking times recorded in a network simulation,
+layer-resolved indegrees, synapse parameters, delay parameters, all per
+presynaptic population.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>X</strong> : list of str</p>
+<blockquote>
+<div><p>Each element denote name of presynaptic populations.</p>
+</div></blockquote>
+<p><strong>networkSim</strong> : <cite>hybridLFPy.cachednetworks.CachedNetwork</cite> object</p>
+<blockquote>
+<div><p>Container of network spike events resolved per population</p>
+</div></blockquote>
+<p><strong>k_yXL</strong> : numpy.ndarray</p>
+<blockquote>
+<div><p>Num layers x num presynapse populations array specifying the
+number of incoming connections per layer and per population type.</p>
+</div></blockquote>
+<p><strong>synParams</strong> : dict of dicts</p>
+<blockquote>
+<div><p>Synapse parameters (cf. <cite>LFPy.Synapse</cite> class).
+Each toplevel key denote each presynaptic population,
+bottom-level dicts are parameters passed to <cite>LFPy.Synapse</cite>.</p>
+</div></blockquote>
+<p><strong>synDelayLoc</strong> : list</p>
+<blockquote>
+<div><p>Average synapse delay for each presynapse connection.</p>
+</div></blockquote>
+<p><strong>synDelayScale</strong> : list</p>
+<blockquote>
+<div><p>Synapse delay std for each presynapse connection.</p>
+</div></blockquote>
+<p><strong>J_yX</strong> : list of floats</p>
+<blockquote>
+<div><p>Synapse weights for connections of each presynaptic population, see
+class <cite>LFPy.Synapse</cite></p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><cite>hybridLFPy.population.Population</cite> object</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="#hybridLFPy.PopulationSuper" title="hybridLFPy.PopulationSuper"><code class="xref py py-obj docutils literal"><span class="pre">PopulationSuper</span></code></a>, <a class="reference internal" href="#hybridLFPy.CachedNetwork" title="hybridLFPy.CachedNetwork"><code class="xref py py-obj docutils literal"><span class="pre">CachedNetwork</span></code></a>, <a class="reference internal" href="#hybridLFPy.CachedFixedSpikesNetwork" title="hybridLFPy.CachedFixedSpikesNetwork"><code class="xref py py-obj docutils literal"><span class="pre">CachedFixedSpikesNetwork</span></code></a>, <a class="reference internal" href="#hybridLFPy.CachedNoiseNetwork" title="hybridLFPy.CachedNoiseNetwork"><code class="xref py py-obj docutils literal"><span class="pre">CachedNoiseNetwork</span></code></a>, <code class="xref py py-obj docutils literal"><span class="pre">LFPy.Cell</span></code>, <code class="xref py py-obj docutils literal"><span class="pre">LFPy.RecExtElectrode</span></code></p>
+</div>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+</tbody>
+</table>
+<dl class="method">
+<dt id="hybridLFPy.Population.cellsim">
+<code class="descname">cellsim</code><span class="sig-paren">(</span><em>cellindex</em>, <em>return_just_cell=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hybridLFPy/population.html#Population.cellsim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hybridLFPy.Population.cellsim" title="Permalink to this definition">¶</a></dt>
+<dd><p>Do the actual simulations of LFP, using synaptic spike times from
+network simulation.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>cellindex</strong> : int</p>
+<blockquote>
+<div><p>cell index between 0 and population size-1.</p>
+</div></blockquote>
+<p><strong>return_just_cell</strong> : bool</p>
+<blockquote>
+<div><p>If True, return only the <cite>LFPy.Cell</cite> object
+if False, run full simulation, return None.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">None or <cite>LFPy.Cell</cite> object</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="#module-hybridLFPy.csd" title="hybridLFPy.csd"><code class="xref py py-obj docutils literal"><span class="pre">hybridLFPy.csd</span></code></a>, <code class="xref py py-obj docutils literal"><span class="pre">LFPy.Cell</span></code>, <code class="xref py py-obj docutils literal"><span class="pre">LFPy.Synapse</span></code>, <code class="xref py py-obj docutils literal"><span class="pre">LFPy.RecExtElectrode</span></code></p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="hybridLFPy.Population.fetchSpCells">
+<code class="descname">fetchSpCells</code><span class="sig-paren">(</span><em>nodes</em>, <em>numSyn</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hybridLFPy/population.html#Population.fetchSpCells"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hybridLFPy.Population.fetchSpCells" title="Permalink to this definition">¶</a></dt>
+<dd><p>For N (nodes count) nestSim-cells draw
+POPULATION_SIZE x NTIMES random cell indexes in
+the population in nodes and broadcast these as <cite>SpCell</cite>.</p>
+<p>The returned argument is a list with len = numSyn.size of np.arrays,
+assumes <cite>numSyn</cite> is a list</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>nodes</strong> : numpy.ndarray, dtype=int</p>
+<blockquote>
+<div><p>Node # of valid presynaptic neurons.</p>
+</div></blockquote>
+<p><strong>numSyn</strong> : numpy.ndarray, dtype=int</p>
+<blockquote>
+<div><p># of synapses per connection.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>SpCells</strong> : list</p>
+<blockquote class="last">
+<div><p>presynaptic network-neuron indices</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><code class="xref py py-obj docutils literal"><span class="pre">Population.fetch_all_SpCells</span></code></p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="hybridLFPy.Population.fetchSynIdxCell">
+<code class="descname">fetchSynIdxCell</code><span class="sig-paren">(</span><em>cell</em>, <em>nidx</em>, <em>synParams</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hybridLFPy/population.html#Population.fetchSynIdxCell"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hybridLFPy.Population.fetchSynIdxCell" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find possible synaptic placements for each cell
+As synapses are placed within layers with bounds determined by
+self.layerBoundaries, it will check this matrix accordingly, and
+use the probabilities from <a href="#id4"><span class="problematic" id="id5">`</span></a>self.connProbLayer to distribute.</p>
+<p>For each layer, the synapses are placed with probability normalized
+by membrane area of each compartment</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>cell</strong> : <cite>LFPy.Cell</cite> instance</p>
+<p><strong>nidx</strong> : numpy.ndarray</p>
+<blockquote>
+<div><p>Numbers of synapses per presynaptic population X.</p>
+</div></blockquote>
+<p><strong>synParams</strong> : which <cite>LFPy.Synapse</cite> parameters to use.</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>syn_idx</strong> : list</p>
+<blockquote class="last">
+<div><p>List of arrays of synapse placements per connection.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="#hybridLFPy.Population.get_all_synIdx" title="hybridLFPy.Population.get_all_synIdx"><code class="xref py py-obj docutils literal"><span class="pre">Population.get_all_synIdx</span></code></a>, <code class="xref py py-obj docutils literal"><span class="pre">Population.get_synIdx</span></code>, <code class="xref py py-obj docutils literal"><span class="pre">LFPy.Synapse</span></code></p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="hybridLFPy.Population.get_all_SpCells">
+<code class="descname">get_all_SpCells</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hybridLFPy/population.html#Population.get_all_SpCells"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hybridLFPy.Population.get_all_SpCells" title="Permalink to this definition">¶</a></dt>
+<dd><p>For each postsynaptic cell existing on this RANK, load or compute
+the presynaptic cell index for each synaptic connection</p>
+<p>This function takes no kwargs.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>None</strong></p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>SpCells</strong> : dict</p>
+<blockquote class="last">
+<div><p><cite>output[cellindex][populationname][layerindex]</cite>, np.array of
+presynaptic cell indices.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="#hybridLFPy.Population.fetchSpCells" title="hybridLFPy.Population.fetchSpCells"><code class="xref py py-obj docutils literal"><span class="pre">Population.fetchSpCells</span></code></a></p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="hybridLFPy.Population.get_all_synDelays">
+<code class="descname">get_all_synDelays</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hybridLFPy/population.html#Population.get_all_synDelays"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hybridLFPy.Population.get_all_synDelays" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create and load arrays of connection delays per connection on this rank</p>
+<p>Get random normally distributed synaptic delays,
+returns dict of nested list of same shape as SpCells.</p>
+<p>Delays are rounded to dt.</p>
+<p>This function takes no kwargs.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>None</strong></p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">dict</p>
+<blockquote class="last">
+<div><p>output[cellindex][populationname][layerindex]`, np.array of
+delays per connection.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><code class="xref py py-obj docutils literal"><span class="pre">numpy.random.normal</span></code></p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="hybridLFPy.Population.get_all_synIdx">
+<code class="descname">get_all_synIdx</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hybridLFPy/population.html#Population.get_all_synIdx"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hybridLFPy.Population.get_all_synIdx" title="Permalink to this definition">¶</a></dt>
+<dd><p>Auxilliary function to set up class attributes containing
+synapse locations given as LFPy.Cell compartment indices</p>
+<p>This function takes no inputs.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>None</strong></p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>synIdx</strong> : dict</p>
+<blockquote class="last">
+<div><p><cite>output[cellindex][populationindex][layerindex]</cite> numpy.ndarray of
+compartment indices.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="#hybridLFPy.Population.get_synidx" title="hybridLFPy.Population.get_synidx"><code class="xref py py-obj docutils literal"><span class="pre">Population.get_synidx</span></code></a>, <a class="reference internal" href="#hybridLFPy.Population.fetchSynIdxCell" title="hybridLFPy.Population.fetchSynIdxCell"><code class="xref py py-obj docutils literal"><span class="pre">Population.fetchSynIdxCell</span></code></a></p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="hybridLFPy.Population.get_synidx">
+<code class="descname">get_synidx</code><span class="sig-paren">(</span><em>cellindex</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hybridLFPy/population.html#Population.get_synidx"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hybridLFPy.Population.get_synidx" title="Permalink to this definition">¶</a></dt>
+<dd><p>Local function, draw and return synapse locations corresponding
+to a single cell, using a random seed set as
+<cite>POPULATIONSEED</cite> + <cite>cellindex</cite>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>cellindex</strong> : int</p>
+<blockquote>
+<div><p>Index of cell object.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>synidx</strong> : dict</p>
+<blockquote class="last">
+<div><p><cite>LFPy.Cell</cite> compartment indices</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="#hybridLFPy.Population.get_all_synIdx" title="hybridLFPy.Population.get_all_synIdx"><code class="xref py py-obj docutils literal"><span class="pre">Population.get_all_synIdx</span></code></a>, <a class="reference internal" href="#hybridLFPy.Population.fetchSynIdxCell" title="hybridLFPy.Population.fetchSynIdxCell"><code class="xref py py-obj docutils literal"><span class="pre">Population.fetchSynIdxCell</span></code></a></p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="hybridLFPy.Population.insert_all_synapses">
+<code class="descname">insert_all_synapses</code><span class="sig-paren">(</span><em>cellindex</em>, <em>cell</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hybridLFPy/population.html#Population.insert_all_synapses"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hybridLFPy.Population.insert_all_synapses" title="Permalink to this definition">¶</a></dt>
+<dd><p>Insert all synaptic events from all presynaptic layers on
+cell object with index <cite>cellindex</cite>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>cellindex</strong> : int</p>
+<blockquote>
+<div><p>cell index in the population.</p>
+</div></blockquote>
+<p><strong>cell</strong> : <cite>LFPy.Cell</cite> instance</p>
+<blockquote>
+<div><p>Postsynaptic target cell.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">None</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><code class="xref py py-obj docutils literal"><span class="pre">Population.insert_synapse</span></code></p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="hybridLFPy.Population.insert_synapses">
+<code class="descname">insert_synapses</code><span class="sig-paren">(</span><em>cell</em>, <em>cellindex</em>, <em>synParams</em>, <em>idx=array([]</em>, <em>dtype=float64)</em>, <em>X='EX'</em>, <em>SpCell=array([]</em>, <em>dtype=float64)</em>, <em>synDelays=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hybridLFPy/population.html#Population.insert_synapses"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hybridLFPy.Population.insert_synapses" title="Permalink to this definition">¶</a></dt>
+<dd><p>Insert synapse with <cite>parameters`=`synparams</cite> on cell=cell, with
+segment indexes given by <cite>idx</cite>. <cite>SpCell</cite> and <cite>SpTimes</cite> picked from
+Brunel network simulation</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>cell</strong> : <cite>LFPy.Cell</cite> instance</p>
+<blockquote>
+<div><p>Postsynaptic target cell.</p>
+</div></blockquote>
+<p><strong>cellindex</strong> : int</p>
+<blockquote>
+<div><p>Index of cell in population.</p>
+</div></blockquote>
+<p><strong>synParams</strong> : dict</p>
+<blockquote>
+<div><p>Parameters passed to <cite>LFPy.Synapse</cite>.</p>
+</div></blockquote>
+<p><strong>idx</strong> : numpy.ndarray</p>
+<blockquote>
+<div><p>Postsynaptic compartment indices.</p>
+</div></blockquote>
+<p><strong>X</strong> : str</p>
+<blockquote>
+<div><p>presynaptic population name</p>
+</div></blockquote>
+<p><strong>SpCell</strong> : numpy.ndarray</p>
+<blockquote>
+<div><p>Presynaptic spiking cells.</p>
+</div></blockquote>
+<p><strong>synDelays</strong> : numpy.ndarray</p>
+<blockquote>
+<div><p>Per connection specific delays.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">None</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="#hybridLFPy.Population.insert_all_synapses" title="hybridLFPy.Population.insert_all_synapses"><code class="xref py py-obj docutils literal"><span class="pre">Population.insert_all_synapses</span></code></a></p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="class-postprocess">
+<h3>class <a class="reference internal" href="#hybridLFPy.PostProcess" title="hybridLFPy.PostProcess"><code class="xref py py-class docutils literal"><span class="pre">PostProcess</span></code></a><a class="headerlink" href="#class-postprocess" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="hybridLFPy.PostProcess">
+<em class="property">class </em><code class="descclassname">hybridLFPy.</code><code class="descname">PostProcess</code><span class="sig-paren">(</span><em>y=['EX', 'IN'], dt_output=1.0, mapping_Yy=[('EX', 'EX'), ('IN', 'IN')], savelist=['somav', 'somapos', 'x', 'y', 'z', 'LFP', 'CSD'], savefolder='simulation_output_example_brunel', cells_subfolder='cells', populations_subfolder='populations', figures_subfolder='figures'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hybridLFPy/postproc.html#PostProcess"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hybridLFPy.PostProcess" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="http://docs.python.org/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
+<p>class <cite>PostProcess</cite>: Methods to deal with the contributions of every
+postsynaptic sub-population.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>y</strong> : list</p>
+<blockquote>
+<div><p>Postsynaptic cell-type or population-names.</p>
+</div></blockquote>
+<p><strong>dt_output</strong> : float</p>
+<blockquote>
+<div><p>Time resolution of output data.</p>
+</div></blockquote>
+<p><strong>savefolder</strong> : str</p>
+<blockquote>
+<div><p>Path to main output folder.</p>
+</div></blockquote>
+<p><strong>mapping_Yy</strong> : list</p>
+<blockquote>
+<div><p>List of tuples, each tuple pairing population with cell type, e.g., [(&#8216;L4E&#8217;, &#8216;p4&#8217;), (&#8216;L4E&#8217;, &#8216;ss4&#8217;)].</p>
+</div></blockquote>
+<p><strong>cells_subfolder</strong> : str</p>
+<blockquote>
+<div><p>Folder under <cite>savefolder</cite> containing cell output.</p>
+</div></blockquote>
+<p><strong>populations_subfolder</strong> : str</p>
+<blockquote>
+<div><p>Folder under <cite>savefolder</cite> containing population specific output.</p>
+</div></blockquote>
+<p><strong>figures_subfolder</strong> : str</p>
+<blockquote class="last">
+<div><p>Folder under <cite>savefolder</cite> containing figs.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+</tbody>
+</table>
+<dl class="method">
+<dt id="hybridLFPy.PostProcess.calc_csd">
+<code class="descname">calc_csd</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hybridLFPy/postproc.html#PostProcess.calc_csd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hybridLFPy.PostProcess.calc_csd" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sum all the CSD contributions from every layer.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="hybridLFPy.PostProcess.calc_csd_layer">
+<code class="descname">calc_csd_layer</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hybridLFPy/postproc.html#PostProcess.calc_csd_layer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hybridLFPy.PostProcess.calc_csd_layer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the CSD from concatenated subpopulations residing in a
+certain layer, e.g all L4E pops are summed, according to the <cite>mapping_Yy</cite>
+attribute of the <cite>hybridLFPy.Population</cite> objects.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="hybridLFPy.PostProcess.calc_lfp">
+<code class="descname">calc_lfp</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hybridLFPy/postproc.html#PostProcess.calc_lfp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hybridLFPy.PostProcess.calc_lfp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sum all the LFP contributions from every cell type.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="hybridLFPy.PostProcess.calc_lfp_layer">
+<code class="descname">calc_lfp_layer</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hybridLFPy/postproc.html#PostProcess.calc_lfp_layer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hybridLFPy.PostProcess.calc_lfp_layer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the LFP from concatenated subpopulations residing in a
+certain layer, e.g all L4E pops are summed, according to the <cite>mapping_Yy</cite>
+attribute of the <cite>hybridLFPy.Population</cite> objects.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="hybridLFPy.PostProcess.create_tar_archive">
+<code class="descname">create_tar_archive</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hybridLFPy/postproc.html#PostProcess.create_tar_archive"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hybridLFPy.PostProcess.create_tar_archive" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a tar archive of the main simulation outputs.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="hybridLFPy.PostProcess.run">
+<code class="descname">run</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hybridLFPy/postproc.html#PostProcess.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hybridLFPy.PostProcess.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform the postprocessing steps, computing compound signals from
+cell-specific output files.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="class-gdf">
+<h3>class <a class="reference internal" href="#hybridLFPy.GDF" title="hybridLFPy.GDF"><code class="xref py py-class docutils literal"><span class="pre">GDF</span></code></a><a class="headerlink" href="#class-gdf" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="hybridLFPy.GDF">
+<em class="property">class </em><code class="descclassname">hybridLFPy.</code><code class="descname">GDF</code><span class="sig-paren">(</span><em>dbname</em>, <em>bsize=1000000</em>, <em>new_db=True</em>, <em>debug=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hybridLFPy/gdf.html#GDF"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hybridLFPy.GDF" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="http://docs.python.org/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
+<ol class="arabic simple">
+<li>Read from gdf files.</li>
+<li>Create sqlite db of (neuron, spike time).</li>
+<li>Query spike times for neurons.</li>
+</ol>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>dbname</strong> : str</p>
+<blockquote>
+<div><p>Filename of sqlite database, see <cite>sqlite3.connect</cite></p>
+</div></blockquote>
+<p><strong>bsize</strong> : int</p>
+<blockquote>
+<div><p>Number of spike times to insert.</p>
+</div></blockquote>
+<p><strong>new_db</strong> : bool</p>
+<blockquote>
+<div><p>New database with name dbname, will overwrite
+at a time, determines memory usage.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><cite>hybridLFPy.gdf.GDF</cite> object</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference external" href="http://docs.python.org/library/sqlite3.html#module-sqlite3" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">sqlite3</span></code></a>, <a class="reference external" href="http://docs.python.org/library/sqlite3.html#sqlite3.connect" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">sqlite3.connect</span></code></a>, <code class="xref py py-obj docutils literal"><span class="pre">sqlite3.connect.cursor</span></code></p>
+</div>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+</tbody>
+</table>
+<dl class="method">
+<dt id="hybridLFPy.GDF.close">
+<code class="descname">close</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hybridLFPy/gdf.html#GDF.close"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hybridLFPy.GDF.close" title="Permalink to this definition">¶</a></dt>
+<dd><p>Close <cite>sqlite3.connect.cursor</cite> and <cite>sqlite3.connect</cite> objects</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>None</strong></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><code class="xref py py-obj docutils literal"><span class="pre">sqlite3.connect.cursor</span></code>, <a class="reference external" href="http://docs.python.org/library/sqlite3.html#sqlite3.connect" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">sqlite3.connect</span></code></a></p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="hybridLFPy.GDF.create">
+<code class="descname">create</code><span class="sig-paren">(</span><em>re='brunel-py-ex-*.gdf'</em>, <em>index=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hybridLFPy/gdf.html#GDF.create"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hybridLFPy.GDF.create" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create db from list of gdf file glob</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>re</strong> : str</p>
+<blockquote>
+<div><p>File glob to load.</p>
+</div></blockquote>
+<p><strong>index</strong> : bool</p>
+<blockquote>
+<div><p>Create index on neurons for speed.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">None</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><code class="xref py py-obj docutils literal"><span class="pre">sqlite3.connect.cursor</span></code>, <a class="reference external" href="http://docs.python.org/library/sqlite3.html#sqlite3.connect" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">sqlite3.connect</span></code></a></p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="hybridLFPy.GDF.create_from_list">
+<code class="descname">create_from_list</code><span class="sig-paren">(</span><em>re=[]</em>, <em>index=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hybridLFPy/gdf.html#GDF.create_from_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hybridLFPy.GDF.create_from_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create db from list of arrays.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>re</strong> : list</p>
+<blockquote>
+<div><p>Index of element is cell index, and element <cite>i</cite> an array of spike times in ms.</p>
+</div></blockquote>
+<p><strong>index</strong> : bool</p>
+<blockquote>
+<div><p>Create index on neurons for speed.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">None</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><code class="xref py py-obj docutils literal"><span class="pre">sqlite3.connect.cursor</span></code>, <a class="reference external" href="http://docs.python.org/library/sqlite3.html#sqlite3.connect" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">sqlite3.connect</span></code></a></p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="hybridLFPy.GDF.interval">
+<code class="descname">interval</code><span class="sig-paren">(</span><em>T=[0, 1000]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hybridLFPy/gdf.html#GDF.interval"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hybridLFPy.GDF.interval" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get all spikes in a time interval T.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>T</strong> : list</p>
+<blockquote>
+<div><p>Time interval.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>s</strong> : list</p>
+<blockquote class="last">
+<div><p>Nested list with spike times.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><code class="xref py py-obj docutils literal"><span class="pre">sqlite3.connect.cursor</span></code></p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="hybridLFPy.GDF.neurons">
+<code class="descname">neurons</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hybridLFPy/gdf.html#GDF.neurons"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hybridLFPy.GDF.neurons" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return list of neuron indices.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>None</strong></p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">list</p>
+<blockquote class="last">
+<div><p>list of neuron indices</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><code class="xref py py-obj docutils literal"><span class="pre">sqlite3.connect.cursor</span></code></p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="hybridLFPy.GDF.num_spikes">
+<code class="descname">num_spikes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hybridLFPy/gdf.html#GDF.num_spikes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hybridLFPy.GDF.num_spikes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return total number of spikes.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>None</strong></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">list</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="hybridLFPy.GDF.plotstuff">
+<code class="descname">plotstuff</code><span class="sig-paren">(</span><em>T=[0, 1000]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hybridLFPy/gdf.html#GDF.plotstuff"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hybridLFPy.GDF.plotstuff" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a scatter plot of the contents of the database,
+with entries on the interval T.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>T</strong> : list</p>
+<blockquote>
+<div><p>Time interval.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">None</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="#hybridLFPy.GDF.select_neurons_interval" title="hybridLFPy.GDF.select_neurons_interval"><code class="xref py py-obj docutils literal"><span class="pre">GDF.select_neurons_interval</span></code></a></p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="hybridLFPy.GDF.select">
+<code class="descname">select</code><span class="sig-paren">(</span><em>neurons</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hybridLFPy/gdf.html#GDF.select"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hybridLFPy.GDF.select" title="Permalink to this definition">¶</a></dt>
+<dd><p>Select spike trains.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>neurons</strong> : numpy.ndarray or list</p>
+<blockquote>
+<div><p>Array of list of neurons.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">list</p>
+<blockquote class="last">
+<div><p>List of numpy.ndarray objects containing spike times.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><code class="xref py py-obj docutils literal"><span class="pre">sqlite3.connect.cursor</span></code></p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="hybridLFPy.GDF.select_neurons_interval">
+<code class="descname">select_neurons_interval</code><span class="sig-paren">(</span><em>neurons, T=[0, 1000]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hybridLFPy/gdf.html#GDF.select_neurons_interval"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hybridLFPy.GDF.select_neurons_interval" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get all spikes from neurons in a time interval T.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>neurons</strong> : list</p>
+<blockquote>
+<div><p>network neuron indices</p>
+</div></blockquote>
+<p><strong>T</strong> : list</p>
+<blockquote>
+<div><p>Time interval.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>s</strong> : list</p>
+<blockquote class="last">
+<div><p>Nested list with spike times.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><code class="xref py py-obj docutils literal"><span class="pre">sqlite3.connect.cursor</span></code></p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-hybridLFPy.helpers">
+<span id="submodule-helpers"></span><h3>submodule <code class="xref py py-mod docutils literal"><span class="pre">helpers</span></code><a class="headerlink" href="#module-hybridLFPy.helpers" title="Permalink to this headline">¶</a></h3>
+<p>Documentation:</p>
+<p>This is a script containing general helper functions which can be applied
+to specialized cases.</p>
+<dl class="function">
+<dt id="hybridLFPy.helpers.autocorrfunc">
+<code class="descclassname">hybridLFPy.helpers.</code><code class="descname">autocorrfunc</code><span class="sig-paren">(</span><em>freq</em>, <em>power</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hybridLFPy/helpers.html#autocorrfunc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hybridLFPy.helpers.autocorrfunc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate autocorrelation function(s) for given power spectrum/spectra.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>freq</strong> : numpy.ndarray</p>
+<blockquote>
+<div><p>1 dimensional array of frequencies.</p>
+</div></blockquote>
+<p><strong>power</strong> : numpy.ndarray</p>
+<blockquote>
+<div><p>2 dimensional power spectra, 1st axis units, 2nd axis frequencies.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>time</strong> : tuple</p>
+<blockquote>
+<div><p>1 dim numpy.ndarray of times.</p>
+</div></blockquote>
+<p><strong>autof</strong> : tuple</p>
+<blockquote class="last">
+<div><p>2 dim numpy.ndarray; autocorrelation functions, 1st axis units,
+2nd axis times.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="hybridLFPy.helpers.calculate_fft">
+<code class="descclassname">hybridLFPy.helpers.</code><code class="descname">calculate_fft</code><span class="sig-paren">(</span><em>data</em>, <em>tbin</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hybridLFPy/helpers.html#calculate_fft"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hybridLFPy.helpers.calculate_fft" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to calculate the Fourier transform of data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>data</strong> : numpy.ndarray</p>
+<blockquote>
+<div><p>1D or 2D array containing time series.</p>
+</div></blockquote>
+<p><strong>tbin</strong> : float</p>
+<blockquote>
+<div><p>Bin size of time series (in ms).</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>freqs</strong> : numpy.ndarray</p>
+<blockquote>
+<div><p>Frequency axis of signal in Fourier space.</p>
+</div></blockquote>
+<p><strong>fft</strong> : numpy.ndarray</p>
+<blockquote class="last">
+<div><p>Signal in Fourier space.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="hybridLFPy.helpers.centralize">
+<code class="descclassname">hybridLFPy.helpers.</code><code class="descname">centralize</code><span class="sig-paren">(</span><em>data</em>, <em>time=False</em>, <em>units=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hybridLFPy/helpers.html#centralize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hybridLFPy.helpers.centralize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to subtract the mean across time and/or across units from data</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>data</strong> : numpy.ndarray</p>
+<blockquote>
+<div><p>1D or 2D array containing time series, 1st index: unit, 2nd index: time</p>
+</div></blockquote>
+<p><strong>time</strong> : bool</p>
+<blockquote>
+<div><p>True: subtract mean across time.</p>
+</div></blockquote>
+<p><strong>units</strong> : bool</p>
+<blockquote>
+<div><p>True: subtract mean across units.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">numpy.ndarray</p>
+<blockquote class="last">
+<div><p>1D or 0D array of centralized signal.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="hybridLFPy.helpers.coherence">
+<code class="descclassname">hybridLFPy.helpers.</code><code class="descname">coherence</code><span class="sig-paren">(</span><em>freq</em>, <em>power</em>, <em>cross</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hybridLFPy/helpers.html#coherence"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hybridLFPy.helpers.coherence" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate frequency resolved coherence for given power- and crossspectra.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>freq</strong> : numpy.ndarray</p>
+<blockquote>
+<div><p>Frequencies, 1 dim array.</p>
+</div></blockquote>
+<p><strong>power</strong> : numpy.ndarray</p>
+<blockquote>
+<div><p>Power spectra, 1st axis units, 2nd axis frequencies.</p>
+</div></blockquote>
+<p><strong>cross</strong> : numpy.ndarray,</p>
+<blockquote>
+<div><p>Cross spectra, 1st axis units, 2nd axis units, 3rd axis frequencies.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">freq: tuple</p>
+<blockquote>
+<div><p>1 dim numpy.ndarray of frequencies.</p>
+</div></blockquote>
+<p>coh: tuple</p>
+<blockquote class="last">
+<div><p>ndim 3 numpy.ndarray of coherences, 1st axis units, 2nd axis units,
+3rd axis frequencies.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="hybridLFPy.helpers.compound_crossspec">
+<code class="descclassname">hybridLFPy.helpers.</code><code class="descname">compound_crossspec</code><span class="sig-paren">(</span><em>a_data</em>, <em>tbin</em>, <em>Df=None</em>, <em>pointProcess=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hybridLFPy/helpers.html#compound_crossspec"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hybridLFPy.helpers.compound_crossspec" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate cross spectra of compound signals.
+a_data is a list of datasets (a_data = [data1,data2,...]).
+For each dataset in a_data, the compound signal is calculated
+and the crossspectra between these compound signals is computed.</p>
+<p>If pointProcess=True, power spectra are normalized by the length T of the
+time series.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>a_data</strong> : list of numpy.ndarrays</p>
+<blockquote>
+<div><p>Array: 1st axis unit, 2nd axis time.</p>
+</div></blockquote>
+<p><strong>tbin</strong> : float</p>
+<blockquote>
+<div><p>Binsize in ms.</p>
+</div></blockquote>
+<p><strong>Df</strong> : float/None,</p>
+<blockquote>
+<div><p>Window width of sliding rectangular filter (smoothing),
+None -&gt; no smoothing.</p>
+</div></blockquote>
+<p><strong>pointProcess</strong> : bool</p>
+<blockquote>
+<div><p>If set to True, crossspectrum is normalized to signal length <cite>T</cite></p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>freq</strong> : tuple</p>
+<blockquote>
+<div><p>numpy.ndarray of frequencies.</p>
+</div></blockquote>
+<p><strong>CRO</strong> : tuple</p>
+<blockquote class="last">
+<div><p>3 dim numpy.ndarray; 1st axis first compound signal, 2nd axis second
+compound signal, 3rd axis frequency.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">compound_crossspec</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">analog_sig1</span><span class="p">,</span> <span class="n">analog_sig2</span><span class="p">]),</span>
+<span class="go">                        np.array([analog_sig3,analog_sig4])], tbin, Df=Df)</span>
+<span class="go">Out[1]: (freq,CRO)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">CRO</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">Out[2]: (2,2,len(analog_sig1))</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="hybridLFPy.helpers.compound_mean">
+<code class="descclassname">hybridLFPy.helpers.</code><code class="descname">compound_mean</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hybridLFPy/helpers.html#compound_mean"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hybridLFPy.helpers.compound_mean" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the mean of the compound/sum signal.
+Data is first summed across units and averaged across time.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>data</strong> : numpy.ndarray</p>
+<blockquote>
+<div><p>1st axis unit, 2nd axis time</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">float</p>
+<blockquote class="last">
+<div><p>time-averaged compound/sum signal</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">compound_mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">]]))</span>
+<span class="go">7.0</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="hybridLFPy.helpers.compound_powerspec">
+<code class="descclassname">hybridLFPy.helpers.</code><code class="descname">compound_powerspec</code><span class="sig-paren">(</span><em>data</em>, <em>tbin</em>, <em>Df=None</em>, <em>pointProcess=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hybridLFPy/helpers.html#compound_powerspec"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hybridLFPy.helpers.compound_powerspec" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the power spectrum of the compound/sum signal.
+data is first summed across units, then the power spectrum is calculated.</p>
+<p>If pointProcess=True, power spectra are normalized by the length T of
+the time series.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>data</strong> : numpy.ndarray,</p>
+<blockquote>
+<div><p>1st axis unit, 2nd axis time</p>
+</div></blockquote>
+<p><strong>tbin</strong> : float,</p>
+<blockquote>
+<div><p>binsize in ms</p>
+</div></blockquote>
+<p><strong>Df</strong> : float/None,</p>
+<blockquote>
+<div><p>window width of sliding rectangular filter (smoothing),
+None -&gt; no smoothing</p>
+</div></blockquote>
+<p><strong>pointProcess</strong> : bool,</p>
+<blockquote>
+<div><p>if set to True, powerspectrum is normalized to signal length T</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>freq</strong> : tuple</p>
+<blockquote>
+<div><p>numpy.ndarray of frequencies</p>
+</div></blockquote>
+<p><strong>POW</strong> : tuple</p>
+<blockquote class="last">
+<div><p>1 dim numpy.ndarray, frequency series</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">compound_powerspec</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">analog_sig1</span><span class="p">,</span> <span class="n">analog_sig2</span><span class="p">]),</span> <span class="n">tbin</span><span class="p">,</span> <span class="n">Df</span><span class="o">=</span><span class="n">Df</span><span class="p">)</span>
+<span class="go">Out[1]: (freq,POW)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">POW</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">Out[2]: (len(analog_sig1),)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="hybridLFPy.helpers.compound_variance">
+<code class="descclassname">hybridLFPy.helpers.</code><code class="descname">compound_variance</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hybridLFPy/helpers.html#compound_variance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hybridLFPy.helpers.compound_variance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the variance of the compound/sum signal.
+Data is first summed across units, then the variance across time
+is calculated.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>data</strong> : numpy.ndarray</p>
+<blockquote>
+<div><p>1st axis unit, 2nd axis time</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">float</p>
+<blockquote class="last">
+<div><p>variance across time of compound/sum signal</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">compound_variance</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">]]))</span>
+<span class="go">2.6666666666666665</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="hybridLFPy.helpers.corrcoef">
+<code class="descclassname">hybridLFPy.helpers.</code><code class="descname">corrcoef</code><span class="sig-paren">(</span><em>time</em>, <em>crossf</em>, <em>integration_window=0.0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hybridLFPy/helpers.html#corrcoef"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hybridLFPy.helpers.corrcoef" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the correlation coefficient for given auto- and crosscorrelation
+functions. Standard settings yield the zero lag correlation coefficient.
+Setting integration_window &gt; 0 yields the correlation coefficient of
+integrated auto- and crosscorrelation functions. The correlation coefficient
+between a zero signal with any other signal is defined as 0.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>time</strong> : numpy.ndarray</p>
+<blockquote>
+<div><p>1 dim array of times corresponding to signal.</p>
+</div></blockquote>
+<p><strong>crossf</strong> : numpy.ndarray</p>
+<blockquote>
+<div><p>Crosscorrelation functions, 1st axis first unit, 2nd axis second unit,
+3rd axis times.</p>
+</div></blockquote>
+<p><strong>integration_window: float</strong></p>
+<blockquote>
+<div><p>Size of the integration window.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>cc</strong> : numpy.ndarray</p>
+<blockquote class="last">
+<div><p>2 dim array of correlation coefficient between two units.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="hybridLFPy.helpers.crosscorrfunc">
+<code class="descclassname">hybridLFPy.helpers.</code><code class="descname">crosscorrfunc</code><span class="sig-paren">(</span><em>freq</em>, <em>cross</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hybridLFPy/helpers.html#crosscorrfunc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hybridLFPy.helpers.crosscorrfunc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate crosscorrelation function(s) for given cross spectra.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>freq</strong> : numpy.ndarray</p>
+<blockquote>
+<div><p>1 dimensional array of frequencies.</p>
+</div></blockquote>
+<p><strong>cross</strong> : numpy.ndarray</p>
+<blockquote>
+<div><p>2 dimensional array of cross spectra, 1st axis units, 2nd axis units,
+3rd axis frequencies.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>time</strong> : tuple</p>
+<blockquote>
+<div><p>1 dim numpy.ndarray of times.</p>
+</div></blockquote>
+<p><strong>crossf</strong> : tuple</p>
+<blockquote class="last">
+<div><p>3 dim numpy.ndarray, crosscorrelation functions,
+1st axis first unit, 2nd axis second unit, 3rd axis times.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="hybridLFPy.helpers.crossspec">
+<code class="descclassname">hybridLFPy.helpers.</code><code class="descname">crossspec</code><span class="sig-paren">(</span><em>data</em>, <em>tbin</em>, <em>Df=None</em>, <em>units=False</em>, <em>pointProcess=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hybridLFPy/helpers.html#crossspec"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hybridLFPy.helpers.crossspec" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate (smoothed) cross spectra of data.
+If <a href="#id6"><span class="problematic" id="id7">`</span></a>units`=True, cross spectra are averaged across units.
+Note that averaging is done on cross spectra rather than data.</p>
+<p>Cross spectra are normalized by the length T of the time series -&gt; no
+scaling with T.</p>
+<p>If pointProcess=True, power spectra are normalized by the length T of the
+time series.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>data</strong> : numpy.ndarray,</p>
+<blockquote>
+<div><p>1st axis unit, 2nd axis time</p>
+</div></blockquote>
+<p><strong>tbin</strong> : float,</p>
+<blockquote>
+<div><p>binsize in ms</p>
+</div></blockquote>
+<p><strong>Df</strong> : float/None,</p>
+<blockquote>
+<div><p>window width of sliding rectangular filter (smoothing),
+None -&gt; no smoothing</p>
+</div></blockquote>
+<p><strong>units</strong> : bool,</p>
+<blockquote>
+<div><p>average cross spectrum</p>
+</div></blockquote>
+<p><strong>pointProcess</strong> : bool,</p>
+<blockquote>
+<div><p>if set to True, cross spectrum is normalized to signal length T</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>freq</strong> : tuple</p>
+<blockquote>
+<div><p>numpy.ndarray of frequencies</p>
+</div></blockquote>
+<p><strong>CRO</strong> : tuple</p>
+<blockquote class="last">
+<div><p>if <a href="#id8"><span class="problematic" id="id9">`</span></a>units`=True: 1 dim numpy.ndarray; frequency series
+if <a href="#id10"><span class="problematic" id="id11">`</span></a>units`=False:3 dim numpy.ndarray; 1st axis first unit,</p>
+<blockquote>
+<div><p>2nd axis second unit, 3rd axis frequency</p>
+</div></blockquote>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">crossspec</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">analog_sig1</span><span class="p">,</span> <span class="n">analog_sig2</span><span class="p">]),</span> <span class="n">tbin</span><span class="p">,</span> <span class="n">Df</span><span class="o">=</span><span class="n">Df</span><span class="p">)</span>
+<span class="go">Out[1]: (freq,CRO)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">CRO</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">Out[2]: (2,2,len(analog_sig1))</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">crossspec</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">analog_sig1</span><span class="p">,</span> <span class="n">analog_sig2</span><span class="p">]),</span> <span class="n">tbin</span><span class="p">,</span> <span class="n">Df</span><span class="o">=</span><span class="n">Df</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="go">Out[1]: (freq,CRO)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">CRO</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">Out[2]: (len(analog_sig1),)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="hybridLFPy.helpers.cv">
+<code class="descclassname">hybridLFPy.helpers.</code><code class="descname">cv</code><span class="sig-paren">(</span><em>data</em>, <em>units=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hybridLFPy/helpers.html#cv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hybridLFPy.helpers.cv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate coefficient of variation (cv) of data. Mean and standard deviation
+are computed across time.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>data</strong> : numpy.ndarray</p>
+<blockquote>
+<div><p>1st axis unit, 2nd axis time.</p>
+</div></blockquote>
+<p><strong>units</strong> : bool</p>
+<blockquote>
+<div><p>Average <cite>cv</cite>.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">numpy.ndarray</p>
+<blockquote>
+<div><p>If units=False, series of unit <a href="#id12"><span class="problematic" id="id13">`</span></a>cv`s.</p>
+</div></blockquote>
+<p>float</p>
+<blockquote class="last">
+<div><p>If units=True, mean <cite>cv</cite> across units.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">cv</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">],</span> <span class="p">[</span><span class="mi">11</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">]]))</span>
+<span class="go">array([ 0.48795004,  0.63887656])</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">cv</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">],</span> <span class="p">[</span><span class="mi">11</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">]]),</span> <span class="n">units</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="go">0.56341330073710316</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="hybridLFPy.helpers.decimate">
+<code class="descclassname">hybridLFPy.helpers.</code><code class="descname">decimate</code><span class="sig-paren">(</span><em>x</em>, <em>q=10</em>, <em>n=4</em>, <em>k=0.8</em>, <em>filterfun=&lt;function cheby1&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hybridLFPy/helpers.html#decimate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hybridLFPy.helpers.decimate" title="Permalink to this definition">¶</a></dt>
+<dd><p>scipy.signal.decimate like downsampling using filtfilt instead of lfilter,
+and filter coeffs from butterworth or chebyshev type 1.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>x</strong> : numpy.ndarray</p>
+<blockquote>
+<div><p>Array to be downsampled along last axis.</p>
+</div></blockquote>
+<p><strong>q</strong> : int</p>
+<blockquote>
+<div><p>Downsampling factor.</p>
+</div></blockquote>
+<p><strong>n</strong> : int</p>
+<blockquote>
+<div><p>Butterworth filter order.</p>
+</div></blockquote>
+<p><strong>k</strong> : float</p>
+<blockquote>
+<div><p>Aliasing filter critical frequency will be set as Wn=k/q.</p>
+</div></blockquote>
+<p><strong>filterfun</strong> : function</p>
+<blockquote>
+<div><p><cite>scipy.signal.filter_design.cheby1</cite> or
+<cite>scipy.signal.filter_design.butter</cite> function</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">numpy.ndarray</p>
+<blockquote class="last">
+<div><p>Array of downsampled signal.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="hybridLFPy.helpers.dump_dict_of_nested_lists_to_h5">
+<code class="descclassname">hybridLFPy.helpers.</code><code class="descname">dump_dict_of_nested_lists_to_h5</code><span class="sig-paren">(</span><em>fname</em>, <em>data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hybridLFPy/helpers.html#dump_dict_of_nested_lists_to_h5"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hybridLFPy.helpers.dump_dict_of_nested_lists_to_h5" title="Permalink to this definition">¶</a></dt>
+<dd><p>Take nested list structure and dump it in hdf5 file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>fname</strong> : str</p>
+<blockquote>
+<div><p>Filename</p>
+</div></blockquote>
+<p><strong>data</strong> : dict(list(numpy.ndarray))</p>
+<blockquote>
+<div><p>Dict of nested lists with variable len arrays.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">None</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="hybridLFPy.helpers.fano">
+<code class="descclassname">hybridLFPy.helpers.</code><code class="descname">fano</code><span class="sig-paren">(</span><em>data</em>, <em>units=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hybridLFPy/helpers.html#fano"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hybridLFPy.helpers.fano" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate fano factor (FF) of data. Mean and variance are computed across
+time.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>data</strong> : numpy.ndarray</p>
+<blockquote>
+<div><p>1st axis unit, 2nd axis time.</p>
+</div></blockquote>
+<p><strong>units</strong> : bool</p>
+<blockquote>
+<div><p>Average <cite>FF</cite>.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">numpy.ndarray</p>
+<blockquote>
+<div><p>If units=False, series of unit FFs.</p>
+</div></blockquote>
+<p>float</p>
+<blockquote class="last">
+<div><p>If units=True, mean FF across units.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">fano</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">],</span> <span class="p">[</span><span class="mi">11</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">]]))</span>
+<span class="go">array([ 0.83333333,  1.9047619 ])</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">fano</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">],</span> <span class="p">[</span><span class="mi">11</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">]]),</span> <span class="n">units</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="go">1.3690476190476191</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="hybridLFPy.helpers.load_dict_of_nested_lists_from_h5">
+<code class="descclassname">hybridLFPy.helpers.</code><code class="descname">load_dict_of_nested_lists_from_h5</code><span class="sig-paren">(</span><em>fname</em>, <em>toplevelkeys=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hybridLFPy/helpers.html#load_dict_of_nested_lists_from_h5"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hybridLFPy.helpers.load_dict_of_nested_lists_from_h5" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load nested list structure from hdf5 file</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>fname</strong> : str</p>
+<blockquote>
+<div><p>Filename</p>
+</div></blockquote>
+<p><strong>toplevelkeys</strong> : None or iterable,</p>
+<blockquote>
+<div><p>Load a two(default) or three-layered structure.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">dict(list(numpy.ndarray))</p>
+<blockquote class="last">
+<div><p>dictionary of nested lists with variable length array data.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="hybridLFPy.helpers.load_h5_data">
+<code class="descclassname">hybridLFPy.helpers.</code><code class="descname">load_h5_data</code><span class="sig-paren">(</span><em>path=''</em>, <em>data_type='LFP'</em>, <em>y=None</em>, <em>electrode=None</em>, <em>warmup=0.0</em>, <em>scaling=1.0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hybridLFPy/helpers.html#load_h5_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hybridLFPy.helpers.load_h5_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function loading results from hdf5 file</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>path</strong> : str</p>
+<blockquote>
+<div><p>Path to hdf5-file</p>
+</div></blockquote>
+<p><strong>data_type</strong> : str</p>
+<blockquote>
+<div><p>Signal types in [&#8216;CSD&#8217; , &#8216;LFP&#8217;, &#8216;CSDsum&#8217;, &#8216;LFPsum&#8217;].</p>
+</div></blockquote>
+<p><strong>y</strong> : None or str</p>
+<blockquote>
+<div><p>Name of population.</p>
+</div></blockquote>
+<p><strong>electrode</strong> : None or int</p>
+<blockquote>
+<div><p>TODO: update, electrode is NOT USED</p>
+</div></blockquote>
+<p><strong>warmup</strong> : float</p>
+<blockquote>
+<div><p>Lower cutoff of time series to remove possible transients</p>
+</div></blockquote>
+<p><strong>scaling</strong> : float,</p>
+<blockquote>
+<div><p>Scaling factor for population size that determines the amount of loaded
+single-cell signals</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">numpy.ndarray</p>
+<blockquote>
+<div><p>[electrode id, compound signal] if <cite>y</cite> is None</p>
+</div></blockquote>
+<p>numpy.ndarray</p>
+<blockquote class="last">
+<div><p>[cell id, electrode, single-cell signal] otherwise</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="hybridLFPy.helpers.mean">
+<code class="descclassname">hybridLFPy.helpers.</code><code class="descname">mean</code><span class="sig-paren">(</span><em>data</em>, <em>units=False</em>, <em>time=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hybridLFPy/helpers.html#mean"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hybridLFPy.helpers.mean" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to compute mean of data</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>data</strong> : numpy.ndarray</p>
+<blockquote>
+<div><p>1st axis unit, 2nd axis time</p>
+</div></blockquote>
+<p><strong>units</strong> : bool</p>
+<blockquote>
+<div><p>Average over units</p>
+</div></blockquote>
+<p><strong>time</strong> : bool</p>
+<blockquote>
+<div><p>Average over time</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">if units=False and time=False:</p>
+<blockquote>
+<div><p>error</p>
+</div></blockquote>
+<p>if units=True:</p>
+<blockquote>
+<div><p>1 dim numpy.ndarray; time series</p>
+</div></blockquote>
+<p>if time=True:</p>
+<blockquote>
+<div><p>1 dim numpy.ndarray; series of unit means across time</p>
+</div></blockquote>
+<p>if units=True and time=True:</p>
+<blockquote class="last">
+<div><p>float; unit and time mean</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">]]),</span> <span class="n">units</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="go">array([ 2.5,  3.5,  4.5])</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">]]),</span> <span class="n">time</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="go">array([ 2.,  5.])</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">]]),</span> <span class="n">units</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">time</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="go">3.5</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="hybridLFPy.helpers.movav">
+<code class="descclassname">hybridLFPy.helpers.</code><code class="descname">movav</code><span class="sig-paren">(</span><em>y</em>, <em>Dx</em>, <em>dx</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hybridLFPy/helpers.html#movav"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hybridLFPy.helpers.movav" title="Permalink to this definition">¶</a></dt>
+<dd><p>Moving average rectangular window filter:
+calculate average of signal y by using sliding rectangular
+window of size Dx using binsize dx</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>y</strong> : numpy.ndarray</p>
+<blockquote>
+<div><p>Signal</p>
+</div></blockquote>
+<p><strong>Dx</strong> : float</p>
+<blockquote>
+<div><p>Window length of filter.</p>
+</div></blockquote>
+<p><strong>dx</strong> : float</p>
+<blockquote>
+<div><p>Bin size of signal sampling.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">numpy.ndarray</p>
+<blockquote class="last">
+<div><p>Filtered signal.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="hybridLFPy.helpers.normalize">
+<code class="descclassname">hybridLFPy.helpers.</code><code class="descname">normalize</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hybridLFPy/helpers.html#normalize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hybridLFPy.helpers.normalize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to normalize data to have mean 0 and unity standard deviation
+(also called z-transform)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>data</strong> : numpy.ndarray</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">numpy.ndarray</p>
+<blockquote class="last">
+<div><p>z-transform of input array</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="hybridLFPy.helpers.powerspec">
+<code class="descclassname">hybridLFPy.helpers.</code><code class="descname">powerspec</code><span class="sig-paren">(</span><em>data</em>, <em>tbin</em>, <em>Df=None</em>, <em>units=False</em>, <em>pointProcess=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hybridLFPy/helpers.html#powerspec"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hybridLFPy.helpers.powerspec" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate (smoothed) power spectra of all timeseries in data.
+If units=True, power spectra are averaged across units.
+Note that averaging is done on power spectra rather than data.</p>
+<p>If pointProcess is True, power spectra are normalized by the length T of the
+time series.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>data</strong> : numpy.ndarray</p>
+<blockquote>
+<div><p>1st axis unit, 2nd axis time.</p>
+</div></blockquote>
+<p><strong>tbin</strong> : float</p>
+<blockquote>
+<div><p>Binsize in ms.</p>
+</div></blockquote>
+<p><strong>Df</strong> : float/None,</p>
+<blockquote>
+<div><p>Window width of sliding rectangular filter (smoothing),
+None is no smoothing.</p>
+</div></blockquote>
+<p><strong>units</strong> : bool</p>
+<blockquote>
+<div><p>Average power spectrum.</p>
+</div></blockquote>
+<p><strong>pointProcess</strong> : bool</p>
+<blockquote>
+<div><p>If set to True, powerspectrum is normalized to signal length T.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>freq</strong> : tuple</p>
+<blockquote>
+<div><p>numpy.ndarray of frequencies.</p>
+</div></blockquote>
+<p><strong>POW</strong> : tuple</p>
+<blockquote class="last">
+<div><dl class="docutils">
+<dt>if units=False: </dt>
+<dd><p class="first last">2 dim numpy.ndarray; 1st axis unit, 2nd axis frequency</p>
+</dd>
+<dt>if units=True:  </dt>
+<dd><p class="first last">1 dim numpy.ndarray; frequency series</p>
+</dd>
+</dl>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">powerspec</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">analog_sig1</span><span class="p">,</span> <span class="n">analog_sig2</span><span class="p">]),</span> <span class="n">tbin</span><span class="p">,</span> <span class="n">Df</span><span class="o">=</span><span class="n">Df</span><span class="p">)</span>
+<span class="go">Out[1]: (freq,POW)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">POW</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">Out[2]: (2,len(analog_sig1))</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">powerspec</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">analog_sig1</span><span class="p">,</span> <span class="n">analog_sig2</span><span class="p">]),</span> <span class="n">tbin</span><span class="p">,</span> <span class="n">Df</span><span class="o">=</span><span class="n">Df</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="go">Out[1]: (freq,POW)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">POW</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">Out[2]: (len(analog_sig1),)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="hybridLFPy.helpers.read_gdf">
+<code class="descclassname">hybridLFPy.helpers.</code><code class="descname">read_gdf</code><span class="sig-paren">(</span><em>fname</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hybridLFPy/helpers.html#read_gdf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hybridLFPy.helpers.read_gdf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fast line-by-line gdf-file reader.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>fname</strong> : str</p>
+<blockquote>
+<div><p>Path to gdf-file.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">numpy.ndarray</p>
+<blockquote class="last">
+<div><p>([gid, val0, val1, <a href="#id14"><span class="problematic" id="id15">**</span></a>]), dtype=object) mixed datatype array</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="hybridLFPy.helpers.setup_file_dest">
+<code class="descclassname">hybridLFPy.helpers.</code><code class="descname">setup_file_dest</code><span class="sig-paren">(</span><em>params</em>, <em>clearDestination=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hybridLFPy/helpers.html#setup_file_dest"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hybridLFPy.helpers.setup_file_dest" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to set up the file catalog structure for simulation output</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>params</strong> : object</p>
+<blockquote>
+<div><p>e.g., <cite>cellsim16popsParams.multicompartment_params()</cite></p>
+</div></blockquote>
+<p><strong>clear_dest</strong> : bool</p>
+<blockquote>
+<div><p>Savefolder will be cleared if already existing.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">None</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="hybridLFPy.helpers.variance">
+<code class="descclassname">hybridLFPy.helpers.</code><code class="descname">variance</code><span class="sig-paren">(</span><em>data</em>, <em>units=False</em>, <em>time=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hybridLFPy/helpers.html#variance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hybridLFPy.helpers.variance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the variance of data across time, units or both.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>data</strong> : numpy.ndarray</p>
+<blockquote>
+<div><p>1st axis unit, 2nd axis time.</p>
+</div></blockquote>
+<p><strong>units</strong> : bool</p>
+<blockquote>
+<div><p>Variance across units</p>
+</div></blockquote>
+<p><strong>time</strong> : bool</p>
+<blockquote>
+<div><p>Average over time</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">if units=False and time=False:</p>
+<blockquote>
+<div><p>Exception</p>
+</div></blockquote>
+<p>if units=True:</p>
+<blockquote>
+<div><p>1 dim numpy.ndarray; time series</p>
+</div></blockquote>
+<p>if time=True:</p>
+<blockquote>
+<div><p>1 dim numpy.ndarray; series of single unit variances across time</p>
+</div></blockquote>
+<p>if units=True and time=True:</p>
+<blockquote class="last">
+<div><p>float; mean of single unit variances across time</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">variance</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">]]),</span> <span class="n">units</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="go">array([ 2.25,  2.25,  2.25])</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">variance</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">]]),</span> <span class="n">time</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="go">array([ 0.66666667,  0.66666667])</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">variance</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">]]),</span> <span class="n">units</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">time</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="go">0.66666666666666663</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="hybridLFPy.helpers.write_gdf">
+<code class="descclassname">hybridLFPy.helpers.</code><code class="descname">write_gdf</code><span class="sig-paren">(</span><em>gdf</em>, <em>fname</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hybridLFPy/helpers.html#write_gdf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hybridLFPy.helpers.write_gdf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fast line-by-line gdf-file write function</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>gdf</strong> : numpy.ndarray</p>
+<blockquote>
+<div><p>Column 0 is gids, columns 1: are values.</p>
+</div></blockquote>
+<p><strong>fname</strong> : str</p>
+<blockquote>
+<div><p>Path to gdf-file.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">None</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-hybridLFPy.csd">
+<span id="submodule-csd"></span><h3>submodule <code class="xref py py-mod docutils literal"><span class="pre">csd</span></code><a class="headerlink" href="#module-hybridLFPy.csd" title="Permalink to this headline">¶</a></h3>
+<p>Function true_lam_csd specification for calculation of true laminar CSD
+from the current-distribution on <cite>LFPy.cell.Cell</cite> objects, assuming line
+sources for each individual compartment, including the soma.</p>
+<dl class="function">
+<dt id="hybridLFPy.csd.true_lam_csd">
+<code class="descclassname">hybridLFPy.csd.</code><code class="descname">true_lam_csd</code><span class="sig-paren">(</span><em>cell</em>, <em>dr=100</em>, <em>z=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hybridLFPy/csd.html#true_lam_csd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hybridLFPy.csd.true_lam_csd" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return CSD from membrane currents as function along the coordinates
+of the electrode along z-axis.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>cell</strong> : <cite>LFPy.cell.Cell</cite> or <cite>LFPy.cell.TemplateCell</cite> object.</p>
+<blockquote>
+<div><p>Cell.</p>
+</div></blockquote>
+<p><strong>dr</strong> : float</p>
+<blockquote>
+<div><p>Radius of the cylindrical CSD volume.</p>
+</div></blockquote>
+<p><strong>z</strong> : numpy.ndarray</p>
+<blockquote>
+<div><p>Z-coordinates of electrode.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>CSD</strong> : numpy.ndarray</p>
+<blockquote class="last">
+<div><p>Current-source density (in pA * mum^-3).</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="submodulue-testing">
+<h3>submodulue <code class="xref py py-mod docutils literal"><span class="pre">testing</span></code><a class="headerlink" href="#submodulue-testing" title="Permalink to this headline">¶</a></h3>
+<dl class="function">
+<dt id="hybridLFPy.test">
+<code class="descclassname">hybridLFPy.</code><code class="descname">test</code><span class="sig-paren">(</span><em>verbosity=2</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hybridLFPy/testing.html#test"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hybridLFPy.test" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run unittests for the CSD toolbox</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+</div>
+</div>
+<div class="section" id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><a class="reference internal" href="genindex.html"><span>Index</span></a></li>
+<li><a class="reference internal" href="py-modindex.html"><span>Module Index</span></a></li>
+<li><a class="reference internal" href="search.html"><span>Search Page</span></a></li>
+</ul>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="#">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Welcome to the documentation of <strong>hybridLFPy</strong>!</a><ul>
+<li><a class="reference internal" href="#module-hybridlfpy">Module <strong>hybridLFPy</strong></a><ul>
+<li><a class="reference internal" href="#development">Development</a></li>
+<li><a class="reference internal" href="#license">License</a></li>
+<li><a class="reference internal" href="#warranty">Warranty</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#installation">Installation</a><ul>
+<li><a class="reference internal" href="#examples-folder">examples folder</a></li>
+<li><a class="reference internal" href="#docs-folder">docs folder</a></li>
+<li><a class="reference internal" href="#documentation-folder">documentation folder</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id1">Module <code class="docutils literal"><span class="pre">hybridLFPy</span></code></a><ul>
+<li><a class="reference internal" href="#hybridlfpy"><strong>hybridLFPy</strong></a><ul>
+<li><a class="reference internal" href="#how-to-use-the-documentation">How to use the documentation</a></li>
+<li><a class="reference internal" href="#available-classes">Available classes</a></li>
+<li><a class="reference internal" href="#available-utilities">Available utilities</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#class-cachednetwork">class <code class="docutils literal"><span class="pre">CachedNetwork</span></code></a></li>
+<li><a class="reference internal" href="#class-cachednoisenetwork">class <code class="docutils literal"><span class="pre">CachedNoiseNetwork</span></code></a></li>
+<li><a class="reference internal" href="#class-cachedfixedspikesnetwork">class <code class="docutils literal"><span class="pre">CachedFixedSpikesNetwork</span></code></a></li>
+<li><a class="reference internal" href="#class-populationsuper">class <code class="docutils literal"><span class="pre">PopulationSuper</span></code></a></li>
+<li><a class="reference internal" href="#class-population">class <code class="docutils literal"><span class="pre">Population</span></code></a></li>
+<li><a class="reference internal" href="#class-postprocess">class <code class="docutils literal"><span class="pre">PostProcess</span></code></a></li>
+<li><a class="reference internal" href="#class-gdf">class <code class="docutils literal"><span class="pre">GDF</span></code></a></li>
+<li><a class="reference internal" href="#module-hybridLFPy.helpers">submodule <code class="docutils literal"><span class="pre">helpers</span></code></a></li>
+<li><a class="reference internal" href="#module-hybridLFPy.csd">submodule <code class="docutils literal"><span class="pre">csd</span></code></a></li>
+<li><a class="reference internal" href="#submodulue-testing">submodulue <code class="docutils literal"><span class="pre">testing</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/index.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="#">hybridLFPy 0.1.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2015, Espen Hagen.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,778 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>hybridLFPy.cachednetworks &mdash; hybridLFPy 0.1.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.1.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="hybridLFPy 0.1.1 documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">hybridLFPy 0.1.1 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for hybridLFPy.cachednetworks</h1><div class="highlight"><pre>
+<span class="c">#!/usr/bin/env python</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Cached networks to use with the population classes, as the only</span>
+<span class="sd">variables being used is &quot;nodes_ex&quot; and &quot;nodes_in&quot; VERSION THAT WORKS.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">glob</span>
+<span class="k">if</span> <span class="s">&#39;DISPLAY&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">matplotlib</span>
+    <span class="n">matplotlib</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s">&#39;Agg&#39;</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">.gdf</span> <span class="kn">import</span> <span class="n">GDF</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">mpi4py</span> <span class="kn">import</span> <span class="n">MPI</span>
+
+
+<span class="c">################# Initialization of MPI stuff ##################################</span>
+<span class="n">COMM</span> <span class="o">=</span> <span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span>
+<span class="n">SIZE</span> <span class="o">=</span> <span class="n">COMM</span><span class="o">.</span><span class="n">Get_size</span><span class="p">()</span>
+<span class="n">RANK</span> <span class="o">=</span> <span class="n">COMM</span><span class="o">.</span><span class="n">Get_rank</span><span class="p">()</span>
+
+
+<span class="c">############## Functions #######################################################</span>
+
+<span class="k">def</span> <span class="nf">remove_axis_junk</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">which</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;right&#39;</span><span class="p">,</span> <span class="s">&#39;top&#39;</span><span class="p">]):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Remove axis lines from axes object that exist in list which.</span>
+
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    ax : `matplotlib.axes.AxesSubplot` object</span>
+<span class="sd">    which : list of str</span>
+<span class="sd">        Entries in [&#39;right&#39;, &#39;top&#39;, &#39;bottom&#39;, &#39;left&#39;].</span>
+
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    None</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">loc</span><span class="p">,</span> <span class="n">spine</span> <span class="ow">in</span> <span class="n">ax</span><span class="o">.</span><span class="n">spines</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">loc</span> <span class="ow">in</span> <span class="n">which</span><span class="p">:</span>
+            <span class="n">spine</span><span class="o">.</span><span class="n">set_color</span><span class="p">(</span><span class="s">&#39;none&#39;</span><span class="p">)</span>            
+    <span class="n">ax</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_ticks_position</span><span class="p">(</span><span class="s">&#39;bottom&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">set_ticks_position</span><span class="p">(</span><span class="s">&#39;left&#39;</span><span class="p">)</span>
+
+
+<span class="c">################ Classes #######################################################</span>
+
+<div class="viewcode-block" id="CachedNetwork"><a class="viewcode-back" href="../../index.html#hybridLFPy.CachedNetwork">[docs]</a><span class="k">class</span> <span class="nc">CachedNetwork</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Offline processing and storing of network spike events, used by other</span>
+<span class="sd">    class objects in the package hybridLFPy.</span>
+
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    simtime : float</span>
+<span class="sd">        Simulation duration.</span>
+<span class="sd">    dt : float,</span>
+<span class="sd">        Simulation timestep size.</span>
+<span class="sd">    spike_output_path : str</span>
+<span class="sd">        Path to gdf-files with spikes.</span>
+<span class="sd">    label : str</span>
+<span class="sd">        Prefix of spiking gdf-files.</span>
+<span class="sd">    ext : str</span>
+<span class="sd">        File extension of gdf-files.</span>
+<span class="sd">    GIDs : dict</span>
+<span class="sd">        dictionary keys are population names and item a list with first</span>
+<span class="sd">        GID in population and population size            </span>
+<span class="sd">    autocollect : bool</span>
+<span class="sd">        If True, class init will process gdf files.</span>
+<span class="sd">    cmap : str</span>
+<span class="sd">        Name of colormap, must be in `dir(plt.cm)`.</span>
+<span class="sd">    </span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    `hybridLFPy.cachednetworks.CachedNetwork` object</span>
+
+
+<span class="sd">    See also</span>
+<span class="sd">    --------</span>
+<span class="sd">    CachedFixedSpikesNetwork, CachedNoiseNetwork</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">simtime</span> <span class="o">=</span> <span class="mf">1000.</span><span class="p">,</span>
+                 <span class="n">dt</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span>
+                 <span class="n">spike_output_path</span><span class="o">=</span><span class="s">&#39;spike_output_path&#39;</span><span class="p">,</span>
+                 <span class="n">label</span> <span class="o">=</span> <span class="s">&#39;spikes&#39;</span><span class="p">,</span>
+                 <span class="n">ext</span> <span class="o">=</span> <span class="s">&#39;gdf&#39;</span><span class="p">,</span>
+                 <span class="n">GIDs</span><span class="o">=</span><span class="p">{</span><span class="s">&#39;EX&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">400</span><span class="p">],</span> <span class="s">&#39;IN&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="mi">401</span><span class="p">,</span> <span class="mi">100</span><span class="p">]},</span>
+                 <span class="n">autocollect</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+                 <span class="n">cmap</span><span class="o">=</span><span class="s">&#39;rainbow&#39;</span><span class="p">,</span>
+                 <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Offline processing and storing of network spike events, used by other</span>
+<span class="sd">        class objects in the package `hybridLFPy`.</span>
+
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        simtime : float</span>
+<span class="sd">            Simulation duration.</span>
+<span class="sd">        dt : float</span>
+<span class="sd">            Simulation timestep size.</span>
+<span class="sd">        spike_output_path : str</span>
+<span class="sd">            Path to gdf-files with spikes.</span>
+<span class="sd">        label : str</span>
+<span class="sd">            Prefix of spiking gdf-files.</span>
+<span class="sd">        ext : str</span>
+<span class="sd">            File extension of gdf-files.</span>
+<span class="sd">        GIDs : dict</span>
+<span class="sd">            dictionary keys are population names and item a list with first</span>
+<span class="sd">            GID in population and population size            </span>
+<span class="sd">        autocollect : bool</span>
+<span class="sd">            If True, class init will process gdf files.</span>
+<span class="sd">        cmap : str</span>
+<span class="sd">            Name of colormap, must be in dir(plt.cm).</span>
+<span class="sd">        </span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        `hybridLFPy.cachednetworks.CachedNetwork` object</span>
+
+
+<span class="sd">        See also</span>
+<span class="sd">        --------</span>
+<span class="sd">        CachedFixedSpikesNetwork, CachedNoiseNetwork</span>
+<span class="sd">            </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># Set some attributes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">simtime</span> <span class="o">=</span> <span class="n">simtime</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dt</span> <span class="o">=</span> <span class="n">dt</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">spike_output_path</span> <span class="o">=</span> <span class="n">spike_output_path</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="n">label</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ext</span> <span class="o">=</span> <span class="n">ext</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dbname</span> <span class="o">=</span> <span class="s">&#39;:memory:&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">GIDs</span> <span class="o">=</span> <span class="n">GIDs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">X</span> <span class="o">=</span> <span class="n">GIDs</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">autocollect</span> <span class="o">=</span> <span class="n">autocollect</span>
+
+        <span class="c"># Create a dictionary of nodes with proper layernames</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">X</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">X</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">GIDs</span><span class="p">[</span><span class="n">X</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">GIDs</span><span class="p">[</span><span class="n">X</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="c">#list population sizes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">N_X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">GIDs</span><span class="p">[</span><span class="n">X</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">X</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">])</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">autocollect</span><span class="p">:</span>
+            <span class="c">#collect the gdf files</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">collect_gdf</span><span class="p">()</span>
+
+
+        <span class="c"># Specify some colors used for each population:</span>
+        <span class="k">if</span> <span class="s">&#39;TC&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">:</span>
+            <span class="c">#self.colors = [&#39;k&#39;]</span>
+            <span class="n">numcolors</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c">#self.colors = []</span>
+            <span class="n">numcolors</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">)</span>
+            
+        <span class="bp">self</span><span class="o">.</span><span class="n">colors</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">numcolors</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">colors</span> <span class="o">+=</span> <span class="p">[</span><span class="n">plt</span><span class="o">.</span><span class="n">get_cmap</span><span class="p">(</span><span class="n">cmap</span><span class="p">,</span> <span class="n">numcolors</span><span class="p">)(</span><span class="n">i</span><span class="p">)]</span>
+
+        <span class="k">if</span> <span class="s">&#39;TC&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">colors</span> <span class="o">+=</span> <span class="p">[</span><span class="s">&#39;k&#39;</span><span class="p">]</span>
+            <span class="c">#self.colors.append(plt.get_cmap(cmap, numcolors)(i))</span>
+        
+
+<div class="viewcode-block" id="CachedNetwork.collect_gdf"><a class="viewcode-back" href="../../index.html#hybridLFPy.CachedNetwork.collect_gdf">[docs]</a>    <span class="k">def</span> <span class="nf">collect_gdf</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Collect the gdf-files from network sim in folder `spike_output_path`</span>
+<span class="sd">        into sqlite database, using the GDF-class.</span>
+<span class="sd">        </span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        None</span>
+<span class="sd">        </span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        None</span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># Resync</span>
+        <span class="n">COMM</span><span class="o">.</span><span class="n">Barrier</span><span class="p">()</span>
+
+        <span class="c"># Raise Exception if there are no gdf files to be read</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spike_output_path</span><span class="p">,</span>
+                                      <span class="bp">self</span><span class="o">.</span><span class="n">label</span> <span class="o">+</span> <span class="s">&#39;*.&#39;</span><span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">ext</span><span class="p">)))</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&#39;path to files contain no gdf-files!&#39;</span><span class="p">)</span>
+
+        <span class="c">#create in-memory databases of spikes</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&#39;dbs&#39;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dbs</span> <span class="o">=</span> <span class="p">{}</span>
+        
+        <span class="k">for</span> <span class="n">X</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">:</span>
+            <span class="n">db</span> <span class="o">=</span> <span class="n">GDF</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dbname</span><span class="p">),</span>
+                     <span class="n">debug</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">new_db</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+            <span class="n">db</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">re</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spike_output_path</span><span class="p">,</span>
+                                      <span class="s">&#39;{0}*{1}*{2}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">label</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span>
+                                                           <span class="bp">self</span><span class="o">.</span><span class="n">ext</span><span class="p">)),</span>
+                      <span class="n">index</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dbs</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
+                    <span class="n">X</span> <span class="p">:</span> <span class="n">db</span>
+                <span class="p">})</span>
+      
+        <span class="n">COMM</span><span class="o">.</span><span class="n">Barrier</span><span class="p">()</span>
+
+</div>
+<div class="viewcode-block" id="CachedNetwork.get_xy"><a class="viewcode-back" href="../../index.html#hybridLFPy.CachedNetwork.get_xy">[docs]</a>    <span class="k">def</span> <span class="nf">get_xy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xlim</span><span class="p">,</span> <span class="n">fraction</span><span class="o">=</span><span class="mf">1.</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get pairs of node units and spike trains on specific time interval.</span>
+<span class="sd">        </span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        xlim : list of floats</span>
+<span class="sd">            Spike time interval, e.g., [0., 1000.].</span>
+<span class="sd">        fraction : float in [0, 1.]</span>
+<span class="sd">            If less than one, sample a fraction of nodes in random order.</span>
+<span class="sd">        </span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        x : dict</span>
+<span class="sd">            In `x` key-value entries are population name and neuron spike times.</span>
+<span class="sd">        y : dict</span>
+<span class="sd">            Where in `y` key-value entries are population name and neuron gid number.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">for</span> <span class="n">X</span><span class="p">,</span> <span class="n">nodes</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">x</span><span class="p">[</span><span class="n">X</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
+            <span class="n">y</span><span class="p">[</span><span class="n">X</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
+
+            <span class="k">if</span> <span class="n">fraction</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">nodes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">permutation</span><span class="p">(</span><span class="n">nodes</span><span class="p">)[:</span><span class="nb">int</span><span class="p">(</span><span class="n">nodes</span><span class="o">.</span><span class="n">size</span><span class="o">*</span><span class="n">fraction</span><span class="p">)]</span>
+                <span class="n">nodes</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+
+            <span class="n">spiketimes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dbs</span><span class="p">[</span><span class="n">X</span><span class="p">]</span><span class="o">.</span><span class="n">select_neurons_interval</span><span class="p">(</span><span class="n">nodes</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="n">xlim</span><span class="p">)</span>
+            <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">for</span> <span class="n">times</span> <span class="ow">in</span> <span class="n">spiketimes</span><span class="p">:</span>
+                <span class="n">x</span><span class="p">[</span><span class="n">X</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">r_</span><span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="n">X</span><span class="p">],</span> <span class="n">times</span><span class="p">]</span>
+                <span class="n">y</span><span class="p">[</span><span class="n">X</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">r_</span><span class="p">[</span><span class="n">y</span><span class="p">[</span><span class="n">X</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">times</span><span class="o">.</span><span class="n">size</span><span class="p">)</span> <span class="o">+</span> <span class="n">nodes</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span>
+                <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+                
+        <span class="k">return</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span>
+
+</div>
+<div class="viewcode-block" id="CachedNetwork.plot_raster"><a class="viewcode-back" href="../../index.html#hybridLFPy.CachedNetwork.plot_raster">[docs]</a>    <span class="k">def</span> <span class="nf">plot_raster</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">xlim</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">pop_names</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+                    <span class="n">markersize</span><span class="o">=</span><span class="mf">20.</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">1.</span><span class="p">,</span> <span class="n">legend</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Plot network raster plot in subplot object.</span>
+<span class="sd">        </span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        ax : `matplotlib.axes.AxesSubplot` object</span>
+<span class="sd">            plot axes</span>
+<span class="sd">        xlim : list</span>
+<span class="sd">            List of floats. Spike time interval, e.g., [0., 1000.].</span>
+<span class="sd">        x : dict</span>
+<span class="sd">            Key-value entries are population name and neuron spike times.</span>
+<span class="sd">        y : dict</span>
+<span class="sd">            Key-value entries are population name and neuron gid number.</span>
+<span class="sd">        pop_names: bool</span>
+<span class="sd">            If True, show population names on yaxis instead of gid number.</span>
+<span class="sd">        markersize : float</span>
+<span class="sd">            raster plot marker size</span>
+<span class="sd">        alpha : float in [0, 1]</span>
+<span class="sd">            transparency of marker</span>
+<span class="sd">        legend : bool</span>
+<span class="sd">            Switch on axes legends.</span>
+
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        None</span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">X</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">):</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">X</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="n">X</span><span class="p">],</span> <span class="s">&#39;o&#39;</span><span class="p">,</span>
+                <span class="n">markersize</span><span class="o">=</span><span class="n">markersize</span><span class="p">,</span>
+                <span class="n">markerfacecolor</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">colors</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+                <span class="n">markeredgecolor</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">colors</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+                <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">,</span>
+                <span class="n">label</span><span class="o">=</span><span class="n">X</span><span class="p">,</span> <span class="n">rasterized</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+                <span class="n">clip_on</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+        
+        <span class="n">ax</span><span class="o">.</span><span class="n">axis</span><span class="p">([</span><span class="n">xlim</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">xlim</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">N_X</span><span class="o">.</span><span class="n">sum</span><span class="p">()])</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="n">ax</span><span class="o">.</span><span class="n">get_ylim</span><span class="p">()[::</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s">&#39;cell id&#39;</span><span class="p">,</span> <span class="n">labelpad</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s">&#39;$t$ (ms)&#39;</span><span class="p">,</span> <span class="n">labelpad</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">legend</span><span class="p">:</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">pop_names</span><span class="p">:</span>
+            <span class="n">yticks</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">yticklabels</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">X</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">y</span><span class="p">[</span><span class="n">X</span><span class="p">]</span> <span class="o">!=</span> <span class="p">[]:</span>
+                    <span class="n">yticks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="n">X</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span>
+                    <span class="n">yticklabels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">(</span><span class="n">yticks</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_yticklabels</span><span class="p">(</span><span class="n">yticklabels</span><span class="p">)</span>
+
+        <span class="c"># Add some horizontal lines separating the populations</span>
+        <span class="k">for</span> <span class="n">X</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">y</span><span class="p">[</span><span class="n">X</span><span class="p">]</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="n">xlim</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">xlim</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="p">[</span><span class="n">y</span><span class="p">[</span><span class="n">X</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span> <span class="n">y</span><span class="p">[</span><span class="n">X</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()],</span>
+                    <span class="s">&#39;k&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">0.25</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="CachedNetwork.plot_f_rate"><a class="viewcode-back" href="../../index.html#hybridLFPy.CachedNetwork.plot_f_rate">[docs]</a>    <span class="k">def</span> <span class="nf">plot_f_rate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">xlim</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">binsize</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">yscale</span><span class="o">=</span><span class="s">&#39;linear&#39;</span><span class="p">,</span>
+                    <span class="n">plottype</span><span class="o">=</span><span class="s">&#39;fill_between&#39;</span><span class="p">,</span> <span class="n">show_label</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Plot network firing rate plot in subplot object.</span>
+<span class="sd">        </span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        ax : `matplotlib.axes.AxesSubplot` object.</span>
+<span class="sd">        X : str</span>
+<span class="sd">            Population name.</span>
+<span class="sd">        i : int</span>
+<span class="sd">            Population index in class attribute `X`.</span>
+<span class="sd">        xlim : list of floats</span>
+<span class="sd">            Spike time interval, e.g., [0., 1000.].</span>
+<span class="sd">        x : dict</span>
+<span class="sd">            Key-value entries are population name and neuron spike times.</span>
+<span class="sd">        y : dict</span>
+<span class="sd">            Key-value entries are population name and neuron gid number.</span>
+<span class="sd">        yscale : &#39;str&#39;</span>
+<span class="sd">            Linear, log, or symlog y-axes in rate plot.</span>
+<span class="sd">        plottype : str</span>
+<span class="sd">            plot type string in `[&#39;fill_between&#39;, &#39;bar&#39;]`</span>
+<span class="sd">        show_label : bool</span>
+<span class="sd">            whether or not to show labels</span>
+<span class="sd">        </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        None</span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="n">bins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">xlim</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">xlim</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="n">binsize</span><span class="p">,</span> <span class="n">binsize</span><span class="p">)</span>
+        <span class="p">(</span><span class="n">hist</span><span class="p">,</span> <span class="n">bins</span><span class="p">)</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">X</span><span class="p">],</span> <span class="n">bins</span><span class="o">=</span><span class="n">bins</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="n">plottype</span> <span class="o">==</span> <span class="s">&#39;fill_between&#39;</span><span class="p">:</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span><span class="n">bins</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">hist</span> <span class="o">*</span> <span class="mf">1000.</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">N_X</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+                    <span class="n">color</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">colors</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">lw</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">X</span><span class="p">,</span> <span class="n">rasterized</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+                    <span class="n">clip_on</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">bins</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">hist</span> <span class="o">*</span> <span class="mf">1000.</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">N_X</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+                    <span class="n">color</span><span class="o">=</span><span class="s">&#39;k&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">X</span><span class="p">,</span> <span class="n">rasterized</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+                    <span class="n">clip_on</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">plottype</span> <span class="o">==</span> <span class="s">&#39;bar&#39;</span><span class="p">:</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">bins</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">hist</span> <span class="o">*</span> <span class="mf">1000.</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">N_X</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+                    <span class="n">color</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">colors</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="n">X</span><span class="p">,</span> <span class="n">rasterized</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+                    <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span> <span class="n">clip_on</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">mssg</span> <span class="o">=</span> <span class="s">&quot;plottype={} not in [&#39;fill_between&#39;, &#39;bar&#39;]&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">plottype</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">mssg</span><span class="p">)</span>
+
+        <span class="n">remove_axis_junk</span><span class="p">(</span><span class="n">ax</span><span class="p">)</span>
+
+        <span class="n">ax</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="n">ax</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s">&#39;tight&#39;</span><span class="p">))</span>
+
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_yscale</span><span class="p">(</span><span class="n">yscale</span><span class="p">)</span>
+
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">xlim</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">xlim</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">show_label</span><span class="p">:</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">xlim</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="o">.</span><span class="mo">05</span><span class="o">*</span><span class="p">(</span><span class="n">xlim</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">xlim</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">ax</span><span class="o">.</span><span class="n">axis</span><span class="p">()[</span><span class="mi">3</span><span class="p">]</span><span class="o">*</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span>
+                    <span class="n">va</span><span class="o">=</span><span class="s">&#39;center&#39;</span><span class="p">,</span> <span class="n">ha</span><span class="o">=</span><span class="s">&#39;left&#39;</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="CachedNetwork.raster_plots"><a class="viewcode-back" href="../../index.html#hybridLFPy.CachedNetwork.raster_plots">[docs]</a>    <span class="k">def</span> <span class="nf">raster_plots</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xlim</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1000</span><span class="p">],</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">1.</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Pretty plot of the spiking output of each population as raster and rate.</span>
+<span class="sd">        </span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        xlim : list</span>
+<span class="sd">            List of floats. Spike time interval, e.g., `[0., 1000.]`.</span>
+<span class="sd">        markersize : float</span>
+<span class="sd">            marker size for plot, see `matplotlib.pyplot.plot`</span>
+<span class="sd">        alpha : float</span>
+<span class="sd">            transparency for markers, see `matplotlib.pyplot.plot`</span>
+<span class="sd">        </span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        fig : `matplotlib.figure.Figure` object</span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_xy</span><span class="p">(</span><span class="n">xlim</span><span class="p">)</span>
+
+        <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">subplots_adjust</span><span class="p">(</span><span class="n">left</span><span class="o">=</span><span class="mf">0.12</span><span class="p">,</span> <span class="n">hspace</span><span class="o">=</span><span class="mf">0.15</span><span class="p">)</span>
+
+        <span class="n">ax0</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">211</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">plot_raster</span><span class="p">(</span><span class="n">ax0</span><span class="p">,</span> <span class="n">xlim</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="n">markersize</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">)</span>
+        <span class="n">remove_axis_junk</span><span class="p">(</span><span class="n">ax0</span><span class="p">)</span>
+        <span class="n">ax0</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s">&#39;spike raster&#39;</span><span class="p">)</span>
+        <span class="n">ax0</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s">&quot;&quot;</span><span class="p">)</span>
+
+        <span class="n">nrows</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">)</span>
+        <span class="n">bottom</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.45</span><span class="p">,</span> <span class="n">nrows</span><span class="o">+</span><span class="mi">1</span><span class="p">)[::</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">:]</span>
+        <span class="n">thickn</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">bottom</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mf">0.9</span>
+
+
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">layer</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">):</span>
+            <span class="n">ax1</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_axes</span><span class="p">([</span><span class="mf">0.12</span><span class="p">,</span> <span class="n">bottom</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="mf">0.78</span><span class="p">,</span> <span class="n">thickn</span><span class="p">])</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">plot_f_rate</span><span class="p">(</span><span class="n">ax1</span><span class="p">,</span> <span class="n">layer</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">xlim</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="n">nrows</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                <span class="n">ax1</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s">&#39;time (ms)&#39;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">ax1</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">([])</span>
+
+            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+                <span class="n">ax1</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s">r&#39;population rates ($s^{-1}$)&#39;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">ax1</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s">r&#39;population firing rates ($s^{-1}$)&#39;</span><span class="p">)</span>
+              
+        <span class="k">return</span> <span class="n">fig</span>
+
+</div></div>
+<div class="viewcode-block" id="CachedFixedSpikesNetwork"><a class="viewcode-back" href="../../index.html#hybridLFPy.CachedFixedSpikesNetwork">[docs]</a><span class="k">class</span> <span class="nc">CachedFixedSpikesNetwork</span><span class="p">(</span><span class="n">CachedNetwork</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Subclass of CachedNetwork.</span>
+<span class="sd">    </span>
+<span class="sd">    Fake nest output, where each cell in a subpopulation spike</span>
+<span class="sd">    simultaneously, and each subpopulation is activated at times given in</span>
+<span class="sd">    kwarg activationtimes.</span>
+<span class="sd">    </span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    activationtimes : list of floats</span>
+<span class="sd">        Each entry set spike times of all cells in each population</span>
+<span class="sd">    autocollect : bool</span>
+<span class="sd">        whether or not to automatically gather gdf file output</span>
+<span class="sd">    **kwargs : see parent class `hybridLFPy.cachednetworks.CachedNetwork`</span>
+<span class="sd">    </span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    `hybridLFPy.cachednetworks.CachedFixedSpikesNetwork` object</span>
+
+
+<span class="sd">    See also</span>
+<span class="sd">    --------</span>
+<span class="sd">    CachedNetwork, CachedNoiseNetwork, </span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">activationtimes</span><span class="o">=</span><span class="p">[</span><span class="mi">200</span><span class="p">,</span> <span class="mi">300</span><span class="p">,</span> <span class="mi">400</span><span class="p">,</span> <span class="mi">500</span><span class="p">,</span> <span class="mi">600</span><span class="p">,</span> <span class="mi">700</span><span class="p">,</span> <span class="mi">800</span><span class="p">,</span> <span class="mi">900</span><span class="p">,</span> <span class="mi">1000</span><span class="p">],</span>
+                 <span class="n">autocollect</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+                 <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Subclass of CachedNetwork</span>
+<span class="sd">        </span>
+<span class="sd">        Fake nest output, where each cell in a subpopulation spike</span>
+<span class="sd">        simultaneously, and each subpopulation is activated at times given in</span>
+<span class="sd">        kwarg activationtimes.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        activationtimes : list</span>
+<span class="sd">            Each entry set spike times of all cells in each population</span>
+<span class="sd">        autocollect : bool</span>
+<span class="sd">            whether or not to automatically gather gdf file output</span>
+<span class="sd">        **kwargs : see parent class `hybridLFPy.cachednetworks.CachedNetwork`</span>
+<span class="sd">        </span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        `hybridLFPy.cachednetworks.CachedFixedSpikesNetwork` object</span>
+
+
+<span class="sd">        See also</span>
+<span class="sd">        --------</span>
+<span class="sd">        CachedNetwork, CachedNoiseNetwork, </span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="n">CachedNetwork</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">autocollect</span><span class="o">=</span><span class="n">autocollect</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="c"># Set some attributes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">activationtimes</span> <span class="o">=</span> <span class="n">activationtimes</span>
+        
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">activationtimes</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">N_X</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&#39;len(activationtimes != len(self.N_X))&#39;</span><span class="p">)</span>
+
+        <span class="sd">&quot;&quot;&quot; Create a dictionary of nodes with proper layernames</span>
+<span class="sd">         self.nodes = {}.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">RANK</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">N</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">N_X</span><span class="p">):</span>
+                <span class="n">nodes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span>
+                <span class="n">cell_spt</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">nodes</span><span class="p">,</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">activationtimes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                                  <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nodes</span><span class="o">.</span><span class="n">size</span><span class="p">)]))</span>
+                <span class="n">cell_spt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">cell_spt</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="p">[(</span><span class="s">&#39;a&#39;</span><span class="p">,</span> <span class="nb">int</span><span class="p">),</span> <span class="p">(</span><span class="s">&#39;b&#39;</span><span class="p">,</span> <span class="nb">float</span><span class="p">)])</span>
+
+                <span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spike_output_path</span><span class="p">,</span>
+                                        <span class="s">&#39;population_spikes_{}.gdf&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">i</span><span class="p">])),</span>
+                           <span class="n">cell_spt</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;</span><span class="si">%i</span><span class="s">&#39;</span><span class="p">,</span> <span class="s">&#39;</span><span class="si">%.1f</span><span class="s">&#39;</span><span class="p">])</span>
+
+        <span class="c"># Resync</span>
+        <span class="n">COMM</span><span class="o">.</span><span class="n">barrier</span><span class="p">()</span>
+
+        <span class="c"># Collect the gdf files</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">collect_gdf</span><span class="p">()</span>
+
+
+</div>
+<div class="viewcode-block" id="CachedNoiseNetwork"><a class="viewcode-back" href="../../index.html#hybridLFPy.CachedNoiseNetwork">[docs]</a><span class="k">class</span> <span class="nc">CachedNoiseNetwork</span><span class="p">(</span><span class="n">CachedNetwork</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Subclass of CachedNetwork.</span>
+
+<span class="sd">    Use Nest to generate N_X poisson-generators each with rate frate,</span>
+<span class="sd">    and record every vector, and create database with spikes.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    frate : list</span>
+<span class="sd">        Rate of each layer, may be tuple (onset, rate, offset)</span>
+<span class="sd">    autocollect : bool</span>
+<span class="sd">        whether or not to automatically gather gdf file output</span>
+<span class="sd">    **kwargs : see parent class `hybridLFPy.cachednetworks.CachedNetwork`</span>
+
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    `hybridLFPy.cachednetworks.CachedNoiseNetwork` object</span>
+
+
+<span class="sd">    See also</span>
+<span class="sd">    --------</span>
+<span class="sd">    CachedNetwork, CachedFixedSpikesNetwork </span>
+<span class="sd">    </span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">frate</span><span class="o">=</span><span class="p">[(</span><span class="mf">200.</span><span class="p">,</span> <span class="mf">15.</span><span class="p">,</span> <span class="mf">210.</span><span class="p">),</span> <span class="mf">0.992</span><span class="p">,</span> <span class="mf">3.027</span><span class="p">,</span> <span class="mf">4.339</span><span class="p">,</span> <span class="mf">5.962</span><span class="p">,</span>
+                        <span class="mf">7.628</span><span class="p">,</span> <span class="mf">8.669</span><span class="p">,</span> <span class="mf">1.118</span><span class="p">,</span> <span class="mf">7.859</span><span class="p">],</span>
+                 <span class="n">autocollect</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+                 <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Subclass of `CachedNetwork`.</span>
+<span class="sd">        Use Nest to generate N_X poisson-generators each with rate frate,</span>
+<span class="sd">        and record every vector, and create database with spikes.</span>
+<span class="sd">    </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        frate : list</span>
+<span class="sd">            Rate of each layer, may be tuple (onset, rate, offset).</span>
+<span class="sd">        autocollect : bool</span>
+<span class="sd">            whether or not to automatically gather gdf file output</span>
+<span class="sd">        **kwargs : see parent class `hybridLFPy.cachednetworks.CachedNetwork`</span>
+<span class="sd">    </span>
+<span class="sd">    </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        `hybridLFPy.cachednetworks.CachedNoiseNetwork` object</span>
+<span class="sd">    </span>
+<span class="sd">    </span>
+<span class="sd">        See also</span>
+<span class="sd">        --------</span>
+<span class="sd">        CachedNetwork, CachedFixedSpikesNetwork </span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">CachedNetwork</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">autocollect</span><span class="o">=</span><span class="n">autocollect</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Putting import nest here, avoid making `nest` a mandatory</span>
+<span class="sd">        `hybridLFPy` dependency.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">import</span> <span class="nn">nest</span>
+
+
+        <span class="c">#set some attributes:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">frate</span> <span class="o">=</span> <span class="n">frate</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">frate</span><span class="p">)</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">N_X</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&#39;self.frate.size != self.N_X.size&#39;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">spike_output_path</span> <span class="o">=</span> <span class="n">spike_output_path</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">total_num_virtual_procs</span> <span class="o">=</span> <span class="n">SIZE</span>
+
+        <span class="c"># Reset nest kernel and set some kernel status variables, destroy old</span>
+        <span class="c"># nodes etc in the process</span>
+        <span class="n">nest</span><span class="o">.</span><span class="n">ResetKernel</span><span class="p">()</span>
+
+        <span class="c">#if dt is in powers of two, dt must be multiple of ms_per_tic</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dt</span> <span class="ow">in</span> <span class="mi">2</span><span class="o">**</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="mf">32.</span><span class="p">,</span> <span class="mi">0</span><span class="p">):</span>
+            <span class="n">nest</span><span class="o">.</span><span class="n">SetKernelStatus</span><span class="p">({</span>
+                <span class="s">&quot;tics_per_ms&quot;</span> <span class="p">:</span> <span class="mi">2</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">dt</span><span class="p">,</span>
+                <span class="s">&quot;resolution&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">dt</span><span class="p">,</span>
+                <span class="s">&quot;print_time&quot;</span><span class="p">:</span> <span class="bp">True</span><span class="p">,</span>
+                <span class="s">&quot;overwrite_files&quot;</span> <span class="p">:</span> <span class="bp">True</span><span class="p">,</span>
+                <span class="s">&quot;total_num_virtual_procs&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">total_num_virtual_procs</span><span class="p">,</span>
+                <span class="p">})</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">nest</span><span class="o">.</span><span class="n">SetKernelStatus</span><span class="p">({</span>
+                <span class="s">&quot;resolution&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">dt</span><span class="p">,</span>
+                <span class="s">&quot;print_time&quot;</span><span class="p">:</span> <span class="bp">True</span><span class="p">,</span>
+                <span class="s">&quot;overwrite_files&quot;</span> <span class="p">:</span> <span class="bp">True</span><span class="p">,</span>
+                <span class="s">&quot;total_num_virtual_procs&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">total_num_virtual_procs</span><span class="p">,</span>
+                <span class="p">})</span>
+
+        <span class="n">nest</span><span class="o">.</span><span class="n">SetDefaults</span><span class="p">(</span><span class="s">&quot;spike_detector&quot;</span><span class="p">,</span> <span class="p">{</span>
+            <span class="s">&#39;withtime&#39;</span> <span class="p">:</span> <span class="bp">True</span><span class="p">,</span>
+            <span class="s">&#39;withgid&#39;</span> <span class="p">:</span> <span class="bp">True</span><span class="p">,</span>
+            <span class="s">&#39;to_file&#39;</span> <span class="p">:</span> <span class="bp">True</span><span class="p">,</span>
+            <span class="s">&#39;to_memory&#39;</span> <span class="p">:</span> <span class="bp">False</span><span class="p">,</span>
+        <span class="p">})</span>
+
+        <span class="c"># Create some populations of parrot neurons that echo the poisson noise</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">N</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">N_X</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">=</span> <span class="n">nest</span><span class="o">.</span><span class="n">Create</span><span class="p">(</span><span class="s">&#39;parrot_neuron&#39;</span><span class="p">,</span> <span class="n">N</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spike_output_path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dbname</span><span class="p">)):</span>
+            <span class="n">mystring</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spike_output_path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dbname</span><span class="p">)</span>
+            <span class="k">print</span><span class="p">(</span><span class="s">&#39;db </span><span class="si">%s</span><span class="s"> exist, will not rerun sim or collect gdf!&#39;</span> <span class="o">%</span> <span class="n">mystring</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c"># Create spike detector</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">spikes</span> <span class="o">=</span> <span class="n">nest</span><span class="o">.</span><span class="n">Create</span><span class="p">(</span><span class="s">&quot;spike_detector&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span>
+                            <span class="p">{</span><span class="s">&#39;label&#39;</span> <span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spike_output_path</span><span class="p">,</span>
+                                                    <span class="bp">self</span><span class="o">.</span><span class="n">label</span><span class="p">)})</span>
+
+            <span class="sd">&quot;&quot;&quot; Create independent poisson spike trains with the some rate,</span>
+<span class="sd">             but each layer population should really have different rates.</span>
+<span class="sd">             &quot;&quot;&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">noise</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">rate</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">frate</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">rate</span><span class="p">)</span> <span class="o">==</span> <span class="nb">tuple</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">noise</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">nest</span><span class="o">.</span><span class="n">Create</span><span class="p">(</span><span class="s">&quot;poisson_generator&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span>
+                                                  <span class="p">{</span> <span class="s">&quot;start&quot;</span> <span class="p">:</span> <span class="n">rate</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                                                    <span class="s">&quot;rate&quot;</span> <span class="p">:</span>  <span class="n">rate</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                                                    <span class="s">&quot;stop&quot;</span> <span class="p">:</span>  <span class="n">rate</span><span class="p">[</span><span class="mi">2</span><span class="p">]}))</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">noise</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">nest</span><span class="o">.</span><span class="n">Create</span><span class="p">(</span><span class="s">&quot;poisson_generator&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span>
+                                                  <span class="p">{</span><span class="s">&quot;rate&quot;</span> <span class="p">:</span> <span class="n">rate</span><span class="p">}))</span>
+
+            <span class="c">## Connect parrots and spike detector</span>
+            <span class="k">for</span> <span class="n">layer</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">:</span>
+                <span class="n">nest</span><span class="o">.</span><span class="n">ConvergentConnect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">layer</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">spikes</span><span class="p">,</span>
+                                       <span class="n">model</span><span class="o">=</span><span class="s">&#39;static_synapse&#39;</span><span class="p">)</span>
+
+            <span class="c"># Connect noise generators and nodes</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">layer</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">):</span>
+                <span class="n">nest</span><span class="o">.</span><span class="n">ConvergentConnect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">noise</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">layer</span><span class="p">],</span>
+                                       <span class="n">model</span><span class="o">=</span><span class="s">&#39;static_synapse&#39;</span><span class="p">)</span>
+
+            <span class="c"># Run simulation</span>
+            <span class="n">nest</span><span class="o">.</span><span class="n">Simulate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">simtime</span><span class="p">)</span>
+
+            <span class="c"># Collect the gdf files</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">collect_gdf</span><span class="p">()</span>
+
+            <span class="c"># Nodes need to be collected in np.ndarrays:</span>
+            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
+
+</div>
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">doctest</span>
+    <span class="n">doctest</span><span class="o">.</span><span class="n">testmod</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">hybridLFPy 0.1.1 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2015, Espen Hagen.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+    </div>
+  </body>
+</html>
