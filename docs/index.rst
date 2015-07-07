@@ -3,8 +3,8 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to hybridLFPy's documentation!
-======================================
+Welcome to the documentation of **hybridLFPy**!
+===============================================
 
 
 .. include:: ../README.md
@@ -73,6 +73,7 @@ Module :mod:`hybridLFPy`
         :members:
         :show-inheritance:
         :undoc-members:
+
     
     submodule :mod:`helpers`
     ========================
@@ -86,6 +87,11 @@ Module :mod:`hybridLFPy`
     .. automodule:: hybridLFPy.csd
         :members:
         :undoc-members:
+
+
+    submodulue :mod:`testing`
+    =========================
+    .. autofunction:: hybridLFPy.test
 
 
 Indices and tables

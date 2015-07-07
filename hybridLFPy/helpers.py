@@ -791,7 +791,7 @@ def crossspec(data, tbin, Df=None, units=False, pointProcess=False):
     units : bool, 
         average cross spectrum
     pointProcess : bool, 
-        if set to True, crossspectrum is normalized to signal length T
+        if set to True, cross spectrum is normalized to signal length T
 
     
     Returns

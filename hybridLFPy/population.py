@@ -326,14 +326,13 @@ class PopulationSuper(object):
         -------
         None
             if `return_just_cell is False
-        LFPy.Cell-object
+        cell : `LFPy.Cell` instance
             if `return_just_cell` is True
 
 
         See also
         --------
         LFPy.Cell, LFPy.Synapse, LFPy.RecExtElectrode
-
 
         """
         tic = time()
@@ -1431,6 +1430,7 @@ class Population(PopulationSuper):
         The returned argument is a list with len = numSyn.size of np.arrays,
         assumes `numSyn` is a list
 
+
         Parameters
         ----------
         nodes : numpy.ndarray, dtype=int
@@ -1441,7 +1441,7 @@ class Population(PopulationSuper):
 
         Returns
         -------
-        list
+        SpCells : list
             presynaptic network-neuron indices
 
 

@@ -9,7 +9,14 @@ import hybridLFPy
 
 
 class TestHybridLFPy(unittest.TestCase):
-    '''hybridLFPy test class'''
+    '''
+    hybridLFPy test class
+    
+    To run tests, simply issue
+    >>>import hybridLFPy
+    >>>hybridLFPy.test()
+    
+    '''
     
     def __init__(self, *args, **kwargs):
         super(TestHybridLFPy, self).__init__(*args, **kwargs)
@@ -65,7 +72,11 @@ def test(verbosity=2):
     ---------
     verbosity : int
         verbosity level
-        
+    
+    
+    Returns
+    -------
+    None
     '''
     suite = unittest.TestLoader().loadTestsFromTestCase(TestHybridLFPy)
     unittest.TextTestRunner(verbosity=verbosity).run(suite)

@@ -1,5 +1,6 @@
 #!/usr/bin/env python
-
+'''setup file for the hybridLFPy python module'''
+import os
 from sys import version
 if version < '2.2.3':
     from distutils.dist import DistributionMetadata

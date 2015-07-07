@@ -137,10 +137,10 @@ class GDF(object):
 
         Parameters
         ----------
-                re : str
-                    File glob to load.
-                index : bool
-                    Create index on neurons for speed.
+        re : str
+            File glob to load.
+        index : bool
+            Create index on neurons for speed.
                     
         
         Returns
