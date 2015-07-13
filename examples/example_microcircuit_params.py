@@ -23,17 +23,12 @@ COMM = MPI.COMM_WORLD
 SIZE = COMM.Get_size()
 RANK = COMM.Get_rank()
 
-'''
-TODO: rename to simulation_and_model_params.py
-'''
-
 
 ####################################
 # HELPER FUNCTIONS                 #
 ####################################
 
 flattenlist = lambda lst: sum(sum(lst, []),[])
-
 
 
 ####################################
@@ -497,7 +492,7 @@ class point_neuron_network_params(general_params):
         if self.record_fraction_neurons_input_spikes:
             self.frac_rec_input_spikes = 0.1 
         else:
-            self.n_rec_input_spikes = 100 
+            self.n_rec_input_spikes = 0 
 
         # number of recorded neurons for depth resolved input currents
         self.n_rec_depth_resolved_input = 0 
@@ -506,7 +501,7 @@ class point_neuron_network_params(general_params):
         self.save_cortical_spikes = True 
 
         # whether to write any recorded membrane potentials to file
-        self.save_voltages = True 
+        self.save_voltages = False 
 
         # whether to record thalamic spikes
         self.record_thalamic_spikes = True 
@@ -553,7 +548,7 @@ class point_neuron_network_params(general_params):
         ####################################  
        
         # scaling parameter for population sizes
-        self.area = 1.
+        self.area = 0.1
         
         # preserve indegrees when downscaling
         self.preserve_K = False         
@@ -798,7 +793,7 @@ class multicompartment_params(point_neuron_network_params):
 
         # list of morphology files with default location, testing = True
         # will point to simplified morphologies
-        testing = False
+        testing = True
         if testing:
             self.PATH_m_y = os.path.join('morphologies', 'ballnsticks')
             self.m_y = [Y + '_' + y + '.hoc' for Y, y in self.mapping_Yy]

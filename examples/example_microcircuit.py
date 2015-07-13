@@ -13,7 +13,7 @@ Synopsis of the main simulation procedure:
     b. parameters for hybrid scheme
 2. Set up file destinations for different simulation output
 3. network simulation
-    a. execute network simulation using NEST (www.nest-initiative.org)
+    a. execute network simulation using NEST (www.nest-simulator.org)
     b. merge network output (spikes, currents, voltages)
 4. Create a object-representation that uses sqlite3 of all the spiking output 
 5. Iterate over post-synaptic populations:
@@ -25,11 +25,12 @@ Synopsis of the main simulation procedure:
 7. Create a tarball for all non-redundant simulation output
 
 The full simulation can be evoked by issuing a mpirun call, such as
-mpirun -np 64 python cellsim16pops.py
+    mpirun -np 64 python example_microcircuit.py
+where the number 64 is the desired number of MPI threads & CPU cores
 
 Given the size of the network and demands for the multi-compartment LFP-
-predictions using the present scheme, running the model on nothing but a large-
-scale compute facility is strongly discouraged.
+predictions using the present scheme, running the model on a large scale
+compute facility is strongly encouraged.
 
 '''
 import os
@@ -51,7 +52,7 @@ np.random.seed(SEED)
 ## PARAMETERS
 ################################################################################
 
-from cellsim16popsParams import multicompartment_params, \
+from example_microcircuit_params import multicompartment_params, \
                                 point_neuron_network_params
 
 #Full set of parameters including network parameters
@@ -82,17 +83,14 @@ nest_output_processing.merge_gdf(networkParams,
                             raw_label=networkParams.spike_detector_label,
                             file_type='gdf',
                             fileprefix=params.networkSimParams['label'])
-nest_output_processing.merge_gdf(networkParams,
-                            raw_label=networkParams.voltmeter_label,
-                            file_type='dat',
-                            fileprefix='voltages')
-nest_output_processing.merge_gdf(networkParams,
-                            raw_label=networkParams.weighted_input_spikes_label,
-                            file_type='dat',
-                            fileprefix='population_input_spikes')
-##spatial input currents
-#nest_output_processing.create_spatial_input_spikes_hdf5(networkParams,
-#                                        fileprefix='depth_res_input_spikes-')
+#nest_output_processing.merge_gdf(networkParams,
+#                            raw_label=networkParams.voltmeter_label,
+#                            file_type='dat',
+#                            fileprefix='voltages')
+#nest_output_processing.merge_gdf(networkParams,
+#                            raw_label=networkParams.weighted_input_spikes_label,
+#                            file_type='dat',
+#                            fileprefix='population_input_spikes')
 
 
 #Create an object representation of the simulation output that uses sqlite3

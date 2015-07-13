@@ -1,34 +1,46 @@
-import sys
-import os
-if os.environ['USER'] == 'dahmen':
-    # nest path
-    sys.path.append('/users/dahmen/nest/10kcollaps_gsd.install/lib64/python2.6/site-packages')
-else:
-    #the rest of us don't need such special precautions
-    pass
-import numpy
+import numpy as np
 import nest
 
 
 def dict_of_numpyarray_to_dict_of_list(d):
     '''
     Convert dictionary containing numpy arrays to dictionary containing lists
+    
+    Parameters
+    ----------
+    d : dict
+        sli parameter name and value as dictionary key and value pairs
+    
+    Returns
+    -------
+    d : dict
+        modified dictionary
+    
     '''
     for key,value in d.iteritems():
         if isinstance(value,dict):  # if value == dict 
             # recurse
             d[key] = dict_of_numpyarray_to_dict_of_list(value)
-        elif isinstance(value,numpy.ndarray): # or isinstance(value,list) :
+        elif isinstance(value,np.ndarray): # or isinstance(value,list) :
             d[key] = value.tolist()
     return d
 
 def send_nest_params_to_sli(p):
     '''
     Read parameters and send them to SLI
+    
+    Parameters
+    ----------
+    p : dict
+        sli parameter name and value as dictionary key and value pairs
+    
+    Returns
+    -------
+    None
     '''
     for name in p.keys():
         value = p[name]
-        if type(value) == numpy.ndarray:
+        if type(value) == np.ndarray:
             value = value.tolist()
         if type(value) == dict:
             value = dict_of_numpyarray_to_dict_of_list(value)
@@ -59,11 +71,19 @@ def sli_run(parameters=object(),
     Takes parameter-class and name of main sli-script as input, initiating the
     simulation.
     
-    kwargs:
-    ::
-        parameters : object, parameter class instance
-        fname : str, path to sli codes to be executed
-        verbosity : 'str', nest verbosity flag
+    Parameters
+    ----------
+    parameters : object
+        parameter class instance
+    fname : str
+        path to sli codes to be executed
+    verbosity : str,
+        nest verbosity flag
+    
+    Returns
+    -------
+    None
+    
     '''
     # Load parameters from params file, and pass them to nest
     # Python -> SLI
