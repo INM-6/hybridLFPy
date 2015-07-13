@@ -298,7 +298,7 @@ if properrun:
 
 if properrun:
     #execute network simulation
-    BN.run()
+    BN.simulate()
 
 #wait for the network simulation to finish, resync MPI threads
 COMM.Barrier()
