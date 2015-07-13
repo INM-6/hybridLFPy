@@ -157,12 +157,10 @@ class CachedNetwork(object):
             self.collect_gdf()
 
 
-        # Specify some colors used for each population:
+        # Specify some plot colors used for each population:
         if 'TC' in self.X:
-            #self.colors = ['k']
             numcolors = len(self.X)-1
         else:
-            #self.colors = []
             numcolors = len(self.X)
             
         self.colors = []
@@ -171,7 +169,6 @@ class CachedNetwork(object):
 
         if 'TC' in self.X:
             self.colors += ['k']
-            #self.colors.append(plt.get_cmap(cmap, numcolors)(i))
         
 
     def collect_gdf(self):
@@ -289,16 +286,25 @@ class CachedNetwork(object):
         None
         
         """
+        yoffset = [sum(self.N_X) if X=='TC' else 0 for X in self.X]
         for i, X in enumerate(self.X):
-            ax.plot(x[X], y[X], 'o',
-                markersize=markersize,
-                markerfacecolor=self.colors[i],
-                markeredgecolor=self.colors[i],
-                alpha=alpha,
-                label=X, rasterized=True,
-                clip_on=True)
+            if y[X].size > 0:
+                ax.plot(x[X], y[X]+yoffset[i], 'o',
+                    markersize=markersize,
+                    markerfacecolor=self.colors[i],
+                    markeredgecolor=self.colors[i],
+                    alpha=alpha,
+                    label=X, rasterized=True,
+                    clip_on=True)
         
-        ax.axis([xlim[0], xlim[1], 0, self.N_X.sum()])
+        #don't draw anything for the may-be-quiet TC population
+        N_X_sum = 0
+        for i, X in enumerate(self.X):
+            if y[X].size > 0:
+                N_X_sum += self.N_X[i]
+        
+        ax.axis([xlim[0], xlim[1],
+                 self.GIDs[self.X[0]][0], self.GIDs[self.X[0]][0]+N_X_sum])
         ax.set_ylim(ax.get_ylim()[::-1])
         ax.set_ylabel('cell id', labelpad=0)
         ax.set_xlabel('$t$ (ms)', labelpad=0)
@@ -309,16 +315,17 @@ class CachedNetwork(object):
             yticklabels = []
             for i, X in enumerate(self.X):
                 if y[X] != []:
-                    yticks.append(y[X].mean())
+                    yticks.append(y[X].mean()+yoffset[i])
                     yticklabels.append(self.X[i])
             ax.set_yticks(yticks)
             ax.set_yticklabels(yticklabels)
-
+        
         # Add some horizontal lines separating the populations
-        for X in self.X:
+        for i, X in enumerate(self.X):
             if y[X].size > 0:
-                ax.plot([xlim[0], xlim[1]], [y[X].max(), y[X].max()],
-                    'k', lw=0.25)
+                ax.plot([xlim[0], xlim[1]],
+                        [y[X].max()+yoffset[i], y[X].max()+yoffset[i]],
+                        'k', lw=0.25)
 
 
     def plot_f_rate(self, ax, X, i, xlim, x, y, binsize=1, yscale='linear',
