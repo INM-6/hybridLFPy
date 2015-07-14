@@ -409,6 +409,7 @@ if RANK == 0:
     fig, ax = plt.subplots(1,1, figsize=(5,8))
     plot_population(ax, PS.populationParams, PS.electrodeParams, PS.layerBoundaries,
                     X=['EX', 'IN'], markers=['^', 'o'], colors=['r', 'b'],
+                    layers = ['upper', 'lower'],
                     isometricangle=np.pi/12, aspect='equal')
     fig.savefig(os.path.join(PS.figures_path, 'layers.pdf'), dpi=300)
     
@@ -417,6 +418,7 @@ if RANK == 0:
     fig, ax = plt.subplots(1,1, figsize=(5,8))
     plot_population(ax, PS.populationParams, PS.electrodeParams, PS.layerBoundaries,
                     X=['EX', 'IN'], markers=['^', 'o'], colors=['r', 'b'],
+                    layers = ['upper', 'lower'],
                     isometricangle=np.pi/12, aspect='equal')
     plot_soma_locations(ax, X=['EX', 'IN'],
                         populations_path=PS.populations_path,
@@ -429,6 +431,7 @@ if RANK == 0:
     fig, ax = plt.subplots(1,1, figsize=(5,8))
     plot_population(ax, PS.populationParams, PS.electrodeParams, PS.layerBoundaries,
                     X=['EX', 'IN'], markers=['^', 'o'], colors=['r', 'b'],
+                    layers = ['upper', 'lower'],
                     aspect='equal')
     plot_morphologies(ax, X=['EX', 'IN'], markers=['^', 'o'], colors=['r', 'b'],
                     isometricangle=np.pi/12,
@@ -441,9 +444,11 @@ if RANK == 0:
     fig, ax = plt.subplots(1,1, figsize=(5,8))
     plot_population(ax, PS.populationParams, PS.electrodeParams, PS.layerBoundaries,
                     X=['EX', 'IN'], markers=['^', 'o'], colors=['r', 'b'],
+                    layers = ['upper', 'lower'],
                     aspect='equal')
     plot_two_cells(ax, X=['EX', 'IN'], markers=['^', 'o'], colors=['r', 'b'],
-                    isometricangle=np.pi/12, cellParams=PS.cellParams)
+                    isometricangle=np.pi/12, cellParams=PS.cellParams,
+                    populationParams=PS.populationParams)
     fig.savefig(os.path.join(PS.figures_path, 'cell_models.pdf'), dpi=300)
     
 
@@ -451,6 +456,7 @@ if RANK == 0:
     fig, ax = plt.subplots(1,1, figsize=(5,8))
     plot_population(ax, PS.populationParams, PS.electrodeParams, PS.layerBoundaries,
                     X=['EX'], markers=['^'], colors=['r'],
+                    layers = ['upper', 'lower'],
                     aspect='equal')
     plot_morphologies(ax, X=['EX'], markers=['^'], colors=['r'],
                     isometricangle=np.pi/12,
@@ -463,6 +469,7 @@ if RANK == 0:
     fig, ax = plt.subplots(1,1, figsize=(5,8))
     plot_population(ax, PS.populationParams, PS.electrodeParams, PS.layerBoundaries,
                     X=['IN'], markers=['o'], colors=['b'],
+                    layers = ['upper', 'lower'],
                     isometricangle=np.pi/12, aspect='equal')
     plot_morphologies(ax, X=['IN'], markers=['o'], colors=['b'],
                     isometricangle=np.pi/12,
@@ -483,6 +490,7 @@ if RANK == 0:
 
     plot_population(ax0, PS.populationParams, PS.electrodeParams, PS.layerBoundaries,
                     X=['EX', 'IN'], markers=['^', 'o'], colors=['r', 'b'],
+                    layers = ['upper', 'lower'],
                     isometricangle=np.pi/12, aspect='equal')
     plot_morphologies(ax0, X=['EX', 'IN'], markers=['^', 'o'], colors=['r', 'b'],
                     isometricangle=np.pi/12,
@@ -512,6 +520,7 @@ if RANK == 0:
 
     plot_population(ax0, PS.populationParams, PS.electrodeParams, PS.layerBoundaries,
                     X=['EX'], markers=['^'], colors=['r'],
+                    layers = ['upper', 'lower'],
                     isometricangle=np.pi/12, aspect='equal')
     plot_morphologies(ax0, X=['EX'], markers=['^'], colors=['r'],
                     isometricangle=np.pi/12,
@@ -540,6 +549,7 @@ if RANK == 0:
 
     plot_population(ax0, PS.populationParams, PS.electrodeParams, PS.layerBoundaries,
                     X=['IN'], markers=['o'], colors=['b'],
+                    layers = ['upper', 'lower'],
                     isometricangle=np.pi/12, aspect='equal')
     plot_morphologies(ax0, X=['IN'], markers=['o'], colors=['b'],
                     isometricangle=np.pi/12,
@@ -597,6 +607,7 @@ if RANK == 0:
     fig, ax = plt.subplots(1,1, figsize=(5,8))
     plot_population(ax, PS.populationParams, PS.electrodeParams, PS.layerBoundaries,
                     X=['EX', 'IN'], markers=['^', 'o'], colors=['r', 'b'],
+                    layers = ['upper', 'lower'],
                     aspect='equal')
     plot_morphologies(ax, X=['EX', 'IN'], markers=['^', 'o'], colors=['r', 'b'],
                     isometricangle=np.pi/12,
