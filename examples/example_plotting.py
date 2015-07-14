@@ -112,6 +112,7 @@ def plot_population(ax,
                     X=['EX', 'IN'],
                     markers=['^', 'o'],
                     colors=['r', 'b'],
+                    layers = ['upper', 'lower'],
                     title='positions'):
     '''
     Plot the geometry of the column model, optionally with somatic locations
@@ -164,7 +165,7 @@ def plot_population(ax,
 
     #outline of populations:
     #fetch the population radius from some population
-    r = populationParams['EX']['radius']
+    r = populationParams[populationParams.keys()[0]]['radius']
 
     theta0 = np.linspace(0, np.pi, 20)
     theta1 = np.linspace(np.pi, 2*np.pi, 20)
@@ -172,7 +173,6 @@ def plot_population(ax,
     zpos = np.r_[np.array(layerBoundaries)[:, 0],
                  np.array(layerBoundaries)[-1, 1]]
     
-    layers = ['upper', 'lower']
     for i, z in enumerate(np.mean(layerBoundaries, axis=1)):
         ax.text(r, z, ' %s' % layers[i],
                 va='center', ha='left', rotation='vertical')
@@ -275,9 +275,23 @@ def plot_morphologies(ax, X, isometricangle, markers, colors,
             
 
 
-def plot_two_cells(ax, X, isometricangle, markers, colors, cellParams):
+def plot_two_cells(ax, X, isometricangle, markers, colors, cellParams, populationParams):
     
-    somapos = np.array([[-75,0,-400],[75, 0, -400]])
+    depth = []
+    offsets = []
+    depth0 = np.inf
+    offset = -75
+    for i, y in enumerate(X):
+        d = populationParams[y]
+        depth += [(d['z_min']+d['z_max'])/2]
+        if depth0 == depth[-1]:
+            offset += 150
+        else:
+            offset = -75 - i*20
+        depth0 = depth[-1]
+        offsets += [offset]
+    somapos = np.c_[offsets, np.zeros(len(offsets)), depth]
+    
     for i, (pop, marker, color) in enumerate(zip(X, markers, colors)):
         
         cell = LFPy.Cell(morphology=cellParams[pop]['morphology'],
