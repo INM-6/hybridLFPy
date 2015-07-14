@@ -36,9 +36,9 @@ compute facility is strongly encouraged.
 import os
 import numpy as np
 from time import time
-import nest_simulation
-from hybridLFPy import PostProcess, Population, CachedNetwork, setup_file_dest
-import nest_output_processing
+import nest
+from hybridLFPy import PostProcess, Population, CachedNetwork, setup_file_dest, helpers
+from glob import glob
 import neuron
 from mpi4py import MPI
 
@@ -78,6 +78,173 @@ from example_microcircuit_params import multicompartment_params, \
 params = multicompartment_params()
 
 
+################################################################################
+# Function declaration(s)
+################################################################################
+
+def merge_gdf(model_params, raw_label='spikes_', file_type='gdf',
+              fileprefix='spikes'):
+    '''
+    NEST produces one file per virtual process containing recorder output. 
+    This function gathers and combines them into one single file per 
+    network population.
+    
+    Parameters
+    ----------
+    model_params : object
+        network parameters object
+    
+    Returns
+    -------
+    None
+    
+    '''
+    def get_raw_gids(model_params):
+        '''
+        Reads text file containing gids of neuron populations as created within the NEST simulation. 
+        These gids are not continuous as in the simulation devices get created in between.
+        
+        Parameters
+        ----------
+        model_params : object
+            network parameters object
+        
+        
+        Returns
+        -------
+        gids : list
+            list of neuron ids and value (spike time, voltage etc.)
+        
+        '''
+        gidfile = open(os.path.join(model_params.raw_nest_output_path, model_params.GID_filename),'r') 
+        gids = [] 
+        for l in gidfile :
+            a = l.split()
+            gids.append([int(a[0]),int(a[1])])
+        return gids
+    
+    #some preprocessing
+    raw_gids = get_raw_gids(model_params)
+    pop_sizes = [raw_gids[i][1]-raw_gids[i][0]+1 for i in np.arange(model_params.Npops)]
+    raw_first_gids =  [raw_gids[i][0] for i in np.arange(model_params.Npops)]
+    converted_first_gids = [int(1 + np.sum(pop_sizes[:i])) for i in np.arange(model_params.Npops)]
+
+    for pop_idx in np.arange(model_params.Npops):
+        if pop_idx % SIZE == RANK:
+            files = glob(os.path.join(model_params.raw_nest_output_path,
+                                      raw_label + str(pop_idx) + '*.' + file_type))
+            gdf = [] # init
+            for f in files:
+                new_gdf = helpers.read_gdf(f)
+                for line in new_gdf:
+                    line[0] = line[0] - raw_first_gids[pop_idx] + converted_first_gids[pop_idx]
+                    gdf.append(line)
+            
+            print 'writing: %s' % os.path.join(model_params.spike_output_path,
+                                               fileprefix + '_%s.gdf' % model_params.X[pop_idx])
+            helpers.write_gdf(gdf, os.path.join(model_params.spike_output_path,
+                                                fileprefix + '_%s.gdf' % model_params.X[pop_idx]))
+    
+    COMM.Barrier()
+
+    return
+
+
+def dict_of_numpyarray_to_dict_of_list(d):
+    '''
+    Convert dictionary containing numpy arrays to dictionary containing lists
+    
+    Parameters
+    ----------
+    d : dict
+        sli parameter name and value as dictionary key and value pairs
+    
+    Returns
+    -------
+    d : dict
+        modified dictionary
+    
+    '''
+    for key,value in d.iteritems():
+        if isinstance(value,dict):  # if value == dict 
+            # recurse
+            d[key] = dict_of_numpyarray_to_dict_of_list(value)
+        elif isinstance(value,np.ndarray): # or isinstance(value,list) :
+            d[key] = value.tolist()
+    return d
+
+
+def send_nest_params_to_sli(p):
+    '''
+    Read parameters and send them to SLI
+    
+    Parameters
+    ----------
+    p : dict
+        sli parameter name and value as dictionary key and value pairs
+    
+    Returns
+    -------
+    None
+    '''
+    for name in p.keys():
+        value = p[name]
+        if type(value) == np.ndarray:
+            value = value.tolist()
+        if type(value) == dict:
+            value = dict_of_numpyarray_to_dict_of_list(value)
+        if name == 'neuron_model': # special case as neuron_model should is a NEST model and not a string
+            try:
+                nest.sli_run('/'+name)
+                nest.sli_push(value)
+                nest.sli_run('eval')
+                nest.sli_run('def')
+            except: 
+                print 'Could not put variable %s on SLI stack' % (name)
+                print type(value)
+        else:
+            try:
+                nest.sli_run('/'+name)
+                nest.sli_push(value)
+                nest.sli_run('def')
+            except: 
+                print 'Could not put variable %s on SLI stack' % (name)
+                print type(value)
+    return
+
+
+def sli_run(parameters=object(),
+            fname='microcircuit.sli',
+            verbosity='M_ERROR'):
+    '''
+    Takes parameter-class and name of main sli-script as input, initiating the
+    simulation.
+    
+    Parameters
+    ----------
+    parameters : object
+        parameter class instance
+    fname : str
+        path to sli codes to be executed
+    verbosity : str,
+        nest verbosity flag
+    
+    Returns
+    -------
+    None
+    
+    '''
+    # Load parameters from params file, and pass them to nest
+    # Python -> SLI
+    send_nest_params_to_sli(vars(parameters))
+    
+    #set SLI verbosity
+    nest.sli_run("%s setverbosity" % verbosity)
+    
+    # Run NEST/SLI simulation
+    nest.sli_run('(%s) run' % fname)
+
+
 ###############################################################################
 # MAIN simulation procedure
 ###############################################################################
@@ -94,16 +261,16 @@ if properrun:
 if properrun:
     ##initiate nest simulation with only the point neuron network parameter class
     networkParams = point_neuron_network_params()
-    nest_simulation.sli_run(parameters=networkParams,
-                            fname='microcircuit.sli',
-                            verbosity='M_WARNING')
+    sli_run(parameters=networkParams,
+            fname='microcircuit.sli',
+            verbosity='M_WARNING')
     
     #preprocess the gdf files containing spiking output, voltages, weighted and
     #spatial input spikes and currents:
-    nest_output_processing.merge_gdf(networkParams,
-                                raw_label=networkParams.spike_detector_label,
-                                file_type='gdf',
-                                fileprefix=params.networkSimParams['label'])
+    merge_gdf(networkParams,
+              raw_label=networkParams.spike_detector_label,
+              file_type='gdf',
+              fileprefix=params.networkSimParams['label'])
 
 
 #Create an object representation of the simulation output that uses sqlite3
@@ -196,7 +363,7 @@ if RANK == 0:
     #create network raster plot
     x, y = networkSim.get_xy((500, 1000), fraction=1)
     fig, ax = plt.subplots(1, figsize=(5,8))
-    fig.subplots_adjust(left=0.18)
+    fig.subplots_adjust(left=0.2)
     networkSim.plot_raster(ax, (500, 1000), x, y, markersize=1, marker='o',
                            alpha=.5,legend=False, pop_names=True)
     remove_axis_junk(ax)
@@ -208,98 +375,100 @@ if RANK == 0:
     
     #plot cell locations
     fig, ax = plt.subplots(1,1, figsize=(5,8))
-    fig.subplots_adjust(left=0.18)
+    fig.subplots_adjust(left=0.2)
     plot_population(ax, params.populationParams, params.electrodeParams,
                     params.layerBoundaries,
                     X=params.y,
-                    markers=['^' if 'p' in y else '*' for y in params.y],
-                    colors=['r' if 'p' in y else 'b' for y in params.y],
+                    markers=['*' if 'b' in y else '^' for y in params.y],
+                    colors=['b' if 'b' in y else 'r' for y in params.y],
                     layers = ['L1', 'L2/3', 'L4', 'L5', 'L6'],
-                    isometricangle=np.pi/12, aspect='equal')
+                    isometricangle=np.pi/24, aspect='equal')
     fig.savefig(os.path.join(params.figures_path, 'layers.pdf'), dpi=300)
     
 
     #plot cell locations
     fig, ax = plt.subplots(1,1, figsize=(5,8))
-    fig.subplots_adjust(left=0.18)
+    fig.subplots_adjust(left=0.2)
     plot_population(ax, params.populationParams, params.electrodeParams,
                     params.layerBoundaries,
                     X=params.y,
-                    markers=['^' if 'p' in y else '*' for y in params.y],
-                    colors=['r' if 'p' in y else 'b' for y in params.y],
+                    markers=['*' if 'b' in y else '^' for y in params.y],
+                    colors=['b' if 'b' in y else 'r' for y in params.y],
                     layers = ['L1', 'L2/3', 'L4', 'L5', 'L6'],
-                    isometricangle=np.pi/12, aspect='equal')
+                    isometricangle=np.pi/24, aspect='equal')
     plot_soma_locations(ax, X=params.y,
                         populations_path=params.populations_path,
-                        markers=['^' if 'p' in y else '*' for y in params.y],
-                        colors=['r' if 'p' in y else 'b' for y in params.y],
-                        isometricangle=np.pi/12, )
+                        markers=['*' if 'b' in y else '^' for y in params.y],
+                        colors=['b' if 'b' in y else 'r' for y in params.y],
+                        isometricangle=np.pi/24, )
     fig.savefig(os.path.join(params.figures_path, 'soma_locations.pdf'), dpi=300)
     
-
+    
     #plot morphologies in their respective locations
     fig, ax = plt.subplots(1,1, figsize=(5,8))
-    fig.subplots_adjust(left=0.18)
+    fig.subplots_adjust(left=0.2)
     plot_population(ax, params.populationParams, params.electrodeParams,
                     params.layerBoundaries,
                     X=params.y,
-                    markers=['^' if 'p' in y else '*' for y in params.y],
-                    colors=['r' if 'p' in y else 'b' for y in params.y],
+                    markers=['*' if 'b' in y else '^' for y in params.y],
+                    colors=['b' if 'b' in y else 'r' for y in params.y],
                     layers = ['L1', 'L2/3', 'L4', 'L5', 'L6'],
-                    isometricangle=np.pi/12, aspect='equal')
+                    isometricangle=np.pi/24, aspect='equal')
     plot_morphologies(ax,
                       X=params.y,
-                      markers=['^' if 'p' in y else '*' for y in params.y],
-                      colors=['r' if 'p' in y else 'b' for y in params.y],
-                      isometricangle=np.pi/12,
+                      markers=['*' if 'b' in y else '^' for y in params.y],
+                      colors=['b' if 'b' in y else 'r' for y in params.y],
+                      isometricangle=np.pi/24,
                       populations_path=params.populations_path,
-                      cellParams=params.yCellParams)
+                      cellParams=params.yCellParams,
+                      fraction=0.01)
     fig.savefig(os.path.join(params.figures_path, 'populations.pdf'), dpi=300)
 
 
-
     #plot morphologies in their respective locations
     fig, ax = plt.subplots(1,1, figsize=(5,8))
-    fig.subplots_adjust(left=0.18)
+    fig.subplots_adjust(left=0.2)
     plot_population(ax, params.populationParams, params.electrodeParams,
                     params.layerBoundaries,
                     X=params.y,
-                    markers=['^' if 'p' in y else '*' for y in params.y],
-                    colors=['r' if 'p' in y else 'b' for y in params.y],
+                    markers=['*' if 'b' in y else '^' for y in params.y],
+                    colors=['b' if 'b' in y else 'r' for y in params.y],
                     layers = ['L1', 'L2/3', 'L4', 'L5', 'L6'],
-                    isometricangle=np.pi/12, aspect='equal')
-    plot_two_cells(ax,
+                    isometricangle=np.pi/24, aspect='equal')
+    plot_individual_morphologies(ax,
                    X=params.y,
-                   markers=['^' if 'p' in y else '*' for y in params.y],
-                   colors=['r' if 'p' in y else 'b' for y in params.y],
-                   isometricangle=np.pi/12, cellParams=params.yCellParams,
+                   markers=['*' if 'b' in y else '^' for y in params.y],
+                   colors=['b' if 'b' in y else 'r' for y in params.y],
+                   isometricangle=np.pi/24, cellParams=params.yCellParams,
                    populationParams=params.populationParams)
     fig.savefig(os.path.join(params.figures_path, 'cell_models.pdf'), dpi=300)
 
 
     #plot compound LFP and CSD traces
     fig = plt.figure(figsize=(10, 8))
-    gs = gridspec.GridSpec(2,8)
+    fig.subplots_adjust(wspace=0.5)
+    gs = gridspec.GridSpec(2,3)
     
-    ax0 = fig.add_subplot(gs[:,:2])
-    ax1 = fig.add_subplot(gs[0, 4:])
-    ax2 = fig.add_subplot(gs[1, 4:])
+    ax0 = fig.add_subplot(gs[:,0])
+    ax1 = fig.add_subplot(gs[0, 1:])
+    ax2 = fig.add_subplot(gs[1, 1:])
     ax1.set_title('CSD')
     ax2.set_title('LFP')
 
     plot_population(ax0, params.populationParams, params.electrodeParams, params.layerBoundaries,
                     X=params.y,
-                    markers=['^' if 'p' in y else '*' for y in params.y],
-                    colors=['r' if 'p' in y else 'b' for y in params.y],
+                    markers=['*' if 'b' in y else '^' for y in params.y],
+                    colors=['b' if 'b' in y else 'r' for y in params.y],
                     layers = ['L1', 'L2/3', 'L4', 'L5', 'L6'],
-                    isometricangle=np.pi/12, aspect='equal')
+                    isometricangle=np.pi/24, aspect='tight')
     plot_morphologies(ax0,
                       X=params.y,
-                      markers=['^' if 'p' in y else '*' for y in params.y],
-                      colors=['r' if 'p' in y else 'b' for y in params.y],
-                      isometricangle=np.pi/12,
+                      markers=['*' if 'b' in y else '^' for y in params.y],
+                      colors=['b' if 'b' in y else 'r' for y in params.y],
+                      isometricangle=np.pi/24,
                       populations_path=params.populations_path,
-                      cellParams=params.yCellParams)
+                      cellParams=params.yCellParams,
+                      fraction=0.01)
 
     plot_signal_sum(ax1, z=params.electrodeParams['z'],
                     fname=os.path.join(params.savefolder, 'CSDsum.h5'),

@@ -229,7 +229,7 @@ def plot_soma_locations(ax, X, populations_path, isometricangle, markers, colors
         
 
 def plot_morphologies(ax, X, isometricangle, markers, colors,
-                      populations_path, cellParams):
+                      populations_path, cellParams, fraction=1):
     for (pop, marker, color) in zip(X, markers, colors):
         #get the somapos
         fname = os.path.join(populations_path,
@@ -249,7 +249,7 @@ def plot_morphologies(ax, X, isometricangle, markers, colors,
         
         
         #plot some units
-        for j in range(n):
+        for j in range(int(n*fraction)):
             cell = LFPy.Cell(morphology=cellParams[pop]['morphology'],
                              nsegs_method='lambda_f',
                              lambda_f=100,
@@ -275,7 +275,8 @@ def plot_morphologies(ax, X, isometricangle, markers, colors,
             
 
 
-def plot_two_cells(ax, X, isometricangle, markers, colors, cellParams, populationParams):
+def plot_individual_morphologies(ax, X, isometricangle, markers, colors,
+                                 cellParams, populationParams):
     
     depth = []
     offsets = []

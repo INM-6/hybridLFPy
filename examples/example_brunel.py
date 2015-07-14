@@ -255,7 +255,7 @@ PS.update(dict(
             syntype = 'AlphaISyn'
         ),
         IN = dict(
-            section = ['dend'],
+            section = ['dend', 'soma'],
             tau = BN.tauSyn,
             syntype = 'AlphaISyn'            
         ),
@@ -446,7 +446,7 @@ if RANK == 0:
                     X=['EX', 'IN'], markers=['^', 'o'], colors=['r', 'b'],
                     layers = ['upper', 'lower'],
                     aspect='equal')
-    plot_two_cells(ax, X=['EX', 'IN'], markers=['^', 'o'], colors=['r', 'b'],
+    plot_individual_morphologies(ax, X=['EX', 'IN'], markers=['^', 'o'], colors=['r', 'b'],
                     isometricangle=np.pi/12, cellParams=PS.cellParams,
                     populationParams=PS.populationParams)
     fig.savefig(os.path.join(PS.figures_path, 'cell_models.pdf'), dpi=300)
