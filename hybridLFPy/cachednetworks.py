@@ -256,7 +256,8 @@ class CachedNetwork(object):
 
 
     def plot_raster(self, ax, xlim, x, y, pop_names=False,
-                    markersize=20., alpha=1., legend=True, ):
+                    markersize=20., alpha=1., legend=True,
+                    marker='o'):
         """
         Plot network raster plot in subplot object.
         
@@ -289,7 +290,7 @@ class CachedNetwork(object):
         yoffset = [sum(self.N_X) if X=='TC' else 0 for X in self.X]
         for i, X in enumerate(self.X):
             if y[X].size > 0:
-                ax.plot(x[X], y[X]+yoffset[i], 'o',
+                ax.plot(x[X], y[X]+yoffset[i], marker,
                     markersize=markersize,
                     markerfacecolor=self.colors[i],
                     markeredgecolor=self.colors[i],

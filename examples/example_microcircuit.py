@@ -185,22 +185,30 @@ print 'Execution time: %.3f seconds' %  (time() - tic)
 
 ########## matplotlib settings #################################################
 import matplotlib.pyplot as plt
-plt.close('all')
-plt.rcParams.update({'figure.figsize': [10.0, 8.0]})
 from example_plotting import *
 
+plt.close('all')
 
 #turn off interactive plotting
 plt.ioff()
 
 if RANK == 0:
     #create network raster plot
-    fig = networkSim.raster_plots(xlim=(500, 1000), markersize=2.)
-    #fig.savefig(os.path.join(PS.figures_path, 'network.pdf'), dpi=300)
+    x, y = networkSim.get_xy((500, 1000), fraction=1)
+    fig, ax = plt.subplots(1, figsize=(5,8))
+    fig.subplots_adjust(left=0.18)
+    networkSim.plot_raster(ax, (500, 1000), x, y, markersize=1, marker='o',
+                           alpha=.5,legend=False, pop_names=True)
+    remove_axis_junk(ax)
+    ax.set_xlabel(r'$t$ (ms)', labelpad=0.1)
+    ax.set_ylabel('population', labelpad=0.1)
+    ax.set_title('network raster')
+    fig.savefig(os.path.join(params.figures_path, 'network_raster.pdf'), dpi=300)
+    #raise Exception
     
-    ['r' if 'p' in y else 'b' for y in params.y]
     #plot cell locations
     fig, ax = plt.subplots(1,1, figsize=(5,8))
+    fig.subplots_adjust(left=0.18)
     plot_population(ax, params.populationParams, params.electrodeParams,
                     params.layerBoundaries,
                     X=params.y,
@@ -213,6 +221,7 @@ if RANK == 0:
 
     #plot cell locations
     fig, ax = plt.subplots(1,1, figsize=(5,8))
+    fig.subplots_adjust(left=0.18)
     plot_population(ax, params.populationParams, params.electrodeParams,
                     params.layerBoundaries,
                     X=params.y,
@@ -230,6 +239,7 @@ if RANK == 0:
 
     #plot morphologies in their respective locations
     fig, ax = plt.subplots(1,1, figsize=(5,8))
+    fig.subplots_adjust(left=0.18)
     plot_population(ax, params.populationParams, params.electrodeParams,
                     params.layerBoundaries,
                     X=params.y,
@@ -250,6 +260,7 @@ if RANK == 0:
 
     #plot morphologies in their respective locations
     fig, ax = plt.subplots(1,1, figsize=(5,8))
+    fig.subplots_adjust(left=0.18)
     plot_population(ax, params.populationParams, params.electrodeParams,
                     params.layerBoundaries,
                     X=params.y,
@@ -267,7 +278,7 @@ if RANK == 0:
 
 
     #plot compound LFP and CSD traces
-    fig = plt.figure()
+    fig = plt.figure(figsize=(10, 8))
     gs = gridspec.GridSpec(2,8)
     
     ax0 = fig.add_subplot(gs[:,:2])
