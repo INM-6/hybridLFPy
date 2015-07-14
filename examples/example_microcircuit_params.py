@@ -199,7 +199,7 @@ class general_params(object):
         self.tstart = 0
 
         # simulation stop
-        self.tstop = 2200
+        self.tstop = 1200
 
 
         ####################################
@@ -209,14 +209,14 @@ class general_params(object):
         # TODO: try except does not work with hambach
 
         # folder for all simulation output and scripts
-        # HAMBACH and STALLO have scratch areas for saving
+        # here, compute clusters have scratch areas for saving
         if os.path.isdir(os.path.join('/', 'scratch', os.environ['USER'])):
             self.savefolder = os.path.join('/', 'scratch', os.environ['USER'],
                                            'hybrid_model',
-                                           'simulation_output_default')
+                                           'simulation_output_example_microcircuit')
         # LOCALLY
         else:
-            self.savefolder = 'simulation_output_default'
+            self.savefolder = 'simulation_output_example_microcircuit'
 
         # folder for simulation scripts
         self.sim_scripts_path = os.path.join(self.savefolder, 'sim_scripts')
@@ -236,7 +236,7 @@ class general_params(object):
         
         # folder for processed nest output files
         self.spike_output_path = os.path.join(self.savefolder,
-                                                       'processed_nest_output')
+                                              'processed_nest_output')
 
     
     ####################################
@@ -548,7 +548,7 @@ class point_neuron_network_params(general_params):
         ####################################  
        
         # scaling parameter for population sizes
-        self.area = 0.1
+        self.area = 1.
         
         # preserve indegrees when downscaling
         self.preserve_K = False         
@@ -784,7 +784,7 @@ class multicompartment_params(point_neuron_network_params):
         # SCALING (VOLUME not density)     #
         ####################################  
            
-        self.SCALING = 1.0
+        self.SCALING = 1.
         
   
         ####################################
@@ -1000,6 +1000,9 @@ class multicompartment_params(point_neuron_network_params):
         
         #time resolution of downsampled data in ms
         self.dt_output = 1.
+        
+        #set fraction of neurons from population which LFP output is stored
+        self.recordSingleContribFrac = 0.
 
 
     def get_GIDs(self):
