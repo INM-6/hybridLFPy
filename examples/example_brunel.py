@@ -70,7 +70,7 @@ RANK = COMM.Get_rank()
 
 #if True, execute full model. If False, do only the plotting. Simulation results
 #must exist.
-properrun = True
+properrun = False
 
 
 #check if mod file for synapse model specified in alphaisyn.mod is loaded

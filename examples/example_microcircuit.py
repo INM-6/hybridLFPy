@@ -383,6 +383,7 @@ if RANK == 0:
                     colors=['b' if 'b' in y else 'r' for y in params.y],
                     layers = ['L1', 'L2/3', 'L4', 'L5', 'L6'],
                     isometricangle=np.pi/24, aspect='equal')
+    ax.set_title('layers')
     fig.savefig(os.path.join(params.figures_path, 'layers.pdf'), dpi=300)
     
 
@@ -401,6 +402,7 @@ if RANK == 0:
                         markers=['*' if 'b' in y else '^' for y in params.y],
                         colors=['b' if 'b' in y else 'r' for y in params.y],
                         isometricangle=np.pi/24, )
+    ax.set_title('soma positions')
     fig.savefig(os.path.join(params.figures_path, 'soma_locations.pdf'), dpi=150)
     
     
@@ -421,7 +423,8 @@ if RANK == 0:
                       isometricangle=np.pi/24,
                       populations_path=params.populations_path,
                       cellParams=params.yCellParams,
-                      fraction=0.01)
+                      fraction=0.02)
+    ax.set_title('LFP generators')
     fig.savefig(os.path.join(params.figures_path, 'populations.pdf'), dpi=300)
 
 
@@ -441,6 +444,7 @@ if RANK == 0:
                    colors=['b' if 'b' in y else 'r' for y in params.y],
                    isometricangle=np.pi/24, cellParams=params.yCellParams,
                    populationParams=params.populationParams)
+    ax.set_title('morphologies')
     fig.savefig(os.path.join(params.figures_path, 'cell_models.pdf'), dpi=300)
 
 
