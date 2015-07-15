@@ -56,7 +56,7 @@ RANK = COMM.Get_rank()
 
 #if True, execute full model. If False, do only the plotting. Simulation results
 #must exist.
-properrun = False
+properrun = True
 
 
 #check if mod file for synapse model specified in expisyn.mod is loaded
