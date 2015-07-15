@@ -56,7 +56,7 @@ RANK = COMM.Get_rank()
 
 #if True, execute full model. If False, do only the plotting. Simulation results
 #must exist.
-properrun = True
+properrun = False
 
 
 #check if mod file for synapse model specified in expisyn.mod is loaded
@@ -401,7 +401,7 @@ if RANK == 0:
                         markers=['*' if 'b' in y else '^' for y in params.y],
                         colors=['b' if 'b' in y else 'r' for y in params.y],
                         isometricangle=np.pi/24, )
-    fig.savefig(os.path.join(params.figures_path, 'soma_locations.pdf'), dpi=300)
+    fig.savefig(os.path.join(params.figures_path, 'soma_locations.pdf'), dpi=150)
     
     
     #plot morphologies in their respective locations
@@ -447,28 +447,22 @@ if RANK == 0:
     #plot compound LFP and CSD traces
     fig = plt.figure(figsize=(10, 8))
     fig.subplots_adjust(wspace=0.5)
-    gs = gridspec.GridSpec(2,3)
+    gs = gridspec.GridSpec(2,2)
     
     ax0 = fig.add_subplot(gs[:,0])
-    ax1 = fig.add_subplot(gs[0, 1:])
-    ax2 = fig.add_subplot(gs[1, 1:])
+    ax1 = fig.add_subplot(gs[0, 1])
+    ax2 = fig.add_subplot(gs[1, 1])
+    ax0.set_title('network raster')
     ax1.set_title('CSD')
     ax2.set_title('LFP')
 
-    plot_population(ax0, params.populationParams, params.electrodeParams, params.layerBoundaries,
-                    X=params.y,
-                    markers=['*' if 'b' in y else '^' for y in params.y],
-                    colors=['b' if 'b' in y else 'r' for y in params.y],
-                    layers = ['L1', 'L2/3', 'L4', 'L5', 'L6'],
-                    isometricangle=np.pi/24, aspect='tight')
-    plot_morphologies(ax0,
-                      X=params.y,
-                      markers=['*' if 'b' in y else '^' for y in params.y],
-                      colors=['b' if 'b' in y else 'r' for y in params.y],
-                      isometricangle=np.pi/24,
-                      populations_path=params.populations_path,
-                      cellParams=params.yCellParams,
-                      fraction=0.01)
+    x, y = networkSim.get_xy((500, 1000), fraction=1)
+    networkSim.plot_raster(ax0, (500, 1000), x, y, markersize=1, marker='o',
+                           alpha=.5,legend=False, pop_names=True)
+    remove_axis_junk(ax0)
+    ax0.set_xlabel(r'$t$ (ms)', labelpad=0.1)
+    ax0.set_ylabel('population', labelpad=0.1)
+    
 
     plot_signal_sum(ax1, z=params.electrodeParams['z'],
                     fname=os.path.join(params.savefolder, 'CSDsum.h5'),

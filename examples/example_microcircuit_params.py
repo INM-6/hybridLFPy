@@ -128,7 +128,6 @@ def get_T_yX(fname, y, y_in_Y, x_in_X, F_y):
         T_yX = K_yX / K_YX
             = F_y * k_yX / sum_y(F_y*k_yX) 
     
-    
     '''
     def _get_k_yX_mul_F_y(y, y_index, X_index):
         # Load data from json dictionary
@@ -170,8 +169,9 @@ def get_T_yX(fname, y, y_in_Y, x_in_X, F_y):
 
 
 class general_params(object):
+    '''class defining general model parameters'''
     def __init__(self):
-        '''class collecting general model parameters'''
+        '''class defining general model parameters'''
 
         ####################################
         # REASON FOR THIS SIMULATION       #
@@ -328,8 +328,8 @@ class general_params(object):
         # IPSP amplitude relative to EPSP amplitude
         self.g = -4.               
 
-        # L4i ->L4e stronger in order to get rid of 84 Hz peak
-        self.g_4e_4i = self.g
+        # set L4i ->L4e stronger in order to get rid of 84 Hz peak
+        self.g_4e_4i = self.g*1.25
         
         # Whether to use lognormal weights or not
         self.lognormal_weights = False 
@@ -337,7 +337,7 @@ class general_params(object):
         # mean dendritic delays for excitatory and inhibitory transmission (ms)
         self.delays = [1.5, 0.75] 
 
-        # standard deviation relative to mean delays; former delay_rel
+        # standard deviation relative to mean delays
         self.delay_rel_sd = 0.5
         
       
@@ -434,6 +434,7 @@ class general_params(object):
 
 
 class point_neuron_network_params(general_params):
+    '''class point-neuron network parameters'''
     def __init__(self):
         '''class point-neuron network parameters'''
 
@@ -722,8 +723,7 @@ class point_neuron_network_params(general_params):
 class multicompartment_params(point_neuron_network_params):
     '''
     Inherited class defining additional attributes needed by e.g., the
-    classes population.Population and
-    population.DummyNetwork
+    classes population.Population and population.DummyNetwork
 
     This class do not take any kwargs    
 
@@ -731,8 +731,7 @@ class multicompartment_params(point_neuron_network_params):
     def __init__(self):
         '''
         Inherited class defining additional attributes needed by e.g., the
-        classes population.Population and
-        population.DummyNetwork
+        classes population.Population and population.DummyNetwork
         
         This class do not take any kwargs    
         
