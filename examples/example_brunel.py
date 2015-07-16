@@ -70,7 +70,7 @@ RANK = COMM.Get_rank()
 
 #if True, execute full model. If False, do only the plotting. Simulation results
 #must exist.
-properrun = False
+properrun = True
 
 
 #check if mod file for synapse model specified in alphaisyn.mod is loaded
@@ -407,7 +407,8 @@ if RANK == 0:
 
     #plot cell locations
     fig, ax = plt.subplots(1,1, figsize=(5,8))
-    plot_population(ax, PS.populationParams, PS.electrodeParams, PS.layerBoundaries,
+    plot_population(ax, PS.populationParams, PS.electrodeParams,
+                    PS.layerBoundaries,
                     X=['EX', 'IN'], markers=['^', 'o'], colors=['r', 'b'],
                     layers = ['upper', 'lower'],
                     isometricangle=np.pi/12, aspect='equal')
@@ -416,7 +417,8 @@ if RANK == 0:
 
     #plot cell locations
     fig, ax = plt.subplots(1,1, figsize=(5,8))
-    plot_population(ax, PS.populationParams, PS.electrodeParams, PS.layerBoundaries,
+    plot_population(ax, PS.populationParams, PS.electrodeParams,
+                    PS.layerBoundaries,
                     X=['EX', 'IN'], markers=['^', 'o'], colors=['r', 'b'],
                     layers = ['upper', 'lower'],
                     isometricangle=np.pi/12, aspect='equal')
@@ -429,7 +431,8 @@ if RANK == 0:
 
     #plot morphologies in their respective locations
     fig, ax = plt.subplots(1,1, figsize=(5,8))
-    plot_population(ax, PS.populationParams, PS.electrodeParams, PS.layerBoundaries,
+    plot_population(ax, PS.populationParams, PS.electrodeParams,
+                    PS.layerBoundaries,
                     X=['EX', 'IN'], markers=['^', 'o'], colors=['r', 'b'],
                     layers = ['upper', 'lower'],
                     aspect='equal')
@@ -442,19 +445,23 @@ if RANK == 0:
 
     #plot morphologies in their respective locations
     fig, ax = plt.subplots(1,1, figsize=(5,8))
-    plot_population(ax, PS.populationParams, PS.electrodeParams, PS.layerBoundaries,
+    plot_population(ax, PS.populationParams, PS.electrodeParams,
+                    PS.layerBoundaries,
                     X=['EX', 'IN'], markers=['^', 'o'], colors=['r', 'b'],
                     layers = ['upper', 'lower'],
                     aspect='equal')
-    plot_individual_morphologies(ax, X=['EX', 'IN'], markers=['^', 'o'], colors=['r', 'b'],
-                    isometricangle=np.pi/12, cellParams=PS.cellParams,
-                    populationParams=PS.populationParams)
+    plot_individual_morphologies(ax, X=['EX', 'IN'], markers=['^', 'o'],
+                                 colors=['r', 'b'],
+                                 isometricangle=np.pi/12,
+                                 cellParams=PS.cellParams,
+                                 populationParams=PS.populationParams)
     fig.savefig(os.path.join(PS.figures_path, 'cell_models.pdf'), dpi=300)
     
 
     #plot EX morphologies in their respective locations
     fig, ax = plt.subplots(1,1, figsize=(5,8))
-    plot_population(ax, PS.populationParams, PS.electrodeParams, PS.layerBoundaries,
+    plot_population(ax, PS.populationParams, PS.electrodeParams,
+                    PS.layerBoundaries,
                     X=['EX'], markers=['^'], colors=['r'],
                     layers = ['upper', 'lower'],
                     aspect='equal')
@@ -467,7 +474,8 @@ if RANK == 0:
 
     #plot IN morphologies in their respective locations
     fig, ax = plt.subplots(1,1, figsize=(5,8))
-    plot_population(ax, PS.populationParams, PS.electrodeParams, PS.layerBoundaries,
+    plot_population(ax, PS.populationParams, PS.electrodeParams,
+                    PS.layerBoundaries,
                     X=['IN'], markers=['o'], colors=['b'],
                     layers = ['upper', 'lower'],
                     isometricangle=np.pi/12, aspect='equal')
@@ -488,11 +496,13 @@ if RANK == 0:
     ax1.set_title('CSD')
     ax2.set_title('LFP')
 
-    plot_population(ax0, PS.populationParams, PS.electrodeParams, PS.layerBoundaries,
+    plot_population(ax0, PS.populationParams, PS.electrodeParams,
+                    PS.layerBoundaries,
                     X=['EX', 'IN'], markers=['^', 'o'], colors=['r', 'b'],
                     layers = ['upper', 'lower'],
                     isometricangle=np.pi/12, aspect='equal')
-    plot_morphologies(ax0, X=['EX', 'IN'], markers=['^', 'o'], colors=['r', 'b'],
+    plot_morphologies(ax0, X=['EX', 'IN'], markers=['^', 'o'],
+                      colors=['r', 'b'],
                     isometricangle=np.pi/12,
                     populations_path=PS.populations_path,
                     cellParams=PS.cellParams)
@@ -518,7 +528,8 @@ if RANK == 0:
     ax1.set_title('CSD')
     ax2.set_title('LFP')
 
-    plot_population(ax0, PS.populationParams, PS.electrodeParams, PS.layerBoundaries,
+    plot_population(ax0, PS.populationParams, PS.electrodeParams,
+                    PS.layerBoundaries,
                     X=['EX'], markers=['^'], colors=['r'],
                     layers = ['upper', 'lower'],
                     isometricangle=np.pi/12, aspect='equal')
@@ -528,13 +539,16 @@ if RANK == 0:
                     cellParams=PS.cellParams)
 
     plot_signal_sum(ax1, z=PS.electrodeParams['z'],
-                    fname=os.path.join(PS.populations_path, 'EX_population_CSD.h5'),
+                    fname=os.path.join(PS.populations_path,
+                                       'EX_population_CSD.h5'),
                     unit='$\mu$Amm$^{-3}$', T=(500, 1000),color='r')
     
     plot_signal_sum(ax2, z=PS.electrodeParams['z'],
-                    fname=os.path.join(PS.populations_path, 'EX_population_LFP.h5'),
+                    fname=os.path.join(PS.populations_path,
+                                       'EX_population_LFP.h5'),
                     unit='mV', T=(500, 1000), color='r')
-    fig.savefig(os.path.join(PS.figures_path, 'population_EX_signals.pdf'), dpi=300)
+    fig.savefig(os.path.join(PS.figures_path, 'population_EX_signals.pdf'),
+                dpi=300)
 
 
     #plot compound LFP and CSD traces
@@ -547,7 +561,8 @@ if RANK == 0:
     ax1.set_title('CSD')
     ax2.set_title('LFP')
 
-    plot_population(ax0, PS.populationParams, PS.electrodeParams, PS.layerBoundaries,
+    plot_population(ax0, PS.populationParams, PS.electrodeParams,
+                    PS.layerBoundaries,
                     X=['IN'], markers=['o'], colors=['b'],
                     layers = ['upper', 'lower'],
                     isometricangle=np.pi/12, aspect='equal')
@@ -557,13 +572,16 @@ if RANK == 0:
                     cellParams=PS.cellParams)
 
     plot_signal_sum(ax1, z=PS.electrodeParams['z'],
-                    fname=os.path.join(PS.populations_path, 'IN_population_CSD.h5'),
+                    fname=os.path.join(PS.populations_path,
+                                       'IN_population_CSD.h5'),
                     unit='$\mu$Amm$^{-3}$', T=(500, 1000),color='b')
     
     plot_signal_sum(ax2, z=PS.electrodeParams['z'],
-                    fname=os.path.join(PS.populations_path, 'IN_population_LFP.h5'),
+                    fname=os.path.join(PS.populations_path,
+                                       'IN_population_LFP.h5'),
                     unit='mV', T=(500, 1000), color='b')
-    fig.savefig(os.path.join(PS.figures_path, 'population_IN_signals.pdf'), dpi=300)
+    fig.savefig(os.path.join(PS.figures_path, 'population_IN_signals.pdf'),
+                dpi=300)
 
 
     #correlate global firing rate of network with CSD/LFP across channels
@@ -599,13 +617,14 @@ if RANK == 0:
     plot_correlation(z_vec=PS.electrodeParams['z'], x0=r, x1=data[:, 1:],
                      ax=ax2, lag=50, title='rate-LFP xcorr')
 
-    fig.savefig(os.path.join(PS.figures_path, 'compound_signal_correlations.pdf'),
-                dpi=300)
+    fig.savefig(os.path.join(PS.figures_path,
+                             'compound_signal_correlations.pdf'), dpi=300)
 
 
     #plot morphologies in their respective locations
     fig, ax = plt.subplots(1,1, figsize=(5,8))
-    plot_population(ax, PS.populationParams, PS.electrodeParams, PS.layerBoundaries,
+    plot_population(ax, PS.populationParams, PS.electrodeParams,
+                    PS.layerBoundaries,
                     X=['EX', 'IN'], markers=['^', 'o'], colors=['r', 'b'],
                     layers = ['upper', 'lower'],
                     aspect='equal')
@@ -621,10 +640,10 @@ if RANK == 0:
     ax.text(-275, -300, 'EX', clip_on=False, va='center', zorder=500)
     ax.add_patch(plt.Rectangle((-290, -340), fc='r', ec='k', alpha=0.5,
         width=80, height=80, clip_on=False, zorder=500))
-    ax.arrow(-210, -300, 50, 50, head_width=20, head_length=20, width=10, fc='r',
-             lw=1, ec='w', alpha=1, zorder=500)
-    ax.arrow(-210, -300, 50, -50, head_width=20, head_length=20, width=10, fc='r',
-             lw=1, ec='w', alpha=1, zorder=500)
+    ax.arrow(-210, -300, 50, 50, head_width=20, head_length=20, width=10,
+             fc='r', lw=1, ec='w', alpha=1, zorder=500)
+    ax.arrow(-210, -300, 50, -50, head_width=20, head_length=20, width=10,
+             fc='r', lw=1, ec='w', alpha=1, zorder=500)
     
     ax.text(-275, -400, 'IN', clip_on=False, va='center', zorder=500)
     ax.add_patch(plt.Rectangle((-290, -440), fc='b', ec='k', alpha=0.5,

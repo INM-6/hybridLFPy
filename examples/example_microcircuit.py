@@ -14,7 +14,7 @@ Synopsis of the main simulation procedure:
 2. Set up file destinations for different simulation output
 3. network simulation
     a. execute network simulation using NEST (www.nest-simulator.org)
-    b. merge network output (spikes, currents, voltages)
+    b. merge nest spike output from different MPI ranks
 4. Create a object-representation that uses sqlite3 of all the spiking output 
 5. Iterate over post-synaptic populations:
     a. Create Population object with appropriate parameters for
@@ -37,7 +37,8 @@ import os
 import numpy as np
 from time import time
 import nest
-from hybridLFPy import PostProcess, Population, CachedNetwork, setup_file_dest, helpers
+from hybridLFPy import PostProcess, Population, CachedNetwork
+from hybridLFPy import setup_file_dest, helpers
 from glob import glob
 import neuron
 from mpi4py import MPI
@@ -101,8 +102,9 @@ def merge_gdf(model_params, raw_label='spikes_', file_type='gdf',
     '''
     def get_raw_gids(model_params):
         '''
-        Reads text file containing gids of neuron populations as created within the NEST simulation. 
-        These gids are not continuous as in the simulation devices get created in between.
+        Reads text file containing gids of neuron populations as created within
+        the NEST simulation. These gids are not continuous as in the simulation
+        devices get created in between.
         
         Parameters
         ----------
@@ -116,7 +118,8 @@ def merge_gdf(model_params, raw_label='spikes_', file_type='gdf',
             list of neuron ids and value (spike time, voltage etc.)
         
         '''
-        gidfile = open(os.path.join(model_params.raw_nest_output_path, model_params.GID_filename),'r') 
+        gidfile = open(os.path.join(model_params.raw_nest_output_path,
+                                    model_params.GID_filename),'r') 
         gids = [] 
         for l in gidfile :
             a = l.split()
@@ -125,25 +128,31 @@ def merge_gdf(model_params, raw_label='spikes_', file_type='gdf',
     
     #some preprocessing
     raw_gids = get_raw_gids(model_params)
-    pop_sizes = [raw_gids[i][1]-raw_gids[i][0]+1 for i in np.arange(model_params.Npops)]
+    pop_sizes = [raw_gids[i][1]-raw_gids[i][0]+1
+                 for i in np.arange(model_params.Npops)]
     raw_first_gids =  [raw_gids[i][0] for i in np.arange(model_params.Npops)]
-    converted_first_gids = [int(1 + np.sum(pop_sizes[:i])) for i in np.arange(model_params.Npops)]
+    converted_first_gids = [int(1 + np.sum(pop_sizes[:i]))
+                            for i in np.arange(model_params.Npops)]
 
     for pop_idx in np.arange(model_params.Npops):
         if pop_idx % SIZE == RANK:
             files = glob(os.path.join(model_params.raw_nest_output_path,
-                                      raw_label + str(pop_idx) + '*.' + file_type))
+                                      raw_label + str(pop_idx) +
+                                      '*.' + file_type))
             gdf = [] # init
             for f in files:
                 new_gdf = helpers.read_gdf(f)
                 for line in new_gdf:
-                    line[0] = line[0] - raw_first_gids[pop_idx] + converted_first_gids[pop_idx]
+                    line[0] = line[0] - raw_first_gids[pop_idx] + \
+                              converted_first_gids[pop_idx]
                     gdf.append(line)
             
             print 'writing: %s' % os.path.join(model_params.spike_output_path,
-                                               fileprefix + '_%s.gdf' % model_params.X[pop_idx])
+                                            fileprefix +
+                                            '_%s.gdf' % model_params.X[pop_idx])
             helpers.write_gdf(gdf, os.path.join(model_params.spike_output_path,
-                                                fileprefix + '_%s.gdf' % model_params.X[pop_idx]))
+                                        fileprefix +
+                                        '_%s.gdf' % model_params.X[pop_idx]))
     
     COMM.Barrier()
 
@@ -193,7 +202,8 @@ def send_nest_params_to_sli(p):
             value = value.tolist()
         if type(value) == dict:
             value = dict_of_numpyarray_to_dict_of_list(value)
-        if name == 'neuron_model': # special case as neuron_model should is a NEST model and not a string
+        if name == 'neuron_model': # special case as neuron_model is a
+                                   # NEST model and not a string
             try:
                 nest.sli_run('/'+name)
                 nest.sli_push(value)
@@ -259,7 +269,7 @@ if properrun:
 ######## Perform network simulation ############################################
 
 if properrun:
-    ##initiate nest simulation with only the point neuron network parameter class
+    #initiate nest simulation with only the point neuron network parameter class
     networkParams = point_neuron_network_params()
     sli_run(parameters=networkParams,
             fname='microcircuit.sli',
@@ -370,7 +380,8 @@ if RANK == 0:
     ax.set_xlabel(r'$t$ (ms)', labelpad=0.1)
     ax.set_ylabel('population', labelpad=0.1)
     ax.set_title('network raster')
-    fig.savefig(os.path.join(params.figures_path, 'network_raster.pdf'), dpi=300)
+    fig.savefig(os.path.join(params.figures_path, 'network_raster.pdf'),
+                dpi=300)
     #raise Exception
     
     #plot cell locations
@@ -403,7 +414,8 @@ if RANK == 0:
                         colors=['b' if 'b' in y else 'r' for y in params.y],
                         isometricangle=np.pi/24, )
     ax.set_title('soma positions')
-    fig.savefig(os.path.join(params.figures_path, 'soma_locations.pdf'), dpi=150)
+    fig.savefig(os.path.join(params.figures_path, 'soma_locations.pdf'),
+                dpi=150)
     
     
     #plot morphologies in their respective locations
@@ -449,8 +461,9 @@ if RANK == 0:
 
 
     #plot compound LFP and CSD traces
-    fig = plt.figure(figsize=(10, 8))
-    fig.subplots_adjust(wspace=0.5)
+    fig = plt.figure(figsize=(13, 8))
+    fig.subplots_adjust(left=0.075, right=0.95, bottom=0.075, top=0.95,
+                        hspace=0.2, wspace=0.2)
     gs = gridspec.GridSpec(2,2)
     
     ax0 = fig.add_subplot(gs[:,0])
@@ -460,8 +473,10 @@ if RANK == 0:
     ax1.set_title('CSD')
     ax2.set_title('LFP')
 
-    x, y = networkSim.get_xy((500, 1000), fraction=1)
-    networkSim.plot_raster(ax0, (500, 1000), x, y, markersize=1, marker='o',
+    T=(500, 700)
+    
+    x, y = networkSim.get_xy(T, fraction=1)
+    networkSim.plot_raster(ax0, T, x, y, markersize=1, marker='o',
                            alpha=.5,legend=False, pop_names=True)
     remove_axis_junk(ax0)
     ax0.set_xlabel(r'$t$ (ms)', labelpad=0.1)
@@ -470,13 +485,17 @@ if RANK == 0:
 
     plot_signal_sum(ax1, z=params.electrodeParams['z'],
                     fname=os.path.join(params.savefolder, 'CSDsum.h5'),
-                    unit='$\mu$Amm$^{-3}$', T=(500, 1000))
+                    unit='$\mu$Amm$^{-3}$', T=T)
+    ax1.set_xticklabels([])
+    ax1.set_xlabel('')
     
     plot_signal_sum(ax2, z=params.electrodeParams['z'],
                     fname=os.path.join(params.savefolder, 'LFPsum.h5'),
-                    unit='mV', T=(500, 1000))
+                    unit='mV', T=T)
+    ax2.set_xlabel('$t$ (ms)')
     
-    fig.savefig(os.path.join(params.figures_path, 'compound_signals.pdf'), dpi=300)
+    fig.savefig(os.path.join(params.figures_path, 'compound_signals.pdf'),
+                dpi=300)
 
     plt.show()
 

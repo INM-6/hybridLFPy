@@ -98,7 +98,8 @@ def plot_pop_scatter(ax, somapos, isometricangle, marker, color):
         inds = (somapos[:, 1] >= lower) & (somapos[:, 1] < upper)
         if np.any(inds):
             ax.scatter(somapos[inds, 0],
-                       somapos[inds, 2] - somapos[inds, 1] * np.sin(isometricangle),
+                       somapos[inds, 2] - somapos[inds, 1] *
+                       np.sin(isometricangle),
                    s=30, facecolors=color, edgecolors='gray', linewidth=0.1,
                    zorder=lower,
                    marker = marker, clip_on=False, rasterized=True)
@@ -262,7 +263,8 @@ def plot_morphologies(ax, X, isometricangle, markers, colors,
             #set up a polycollection
             zips = []
             for x, z in cell.get_idx_polygons():
-                zips.append(list(zip(x, z-somapos[j, 1] * np.sin(isometricangle))))
+                zips.append(list(zip(x, z-somapos[j, 1] * np.sin(isometricangle)
+                                     )))
             
             polycol = PolyCollection(zips,
                                      edgecolors='gray',
