@@ -312,6 +312,7 @@ networkSim = CachedNetwork(
     label = BN.label,
     ext = 'gdf',
     GIDs = {'EX' : [1, BN.NE], 'IN' : [BN.NE+1, BN.NI]},
+    cmap='rainbow_r',
 )
 
 
