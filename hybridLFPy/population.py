@@ -658,7 +658,7 @@ class PopulationSuper(object):
         else:
             #reconstruct RANK_CELLINDICES of all RANKs for controlling
             #communication
-            if self.recordSingleContribFrac:
+            if self.recordSingleContribFrac == 1.:
                 SAMPLESIZE = self.POPULATION_SIZE
                 RANK_CELLINDICES = []
                 for i in range(SIZE):
