@@ -527,7 +527,7 @@ class CachedFixedSpikesNetwork(CachedNetwork):
                 cell_spt = np.array(cell_spt, dtype=[('a', int), ('b', float)])
 
                 np.savetxt(os.path.join(self.spike_output_path,
-                                        'population_spikes_{}.gdf'.format(self.X[i])),
+                                        self.label + '_{}.gdf'.format(self.X[i])),
                            cell_spt, fmt=['%i', '%.1f'])
 
         # Resync
