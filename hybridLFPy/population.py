@@ -66,6 +66,8 @@ class PopulationSuper(object):
         Random seed for population, for positions etc.
     verbose : bool
         Verbosity flag.
+    output_file : str
+        formattable string for population output, e.g., '{}_population_{}'
 
 
     Returns
@@ -123,6 +125,7 @@ class PopulationSuper(object):
                  recordSingleContribFrac=0,
                  POPULATIONSEED=123456,
                  verbose=False,
+                 output_file='{}_population_{}'
                  ):
 
         """
@@ -168,6 +171,8 @@ class PopulationSuper(object):
             Random seed for population, for positions etc.
         verbose : bool
             Verbosity flag.
+        output_file : str
+            formattable string for population output, e.g., '{}_population_{}'
 
 
         Returns
@@ -195,6 +200,7 @@ class PopulationSuper(object):
         self.calculateCSD = calculateCSD
         self.dt_output = dt_output
         self.recordSingleContribFrac = recordSingleContribFrac
+        self.output_file = output_file
         
         #check that decimate fraction is actually a whole number
         try:
@@ -762,7 +768,8 @@ class PopulationSuper(object):
             #saving LFPs
             if 'LFP' in self.savelist:
                 fname = os.path.join(self.populations_path,
-                                     '{}_population_LFP.h5'.format(self.y))
+                                     self.output_file.format(self.y,
+                                                             'LFP')+'.h5')
                 f = h5py.File(fname, 'w')
                 f['srate'] = 1E3 / self.dt_output
                 f.create_dataset('data', data=lfp, compression=4)
@@ -775,7 +782,8 @@ class PopulationSuper(object):
             #saving CSDs
             if 'CSD' in self.savelist and self.calculateCSD:
                 fname = os.path.join(self.populations_path,
-                                     '{}_population_CSD.h5'.format(self.y))
+                                     self.output_file.format(self.y,
+                                                             'CSD')+'.h5')
                 f = h5py.File(fname, 'w')
                 f['srate'] = 1E3 / self.dt_output
                 f.create_dataset('data', data=csd, compression=4)
@@ -792,14 +800,14 @@ class PopulationSuper(object):
                 for j in range(3):
                     pop_soma_pos[i, j] = self.pop_soma_pos[i][keys[j]]
             fname = os.path.join(self.populations_path,
-                                 '{}_population_somapos.gdf'.format(self.y))
+                                 self.output_file.format(self.y, 'somapos.gdf'))
             np.savetxt(fname, pop_soma_pos)
             assert(os.path.isfile(fname))
             print('save somapos ok')
 
             #save rotations using hdf5
             fname = os.path.join(self.populations_path,
-                                    '{}_population_rotations.h5'.format(self.y))
+                                    self.output_file.format(self.y, 'rotations.h5'))
             f = h5py.File(fname, 'w')
             f.create_dataset('x', (len(self.rotations),))
             f.create_dataset('y', (len(self.rotations),))

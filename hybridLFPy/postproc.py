@@ -37,15 +37,17 @@ class PostProcess(object):
 
     """
     def __init__(self,
-                 y = ['EX', 'IN'],
-                 dt_output = 1.,
-                 mapping_Yy = [('EX', 'EX'),
+                 y=['EX', 'IN'],
+                 dt_output=1.,
+                 mapping_Yy=[('EX', 'EX'),
                                ('IN', 'IN')],
                  savelist=['somav', 'somapos', 'x', 'y', 'z', 'LFP', 'CSD'],
-                 savefolder = 'simulation_output_example_brunel',
-                 cells_subfolder = 'cells',
-                 populations_subfolder = 'populations',
-                 figures_subfolder = 'figures',
+                 savefolder='simulation_output_example_brunel',
+                 cells_subfolder='cells',
+                 populations_subfolder='populations',
+                 figures_subfolder='figures',
+                 output_file='{}_population_{}',
+                 compound_file='{}sum.h5',
                  ):
         """
         class `PostProcess`: Methods to deal with the contributions of every
@@ -71,6 +73,13 @@ class PostProcess(object):
             Folder under `savefolder` containing population specific output.
         figures_subfolder : str
             Folder under `savefolder` containing figs.
+        output_file : str
+            formattable file name for population signals, e.g.,
+            '{}_population_{}.h5'
+        compound_file : str
+            formattable file name for population signals, e.g.,
+            '{}sum.h5'
+        
     
         """
         #set some attributes
@@ -82,6 +91,8 @@ class PostProcess(object):
         self.cells_path = os.path.join(savefolder, cells_subfolder)
         self.populations_path = os.path.join(savefolder, populations_subfolder)
         self.figures_path = os.path.join(savefolder, figures_subfolder)
+        self.output_file = output_file
+        self.compound_file = compound_file
         
         #set up subfolders
         if RANK == 0:
@@ -101,20 +112,21 @@ class PostProcess(object):
                 self.LFPdictLayer = self.calc_lfp_layer()
     
                 #save global LFP sum, and from L23E, L4I etc.:
-                if not os.path.isfile(os.path.join(self.savefolder, 'LFPsum.h5')):
-                    f = h5py.File(os.path.join(self.savefolder, 'LFPsum.h5'))
-                    f['srate'] = 1E3 / self.dt_output
-                    f.create_dataset('data', data=self.LFPsum, compression=4)
-                    f.close()
+                f = h5py.File(os.path.join(self.savefolder,
+                                           self.compound_file.format('LFP')
+                                           ), 'w')
+                f['srate'] = 1E3 / self.dt_output
+                f.create_dataset('data', data=self.LFPsum, compression=4)
+                f.close()
     
                 for key, value in list(self.LFPdictLayer.items()):
-                    if not os.path.isfile(os.path.join(self.populations_path,
-                                                    '%s_population_LFP.h5' % key)):
-                        f = h5py.File(os.path.join(self.populations_path,
-                                                   '%s_population_LFP.h5' % key))
-                        f['srate'] = 1E3 / self.dt_output
-                        f.create_dataset('data', data=value, compression=4)
-                        f.close()
+                    f = h5py.File(os.path.join(self.populations_path,
+                                               self.output_file.format(key,
+                                                                       'LFP.h5')
+                                               ), 'w')
+                    f['srate'] = 1E3 / self.dt_output
+                    f.create_dataset('data', data=value, compression=4)
+                    f.close()
 
             if 'CSD' in self.savelist:
                 #get the per population CSDs and total CSD from all populations:
@@ -122,20 +134,21 @@ class PostProcess(object):
                 self.CSDdictLayer = self.calc_csd_layer()
     
                 #save global CSD sum, and from L23E, L4I etc.:
-                if not os.path.isfile(os.path.join(self.savefolder, 'CSDsum.h5')):
-                    f = h5py.File(os.path.join(self.savefolder, 'CSDsum.h5'))
-                    f['srate'] = 1E3 / self.dt_output
-                    f.create_dataset('data', data=self.CSDsum, compression=4)
-                    f.close()
+                f = h5py.File(os.path.join(self.savefolder,
+                                           self.compound_file.format('CSD')),
+                              'w')
+                f['srate'] = 1E3 / self.dt_output
+                f.create_dataset('data', data=self.CSDsum, compression=4)
+                f.close()
     
                 for key, value in list(self.CSDdictLayer.items()):
-                    if not os.path.isfile(os.path.join(self.populations_path,
-                                                '%s_population_CSD.h5' % key)):
-                        f = h5py.File(os.path.join(self.populations_path,
-                                                '%s_population_CSD.h5' % key))
-                        f['srate'] = 1E3 / self.dt_output
-                        f.create_dataset('data', data=value, compression=4)
-                        f.close()
+                    f = h5py.File(os.path.join(self.populations_path,
+                                               self.output_file.format(key,
+                                                                       'CSD.h5')
+                                               ), 'w')
+                    f['srate'] = 1E3 / self.dt_output
+                    f.create_dataset('data', data=value, compression=4)
+                    f.close()
 
         else:
             pass
@@ -167,7 +180,7 @@ class PostProcess(object):
         i = 0
         for y in self.y:
             fil = os.path.join(self.populations_path,
-                               '%s_population_LFP.h5' % y)
+                               self.output_file.format(y, 'LFP.h5'))
 
             f = h5py.File(fil)
 
@@ -197,7 +210,7 @@ class PostProcess(object):
         i = 0
         for y in self.y:
             fil = os.path.join(self.populations_path,
-                               '%s_population_CSD.h5' % y)
+                               self.output_file.format(y, 'CSD.h5'))
 
             f = h5py.File(fil)
 
