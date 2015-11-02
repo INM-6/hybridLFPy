@@ -648,6 +648,7 @@ class point_neuron_network_params(general_params):
         self.th_sin_mean_rate = 30. 	        # mean rate (spikess)
         self.th_sin_fluc_rate = 30.  	        # rate modulation amplitude (spikess)
         self.th_sin_freq = 15. 	                # frequency of the rate modulation (Hz)
+        self.th_sin_phase = 0.                  # phase of rate modulation (deg)
 
 
         ## Gaussian_pulse_packages

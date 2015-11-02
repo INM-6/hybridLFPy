@@ -304,9 +304,10 @@
         th_smp_GID <<
 		  /start th_sin_start
 		  /stop th_sin_start th_sin_duration add
-		  /freq th_sin_freq
-		  /dc th_sin_mean_rate
-		  /ac th_sin_fluc_rate
+		  /frequency th_sin_freq
+		  /rate th_sin_mean_rate
+		  /amplitude th_sin_fluc_rate
+                  /phase th_sin_phase
 		>> SetStatus
 		
 	%% Pulse-packet generators
