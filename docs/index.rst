@@ -9,12 +9,6 @@ Welcome to the documentation of **hybridLFPy**!
 
 .. include:: ../README.md
 
-Tutorial slides
----------------
-
-Slides from OCNS 2015 meeting tutorial `T2:  Modeling and analysis of extracellular potentials <http://www.cnsorg.org/cns-2015-tutorials#t2>`_ hosted in Prague, Czech Republic on LFPy and hybridLFPy: `CNS2015_LFPy_tutorial.pdf  <http://LFPy.github.io/downloads/CNS2015_LFPy_tutorial.pdf>`_
-
-
 ========================
 Module :mod:`hybridLFPy`
 ========================

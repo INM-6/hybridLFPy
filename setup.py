@@ -1,19 +1,10 @@
 #!/usr/bin/env python
 '''setup file for the hybridLFPy python module'''
 import os
-from sys import version
-if version < '2.2.3':
-    from distutils.dist import DistributionMetadata
-    DistributionMetadata.classifiers = None
-    DistributionMetadata.download_url = None
-    
-    
-from distutils.core import setup
-
+from setuptools import setup
 
 with open('README.md') as file:
     long_description = file.read()
-
 
 setup(
     name = 'hybridLFPy',

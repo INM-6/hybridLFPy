@@ -19,6 +19,40 @@ Juelich Research Centre and JARA, Juelich, Germany
 (http://www.fz-juelich.de/inm/inm-6/EN/).
 
 
+Manuscript
+----------
+
+A preprint of our manuscript on the hybrid scheme implemented in ``hybridLFPy`` is available on arXiv.org at http://arxiv.org/abs/1511.01681v1. 
+
+Citation:
+Espen Hagen, David Dahmen, Maria L. Stavrinou, Henrik Linden, Tom Tetzlaff, Sacha Jennifer van Albada, Sonja Gruen, Markus Diesmann, Gaute T. Einevoll. Hybrid scheme for modeling local field potentials from point-neuron networks. arXiv:1511.01681 [q-bio.NC]
+
+Bibtex source:
+::
+    
+    @ARTICLE{2015arXiv151101681H,
+       author = {{Hagen}, E. and {Dahmen}, D. and {Stavrinou}, M.~L. and {Lind{\'e}n}, H. and 
+            {Tetzlaff}, T. and {van Albada}, S.~J. and {Gr{\"u}n}, S. and 
+            {Diesmann}, M. and {Einevoll}, G.~T.},
+        title = "{Hybrid scheme for modeling local field potentials from point-neuron networks}",
+      journal = {ArXiv e-prints},
+    archivePrefix = "arXiv",
+       eprint = {1511.01681},
+     primaryClass = "q-bio.NC",
+     keywords = {Quantitative Biology - Neurons and Cognition},
+         year = 2015,
+        month = nov,
+       adsurl = {http://adsabs.harvard.edu/abs/2015arXiv151101681H},
+      adsnote = {Provided by the SAO/NASA Astrophysics Data System}
+    }    
+
+Tutorial slides
+---------------
+
+Slides from OCNS 2015 meeting tutorial `T2:  Modeling and analysis of extracellular potentials <http://www.cnsorg.org/cns-2015-tutorials#t2>`_ hosted in Prague, Czech Republic on LFPy and hybridLFPy: `CNS2015_LFPy_tutorial.pdf  <http://LFPy.github.io/downloads/CNS2015_LFPy_tutorial.pdf>`_
+
+
+
 License
 -------
 
