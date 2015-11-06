@@ -115,6 +115,8 @@
 <span class="sd">        Random seed for population, for positions etc.</span>
 <span class="sd">    verbose : bool</span>
 <span class="sd">        Verbosity flag.</span>
+<span class="sd">    output_file : str</span>
+<span class="sd">        formattable string for population output, e.g., &#39;{}_population_{}&#39;</span>
 
 
 <span class="sd">    Returns</span>
@@ -172,6 +174,7 @@
                  <span class="n">recordSingleContribFrac</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
                  <span class="n">POPULATIONSEED</span><span class="o">=</span><span class="mi">123456</span><span class="p">,</span>
                  <span class="n">verbose</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+                 <span class="n">output_file</span><span class="o">=</span><span class="s">&#39;{}_population_{}&#39;</span>
                  <span class="p">):</span>
 
         <span class="sd">&quot;&quot;&quot;</span>
@@ -217,6 +220,8 @@
 <span class="sd">            Random seed for population, for positions etc.</span>
 <span class="sd">        verbose : bool</span>
 <span class="sd">            Verbosity flag.</span>
+<span class="sd">        output_file : str</span>
+<span class="sd">            formattable string for population output, e.g., &#39;{}_population_{}&#39;</span>
 
 
 <span class="sd">        Returns</span>
@@ -244,6 +249,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">calculateCSD</span> <span class="o">=</span> <span class="n">calculateCSD</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dt_output</span> <span class="o">=</span> <span class="n">dt_output</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">recordSingleContribFrac</span> <span class="o">=</span> <span class="n">recordSingleContribFrac</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_file</span> <span class="o">=</span> <span class="n">output_file</span>
         
         <span class="c">#check that decimate fraction is actually a whole number</span>
         <span class="k">try</span><span class="p">:</span>
@@ -707,7 +713,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="c">#reconstruct RANK_CELLINDICES of all RANKs for controlling</span>
             <span class="c">#communication</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">recordSingleContribFrac</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">recordSingleContribFrac</span> <span class="o">==</span> <span class="mf">1.</span><span class="p">:</span>
                 <span class="n">SAMPLESIZE</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">POPULATION_SIZE</span>
                 <span class="n">RANK_CELLINDICES</span> <span class="o">=</span> <span class="p">[]</span>
                 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">SIZE</span><span class="p">):</span>
@@ -811,7 +817,8 @@
             <span class="c">#saving LFPs</span>
             <span class="k">if</span> <span class="s">&#39;LFP&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">savelist</span><span class="p">:</span>
                 <span class="n">fname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">populations_path</span><span class="p">,</span>
-                                     <span class="s">&#39;{}_population_LFP.h5&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">))</span>
+                                     <span class="bp">self</span><span class="o">.</span><span class="n">output_file</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">,</span>
+                                                             <span class="s">&#39;LFP&#39;</span><span class="p">)</span><span class="o">+</span><span class="s">&#39;.h5&#39;</span><span class="p">)</span>
                 <span class="n">f</span> <span class="o">=</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="s">&#39;w&#39;</span><span class="p">)</span>
                 <span class="n">f</span><span class="p">[</span><span class="s">&#39;srate&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1E3</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">dt_output</span>
                 <span class="n">f</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s">&#39;data&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">lfp</span><span class="p">,</span> <span class="n">compression</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
@@ -824,7 +831,8 @@
             <span class="c">#saving CSDs</span>
             <span class="k">if</span> <span class="s">&#39;CSD&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">savelist</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">calculateCSD</span><span class="p">:</span>
                 <span class="n">fname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">populations_path</span><span class="p">,</span>
-                                     <span class="s">&#39;{}_population_CSD.h5&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">))</span>
+                                     <span class="bp">self</span><span class="o">.</span><span class="n">output_file</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">,</span>
+                                                             <span class="s">&#39;CSD&#39;</span><span class="p">)</span><span class="o">+</span><span class="s">&#39;.h5&#39;</span><span class="p">)</span>
                 <span class="n">f</span> <span class="o">=</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="s">&#39;w&#39;</span><span class="p">)</span>
                 <span class="n">f</span><span class="p">[</span><span class="s">&#39;srate&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1E3</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">dt_output</span>
                 <span class="n">f</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s">&#39;data&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">csd</span><span class="p">,</span> <span class="n">compression</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
@@ -841,14 +849,14 @@
                 <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
                     <span class="n">pop_soma_pos</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pop_soma_pos</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">keys</span><span class="p">[</span><span class="n">j</span><span class="p">]]</span>
             <span class="n">fname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">populations_path</span><span class="p">,</span>
-                                 <span class="s">&#39;{}_population_somapos.gdf&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">))</span>
+                                 <span class="bp">self</span><span class="o">.</span><span class="n">output_file</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="s">&#39;somapos.gdf&#39;</span><span class="p">))</span>
             <span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">pop_soma_pos</span><span class="p">)</span>
             <span class="k">assert</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">fname</span><span class="p">))</span>
             <span class="k">print</span><span class="p">(</span><span class="s">&#39;save somapos ok&#39;</span><span class="p">)</span>
 
             <span class="c">#save rotations using hdf5</span>
             <span class="n">fname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">populations_path</span><span class="p">,</span>
-                                    <span class="s">&#39;{}_population_rotations.h5&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">))</span>
+                                    <span class="bp">self</span><span class="o">.</span><span class="n">output_file</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="s">&#39;rotations.h5&#39;</span><span class="p">))</span>
             <span class="n">f</span> <span class="o">=</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="s">&#39;w&#39;</span><span class="p">)</span>
             <span class="n">f</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s">&#39;x&#39;</span><span class="p">,</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rotations</span><span class="p">),))</span>
             <span class="n">f</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s">&#39;y&#39;</span><span class="p">,</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rotations</span><span class="p">),))</span>

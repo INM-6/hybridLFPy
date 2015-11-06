@@ -61,6 +61,34 @@ Neuroscience and Medicine (INM-6) and Institute for Advanced Simulation (IAS-6),
 Juelich Research Centre and JARA, Juelich, Germany
 (<a class="reference external" href="http://www.fz-juelich.de/inm/inm-6/EN/">http://www.fz-juelich.de/inm/inm-6/EN/</a>).</p>
 </div>
+<div class="section" id="manuscript">
+<h3>Manuscript<a class="headerlink" href="#manuscript" title="Permalink to this headline">¶</a></h3>
+<p>A preprint of our manuscript on the hybrid scheme implemented in <code class="docutils literal"><span class="pre">hybridLFPy</span></code> is available on arXiv.org at <a class="reference external" href="http://arxiv.org/abs/1511.01681v1">http://arxiv.org/abs/1511.01681v1</a>.</p>
+<p>Citation:
+Espen Hagen, David Dahmen, Maria L. Stavrinou, Henrik Linden, Tom Tetzlaff, Sacha Jennifer van Albada, Sonja Gruen, Markus Diesmann, Gaute T. Einevoll. Hybrid scheme for modeling local field potentials from point-neuron networks. arXiv:1511.01681 [q-bio.NC]</p>
+<p>Bibtex source:</p>
+<div class="highlight-python"><div class="highlight"><pre>@ARTICLE{2015arXiv151101681H,
+   author = {{Hagen}, E. and {Dahmen}, D. and {Stavrinou}, M.~L. and {Lind{\&#39;e}n}, H. and
+        {Tetzlaff}, T. and {van Albada}, S.~J. and {Gr{\&quot;u}n}, S. and
+        {Diesmann}, M. and {Einevoll}, G.~T.},
+    title = &quot;{Hybrid scheme for modeling local field potentials from point-neuron networks}&quot;,
+  journal = {ArXiv e-prints},
+archivePrefix = &quot;arXiv&quot;,
+   eprint = {1511.01681},
+ primaryClass = &quot;q-bio.NC&quot;,
+ keywords = {Quantitative Biology - Neurons and Cognition},
+     year = 2015,
+    month = nov,
+   adsurl = {http://adsabs.harvard.edu/abs/2015arXiv151101681H},
+  adsnote = {Provided by the SAO/NASA Astrophysics Data System}
+}
+</pre></div>
+</div>
+</div>
+<div class="section" id="tutorial-slides">
+<h3>Tutorial slides<a class="headerlink" href="#tutorial-slides" title="Permalink to this headline">¶</a></h3>
+<p>Slides from OCNS 2015 meeting tutorial <a class="reference external" href="http://www.cnsorg.org/cns-2015-tutorials#t2">T2:  Modeling and analysis of extracellular potentials</a> hosted in Prague, Czech Republic on LFPy and hybridLFPy: <a class="reference external" href="http://LFPy.github.io/downloads/CNS2015_LFPy_tutorial.pdf">CNS2015_LFPy_tutorial.pdf</a></p>
+</div>
 <div class="section" id="license">
 <h3>License<a class="headerlink" href="#license" title="Permalink to this headline">¶</a></h3>
 <p>This software is released under the General Public License (see LICENSE file).</p>
@@ -104,10 +132,6 @@ any pull request from the repository:</p>
 <h3>online documentation<a class="headerlink" href="#online-documentation" title="Permalink to this headline">¶</a></h3>
 <p>The sphinx-generated html documentation can be accessed at
 <a class="reference external" href="http://INM-6.github.io/hybridLFPy">http://INM-6.github.io/hybridLFPy</a></p>
-</div>
-<div class="section" id="tutorial-slides">
-<h3>Tutorial slides<a class="headerlink" href="#tutorial-slides" title="Permalink to this headline">¶</a></h3>
-<p>Slides from OCNS 2015 meeting tutorial <a class="reference external" href="http://www.cnsorg.org/cns-2015-tutorials#t2">T2:  Modeling and analysis of extracellular potentials</a> hosted in Prague, Czech Republic on LFPy and hybridLFPy: <a class="reference external" href="http://LFPy.github.io/downloads/CNS2015_LFPy_tutorial.pdf">CNS2015_LFPy_tutorial.pdf</a></p>
 </div>
 </div>
 <div class="section" id="id1">
@@ -517,7 +541,7 @@ kwarg activationtimes.</p>
 <h3>class <a class="reference internal" href="#hybridLFPy.PopulationSuper" title="hybridLFPy.PopulationSuper"><code class="xref py py-class docutils literal"><span class="pre">PopulationSuper</span></code></a><a class="headerlink" href="#class-populationsuper" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="hybridLFPy.PopulationSuper">
-<em class="property">class </em><code class="descclassname">hybridLFPy.</code><code class="descname">PopulationSuper</code><span class="sig-paren">(</span><em>cellParams={'verbose': False, 'cm': 1.0, 'nsegs_method': 'lambda_f', 'tstartms': 0, 'timeres_python': 0.1, 'Ra': 150, 'morphology': 'morphologies/ex.hoc', 'timeres_NEURON': 0.1, 'v_init': 0.0, 'lambda_f': 100, 'e_pas': 0.0, 'rm': 20000.0, 'tstopms': 1000.0}, rand_rot_axis=[], simulationParams={}, populationParams={'z_min': -450, 'z_max': -350, 'min_cell_interdist': 1.0, 'radius': 100, 'number': 400}, y='EX', layerBoundaries=[[0.0, -300], [-300, -500]], electrodeParams={'r_z': [[-1e+199, -600, -550, 1e+99], [0, 0, 10, 10]], 'r': 5, 'z': [-0.0, -100.0, -200.0, -300.0, -400.0, -500.0], 'seedvalue': None, 'y': [0, 0, 0, 0, 0, 0], 'x': [0, 0, 0, 0, 0, 0], 'n': 20, 'sigma': 0.3, 'method': 'som_as_point', 'N': [[1, 0, 0], [1, 0, 0], [1, 0, 0], [1, 0, 0], [1, 0, 0], [1, 0, 0]]}, savelist=['somapos', 'x', 'y', 'z', 'LFP', 'CSD'], savefolder='simulation_output_example_brunel', calculateCSD=True, dt_output=1.0, recordSingleContribFrac=0, POPULATIONSEED=123456, verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hybridLFPy/population.html#PopulationSuper"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hybridLFPy.PopulationSuper" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">hybridLFPy.</code><code class="descname">PopulationSuper</code><span class="sig-paren">(</span><em>cellParams={'verbose': False, 'cm': 1.0, 'nsegs_method': 'lambda_f', 'tstartms': 0, 'timeres_python': 0.1, 'Ra': 150, 'morphology': 'morphologies/ex.hoc', 'timeres_NEURON': 0.1, 'v_init': 0.0, 'lambda_f': 100, 'e_pas': 0.0, 'rm': 20000.0, 'tstopms': 1000.0}, rand_rot_axis=[], simulationParams={}, populationParams={'z_min': -450, 'z_max': -350, 'min_cell_interdist': 1.0, 'radius': 100, 'number': 400}, y='EX', layerBoundaries=[[0.0, -300], [-300, -500]], electrodeParams={'r_z': [[-1e+199, -600, -550, 1e+99], [0, 0, 10, 10]], 'r': 5, 'z': [-0.0, -100.0, -200.0, -300.0, -400.0, -500.0], 'seedvalue': None, 'y': [0, 0, 0, 0, 0, 0], 'x': [0, 0, 0, 0, 0, 0], 'n': 20, 'sigma': 0.3, 'method': 'som_as_point', 'N': [[1, 0, 0], [1, 0, 0], [1, 0, 0], [1, 0, 0], [1, 0, 0], [1, 0, 0]]}, savelist=['somapos', 'x', 'y', 'z', 'LFP', 'CSD'], savefolder='simulation_output_example_brunel', calculateCSD=True, dt_output=1.0, recordSingleContribFrac=0, POPULATIONSEED=123456, verbose=False, output_file='{}_population_{}'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hybridLFPy/population.html#PopulationSuper"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hybridLFPy.PopulationSuper" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="http://docs.python.org/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
 <p>Main population class object, let one set up simulations, execute, and
 compile the results. This class is suitable for subclassing for
@@ -586,6 +610,10 @@ will be stored</p>
 <p><strong>verbose</strong> : bool</p>
 <blockquote>
 <div><p>Verbosity flag.</p>
+</div></blockquote>
+<p><strong>output_file</strong> : str</p>
+<blockquote>
+<div><p>formattable string for population output, e.g., &#8216;{}_population_{}&#8217;</p>
 </div></blockquote>
 </td>
 </tr>
@@ -1229,7 +1257,7 @@ Brunel network simulation</p>
 <h3>class <a class="reference internal" href="#hybridLFPy.PostProcess" title="hybridLFPy.PostProcess"><code class="xref py py-class docutils literal"><span class="pre">PostProcess</span></code></a><a class="headerlink" href="#class-postprocess" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="hybridLFPy.PostProcess">
-<em class="property">class </em><code class="descclassname">hybridLFPy.</code><code class="descname">PostProcess</code><span class="sig-paren">(</span><em>y=['EX', 'IN'], dt_output=1.0, mapping_Yy=[('EX', 'EX'), ('IN', 'IN')], savelist=['somav', 'somapos', 'x', 'y', 'z', 'LFP', 'CSD'], savefolder='simulation_output_example_brunel', cells_subfolder='cells', populations_subfolder='populations', figures_subfolder='figures'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hybridLFPy/postproc.html#PostProcess"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hybridLFPy.PostProcess" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">hybridLFPy.</code><code class="descname">PostProcess</code><span class="sig-paren">(</span><em>y=['EX', 'IN'], dt_output=1.0, mapping_Yy=[('EX', 'EX'), ('IN', 'IN')], savelist=['somav', 'somapos', 'x', 'y', 'z', 'LFP', 'CSD'], savefolder='simulation_output_example_brunel', cells_subfolder='cells', populations_subfolder='populations', figures_subfolder='figures', output_file='{}_population_{}', compound_file='{}sum.h5'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hybridLFPy/postproc.html#PostProcess"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hybridLFPy.PostProcess" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="http://docs.python.org/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
 <p>class <cite>PostProcess</cite>: Methods to deal with the contributions of every
 postsynaptic sub-population.</p>
@@ -2671,6 +2699,8 @@ of the electrode along z-axis.</p>
 <li><a class="reference internal" href="#">Welcome to the documentation of <strong>hybridLFPy</strong>!</a><ul>
 <li><a class="reference internal" href="#module-hybridlfpy">Module <strong>hybridLFPy</strong></a><ul>
 <li><a class="reference internal" href="#development">Development</a></li>
+<li><a class="reference internal" href="#manuscript">Manuscript</a></li>
+<li><a class="reference internal" href="#tutorial-slides">Tutorial slides</a></li>
 <li><a class="reference internal" href="#license">License</a></li>
 <li><a class="reference internal" href="#warranty">Warranty</a></li>
 </ul>
@@ -2679,7 +2709,6 @@ of the electrode along z-axis.</p>
 <li><a class="reference internal" href="#examples-folder">examples folder</a></li>
 <li><a class="reference internal" href="#docs-folder">docs folder</a></li>
 <li><a class="reference internal" href="#online-documentation">online documentation</a></li>
-<li><a class="reference internal" href="#tutorial-slides">Tutorial slides</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#id1">Module <code class="docutils literal"><span class="pre">hybridLFPy</span></code></a><ul>
