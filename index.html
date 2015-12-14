@@ -63,7 +63,7 @@ Juelich Research Centre and JARA, Juelich, Germany
 </div>
 <div class="section" id="manuscript">
 <h3>Manuscript<a class="headerlink" href="#manuscript" title="Permalink to this headline">¶</a></h3>
-<p>A preprint of our manuscript on the hybrid scheme implemented in <code class="docutils literal"><span class="pre">hybridLFPy</span></code> is available on arXiv.org at <a class="reference external" href="http://arxiv.org/abs/1511.01681v1">http://arxiv.org/abs/1511.01681v1</a>.</p>
+<p>A preprint of our manuscript on the hybrid scheme implemented in <code class="docutils literal"><span class="pre">hybridLFPy</span></code> is available on arXiv.org at <a class="reference external" href="http://arxiv.org/abs/1511.01681">http://arxiv.org/abs/1511.01681</a></p>
 <p>Citation:
 Espen Hagen, David Dahmen, Maria L. Stavrinou, Henrik Linden, Tom Tetzlaff, Sacha Jennifer van Albada, Sonja Gruen, Markus Diesmann, Gaute T. Einevoll. Hybrid scheme for modeling local field potentials from point-neuron networks. arXiv:1511.01681 [q-bio.NC]</p>
 <p>Bibtex source:</p>
@@ -129,9 +129,23 @@ any pull request from the repository:</p>
 </div>
 </div>
 <div class="section" id="online-documentation">
-<h3>online documentation<a class="headerlink" href="#online-documentation" title="Permalink to this headline">¶</a></h3>
+<h3>Online documentation<a class="headerlink" href="#online-documentation" title="Permalink to this headline">¶</a></h3>
 <p>The sphinx-generated html documentation can be accessed at
 <a class="reference external" href="http://INM-6.github.io/hybridLFPy">http://INM-6.github.io/hybridLFPy</a></p>
+</div>
+<div class="section" id="notes-on-performance">
+<h3>Notes on performance<a class="headerlink" href="#notes-on-performance" title="Permalink to this headline">¶</a></h3>
+<p>The present version of <code class="docutils literal"><span class="pre">hybridLFPy</span></code> may facilitate on a trivial parallelism
+as the contribution of each single-cell LFP can be computed independently.
+However, this does not imply that the present implementation code is highly
+optimized for speed. In particular, initializing the multicompartment neuron
+populations do not as much benefit from increasing the MPI pool size, as
+exemplified by a benchmark based on the Brunel-network example scaled up to
+50,000 neurons and with simplified neuron morphologies.</p>
+<div class="figure" id="id16">
+<a class="reference internal image-reference" href="_images/benchmark_example_brunel.png"><img alt="_images/benchmark_example_brunel.png" src="_images/benchmark_example_brunel.png" style="width: 500.0px; height: 400.0px;" /></a>
+<p class="caption"><span class="caption-text">Scaling example with <code class="docutils literal"><span class="pre">hybridLFPy</span></code> based on a Brunel-like network with 50,000 neurons, running on the JURECA cluster at the Juelich Supercomputing Centre (JSC), Juelich Research Centre, Germany.</span></p>
+</div>
 </div>
 </div>
 <div class="section" id="id1">
@@ -2708,7 +2722,8 @@ of the electrode along z-axis.</p>
 <li><a class="reference internal" href="#installation">Installation</a><ul>
 <li><a class="reference internal" href="#examples-folder">examples folder</a></li>
 <li><a class="reference internal" href="#docs-folder">docs folder</a></li>
-<li><a class="reference internal" href="#online-documentation">online documentation</a></li>
+<li><a class="reference internal" href="#online-documentation">Online documentation</a></li>
+<li><a class="reference internal" href="#notes-on-performance">Notes on performance</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#id1">Module <code class="docutils literal"><span class="pre">hybridLFPy</span></code></a><ul>
