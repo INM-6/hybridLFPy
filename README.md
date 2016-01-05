@@ -22,7 +22,7 @@ Juelich Research Centre and JARA, Juelich, Germany
 Manuscript
 ----------
 
-A preprint of our manuscript on the hybrid scheme implemented in ``hybridLFPy`` is available on arXiv.org at http://arxiv.org/abs/1511.01681v1. 
+A preprint of our manuscript on the hybrid scheme implemented in ``hybridLFPy`` is available on arXiv.org at http://arxiv.org/abs/1511.01681
 
 Citation:
 Espen Hagen, David Dahmen, Maria L. Stavrinou, Henrik Linden, Tom Tetzlaff, Sacha Jennifer van Albada, Sonja Gruen, Markus Diesmann, Gaute T. Einevoll. Hybrid scheme for modeling local field potentials from point-neuron networks. arXiv:1511.01681 [q-bio.NC]
@@ -109,7 +109,7 @@ To compile documentation source files in this directory using sphinx, use:
     sphinx-build -b html docs documentation
     
 
-online documentation
+Online documentation
 --------------------
 
 The sphinx-generated html documentation can be accessed at
