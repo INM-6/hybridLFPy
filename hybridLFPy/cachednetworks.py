@@ -94,7 +94,7 @@ class CachedNetwork(object):
                  ext = 'gdf',
                  GIDs={'EX' : [1, 400], 'IN' : [401, 100]},
                  autocollect=True,
-                 cmap='rainbow',
+                 cmap='Set1',
                  ):
         """
         Offline processing and storing of network spike events, used by other
@@ -392,7 +392,7 @@ class CachedNetwork(object):
                     va='center', ha='left')
 
 
-    def raster_plots(self, xlim=[0, 1000], markersize=1, alpha=1.):
+    def raster_plots(self, xlim=[0, 1000], markersize=1, alpha=1., marker='o'):
         """
         Pretty plot of the spiking output of each population as raster and rate.
         
@@ -405,6 +405,7 @@ class CachedNetwork(object):
             marker size for plot, see `matplotlib.pyplot.plot`
         alpha : float
             transparency for markers, see `matplotlib.pyplot.plot`
+        marker : :mod:`A valid marker style <matplotlib.markers>`
         
         
         Returns
@@ -419,7 +420,8 @@ class CachedNetwork(object):
 
         ax0 = fig.add_subplot(211)
 
-        self.plot_raster(ax0, xlim, x, y, markersize=markersize, alpha=alpha)
+        self.plot_raster(ax0, xlim, x, y, markersize=markersize, alpha=alpha,
+                         marker=marker)
         remove_axis_junk(ax0)
         ax0.set_title('spike raster')
         ax0.set_xlabel("")
