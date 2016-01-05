@@ -9,6 +9,25 @@ Welcome to the documentation of **hybridLFPy**!
 
 .. include:: ../README.md
 
+
+Notes on performance
+--------------------
+
+The present version of ``hybridLFPy`` may facilitate on a trivial parallelism
+as the contribution of each single-cell LFP can be computed independently. 
+However, this does not imply that the present implementation code is highly
+optimized for speed. In particular, initializing the multicompartment neuron
+populations do not as much benefit from increasing the MPI pool size, as
+exemplified by a benchmark based on the Brunel-network example scaled up to
+50,000 neurons and with simplified neuron morphologies. 
+
+.. figure:: benchmark_example_brunel.png
+    :scale: 25 %    
+    
+    Scaling example with ``hybridLFPy`` based on a Brunel-like network with 50,000 neurons, running on the JURECA cluster at the Juelich Supercomputing Centre (JSC), Juelich Research Centre, Germany.
+
+
+
 ========================
 Module :mod:`hybridLFPy`
 ========================
