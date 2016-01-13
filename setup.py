@@ -8,11 +8,11 @@ with open('README.md') as file:
 
 setup(
     name = 'hybridLFPy',
-    version = '0.1.1',
+    version = '0.1.2',
     maintainer = 'Espen Hagen',
     maintainer_email = 'e.hagen@fz-juelich.de',
     url = 'https://github.com/INM-6/hybridLFPy',
-    download_url = 'https://github.com/INM-6/hybridLFPy/tarball/v0.1.1',
+    download_url = 'https://github.com/INM-6/hybridLFPy/tarball/v0.1.2',
     packages = ['hybridLFPy'],
     provides = ['hybridLFPy'],
     package_data = {'hybridLFPy' : [os.path.join('testing', 'testing-X-0.gdf')]},
