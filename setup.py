@@ -34,8 +34,8 @@ setup(
             'Development Status :: 4 - Beta',
             ],
     install_requires = [
-        'numpy', 'scipy', 'matplotlib', 'neuron', 'LFPy', 'sqlite3', 'mpi4py',
-        'nest', 'NeuroTools',
+        'numpy', 'scipy', 'matplotlib', 'neuron', 'LFPy', 'mpi4py',
+        'NeuroTools',
         ],
 
 )
