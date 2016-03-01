@@ -320,6 +320,7 @@ if properrun:
                 synDelayLoc = params.synDelayLoc[y],
                 synDelayScale = params.synDelayScale[y],
                 J_yX = params.J_yX[y],
+                tau_yX = params.tau_yX[y],
                 recordSingleContribFrac = params.recordSingleContribFrac,
             )
     

@@ -241,7 +241,7 @@ PS.update(dict(
               [BN.CE, BN.CI]],
     ),
     
-    #set up table of synapse  from each possible 
+    #set up table of synapse weights from each possible presynaptic population
     J_yX = dict(
         EX = [BN.J_ex*1E-3, BN.J_in*1E-3],
         IN = [BN.J_ex*1E-3, BN.J_in*1E-3],
@@ -251,14 +251,20 @@ PS.update(dict(
     synParams = dict(
         EX = dict(
             section = ['apic', 'dend'],
-            tau = BN.tauSyn,
+            # tau = [BN.tauSyn, BN.tauSyn],
             syntype = 'AlphaISyn'
         ),
         IN = dict(
             section = ['dend', 'soma'],
-            tau = BN.tauSyn,
+            # tau = [BN.tauSyn, BN.tauSyn],
             syntype = 'AlphaISyn'            
         ),
+    ),
+    
+    #set up table of synapse time constants from each presynaptic populations
+    tau_yX = dict(
+        EX = [BN.tauSyn, BN.tauSyn],
+        IN = [BN.tauSyn, BN.tauSyn]
     ),
     
     #set up delays, here using fixed delays of network
@@ -347,6 +353,7 @@ if properrun:
                 synDelayLoc = PS.synDelayLoc[Y],
                 synDelayScale = PS.synDelayScale[Y],
                 J_yX = PS.J_yX[Y],
+                tau_yX = PS.tau_yX[Y],
             )
     
         #run population simulation and collect the data

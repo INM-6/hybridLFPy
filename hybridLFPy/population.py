@@ -875,14 +875,18 @@ class Population(PopulationSuper):
                     'EX': {
                         'section': ['apic', 'dend'],
                         'syntype': 'AlphaISyn',
-                        'tau': 0.5},
+                        # 'tau': [0.5, 0.5]
+                        },
                     'IN': {
                         'section': ['dend'],
                         'syntype': 'AlphaISyn',
-                        'tau': 0.5}},
+                        # 'tau': [0.5, 0.5],
+                        },
+                    },
                 synDelayLoc = [1.5, 1.5],
                 synDelayScale = [None, None],
                 J_yX = [0.20680155243678455, -1.2408093146207075],
+                tau_yX = [0.5, 0.5],
                 #calculateCSD = True,
                 **kwargs):
         """
@@ -905,14 +909,18 @@ class Population(PopulationSuper):
         synParams : dict of dicts
             Synapse parameters (cf. `LFPy.Synapse` class).
             Each toplevel key denote each presynaptic population,
-            bottom-level dicts are parameters passed to `LFPy.Synapse`.
+            bottom-level dicts are parameters passed to `LFPy.Synapse`, however,
+            time constants `tau' takes one value per presynaptic population. 
         synDelayLoc : list
             Average synapse delay for each presynapse connection.
         synDelayScale : list
             Synapse delay std for each presynapse connection.
         J_yX : list of floats
-            Synapse weights for connections of each presynaptic population, see
-            class `LFPy.Synapse`
+            Synapse weights for connections from each presynaptic population,
+            see class `LFPy.Synapse`
+        tau_yX : list of floats
+            Synapse time constants for connections from each presynaptic
+            population
         #calculateCSD : bool
         #    Flag for computing the ground-source CSD.
 
@@ -941,6 +949,7 @@ class Population(PopulationSuper):
         self.synDelayLoc = synDelayLoc
         self.synDelayScale = synDelayScale
         self.J_yX = J_yX
+        self.tau_yX = tau_yX
 
 
         #Now loop over all cells in the population and assess
@@ -1350,7 +1359,8 @@ class Population(PopulationSuper):
         for i, X in enumerate(self.X): #range(self.k_yXL.shape[1]):
             synParams = self.synParams
             synParams.update({
-                'weight' : self.J_yX[i]
+                'weight' : self.J_yX[i],
+                'tau' : self.tau_yX[i],
                 })
             for j in range(len(self.synIdx[cellindex][X])):
                 if self.synDelays is not None:

@@ -944,10 +944,19 @@ class multicompartment_params(point_neuron_network_params):
                 y : {
                     'syntype' : 'ExpSynI',  #current based exponential synapse
                     'section' : section,
-                    'tau' : self.model_params["tau_syn_ex"],
+                    # 'tau' : self.model_params["tau_syn_ex"],
                 },
             })
 
+        
+        # set up dictionary of synapse time constants specific to each
+        # postsynaptic cell type and presynaptic population
+        self.tau_yX = {}
+        for y in self.Y:
+            self.tau_yX.update({
+                y : [self.model_params["tau_syn_in"] if 'I' in X else
+                     self.model_params["tau_syn_ex"] for X in self.X]
+            })
 
         #synaptic delay parameters, loc and scale is mean and std for every
         #network population, negative values will be removed
