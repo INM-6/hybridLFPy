@@ -452,9 +452,9 @@ def decimate(x, q=10, n=4, k=0.8, filterfun=ss.cheby1):
     q : int 
         Downsampling factor.
     n : int
-        Butterworth filter order.
+        Filter order.
     k : float
-        Aliasing filter critical frequency will be set as Wn=k/q.
+        Aliasing filter critical frequency Wn will be set as Wn=k/q.
     filterfun : function
         `scipy.signal.filter_design.cheby1` or
         `scipy.signal.filter_design.butter` function
