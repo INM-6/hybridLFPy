@@ -292,8 +292,8 @@ class CachedNetwork(object):
             if y[X].size > 0:
                 ax.plot(x[X], y[X]+yoffset[i], marker,
                     markersize=markersize,
-                    markerfacecolor=self.colors[i],
-                    markeredgecolor=self.colors[i],
+                    mfc=self.colors[i],
+                    mec='none' if marker in '.ov><v^1234sp*hHDd' else self.colors[i],
                     alpha=alpha,
                     label=X, rasterized=True,
                     clip_on=True)
