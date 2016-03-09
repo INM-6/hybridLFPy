@@ -904,7 +904,7 @@ class multicompartment_params(point_neuron_network_params):
         self.rand_rot_axis = {}
         for y, _, _, _ in self.y_zip_list:
             #identify pyramidal cell populations:
-            if y.rfind('p') >= 0:
+            if 'p' in y:
                 self.rand_rot_axis.update({y : ['z']})
             else:
                 self.rand_rot_axis.update({y : ['x', 'z']})
@@ -920,7 +920,6 @@ class multicompartment_params(point_neuron_network_params):
         for y, _, depth, N_y in self.y_zip_list:
             self.populationParams.update({
                 y : {
-                    #'number' : 4 if 'p' in y else 1,
                     'number' : int(N_y*self.SCALING),
                     'radius' : np.sqrt(1000**2 / np.pi),
                     'z_min' : depth - 25,
@@ -933,7 +932,7 @@ class multicompartment_params(point_neuron_network_params):
         # and synapse locations
         self.synParams = {}
         for y in self.y:
-            if y.rfind('p') >= 0:
+            if 'p' in y:
                 #pyramidal types have apical dendrites
                 section = ['apic', 'dend']
             else:
@@ -952,7 +951,7 @@ class multicompartment_params(point_neuron_network_params):
         # set up dictionary of synapse time constants specific to each
         # postsynaptic cell type and presynaptic population
         self.tau_yX = {}
-        for y in self.Y:
+        for y in self.y:
             self.tau_yX.update({
                 y : [self.model_params["tau_syn_in"] if 'I' in X else
                      self.model_params["tau_syn_ex"] for X in self.X]
