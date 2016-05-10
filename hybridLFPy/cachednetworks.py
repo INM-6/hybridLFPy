@@ -257,7 +257,7 @@ class CachedNetwork(object):
 
     def plot_raster(self, ax, xlim, x, y, pop_names=False,
                     markersize=20., alpha=1., legend=True,
-                    marker='o'):
+                    marker='o', rasterized=True):
         """
         Plot network raster plot in subplot object.
         
@@ -280,6 +280,11 @@ class CachedNetwork(object):
             transparency of marker
         legend : bool
             Switch on axes legends.
+        marker : str
+            marker symbol for matplotlib.pyplot.plot
+        rasterized : bool
+            if True, the scatter plot will be treated as a bitmap embedded in
+            pdf file output
 
 
         Returns
@@ -295,7 +300,7 @@ class CachedNetwork(object):
                     mfc=self.colors[i],
                     mec='none' if marker in '.ov><v^1234sp*hHDd' else self.colors[i],
                     alpha=alpha,
-                    label=X, rasterized=True,
+                    label=X, rasterized=rasterized,
                     clip_on=True)
         
         #don't draw anything for the may-be-quiet TC population
