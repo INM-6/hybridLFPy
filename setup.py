@@ -8,7 +8,7 @@ with open('README.md') as file:
 
 setup(
     name = 'hybridLFPy',
-    version = '0.1.2',
+    version = '0.1.3',
     maintainer = 'Espen Hagen',
     maintainer_email = 'e.hagen@fz-juelich.de',
     url = 'https://github.com/INM-6/hybridLFPy',
