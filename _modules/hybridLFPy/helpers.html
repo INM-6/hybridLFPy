@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>hybridLFPy.helpers &mdash; hybridLFPy 0.1.1 documentation</title>
+    <title>hybridLFPy.helpers &mdash; hybridLFPy 0.1.3 documentation</title>
     
     <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.1.1',
+        VERSION:     '0.1.3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -23,7 +23,7 @@
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <link rel="top" title="hybridLFPy 0.1.1 documentation" href="../../index.html" />
+    <link rel="top" title="hybridLFPy 0.1.3 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
   </head>
   <body role="document">
@@ -36,7 +36,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">hybridLFPy 0.1.1 documentation</a> &raquo;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">hybridLFPy 0.1.3 documentation</a> &raquo;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
     </div>  
@@ -47,7 +47,7 @@
           <div class="body" role="main">
             
   <h1>Source code for hybridLFPy.helpers</h1><div class="highlight"><pre>
-<span class="c">#!/usr/bin/env python</span>
+<span></span><span class="ch">#!/usr/bin/env python</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Documentation:</span>
 
@@ -66,18 +66,18 @@
 <span class="kn">from</span> <span class="nn">mpi4py</span> <span class="kn">import</span> <span class="n">MPI</span>
 
 
-<span class="c">###################################</span>
-<span class="c"># Initialization of MPI stuff     #</span>
-<span class="c">###################################</span>
+<span class="c1">###################################</span>
+<span class="c1"># Initialization of MPI stuff     #</span>
+<span class="c1">###################################</span>
 <span class="n">COMM</span> <span class="o">=</span> <span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span>
 <span class="n">SIZE</span> <span class="o">=</span> <span class="n">COMM</span><span class="o">.</span><span class="n">Get_size</span><span class="p">()</span>
 <span class="n">RANK</span> <span class="o">=</span> <span class="n">COMM</span><span class="o">.</span><span class="n">Get_rank</span><span class="p">()</span>
 
 
 
-<span class="c">#######################################</span>
-<span class="c">### DATA I/O                        ###</span>
-<span class="c">#######################################</span>
+<span class="c1">#######################################</span>
+<span class="c1">### DATA I/O                        ###</span>
+<span class="c1">#######################################</span>
 
 
 <div class="viewcode-block" id="read_gdf"><a class="viewcode-back" href="../../index.html#hybridLFPy.helpers.read_gdf">[docs]</a><span class="k">def</span> <span class="nf">read_gdf</span><span class="p">(</span><span class="n">fname</span><span class="p">):</span>
@@ -98,7 +98,7 @@
 <span class="sd">            </span>
 <span class="sd">    &quot;&quot;&quot;</span>
     
-    <span class="n">gdf_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="s">&#39;r&#39;</span><span class="p">)</span>
+    <span class="n">gdf_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span>
     <span class="n">gdf</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">gdf_file</span><span class="p">:</span>
         <span class="n">data</span> <span class="o">=</span> <span class="n">l</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
@@ -110,9 +110,9 @@
         <span class="n">gdf</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">gdf</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
         <span class="n">gdf</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">:]</span> <span class="o">=</span> <span class="n">gdf</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">:]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
     
-    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">gdf</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">gdf</span><span class="p">)</span></div>
 
-</div>
+
 <div class="viewcode-block" id="write_gdf"><a class="viewcode-back" href="../../index.html#hybridLFPy.helpers.write_gdf">[docs]</a><span class="k">def</span> <span class="nf">write_gdf</span><span class="p">(</span><span class="n">gdf</span><span class="p">,</span> <span class="n">fname</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Fast line-by-line gdf-file write function</span>
@@ -131,16 +131,16 @@
 <span class="sd">    None</span>
 <span class="sd">    </span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">gdf_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="s">&#39;w&#39;</span><span class="p">)</span>
+    <span class="n">gdf_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">gdf</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">line</span><span class="p">)):</span>
-            <span class="n">gdf_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">+</span> <span class="s">&#39;</span><span class="se">\t</span><span class="s">&#39;</span><span class="p">)</span>
-        <span class="n">gdf_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>
+            <span class="n">gdf_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">gdf_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
     
-    <span class="k">return</span> <span class="bp">None</span>
+    <span class="k">return</span> <span class="bp">None</span></div>
 
-</div>
-<div class="viewcode-block" id="load_h5_data"><a class="viewcode-back" href="../../index.html#hybridLFPy.helpers.load_h5_data">[docs]</a><span class="k">def</span> <span class="nf">load_h5_data</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="s">&#39;LFP&#39;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">electrode</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+
+<div class="viewcode-block" id="load_h5_data"><a class="viewcode-back" href="../../index.html#hybridLFPy.helpers.load_h5_data">[docs]</a><span class="k">def</span> <span class="nf">load_h5_data</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="s1">&#39;LFP&#39;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">electrode</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
                  <span class="n">warmup</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">scaling</span><span class="o">=</span><span class="mf">1.</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Function loading results from hdf5 file</span>
@@ -174,19 +174,19 @@
     <span class="k">assert</span> <span class="n">y</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">or</span> <span class="n">electrode</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span>
     
     <span class="k">if</span> <span class="n">y</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-        <span class="n">f</span> <span class="o">=</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s">&#39;</span><span class="si">%s</span><span class="s">_</span><span class="si">%s</span><span class="s">s.h5&#39;</span> <span class="o">%</span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="n">data_type</span><span class="p">)))</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="s">&#39;data&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">[:,:,</span> <span class="n">warmup</span><span class="p">:]</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">_</span><span class="si">%s</span><span class="s1">s.h5&#39;</span> <span class="o">%</span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="n">data_type</span><span class="p">)))</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">[:,:,</span> <span class="n">warmup</span><span class="p">:]</span>
         <span class="k">if</span> <span class="n">scaling</span> <span class="o">!=</span> <span class="mf">1.</span><span class="p">:</span>
             <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
             <span class="n">num_cells</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">*</span><span class="n">scaling</span><span class="p">)</span>
             <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:</span><span class="n">num_cells</span><span class="p">,:,</span> <span class="n">warmup</span><span class="p">:]</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">f</span> <span class="o">=</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s">&#39;</span><span class="si">%s</span><span class="s">sum.h5&#39;</span> <span class="o">%</span><span class="n">data_type</span><span class="p">))</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="s">&#39;data&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">[:,</span> <span class="n">warmup</span><span class="p">:]</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">sum.h5&#39;</span> <span class="o">%</span><span class="n">data_type</span><span class="p">))</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">[:,</span> <span class="n">warmup</span><span class="p">:]</span>
 
-    <span class="k">return</span> <span class="n">data</span>
+    <span class="k">return</span> <span class="n">data</span></div>
 
-</div>
+
 <div class="viewcode-block" id="dump_dict_of_nested_lists_to_h5"><a class="viewcode-back" href="../../index.html#hybridLFPy.helpers.dump_dict_of_nested_lists_to_h5">[docs]</a><span class="k">def</span> <span class="nf">dump_dict_of_nested_lists_to_h5</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Take nested list structure and dump it in hdf5 file.</span>
@@ -205,10 +205,10 @@
 <span class="sd">    None</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c"># Open file</span>
-    <span class="k">print</span><span class="p">(</span><span class="s">&#39;writing to file: </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">fname</span><span class="p">)</span>
+    <span class="c1"># Open file</span>
+    <span class="k">print</span><span class="p">(</span><span class="s1">&#39;writing to file: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">fname</span><span class="p">)</span>
     <span class="n">f</span> <span class="o">=</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
-    <span class="c"># Iterate over values</span>
+    <span class="c1"># Iterate over values</span>
     <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">ivalue</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
         <span class="n">igrp</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">create_group</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
         <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">jvalue</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">ivalue</span><span class="p">):</span>
@@ -216,15 +216,15 @@
             <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">kvalue</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">jvalue</span><span class="p">):</span>
                 <span class="k">if</span> <span class="n">kvalue</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
                     <span class="n">dset</span> <span class="o">=</span> <span class="n">jgrp</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">k</span><span class="p">),</span> <span class="n">data</span><span class="o">=</span><span class="n">kvalue</span><span class="p">,</span>
-                                               <span class="n">compression</span><span class="o">=</span><span class="s">&#39;gzip&#39;</span><span class="p">)</span>
+                                               <span class="n">compression</span><span class="o">=</span><span class="s1">&#39;gzip&#39;</span><span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">dset</span> <span class="o">=</span> <span class="n">jgrp</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">k</span><span class="p">),</span> <span class="n">data</span><span class="o">=</span><span class="n">kvalue</span><span class="p">,</span>
                                                <span class="n">maxshape</span><span class="o">=</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="p">),</span>
-                                               <span class="n">compression</span><span class="o">=</span><span class="s">&#39;gzip&#39;</span><span class="p">)</span>
-    <span class="c"># Close file</span>
-    <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+                                               <span class="n">compression</span><span class="o">=</span><span class="s1">&#39;gzip&#39;</span><span class="p">)</span>
+    <span class="c1"># Close file</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
 
-</div>
+
 <div class="viewcode-block" id="load_dict_of_nested_lists_from_h5"><a class="viewcode-back" href="../../index.html#hybridLFPy.helpers.load_dict_of_nested_lists_from_h5">[docs]</a><span class="k">def</span> <span class="nf">load_dict_of_nested_lists_from_h5</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">toplevelkeys</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Load nested list structure from hdf5 file</span>
@@ -245,13 +245,13 @@
 <span class="sd">    </span>
 <span class="sd">    &quot;&quot;&quot;</span>
     
-    <span class="c"># Container:</span>
+    <span class="c1"># Container:</span>
     <span class="n">data</span> <span class="o">=</span> <span class="p">{}</span>
 
-    <span class="c"># Open file object</span>
-    <span class="n">f</span> <span class="o">=</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="s">&#39;r&#39;</span><span class="p">)</span>
+    <span class="c1"># Open file object</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span>
 
-    <span class="c"># Iterate over partial dataset</span>
+    <span class="c1"># Iterate over partial dataset</span>
     <span class="k">if</span> <span class="n">toplevelkeys</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">toplevelkeys</span><span class="p">:</span>
             <span class="n">ivalue</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)]</span>
@@ -269,12 +269,12 @@
                 <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">kvalue</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">jvalue</span><span class="o">.</span><span class="n">values</span><span class="p">()):</span>
                     <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">kvalue</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
 
-    <span class="c"># Close dataset</span>
+    <span class="c1"># Close dataset</span>
     <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
-    <span class="k">return</span> <span class="n">data</span>
+    <span class="k">return</span> <span class="n">data</span></div>
 
-</div>
+
 <div class="viewcode-block" id="setup_file_dest"><a class="viewcode-back" href="../../index.html#hybridLFPy.helpers.setup_file_dest">[docs]</a><span class="k">def</span> <span class="nf">setup_file_dest</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">clearDestination</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Function to set up the file catalog structure for simulation output</span>
@@ -299,65 +299,65 @@
             <span class="k">assert</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">savefolder</span><span class="p">))</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">clearDestination</span><span class="p">:</span>
-                <span class="k">print</span><span class="p">(</span><span class="s">&#39;removing folder tree </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">params</span><span class="o">.</span><span class="n">savefolder</span><span class="p">)</span>
+                <span class="k">print</span><span class="p">(</span><span class="s1">&#39;removing folder tree </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">params</span><span class="o">.</span><span class="n">savefolder</span><span class="p">)</span>
                 <span class="k">while</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">savefolder</span><span class="p">):</span>
                     <span class="k">try</span><span class="p">:</span>
-                        <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s">&#39;find </span><span class="si">%s</span><span class="s"> -delete&#39;</span> <span class="o">%</span> <span class="n">params</span><span class="o">.</span><span class="n">savefolder</span><span class="p">)</span>
+                        <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s1">&#39;find </span><span class="si">%s</span><span class="s1"> -delete&#39;</span> <span class="o">%</span> <span class="n">params</span><span class="o">.</span><span class="n">savefolder</span><span class="p">)</span>
                     <span class="k">except</span><span class="p">:</span>
                         <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">savefolder</span><span class="p">)</span>
                 <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">savefolder</span><span class="p">)</span>
                 <span class="k">assert</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">savefolder</span><span class="p">))</span>
         
         <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">sim_scripts_path</span><span class="p">):</span>
-            <span class="k">print</span><span class="p">(</span><span class="s">&#39;creating </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">params</span><span class="o">.</span><span class="n">sim_scripts_path</span><span class="p">)</span>
+            <span class="k">print</span><span class="p">(</span><span class="s1">&#39;creating </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">params</span><span class="o">.</span><span class="n">sim_scripts_path</span><span class="p">)</span>
             <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">sim_scripts_path</span><span class="p">)</span>
         
         <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">cells_path</span><span class="p">):</span>
-            <span class="k">print</span><span class="p">(</span><span class="s">&#39;creating </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">params</span><span class="o">.</span><span class="n">cells_path</span><span class="p">)</span>
+            <span class="k">print</span><span class="p">(</span><span class="s1">&#39;creating </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">params</span><span class="o">.</span><span class="n">cells_path</span><span class="p">)</span>
             <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">cells_path</span><span class="p">)</span>
         
         <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">figures_path</span><span class="p">):</span>
-            <span class="k">print</span><span class="p">(</span><span class="s">&#39;creating </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">params</span><span class="o">.</span><span class="n">figures_path</span><span class="p">)</span>
+            <span class="k">print</span><span class="p">(</span><span class="s1">&#39;creating </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">params</span><span class="o">.</span><span class="n">figures_path</span><span class="p">)</span>
             <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">figures_path</span><span class="p">)</span>
         
         <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">populations_path</span><span class="p">):</span>
-            <span class="k">print</span><span class="p">(</span><span class="s">&#39;creating </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">params</span><span class="o">.</span><span class="n">populations_path</span><span class="p">)</span>
+            <span class="k">print</span><span class="p">(</span><span class="s1">&#39;creating </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">params</span><span class="o">.</span><span class="n">populations_path</span><span class="p">)</span>
             <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">populations_path</span><span class="p">)</span>
         
         <span class="k">try</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">raw_nest_output_path</span><span class="p">):</span>
-                <span class="k">print</span><span class="p">(</span><span class="s">&#39;creating </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">params</span><span class="o">.</span><span class="n">raw_nest_output_path</span><span class="p">)</span>
+                <span class="k">print</span><span class="p">(</span><span class="s1">&#39;creating </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">params</span><span class="o">.</span><span class="n">raw_nest_output_path</span><span class="p">)</span>
                 <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">raw_nest_output_path</span><span class="p">)</span>
         <span class="k">except</span><span class="p">:</span>
             <span class="k">pass</span>
         
         <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">spike_output_path</span><span class="p">):</span>
-            <span class="k">print</span><span class="p">(</span><span class="s">&#39;creating </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">params</span><span class="o">.</span><span class="n">spike_output_path</span><span class="p">)</span>
+            <span class="k">print</span><span class="p">(</span><span class="s1">&#39;creating </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">params</span><span class="o">.</span><span class="n">spike_output_path</span><span class="p">)</span>
             <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">spike_output_path</span><span class="p">)</span>
     
-        <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&#39;cellsim16popsParams.py&#39;</span><span class="p">,</span>
-                  <span class="s">&#39;cellsim16pops.py&#39;</span><span class="p">,</span>
-                  <span class="s">&#39;example_brunel.py&#39;</span><span class="p">,</span>
-                  <span class="s">&#39;brunel_alpha_nest.py&#39;</span><span class="p">,</span>
-                  <span class="s">&#39;mesocircuit.sli&#39;</span><span class="p">,</span>
-                  <span class="s">&#39;mesocircuit_LFP_model.py&#39;</span><span class="p">,</span>
-                  <span class="s">&#39;binzegger_connectivity_table.json&#39;</span><span class="p">,</span> 
-                  <span class="s">&#39;nest_simulation.py&#39;</span><span class="p">,</span>
-                  <span class="s">&#39;microcircuit.sli&#39;</span><span class="p">]:</span>
+        <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;cellsim16popsParams.py&#39;</span><span class="p">,</span>
+                  <span class="s1">&#39;cellsim16pops.py&#39;</span><span class="p">,</span>
+                  <span class="s1">&#39;example_brunel.py&#39;</span><span class="p">,</span>
+                  <span class="s1">&#39;brunel_alpha_nest.py&#39;</span><span class="p">,</span>
+                  <span class="s1">&#39;mesocircuit.sli&#39;</span><span class="p">,</span>
+                  <span class="s1">&#39;mesocircuit_LFP_model.py&#39;</span><span class="p">,</span>
+                  <span class="s1">&#39;binzegger_connectivity_table.json&#39;</span><span class="p">,</span> 
+                  <span class="s1">&#39;nest_simulation.py&#39;</span><span class="p">,</span>
+                  <span class="s1">&#39;microcircuit.sli&#39;</span><span class="p">]:</span>
             <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">sim_scripts_path</span><span class="p">,</span> <span class="n">f</span><span class="p">)):</span>
                     <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">sim_scripts_path</span><span class="p">,</span> <span class="n">f</span><span class="p">))</span>
                     <span class="n">os</span><span class="o">.</span><span class="n">chmod</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">sim_scripts_path</span><span class="p">,</span> <span class="n">f</span><span class="p">),</span>
                              <span class="n">stat</span><span class="o">.</span><span class="n">S_IREAD</span><span class="p">)</span>
        
-    <span class="n">COMM</span><span class="o">.</span><span class="n">Barrier</span><span class="p">()</span>
+    <span class="n">COMM</span><span class="o">.</span><span class="n">Barrier</span><span class="p">()</span></div>
     
 
-<span class="c">#######################################</span>
-<span class="c">### GENERAL                         ###</span>
-<span class="c">#######################################</span>
+<span class="c1">#######################################</span>
+<span class="c1">### GENERAL                         ###</span>
+<span class="c1">#######################################</span>
 
-</div>
+
 <div class="viewcode-block" id="calculate_fft"><a class="viewcode-back" href="../../index.html#hybridLFPy.helpers.calculate_fft">[docs]</a><span class="k">def</span> <span class="nf">calculate_fft</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">tbin</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Function to calculate the Fourier transform of data.</span>
@@ -384,13 +384,13 @@
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">fftfreq</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">tbin</span> <span class="o">*</span> <span class="mf">1e-3</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">fft</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">fftfreq</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">tbin</span> <span class="o">*</span> <span class="mf">1e-3</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">fft</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">fftfreq</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">tbin</span> <span class="o">*</span> <span class="mf">1e-3</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">fft</span><span class="p">(</span><span class="n">data</span><span class="p">)</span></div>
 
 
-<span class="c">#######################################</span>
-<span class="c">### DATA MANIPULATION               ###</span>
-<span class="c">#######################################</span>
-</div>
+<span class="c1">#######################################</span>
+<span class="c1">### DATA MANIPULATION               ###</span>
+<span class="c1">#######################################</span>
+
 <div class="viewcode-block" id="centralize"><a class="viewcode-back" href="../../index.html#hybridLFPy.helpers.centralize">[docs]</a><span class="k">def</span> <span class="nf">centralize</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">time</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Function to subtract the mean across time and/or across units from data</span>
@@ -421,9 +421,9 @@
     <span class="k">if</span> <span class="n">units</span> <span class="ow">is</span> <span class="bp">True</span><span class="p">:</span>
         <span class="n">res</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">res</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
     
-    <span class="k">return</span> <span class="n">res</span>
+    <span class="k">return</span> <span class="n">res</span></div>
 
-</div>
+
 <div class="viewcode-block" id="normalize"><a class="viewcode-back" href="../../index.html#hybridLFPy.helpers.normalize">[docs]</a><span class="k">def</span> <span class="nf">normalize</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Function to normalize data to have mean 0 and unity standard deviation</span>
@@ -444,13 +444,13 @@
     <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
     <span class="n">data</span> <span class="o">-=</span> <span class="n">data</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
     
-    <span class="k">return</span> <span class="n">data</span> <span class="o">/</span> <span class="n">data</span><span class="o">.</span><span class="n">std</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">data</span> <span class="o">/</span> <span class="n">data</span><span class="o">.</span><span class="n">std</span><span class="p">()</span></div>
 
 
-<span class="c">#######################################</span>
-<span class="c">### FILTER                          ###</span>
-<span class="c">#######################################</span>
-</div>
+<span class="c1">#######################################</span>
+<span class="c1">### FILTER                          ###</span>
+<span class="c1">#######################################</span>
+
 <div class="viewcode-block" id="movav"><a class="viewcode-back" href="../../index.html#hybridLFPy.helpers.movav">[docs]</a><span class="k">def</span> <span class="nf">movav</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">Dx</span><span class="p">,</span> <span class="n">dx</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Moving average rectangular window filter:</span>
@@ -485,9 +485,9 @@
         <span class="n">R</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">fft</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
         <span class="n">Y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">fft</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
         <span class="n">yf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">ifft</span><span class="p">(</span><span class="n">Y</span> <span class="o">*</span> <span class="n">R</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">yf</span>
+        <span class="k">return</span> <span class="n">yf</span></div>
 
-</div>
+
 <div class="viewcode-block" id="decimate"><a class="viewcode-back" href="../../index.html#hybridLFPy.helpers.decimate">[docs]</a><span class="k">def</span> <span class="nf">decimate</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">q</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">filterfun</span><span class="o">=</span><span class="n">ss</span><span class="o">.</span><span class="n">cheby1</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    scipy.signal.decimate like downsampling using filtfilt instead of lfilter,</span>
@@ -501,9 +501,9 @@
 <span class="sd">    q : int </span>
 <span class="sd">        Downsampling factor.</span>
 <span class="sd">    n : int</span>
-<span class="sd">        Butterworth filter order.</span>
+<span class="sd">        Filter order.</span>
 <span class="sd">    k : float</span>
-<span class="sd">        Aliasing filter critical frequency will be set as Wn=k/q.</span>
+<span class="sd">        Aliasing filter critical frequency Wn will be set as Wn=k/q.</span>
 <span class="sd">    filterfun : function</span>
 <span class="sd">        `scipy.signal.filter_design.cheby1` or</span>
 <span class="sd">        `scipy.signal.filter_design.butter` function</span>
@@ -515,7 +515,7 @@
 <span class="sd">              </span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&quot;q must be an integer&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;q must be an integer&quot;</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">n</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
         <span class="n">n</span> <span class="o">=</span> <span class="mi">1</span>
@@ -525,11 +525,11 @@
     <span class="k">elif</span> <span class="n">filterfun</span> <span class="o">==</span> <span class="n">ss</span><span class="o">.</span><span class="n">cheby1</span><span class="p">:</span>
         <span class="n">b</span><span class="p">,</span> <span class="n">a</span> <span class="o">=</span> <span class="n">filterfun</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="n">k</span> <span class="o">/</span> <span class="n">q</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&#39;only ss.butter or ss.cheby1 supported&#39;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;only ss.butter or ss.cheby1 supported&#39;</span><span class="p">)</span>
 
     <span class="k">try</span><span class="p">:</span>
         <span class="n">y</span> <span class="o">=</span> <span class="n">ss</span><span class="o">.</span><span class="n">filtfilt</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
-    <span class="k">except</span><span class="p">:</span> <span class="c"># Multidim array can only be processed at once for scipy &gt;= 0.9.0</span>
+    <span class="k">except</span><span class="p">:</span> <span class="c1"># Multidim array can only be processed at once for scipy &gt;= 0.9.0</span>
         <span class="n">y</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">x</span><span class="p">:</span>
             <span class="n">y</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ss</span><span class="o">.</span><span class="n">filtfilt</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">data</span><span class="p">))</span>
@@ -538,14 +538,14 @@
     <span class="k">try</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">y</span><span class="p">[:,</span> <span class="p">::</span><span class="n">q</span><span class="p">]</span>
     <span class="k">except</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">y</span><span class="p">[::</span><span class="n">q</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">y</span><span class="p">[::</span><span class="n">q</span><span class="p">]</span></div>
 
 
-<span class="c">#######################################</span>
-<span class="c">### CORRELATION ANALYSIS            ###</span>
-<span class="c">#######################################</span>
+<span class="c1">#######################################</span>
+<span class="c1">### CORRELATION ANALYSIS            ###</span>
+<span class="c1">#######################################</span>
 
-</div>
+
 <div class="viewcode-block" id="mean"><a class="viewcode-back" href="../../index.html#hybridLFPy.helpers.mean">[docs]</a><span class="k">def</span> <span class="nf">mean</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">time</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Function to compute mean of data</span>
@@ -592,9 +592,9 @@
     <span class="k">elif</span> <span class="n">units</span> <span class="ow">is</span> <span class="bp">False</span> <span class="ow">and</span> <span class="n">time</span> <span class="ow">is</span> <span class="bp">True</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
     <span class="k">elif</span> <span class="n">units</span> <span class="ow">is</span> <span class="bp">True</span> <span class="ow">and</span> <span class="n">time</span> <span class="ow">is</span> <span class="bp">True</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">data</span><span class="p">)</span></div>
 
-</div>
+
 <div class="viewcode-block" id="compound_mean"><a class="viewcode-back" href="../../index.html#hybridLFPy.helpers.compound_mean">[docs]</a><span class="k">def</span> <span class="nf">compound_mean</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Compute the mean of the compound/sum signal.</span>
@@ -620,9 +620,9 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span></div>
 
-</div>
+
 <div class="viewcode-block" id="variance"><a class="viewcode-back" href="../../index.html#hybridLFPy.helpers.variance">[docs]</a><span class="k">def</span> <span class="nf">variance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">time</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Compute the variance of data across time, units or both.</span>
@@ -670,9 +670,9 @@
     <span class="k">elif</span> <span class="n">units</span> <span class="ow">is</span> <span class="bp">False</span> <span class="ow">and</span> <span class="n">time</span> <span class="ow">is</span> <span class="bp">True</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">var</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
     <span class="k">elif</span> <span class="n">units</span> <span class="ow">is</span> <span class="bp">True</span> <span class="ow">and</span> <span class="n">time</span> <span class="ow">is</span> <span class="bp">True</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">var</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">var</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span></div>
 
-</div>
+
 <div class="viewcode-block" id="compound_variance"><a class="viewcode-back" href="../../index.html#hybridLFPy.helpers.compound_variance">[docs]</a><span class="k">def</span> <span class="nf">compound_variance</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Compute the variance of the compound/sum signal.</span>
@@ -699,9 +699,9 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">var</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">var</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span></div>
 
-</div>
+
 <div class="viewcode-block" id="powerspec"><a class="viewcode-back" href="../../index.html#hybridLFPy.helpers.powerspec">[docs]</a><span class="k">def</span> <span class="nf">powerspec</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">tbin</span><span class="p">,</span> <span class="n">Df</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">pointProcess</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate (smoothed) power spectra of all timeseries in data.</span>
@@ -767,10 +767,10 @@
         <span class="n">POW</span> <span class="o">=</span> <span class="n">mean</span><span class="p">(</span><span class="n">POW</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="n">units</span><span class="p">)</span>
         <span class="k">assert</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">freq</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">POW</span><span class="p">))</span>
     <span class="k">if</span> <span class="n">pointProcess</span><span class="p">:</span>
-        <span class="n">POW</span> <span class="o">*=</span> <span class="mf">1.</span> <span class="o">/</span> <span class="n">T</span> <span class="o">*</span> <span class="mf">1e3</span>  <span class="c"># Normalization, power independent of T</span>
-    <span class="k">return</span> <span class="n">freq</span><span class="p">,</span> <span class="n">POW</span>
+        <span class="n">POW</span> <span class="o">*=</span> <span class="mf">1.</span> <span class="o">/</span> <span class="n">T</span> <span class="o">*</span> <span class="mf">1e3</span>  <span class="c1"># Normalization, power independent of T</span>
+    <span class="k">return</span> <span class="n">freq</span><span class="p">,</span> <span class="n">POW</span></div>
 
-</div>
+
 <div class="viewcode-block" id="compound_powerspec"><a class="viewcode-back" href="../../index.html#hybridLFPy.helpers.compound_powerspec">[docs]</a><span class="k">def</span> <span class="nf">compound_powerspec</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">tbin</span><span class="p">,</span> <span class="n">Df</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">pointProcess</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate the power spectrum of the compound/sum signal.</span>
@@ -812,9 +812,9 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">return</span> <span class="n">powerspec</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)],</span> <span class="n">tbin</span><span class="p">,</span> <span class="n">Df</span><span class="o">=</span><span class="n">Df</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
-        <span class="n">pointProcess</span><span class="o">=</span><span class="n">pointProcess</span><span class="p">)</span>
+        <span class="n">pointProcess</span><span class="o">=</span><span class="n">pointProcess</span><span class="p">)</span></div>
 
-</div>
+
 <div class="viewcode-block" id="crossspec"><a class="viewcode-back" href="../../index.html#hybridLFPy.helpers.crossspec">[docs]</a><span class="k">def</span> <span class="nf">crossspec</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">tbin</span><span class="p">,</span> <span class="n">Df</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">pointProcess</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate (smoothed) cross spectra of data.</span>
@@ -869,8 +869,8 @@
 
     <span class="n">N</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">units</span> <span class="ow">is</span> <span class="bp">True</span><span class="p">:</span>
-        <span class="c"># smoothing and normalization take place in powerspec</span>
-        <span class="c"># and compound_powerspec</span>
+        <span class="c1"># smoothing and normalization take place in powerspec</span>
+        <span class="c1"># and compound_powerspec</span>
         <span class="n">freq</span><span class="p">,</span> <span class="n">POW</span> <span class="o">=</span> <span class="n">powerspec</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">tbin</span><span class="p">,</span> <span class="n">Df</span><span class="o">=</span><span class="n">Df</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
         <span class="n">freq_com</span><span class="p">,</span> <span class="n">CPOW</span> <span class="o">=</span> <span class="n">compound_powerspec</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">tbin</span><span class="p">,</span> <span class="n">Df</span><span class="o">=</span><span class="n">Df</span><span class="p">)</span>
         <span class="k">assert</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">freq</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">freq_com</span><span class="p">))</span>
@@ -895,10 +895,10 @@
                 <span class="n">CRO</span><span class="p">[</span><span class="n">j</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">CRO</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">conj</span><span class="p">()</span>
         <span class="k">assert</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">freq</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">CRO</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]))</span>
         <span class="k">if</span> <span class="n">pointProcess</span><span class="p">:</span>
-            <span class="n">CRO</span> <span class="o">*=</span> <span class="mf">1.</span> <span class="o">/</span> <span class="n">T</span> <span class="o">*</span> <span class="mf">1e3</span>  <span class="c"># normalization</span>
-    <span class="k">return</span> <span class="n">freq</span><span class="p">,</span> <span class="n">CRO</span>
+            <span class="n">CRO</span> <span class="o">*=</span> <span class="mf">1.</span> <span class="o">/</span> <span class="n">T</span> <span class="o">*</span> <span class="mf">1e3</span>  <span class="c1"># normalization</span>
+    <span class="k">return</span> <span class="n">freq</span><span class="p">,</span> <span class="n">CRO</span></div>
 
-</div>
+
 <div class="viewcode-block" id="compound_crossspec"><a class="viewcode-back" href="../../index.html#hybridLFPy.helpers.compound_crossspec">[docs]</a><span class="k">def</span> <span class="nf">compound_crossspec</span><span class="p">(</span><span class="n">a_data</span><span class="p">,</span> <span class="n">tbin</span><span class="p">,</span> <span class="n">Df</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">pointProcess</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate cross spectra of compound signals.</span>
@@ -943,11 +943,11 @@
 
     <span class="n">a_mdata</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">a_data</span><span class="p">:</span>
-        <span class="n">a_mdata</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>  <span class="c"># calculate compound signals</span>
+        <span class="n">a_mdata</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>  <span class="c1"># calculate compound signals</span>
     <span class="k">return</span> <span class="n">crossspec</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">a_mdata</span><span class="p">),</span> <span class="n">tbin</span><span class="p">,</span> <span class="n">Df</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
-                     <span class="n">pointProcess</span><span class="o">=</span><span class="n">pointProcess</span><span class="p">)</span>
+                     <span class="n">pointProcess</span><span class="o">=</span><span class="n">pointProcess</span><span class="p">)</span></div>
 
-</div>
+
 <div class="viewcode-block" id="autocorrfunc"><a class="viewcode-back" href="../../index.html#hybridLFPy.helpers.autocorrfunc">[docs]</a><span class="k">def</span> <span class="nf">autocorrfunc</span><span class="p">(</span><span class="n">freq</span><span class="p">,</span> <span class="n">power</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate autocorrelation function(s) for given power spectrum/spectra.</span>
@@ -970,9 +970,9 @@
 <span class="sd">        2nd axis times.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">tbin</span> <span class="o">=</span> <span class="mf">1.</span> <span class="o">/</span> <span class="p">(</span><span class="mf">2.</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">freq</span><span class="p">))</span> <span class="o">*</span> <span class="mf">1e3</span>  <span class="c"># tbin in ms</span>
+    <span class="n">tbin</span> <span class="o">=</span> <span class="mf">1.</span> <span class="o">/</span> <span class="p">(</span><span class="mf">2.</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">freq</span><span class="p">))</span> <span class="o">*</span> <span class="mf">1e3</span>  <span class="c1"># tbin in ms</span>
     <span class="n">time</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="n">freq</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">freq</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">tbin</span>
-    <span class="c"># T = max(time)</span>
+    <span class="c1"># T = max(time)</span>
     <span class="n">multidata</span> <span class="o">=</span> <span class="bp">False</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">power</span><span class="p">))</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
         <span class="n">multidata</span> <span class="o">=</span> <span class="bp">True</span>
@@ -989,10 +989,10 @@
         <span class="n">mid</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">raw_autof</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.</span><span class="p">)</span>
         <span class="n">autof</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">([</span><span class="n">raw_autof</span><span class="p">[</span><span class="n">mid</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:],</span> <span class="n">raw_autof</span><span class="p">[:</span><span class="n">mid</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]])</span>
         <span class="k">assert</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">time</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">autof</span><span class="p">))</span>
-    <span class="c"># autof *= T*1e-3 # normalization is done in powerspec()</span>
-    <span class="k">return</span> <span class="n">time</span><span class="p">,</span> <span class="n">autof</span>
+    <span class="c1"># autof *= T*1e-3 # normalization is done in powerspec()</span>
+    <span class="k">return</span> <span class="n">time</span><span class="p">,</span> <span class="n">autof</span></div>
 
-</div>
+
 <div class="viewcode-block" id="crosscorrfunc"><a class="viewcode-back" href="../../index.html#hybridLFPy.helpers.crosscorrfunc">[docs]</a><span class="k">def</span> <span class="nf">crosscorrfunc</span><span class="p">(</span><span class="n">freq</span><span class="p">,</span> <span class="n">cross</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate crosscorrelation function(s) for given cross spectra.</span>
@@ -1017,11 +1017,11 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">tbin</span> <span class="o">=</span> <span class="mf">1.</span> <span class="o">/</span> <span class="p">(</span><span class="mf">2.</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">freq</span><span class="p">))</span> <span class="o">*</span> <span class="mf">1e3</span>  <span class="c"># tbin in ms</span>
+    <span class="n">tbin</span> <span class="o">=</span> <span class="mf">1.</span> <span class="o">/</span> <span class="p">(</span><span class="mf">2.</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">freq</span><span class="p">))</span> <span class="o">*</span> <span class="mf">1e3</span>  <span class="c1"># tbin in ms</span>
     <span class="n">time</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="n">freq</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">freq</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">tbin</span>
-    <span class="c"># T = max(time)</span>
+    <span class="c1"># T = max(time)</span>
     <span class="n">multidata</span> <span class="o">=</span> <span class="bp">False</span>
-    <span class="c"># check whether cross contains many cross spectra</span>
+    <span class="c1"># check whether cross contains many cross spectra</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">cross</span><span class="p">))</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
         <span class="n">multidata</span> <span class="o">=</span> <span class="bp">True</span>
     <span class="k">if</span> <span class="n">multidata</span><span class="p">:</span>
@@ -1039,10 +1039,10 @@
         <span class="n">mid</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">raw_crossf</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.</span><span class="p">)</span>
         <span class="n">crossf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">([</span><span class="n">raw_crossf</span><span class="p">[</span><span class="n">mid</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:],</span> <span class="n">raw_crossf</span><span class="p">[:</span><span class="n">mid</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]])</span>
         <span class="k">assert</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">time</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">crossf</span><span class="p">))</span>
-    <span class="c"># crossf *= T*1e-3 # normalization happens in cross spectrum</span>
-    <span class="k">return</span> <span class="n">time</span><span class="p">,</span> <span class="n">crossf</span>
+    <span class="c1"># crossf *= T*1e-3 # normalization happens in cross spectrum</span>
+    <span class="k">return</span> <span class="n">time</span><span class="p">,</span> <span class="n">crossf</span></div>
 
-</div>
+
 <div class="viewcode-block" id="corrcoef"><a class="viewcode-back" href="../../index.html#hybridLFPy.helpers.corrcoef">[docs]</a><span class="k">def</span> <span class="nf">corrcoef</span><span class="p">(</span><span class="n">time</span><span class="p">,</span> <span class="n">crossf</span><span class="p">,</span> <span class="n">integration_window</span><span class="o">=</span><span class="mf">0.</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate the correlation coefficient for given auto- and crosscorrelation</span>
@@ -1094,9 +1094,9 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">cc</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.</span>
     
-    <span class="k">return</span> <span class="n">cc</span>
+    <span class="k">return</span> <span class="n">cc</span></div>
 
-</div>
+
 <div class="viewcode-block" id="coherence"><a class="viewcode-back" href="../../index.html#hybridLFPy.helpers.coherence">[docs]</a><span class="k">def</span> <span class="nf">coherence</span><span class="p">(</span><span class="n">freq</span><span class="p">,</span> <span class="n">power</span><span class="p">,</span> <span class="n">cross</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate frequency resolved coherence for given power- and crossspectra.</span>
@@ -1131,9 +1131,9 @@
     
     <span class="k">assert</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">freq</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">coh</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]))</span>
     
-    <span class="k">return</span> <span class="n">freq</span><span class="p">,</span> <span class="n">coh</span>
+    <span class="k">return</span> <span class="n">freq</span><span class="p">,</span> <span class="n">coh</span></div>
 
-</div>
+
 <div class="viewcode-block" id="cv"><a class="viewcode-back" href="../../index.html#hybridLFPy.helpers.cv">[docs]</a><span class="k">def</span> <span class="nf">cv</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate coefficient of variation (cv) of data. Mean and standard deviation</span>
@@ -1173,9 +1173,9 @@
     <span class="k">if</span> <span class="n">units</span> <span class="ow">is</span> <span class="bp">True</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">cv</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">cv</span>
+        <span class="k">return</span> <span class="n">cv</span></div>
 
-</div>
+
 <div class="viewcode-block" id="fano"><a class="viewcode-back" href="../../index.html#hybridLFPy.helpers.fano">[docs]</a><span class="k">def</span> <span class="nf">fano</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate fano factor (FF) of data. Mean and variance are computed across</span>
@@ -1214,13 +1214,14 @@
     <span class="k">if</span> <span class="n">units</span> <span class="ow">is</span> <span class="bp">True</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">ff</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">ff</span>
+        <span class="k">return</span> <span class="n">ff</span></div>
 
-</div>
-<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&quot;__main__&quot;</span><span class="p">:</span>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
     <span class="kn">import</span> <span class="nn">doctest</span>
     <span class="n">doctest</span><span class="o">.</span><span class="n">testmod</span><span class="p">()</span>
     
+
 </pre></div>
 
           </div>
@@ -1236,9 +1237,6 @@
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -1254,13 +1252,13 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">hybridLFPy 0.1.1 documentation</a> &raquo;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">hybridLFPy 0.1.3 documentation</a> &raquo;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &copy; Copyright 2015, Espen Hagen.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1.
     </div>
   </body>
 </html>

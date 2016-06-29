@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>hybridLFPy.postproc &mdash; hybridLFPy 0.1.1 documentation</title>
+    <title>hybridLFPy.postproc &mdash; hybridLFPy 0.1.3 documentation</title>
     
     <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.1.1',
+        VERSION:     '0.1.3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -23,7 +23,7 @@
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <link rel="top" title="hybridLFPy 0.1.1 documentation" href="../../index.html" />
+    <link rel="top" title="hybridLFPy 0.1.3 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
   </head>
   <body role="document">
@@ -36,7 +36,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">hybridLFPy 0.1.1 documentation</a> &raquo;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">hybridLFPy 0.1.3 documentation</a> &raquo;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
     </div>  
@@ -47,7 +47,7 @@
           <div class="body" role="main">
             
   <h1>Source code for hybridLFPy.postproc</h1><div class="highlight"><pre>
-<span class="c">#!/usr/bin/env python</span>
+<span></span><span class="ch">#!/usr/bin/env python</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">h5py</span>
 <span class="kn">import</span> <span class="nn">os</span>
@@ -56,7 +56,7 @@
 <span class="kn">from</span> <span class="nn">warnings</span> <span class="kn">import</span> <span class="n">warn</span>
 <span class="kn">from</span> <span class="nn">mpi4py</span> <span class="kn">import</span> <span class="n">MPI</span>
 
-<span class="c">################# Initialization of MPI stuff ##################################</span>
+<span class="c1">################# Initialization of MPI stuff ##################################</span>
 <span class="n">COMM</span> <span class="o">=</span> <span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span>
 <span class="n">SIZE</span> <span class="o">=</span> <span class="n">COMM</span><span class="o">.</span><span class="n">Get_size</span><span class="p">()</span>
 <span class="n">RANK</span> <span class="o">=</span> <span class="n">COMM</span><span class="o">.</span><span class="n">Get_rank</span><span class="p">()</span>
@@ -86,17 +86,17 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-                 <span class="n">y</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;EX&#39;</span><span class="p">,</span> <span class="s">&#39;IN&#39;</span><span class="p">],</span>
+                 <span class="n">y</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;EX&#39;</span><span class="p">,</span> <span class="s1">&#39;IN&#39;</span><span class="p">],</span>
                  <span class="n">dt_output</span><span class="o">=</span><span class="mf">1.</span><span class="p">,</span>
-                 <span class="n">mapping_Yy</span><span class="o">=</span><span class="p">[(</span><span class="s">&#39;EX&#39;</span><span class="p">,</span> <span class="s">&#39;EX&#39;</span><span class="p">),</span>
-                               <span class="p">(</span><span class="s">&#39;IN&#39;</span><span class="p">,</span> <span class="s">&#39;IN&#39;</span><span class="p">)],</span>
-                 <span class="n">savelist</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;somav&#39;</span><span class="p">,</span> <span class="s">&#39;somapos&#39;</span><span class="p">,</span> <span class="s">&#39;x&#39;</span><span class="p">,</span> <span class="s">&#39;y&#39;</span><span class="p">,</span> <span class="s">&#39;z&#39;</span><span class="p">,</span> <span class="s">&#39;LFP&#39;</span><span class="p">,</span> <span class="s">&#39;CSD&#39;</span><span class="p">],</span>
-                 <span class="n">savefolder</span><span class="o">=</span><span class="s">&#39;simulation_output_example_brunel&#39;</span><span class="p">,</span>
-                 <span class="n">cells_subfolder</span><span class="o">=</span><span class="s">&#39;cells&#39;</span><span class="p">,</span>
-                 <span class="n">populations_subfolder</span><span class="o">=</span><span class="s">&#39;populations&#39;</span><span class="p">,</span>
-                 <span class="n">figures_subfolder</span><span class="o">=</span><span class="s">&#39;figures&#39;</span><span class="p">,</span>
-                 <span class="n">output_file</span><span class="o">=</span><span class="s">&#39;{}_population_{}&#39;</span><span class="p">,</span>
-                 <span class="n">compound_file</span><span class="o">=</span><span class="s">&#39;{}sum.h5&#39;</span><span class="p">,</span>
+                 <span class="n">mapping_Yy</span><span class="o">=</span><span class="p">[(</span><span class="s1">&#39;EX&#39;</span><span class="p">,</span> <span class="s1">&#39;EX&#39;</span><span class="p">),</span>
+                               <span class="p">(</span><span class="s1">&#39;IN&#39;</span><span class="p">,</span> <span class="s1">&#39;IN&#39;</span><span class="p">)],</span>
+                 <span class="n">savelist</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;somav&#39;</span><span class="p">,</span> <span class="s1">&#39;somapos&#39;</span><span class="p">,</span> <span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="s1">&#39;z&#39;</span><span class="p">,</span> <span class="s1">&#39;LFP&#39;</span><span class="p">,</span> <span class="s1">&#39;CSD&#39;</span><span class="p">],</span>
+                 <span class="n">savefolder</span><span class="o">=</span><span class="s1">&#39;simulation_output_example_brunel&#39;</span><span class="p">,</span>
+                 <span class="n">cells_subfolder</span><span class="o">=</span><span class="s1">&#39;cells&#39;</span><span class="p">,</span>
+                 <span class="n">populations_subfolder</span><span class="o">=</span><span class="s1">&#39;populations&#39;</span><span class="p">,</span>
+                 <span class="n">figures_subfolder</span><span class="o">=</span><span class="s1">&#39;figures&#39;</span><span class="p">,</span>
+                 <span class="n">output_file</span><span class="o">=</span><span class="s1">&#39;{}_population_{}&#39;</span><span class="p">,</span>
+                 <span class="n">compound_file</span><span class="o">=</span><span class="s1">&#39;{}sum.h5&#39;</span><span class="p">,</span>
                  <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        class `PostProcess`: Methods to deal with the contributions of every</span>
@@ -131,7 +131,7 @@
 <span class="sd">        </span>
 <span class="sd">    </span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c">#set some attributes</span>
+        <span class="c1">#set some attributes</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">y</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dt_output</span> <span class="o">=</span> <span class="n">dt_output</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">mapping_Yy</span> <span class="o">=</span> <span class="n">mapping_Yy</span>
@@ -143,7 +143,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">output_file</span> <span class="o">=</span> <span class="n">output_file</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">compound_file</span> <span class="o">=</span> <span class="n">compound_file</span>
         
-        <span class="c">#set up subfolders</span>
+        <span class="c1">#set up subfolders</span>
         <span class="k">if</span> <span class="n">RANK</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_set_up_savefolder</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
@@ -155,57 +155,57 @@
 <span class="sd">        cell-specific output files.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">RANK</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">if</span> <span class="s">&#39;LFP&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">savelist</span><span class="p">:</span>
-                <span class="c">#get the per population LFPs and total LFP from all populations:</span>
+            <span class="k">if</span> <span class="s1">&#39;LFP&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">savelist</span><span class="p">:</span>
+                <span class="c1">#get the per population LFPs and total LFP from all populations:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">LFPdict</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">LFPsum</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">calc_lfp</span><span class="p">()</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">LFPdictLayer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">calc_lfp_layer</span><span class="p">()</span>
     
-                <span class="c">#save global LFP sum, and from L23E, L4I etc.:</span>
+                <span class="c1">#save global LFP sum, and from L23E, L4I etc.:</span>
                 <span class="n">f</span> <span class="o">=</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">savefolder</span><span class="p">,</span>
-                                           <span class="bp">self</span><span class="o">.</span><span class="n">compound_file</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s">&#39;LFP&#39;</span><span class="p">)</span>
-                                           <span class="p">),</span> <span class="s">&#39;w&#39;</span><span class="p">)</span>
-                <span class="n">f</span><span class="p">[</span><span class="s">&#39;srate&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1E3</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">dt_output</span>
-                <span class="n">f</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s">&#39;data&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">LFPsum</span><span class="p">,</span> <span class="n">compression</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+                                           <span class="bp">self</span><span class="o">.</span><span class="n">compound_file</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s1">&#39;LFP&#39;</span><span class="p">)</span>
+                                           <span class="p">),</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
+                <span class="n">f</span><span class="p">[</span><span class="s1">&#39;srate&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1E3</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">dt_output</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">LFPsum</span><span class="p">,</span> <span class="n">compression</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
                 <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
     
                 <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">LFPdictLayer</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
                     <span class="n">f</span> <span class="o">=</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">populations_path</span><span class="p">,</span>
                                                <span class="bp">self</span><span class="o">.</span><span class="n">output_file</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="p">,</span>
-                                                                       <span class="s">&#39;LFP.h5&#39;</span><span class="p">)</span>
-                                               <span class="p">),</span> <span class="s">&#39;w&#39;</span><span class="p">)</span>
-                    <span class="n">f</span><span class="p">[</span><span class="s">&#39;srate&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1E3</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">dt_output</span>
-                    <span class="n">f</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s">&#39;data&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">value</span><span class="p">,</span> <span class="n">compression</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+                                                                       <span class="s1">&#39;LFP.h5&#39;</span><span class="p">)</span>
+                                               <span class="p">),</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
+                    <span class="n">f</span><span class="p">[</span><span class="s1">&#39;srate&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1E3</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">dt_output</span>
+                    <span class="n">f</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">value</span><span class="p">,</span> <span class="n">compression</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
                     <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
-            <span class="k">if</span> <span class="s">&#39;CSD&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">savelist</span><span class="p">:</span>
-                <span class="c">#get the per population CSDs and total CSD from all populations:</span>
+            <span class="k">if</span> <span class="s1">&#39;CSD&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">savelist</span><span class="p">:</span>
+                <span class="c1">#get the per population CSDs and total CSD from all populations:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">CSDdict</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">CSDsum</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">calc_csd</span><span class="p">()</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">CSDdictLayer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">calc_csd_layer</span><span class="p">()</span>
     
-                <span class="c">#save global CSD sum, and from L23E, L4I etc.:</span>
+                <span class="c1">#save global CSD sum, and from L23E, L4I etc.:</span>
                 <span class="n">f</span> <span class="o">=</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">savefolder</span><span class="p">,</span>
-                                           <span class="bp">self</span><span class="o">.</span><span class="n">compound_file</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s">&#39;CSD&#39;</span><span class="p">)),</span>
-                              <span class="s">&#39;w&#39;</span><span class="p">)</span>
-                <span class="n">f</span><span class="p">[</span><span class="s">&#39;srate&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1E3</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">dt_output</span>
-                <span class="n">f</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s">&#39;data&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">CSDsum</span><span class="p">,</span> <span class="n">compression</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+                                           <span class="bp">self</span><span class="o">.</span><span class="n">compound_file</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s1">&#39;CSD&#39;</span><span class="p">)),</span>
+                              <span class="s1">&#39;w&#39;</span><span class="p">)</span>
+                <span class="n">f</span><span class="p">[</span><span class="s1">&#39;srate&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1E3</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">dt_output</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">CSDsum</span><span class="p">,</span> <span class="n">compression</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
                 <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
     
                 <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">CSDdictLayer</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
                     <span class="n">f</span> <span class="o">=</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">populations_path</span><span class="p">,</span>
                                                <span class="bp">self</span><span class="o">.</span><span class="n">output_file</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="p">,</span>
-                                                                       <span class="s">&#39;CSD.h5&#39;</span><span class="p">)</span>
-                                               <span class="p">),</span> <span class="s">&#39;w&#39;</span><span class="p">)</span>
-                    <span class="n">f</span><span class="p">[</span><span class="s">&#39;srate&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1E3</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">dt_output</span>
-                    <span class="n">f</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s">&#39;data&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">value</span><span class="p">,</span> <span class="n">compression</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+                                                                       <span class="s1">&#39;CSD.h5&#39;</span><span class="p">)</span>
+                                               <span class="p">),</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
+                    <span class="n">f</span><span class="p">[</span><span class="s1">&#39;srate&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1E3</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">dt_output</span>
+                    <span class="n">f</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">value</span><span class="p">,</span> <span class="n">compression</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
                     <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">pass</span>
+            <span class="k">pass</span></div>
 
-        <span class="c">##collect matrices with the single cell contributions in parallel</span>
-        <span class="c">#self.collectSingleContribs()</span>
+        <span class="c1">##collect matrices with the single cell contributions in parallel</span>
+        <span class="c1">#self.collectSingleContribs()</span>
 
-</div>
+
     <span class="k">def</span> <span class="nf">_set_up_savefolder</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Create catalogs for different file output to clean up savefolder.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -229,26 +229,26 @@
         <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">:</span>
             <span class="n">fil</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">populations_path</span><span class="p">,</span>
-                               <span class="bp">self</span><span class="o">.</span><span class="n">output_file</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="s">&#39;LFP.h5&#39;</span><span class="p">))</span>
+                               <span class="bp">self</span><span class="o">.</span><span class="n">output_file</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="s1">&#39;LFP.h5&#39;</span><span class="p">))</span>
 
             <span class="n">f</span> <span class="o">=</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">fil</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="n">LFParray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">),</span>
-                                    <span class="n">f</span><span class="p">[</span><span class="s">&#39;data&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">f</span><span class="p">[</span><span class="s">&#39;data&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+                                    <span class="n">f</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">f</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
 
-            <span class="c">#fill in</span>
-            <span class="n">LFParray</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">]</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="s">&#39;data&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span>
+            <span class="c1">#fill in</span>
+            <span class="n">LFParray</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">]</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span>
 
-            <span class="n">LFPdict</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">y</span> <span class="p">:</span> <span class="n">f</span><span class="p">[</span><span class="s">&#39;data&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">})</span>
+            <span class="n">LFPdict</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">y</span> <span class="p">:</span> <span class="n">f</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">})</span>
 
             <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
             <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
 
-        <span class="k">return</span> <span class="n">LFPdict</span><span class="p">,</span>  <span class="n">LFParray</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">LFPdict</span><span class="p">,</span>  <span class="n">LFParray</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span></div>
 
-</div>
+
 <div class="viewcode-block" id="PostProcess.calc_csd"><a class="viewcode-back" href="../../index.html#hybridLFPy.PostProcess.calc_csd">[docs]</a>    <span class="k">def</span> <span class="nf">calc_csd</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Sum all the CSD contributions from every layer.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -259,26 +259,26 @@
         <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">:</span>
             <span class="n">fil</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">populations_path</span><span class="p">,</span>
-                               <span class="bp">self</span><span class="o">.</span><span class="n">output_file</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="s">&#39;CSD.h5&#39;</span><span class="p">))</span>
+                               <span class="bp">self</span><span class="o">.</span><span class="n">output_file</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="s1">&#39;CSD.h5&#39;</span><span class="p">))</span>
 
             <span class="n">f</span> <span class="o">=</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">fil</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="n">CSDarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">),</span>
-                                    <span class="n">f</span><span class="p">[</span><span class="s">&#39;data&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">f</span><span class="p">[</span><span class="s">&#39;data&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+                                    <span class="n">f</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">f</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
 
-            <span class="c">#fill in</span>
-            <span class="n">CSDarray</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">]</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="s">&#39;data&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span>
+            <span class="c1">#fill in</span>
+            <span class="n">CSDarray</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">]</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span>
 
-            <span class="n">CSDdict</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">y</span> <span class="p">:</span> <span class="n">f</span><span class="p">[</span><span class="s">&#39;data&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">})</span>
+            <span class="n">CSDdict</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">y</span> <span class="p">:</span> <span class="n">f</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">})</span>
 
             <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
             <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
 
-        <span class="k">return</span> <span class="n">CSDdict</span><span class="p">,</span>  <span class="n">CSDarray</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">CSDdict</span><span class="p">,</span>  <span class="n">CSDarray</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span></div>
 
-</div>
+
 <div class="viewcode-block" id="PostProcess.calc_lfp_layer"><a class="viewcode-back" href="../../index.html#hybridLFPy.PostProcess.calc_lfp_layer">[docs]</a>    <span class="k">def</span> <span class="nf">calc_lfp_layer</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculate the LFP from concatenated subpopulations residing in a</span>
@@ -301,9 +301,9 @@
                     <span class="k">pass</span>
             <span class="n">lastY</span> <span class="o">=</span> <span class="n">Y</span>
 
-        <span class="k">return</span> <span class="n">LFPdict</span>
+        <span class="k">return</span> <span class="n">LFPdict</span></div>
 
-</div>
+
 <div class="viewcode-block" id="PostProcess.calc_csd_layer"><a class="viewcode-back" href="../../index.html#hybridLFPy.PostProcess.calc_csd_layer">[docs]</a>    <span class="k">def</span> <span class="nf">calc_csd_layer</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculate the CSD from concatenated subpopulations residing in a</span>
@@ -326,18 +326,18 @@
                     <span class="k">pass</span>
             <span class="n">lastY</span> <span class="o">=</span> <span class="n">Y</span>
 
-        <span class="k">return</span> <span class="n">CSDdict</span>
+        <span class="k">return</span> <span class="n">CSDdict</span></div>
 
-</div>
+
 <div class="viewcode-block" id="PostProcess.create_tar_archive"><a class="viewcode-back" href="../../index.html#hybridLFPy.PostProcess.create_tar_archive">[docs]</a>    <span class="k">def</span> <span class="nf">create_tar_archive</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Create a tar archive of the main simulation outputs.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c">#file filter</span>
-        <span class="n">EXCLUDE_FILES</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">savefolder</span><span class="p">,</span> <span class="s">&#39;cells&#39;</span><span class="p">))</span>
+        <span class="c1">#file filter</span>
+        <span class="n">EXCLUDE_FILES</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">savefolder</span><span class="p">,</span> <span class="s1">&#39;cells&#39;</span><span class="p">))</span>
         <span class="n">EXCLUDE_FILES</span> <span class="o">+=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">savefolder</span><span class="p">,</span>
-                                                <span class="s">&#39;populations&#39;</span><span class="p">,</span> <span class="s">&#39;subsamples&#39;</span><span class="p">))</span>
+                                                <span class="s1">&#39;populations&#39;</span><span class="p">,</span> <span class="s1">&#39;subsamples&#39;</span><span class="p">))</span>
         <span class="n">EXCLUDE_FILES</span> <span class="o">+=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">savefolder</span><span class="p">,</span>
-                                                <span class="s">&#39;raw_nest_output&#39;</span><span class="p">))</span>
+                                                <span class="s1">&#39;raw_nest_output&#39;</span><span class="p">))</span>
 
         <span class="k">def</span> <span class="nf">filter_function</span><span class="p">(</span><span class="n">tarinfo</span><span class="p">):</span>
             <span class="k">print</span><span class="p">(</span><span class="n">tarinfo</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
@@ -345,17 +345,17 @@
                     <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">f</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]])</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">or</span> \
                <span class="nb">len</span><span class="p">([</span><span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">EXCLUDE_FILES</span> <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">tarinfo</span><span class="o">.</span><span class="n">path</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
                     <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">f</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]])</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="k">print</span><span class="p">(</span><span class="s">&#39;excluding </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">tarinfo</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+                <span class="k">print</span><span class="p">(</span><span class="s1">&#39;excluding </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">tarinfo</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
 
                 <span class="k">return</span> <span class="bp">None</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">tarinfo</span>
 
         <span class="k">if</span> <span class="n">RANK</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">print</span><span class="p">(</span><span class="s">&#39;creating archive </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">savefolder</span> <span class="o">+</span> <span class="s">&#39;.tar&#39;</span><span class="p">))</span>
-            <span class="c">#open file</span>
-            <span class="n">f</span> <span class="o">=</span> <span class="n">tarfile</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">savefolder</span> <span class="o">+</span> <span class="s">&#39;.tar&#39;</span><span class="p">,</span> <span class="s">&#39;w&#39;</span><span class="p">)</span>
-            <span class="c">#avoid adding files to repo as /scratch/$USER/hybrid_model/...</span>
+            <span class="k">print</span><span class="p">(</span><span class="s1">&#39;creating archive </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">savefolder</span> <span class="o">+</span> <span class="s1">&#39;.tar&#39;</span><span class="p">))</span>
+            <span class="c1">#open file</span>
+            <span class="n">f</span> <span class="o">=</span> <span class="n">tarfile</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">savefolder</span> <span class="o">+</span> <span class="s1">&#39;.tar&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
+            <span class="c1">#avoid adding files to repo as /scratch/$USER/hybrid_model/...</span>
             <span class="n">arcname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">savefolder</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 
             <span class="n">f</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">savefolder</span><span class="p">,</span>
@@ -363,9 +363,10 @@
                   <span class="nb">filter</span><span class="o">=</span><span class="n">filter_function</span><span class="p">)</span>
             <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
-        <span class="c">#resync</span>
-        <span class="n">COMM</span><span class="o">.</span><span class="n">Barrier</span><span class="p">()</span>
-</pre></div></div></div>
+        <span class="c1">#resync</span>
+        <span class="n">COMM</span><span class="o">.</span><span class="n">Barrier</span><span class="p">()</span></div></div>
+
+</pre></div>
 
           </div>
         </div>
@@ -380,9 +381,6 @@
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -398,13 +396,13 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">hybridLFPy 0.1.1 documentation</a> &raquo;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">hybridLFPy 0.1.3 documentation</a> &raquo;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &copy; Copyright 2015, Espen Hagen.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1.
     </div>
   </body>
 </html>

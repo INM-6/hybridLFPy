@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>hybridLFPy.population &mdash; hybridLFPy 0.1.1 documentation</title>
+    <title>hybridLFPy.population &mdash; hybridLFPy 0.1.3 documentation</title>
     
     <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.1.1',
+        VERSION:     '0.1.3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -23,7 +23,7 @@
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <link rel="top" title="hybridLFPy 0.1.1 documentation" href="../../index.html" />
+    <link rel="top" title="hybridLFPy 0.1.3 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
   </head>
   <body role="document">
@@ -36,7 +36,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">hybridLFPy 0.1.1 documentation</a> &raquo;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">hybridLFPy 0.1.3 documentation</a> &raquo;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
     </div>  
@@ -47,7 +47,7 @@
           <div class="body" role="main">
             
   <h1>Source code for hybridLFPy.population</h1><div class="highlight"><pre>
-<span class="c">#!/usr/bin/env python</span>
+<span></span><span class="ch">#!/usr/bin/env python</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Class methods defining multicompartment neuron populations in the hybrid scheme</span>
 <span class="sd">&quot;&quot;&quot;</span>
@@ -65,13 +65,13 @@
 <span class="kn">from</span> <span class="nn">time</span> <span class="kn">import</span> <span class="n">time</span>
 
 
-<span class="c">################# Initialization of MPI stuff ##################################</span>
+<span class="c1">################# Initialization of MPI stuff ##################################</span>
 <span class="n">COMM</span> <span class="o">=</span> <span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span>
 <span class="n">SIZE</span> <span class="o">=</span> <span class="n">COMM</span><span class="o">.</span><span class="n">Get_size</span><span class="p">()</span>
 <span class="n">RANK</span> <span class="o">=</span> <span class="n">COMM</span><span class="o">.</span><span class="n">Get_rank</span><span class="p">()</span>
 
 
-<span class="c">############ class objects #####################################################</span>
+<span class="c1">############ class objects #####################################################</span>
 <div class="viewcode-block" id="PopulationSuper"><a class="viewcode-back" href="../../index.html#hybridLFPy.PopulationSuper">[docs]</a><span class="k">class</span> <span class="nc">PopulationSuper</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Main population class object, let one set up simulations, execute, and</span>
@@ -132,49 +132,49 @@
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                  <span class="n">cellParams</span><span class="o">=</span><span class="p">{</span>
-                    <span class="s">&#39;morphology&#39;</span><span class="p">:</span> <span class="s">&#39;morphologies/ex.hoc&#39;</span><span class="p">,</span>
-                    <span class="s">&#39;Ra&#39;</span><span class="p">:</span> <span class="mi">150</span><span class="p">,</span>
-                    <span class="s">&#39;cm&#39;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
-                    <span class="s">&#39;e_pas&#39;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
-                    <span class="s">&#39;lambda_f&#39;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
-                    <span class="s">&#39;nsegs_method&#39;</span><span class="p">:</span> <span class="s">&#39;lambda_f&#39;</span><span class="p">,</span>
-                    <span class="s">&#39;rm&#39;</span><span class="p">:</span> <span class="mf">20000.0</span><span class="p">,</span>
-                    <span class="s">&#39;timeres_NEURON&#39;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span>
-                    <span class="s">&#39;timeres_python&#39;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span>
-                    <span class="s">&#39;tstartms&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-                    <span class="s">&#39;tstopms&#39;</span><span class="p">:</span> <span class="mf">1000.0</span><span class="p">,</span>
-                    <span class="s">&#39;v_init&#39;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
-                    <span class="s">&#39;verbose&#39;</span><span class="p">:</span> <span class="bp">False</span><span class="p">},</span>
+                    <span class="s1">&#39;morphology&#39;</span><span class="p">:</span> <span class="s1">&#39;morphologies/ex.hoc&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;Ra&#39;</span><span class="p">:</span> <span class="mi">150</span><span class="p">,</span>
+                    <span class="s1">&#39;cm&#39;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
+                    <span class="s1">&#39;e_pas&#39;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
+                    <span class="s1">&#39;lambda_f&#39;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+                    <span class="s1">&#39;nsegs_method&#39;</span><span class="p">:</span> <span class="s1">&#39;lambda_f&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;rm&#39;</span><span class="p">:</span> <span class="mf">20000.0</span><span class="p">,</span>
+                    <span class="s1">&#39;timeres_NEURON&#39;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span>
+                    <span class="s1">&#39;timeres_python&#39;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span>
+                    <span class="s1">&#39;tstartms&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                    <span class="s1">&#39;tstopms&#39;</span><span class="p">:</span> <span class="mf">1000.0</span><span class="p">,</span>
+                    <span class="s1">&#39;v_init&#39;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
+                    <span class="s1">&#39;verbose&#39;</span><span class="p">:</span> <span class="bp">False</span><span class="p">},</span>
                  <span class="n">rand_rot_axis</span><span class="o">=</span><span class="p">[],</span>
                  <span class="n">simulationParams</span><span class="o">=</span><span class="p">{},</span>
                  <span class="n">populationParams</span><span class="o">=</span><span class="p">{</span>
-                    <span class="s">&#39;min_cell_interdist&#39;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
-                    <span class="s">&#39;number&#39;</span><span class="p">:</span> <span class="mi">400</span><span class="p">,</span>
-                    <span class="s">&#39;radius&#39;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
-                    <span class="s">&#39;z_max&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mi">350</span><span class="p">,</span>
-                    <span class="s">&#39;z_min&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mi">450</span><span class="p">},</span>
-                 <span class="n">y</span> <span class="o">=</span> <span class="s">&#39;EX&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;min_cell_interdist&#39;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
+                    <span class="s1">&#39;number&#39;</span><span class="p">:</span> <span class="mi">400</span><span class="p">,</span>
+                    <span class="s1">&#39;radius&#39;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+                    <span class="s1">&#39;z_max&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mi">350</span><span class="p">,</span>
+                    <span class="s1">&#39;z_min&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mi">450</span><span class="p">},</span>
+                 <span class="n">y</span> <span class="o">=</span> <span class="s1">&#39;EX&#39;</span><span class="p">,</span>
                  <span class="n">layerBoundaries</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="mi">300</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mi">300</span><span class="p">,</span> <span class="o">-</span><span class="mi">500</span><span class="p">]],</span>
                  <span class="n">electrodeParams</span><span class="o">=</span><span class="p">{</span>
-                    <span class="s">&#39;N&#39;</span><span class="p">:</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                    <span class="s1">&#39;N&#39;</span><span class="p">:</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
                           <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]],</span>
-                    <span class="s">&#39;method&#39;</span><span class="p">:</span> <span class="s">&#39;som_as_point&#39;</span><span class="p">,</span>
-                    <span class="s">&#39;n&#39;</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span>
-                    <span class="s">&#39;r&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
-                    <span class="s">&#39;r_z&#39;</span><span class="p">:</span> <span class="p">[[</span><span class="o">-</span><span class="mf">1e+199</span><span class="p">,</span> <span class="o">-</span><span class="mi">600</span><span class="p">,</span> <span class="o">-</span><span class="mi">550</span><span class="p">,</span> <span class="mf">1e+99</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">]],</span>
-                    <span class="s">&#39;seedvalue&#39;</span><span class="p">:</span> <span class="bp">None</span><span class="p">,</span>
-                    <span class="s">&#39;sigma&#39;</span><span class="p">:</span> <span class="mf">0.3</span><span class="p">,</span>
-                    <span class="s">&#39;x&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
-                    <span class="s">&#39;y&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
-                    <span class="s">&#39;z&#39;</span><span class="p">:</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">100.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">200.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">300.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">400.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">500.0</span><span class="p">]},</span>
-                 <span class="n">savelist</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;somapos&#39;</span><span class="p">,</span> <span class="s">&#39;x&#39;</span><span class="p">,</span> <span class="s">&#39;y&#39;</span><span class="p">,</span> <span class="s">&#39;z&#39;</span><span class="p">,</span> <span class="s">&#39;LFP&#39;</span><span class="p">,</span> <span class="s">&#39;CSD&#39;</span><span class="p">],</span>
-                 <span class="n">savefolder</span><span class="o">=</span><span class="s">&#39;simulation_output_example_brunel&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;method&#39;</span><span class="p">:</span> <span class="s1">&#39;som_as_point&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;n&#39;</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span>
+                    <span class="s1">&#39;r&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+                    <span class="s1">&#39;r_z&#39;</span><span class="p">:</span> <span class="p">[[</span><span class="o">-</span><span class="mf">1e+199</span><span class="p">,</span> <span class="o">-</span><span class="mi">600</span><span class="p">,</span> <span class="o">-</span><span class="mi">550</span><span class="p">,</span> <span class="mf">1e+99</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">]],</span>
+                    <span class="s1">&#39;seedvalue&#39;</span><span class="p">:</span> <span class="bp">None</span><span class="p">,</span>
+                    <span class="s1">&#39;sigma&#39;</span><span class="p">:</span> <span class="mf">0.3</span><span class="p">,</span>
+                    <span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                    <span class="s1">&#39;y&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                    <span class="s1">&#39;z&#39;</span><span class="p">:</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">100.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">200.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">300.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">400.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">500.0</span><span class="p">]},</span>
+                 <span class="n">savelist</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;somapos&#39;</span><span class="p">,</span> <span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="s1">&#39;z&#39;</span><span class="p">,</span> <span class="s1">&#39;LFP&#39;</span><span class="p">,</span> <span class="s1">&#39;CSD&#39;</span><span class="p">],</span>
+                 <span class="n">savefolder</span><span class="o">=</span><span class="s1">&#39;simulation_output_example_brunel&#39;</span><span class="p">,</span>
                  <span class="n">calculateCSD</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
                  <span class="n">dt_output</span><span class="o">=</span><span class="mf">1.</span><span class="p">,</span>
                  <span class="n">recordSingleContribFrac</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
                  <span class="n">POPULATIONSEED</span><span class="o">=</span><span class="mi">123456</span><span class="p">,</span>
                  <span class="n">verbose</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
-                 <span class="n">output_file</span><span class="o">=</span><span class="s">&#39;{}_population_{}&#39;</span>
+                 <span class="n">output_file</span><span class="o">=</span><span class="s1">&#39;{}_population_{}&#39;</span>
                  <span class="p">):</span>
 
         <span class="sd">&quot;&quot;&quot;</span>
@@ -236,11 +236,11 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">cellParams</span> <span class="o">=</span> <span class="n">cellParams</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">dt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cellParams</span><span class="p">[</span><span class="s">&#39;timeres_python&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cellParams</span><span class="p">[</span><span class="s1">&#39;timeres_python&#39;</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">rand_rot_axis</span> <span class="o">=</span> <span class="n">rand_rot_axis</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">simulationParams</span> <span class="o">=</span> <span class="n">simulationParams</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">populationParams</span> <span class="o">=</span> <span class="n">populationParams</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">POPULATION_SIZE</span> <span class="o">=</span> <span class="n">populationParams</span><span class="p">[</span><span class="s">&#39;number&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">POPULATION_SIZE</span> <span class="o">=</span> <span class="n">populationParams</span><span class="p">[</span><span class="s1">&#39;number&#39;</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">y</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">layerBoundaries</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">layerBoundaries</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">electrodeParams</span> <span class="o">=</span> <span class="n">electrodeParams</span>
@@ -251,26 +251,26 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">recordSingleContribFrac</span> <span class="o">=</span> <span class="n">recordSingleContribFrac</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">output_file</span> <span class="o">=</span> <span class="n">output_file</span>
         
-        <span class="c">#check that decimate fraction is actually a whole number</span>
+        <span class="c1">#check that decimate fraction is actually a whole number</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">assert</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dt_output</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">dt</span><span class="p">)</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">dt_output</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">dt</span>
         <span class="k">except</span> <span class="ne">AssertionError</span> <span class="k">as</span> <span class="n">ae</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">ae</span><span class="p">,</span> <span class="s">&#39;dt_output not an integer multiple of dt&#39;</span>
+            <span class="k">raise</span> <span class="n">ae</span><span class="p">,</span> <span class="s1">&#39;dt_output not an integer multiple of dt&#39;</span>
         
         <span class="bp">self</span><span class="o">.</span><span class="n">decimatefrac</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dt_output</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">dt</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">POPULATIONSEED</span> <span class="o">=</span> <span class="n">POPULATIONSEED</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span> <span class="o">=</span> <span class="n">verbose</span>
         
-        <span class="c">#put revision info in savefolder</span>
+        <span class="c1">#put revision info in savefolder</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">savefolder</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s">&#39;git rev-parse HEAD -&gt; </span><span class="si">%s</span><span class="s">/populationRevision.txt&#39;</span> <span class="o">%</span> \
+            <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s1">&#39;git rev-parse HEAD -&gt; </span><span class="si">%s</span><span class="s1">/populationRevision.txt&#39;</span> <span class="o">%</span> \
                     <span class="bp">self</span><span class="o">.</span><span class="n">savefolder</span><span class="p">)</span>
 
-        <span class="c">#set the random seed for reproducible populations, synapse locations,</span>
-        <span class="c">#presynaptic spiketrains</span>
+        <span class="c1">#set the random seed for reproducible populations, synapse locations,</span>
+        <span class="c1">#presynaptic spiketrains</span>
         <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">POPULATIONSEED</span><span class="p">)</span>
 
-        <span class="c">#using these colors and alphas:</span>
+        <span class="c1">#using these colors and alphas:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">colors</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">POPULATION_SIZE</span><span class="p">):</span>
             <span class="n">i</span> <span class="o">*=</span> <span class="mf">256.</span>
@@ -297,7 +297,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">RANK_CELLINDICES</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">CELLINDICES</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">CELLINDICES</span> <span class="o">%</span> <span class="n">SIZE</span>
                                                  <span class="o">==</span> <span class="n">RANK</span><span class="p">]</span>
 
-        <span class="c">#container for single-cell output generated on this RANK</span>
+        <span class="c1">#container for single-cell output generated on this RANK</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">output</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">((</span><span class="n">i</span><span class="p">,</span> <span class="p">{})</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">RANK_CELLINDICES</span><span class="p">)</span>
 
 
@@ -321,17 +321,17 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">savefolder</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
             <span class="k">return</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">cells_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">savefolder</span><span class="p">,</span> <span class="s">&#39;cells&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cells_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">savefolder</span><span class="p">,</span> <span class="s1">&#39;cells&#39;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">RANK</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cells_path</span><span class="p">):</span>
                 <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cells_path</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">figures_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">savefolder</span><span class="p">,</span> <span class="s">&#39;figures&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">figures_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">savefolder</span><span class="p">,</span> <span class="s1">&#39;figures&#39;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">RANK</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">figures_path</span><span class="p">):</span>
                 <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">figures_path</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">populations_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">savefolder</span><span class="p">,</span> <span class="s">&#39;populations&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">populations_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">savefolder</span><span class="p">,</span> <span class="s1">&#39;populations&#39;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">RANK</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">populations_path</span><span class="p">):</span>
                 <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">populations_path</span><span class="p">)</span>
@@ -359,9 +359,9 @@
         <span class="k">for</span> <span class="n">cellindex</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">RANK_CELLINDICES</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">cellsim</span><span class="p">(</span><span class="n">cellindex</span><span class="p">)</span>
 
-        <span class="n">COMM</span><span class="o">.</span><span class="n">Barrier</span><span class="p">()</span>
+        <span class="n">COMM</span><span class="o">.</span><span class="n">Barrier</span><span class="p">()</span></div>
 
-</div>
+
 <div class="viewcode-block" id="PopulationSuper.cellsim"><a class="viewcode-back" href="../../index.html#hybridLFPy.PopulationSuper.cellsim">[docs]</a>    <span class="k">def</span> <span class="nf">cellsim</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cellindex</span><span class="p">,</span> <span class="n">return_just_cell</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Single-cell `LFPy.Cell` simulation without any stimulus, mostly for</span>
@@ -406,8 +406,8 @@
                 <span class="n">cell</span><span class="o">.</span><span class="n">tvec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">cell</span><span class="o">.</span><span class="n">totnsegs</span><span class="p">)</span>
                 <span class="n">cell</span><span class="o">.</span><span class="n">imem</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">cell</span><span class="o">.</span><span class="n">totnsegs</span><span class="p">)</span>
                 <span class="n">csdcoeff</span> <span class="o">=</span> <span class="n">csd</span><span class="o">.</span><span class="n">true_lam_csd</span><span class="p">(</span><span class="n">cell</span><span class="p">,</span>
-                                <span class="bp">self</span><span class="o">.</span><span class="n">populationParams</span><span class="p">[</span><span class="s">&#39;radius&#39;</span><span class="p">],</span> <span class="n">electrode</span><span class="o">.</span><span class="n">z</span><span class="p">)</span>
-                <span class="n">csdcoeff</span> <span class="o">*=</span> <span class="mf">1E6</span> <span class="c">#nA mum^-3 -&gt; muA mm^-3 conversion</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">populationParams</span><span class="p">[</span><span class="s1">&#39;radius&#39;</span><span class="p">],</span> <span class="n">electrode</span><span class="o">.</span><span class="n">z</span><span class="p">)</span>
+                <span class="n">csdcoeff</span> <span class="o">*=</span> <span class="mf">1E6</span> <span class="c1">#nA mum^-3 -&gt; muA mm^-3 conversion</span>
                 <span class="k">del</span> <span class="n">cell</span><span class="o">.</span><span class="n">tvec</span><span class="p">,</span> <span class="n">cell</span><span class="o">.</span><span class="n">imem</span>
                 <span class="n">cell</span><span class="o">.</span><span class="n">simulate</span><span class="p">(</span><span class="n">electrode</span><span class="p">,</span> <span class="n">dotprodcoeffs</span><span class="o">=</span><span class="p">[</span><span class="n">csdcoeff</span><span class="p">],</span>
                               <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">simulationParams</span><span class="p">)</span>
@@ -427,22 +427,22 @@
             <span class="n">cell</span><span class="o">.</span><span class="n">electrodecoeff</span> <span class="o">=</span> <span class="n">electrode</span><span class="o">.</span><span class="n">electrodecoeff</span>
 
 
-            <span class="c">#put all necessary cell output in output dict</span>
+            <span class="c1">#put all necessary cell output in output dict</span>
             <span class="k">for</span> <span class="n">attrbt</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">savelist</span><span class="p">:</span>
                 <span class="n">attr</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">cell</span><span class="p">,</span> <span class="n">attrbt</span><span class="p">)</span>
                 <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">[</span><span class="n">cellindex</span><span class="p">][</span><span class="n">attrbt</span><span class="p">]</span> <span class="o">=</span> <span class="n">attr</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s">&#39;float32&#39;</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">[</span><span class="n">cellindex</span><span class="p">][</span><span class="n">attrbt</span><span class="p">]</span> <span class="o">=</span> <span class="n">attr</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;float32&#39;</span><span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="k">try</span><span class="p">:</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">[</span><span class="n">cellindex</span><span class="p">][</span><span class="n">attrbt</span><span class="p">]</span> <span class="o">=</span> <span class="n">attr</span>
                     <span class="k">except</span><span class="p">:</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">[</span><span class="n">cellindex</span><span class="p">][</span><span class="n">attrbt</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">[</span><span class="n">cellindex</span><span class="p">][</span><span class="s">&#39;srate&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1E3</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">dt_output</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">[</span><span class="n">cellindex</span><span class="p">][</span><span class="s1">&#39;srate&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1E3</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">dt_output</span>
 
-            <span class="k">print</span><span class="p">(</span><span class="s">&#39;cell </span><span class="si">%s</span><span class="s"> population </span><span class="si">%s</span><span class="s"> in </span><span class="si">%.2f</span><span class="s"> s&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">cellindex</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">,</span>
-                                                              <span class="n">time</span><span class="p">()</span><span class="o">-</span><span class="n">tic</span><span class="p">))</span>
+            <span class="k">print</span><span class="p">(</span><span class="s1">&#39;cell </span><span class="si">%s</span><span class="s1"> population </span><span class="si">%s</span><span class="s1"> in </span><span class="si">%.2f</span><span class="s1"> s&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">cellindex</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">,</span>
+                                                              <span class="n">time</span><span class="p">()</span><span class="o">-</span><span class="n">tic</span><span class="p">))</span></div>
 
-</div>
+
 <div class="viewcode-block" id="PopulationSuper.set_pop_soma_pos"><a class="viewcode-back" href="../../index.html#hybridLFPy.PopulationSuper.set_pop_soma_pos">[docs]</a>    <span class="k">def</span> <span class="nf">set_pop_soma_pos</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set `pop_soma_pos` using draw_rand_pos().</span>
@@ -469,17 +469,17 @@
         <span class="n">tic</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">RANK</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">pop_soma_pos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">draw_rand_pos</span><span class="p">(</span>
-                <span class="n">min_r</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">electrodeParams</span><span class="p">[</span><span class="s">&#39;r_z&#39;</span><span class="p">],</span>
+                <span class="n">min_r</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">electrodeParams</span><span class="p">[</span><span class="s1">&#39;r_z&#39;</span><span class="p">],</span>
                 <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">populationParams</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">pop_soma_pos</span> <span class="o">=</span> <span class="bp">None</span>
 
         <span class="k">if</span> <span class="n">RANK</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">print</span><span class="p">(</span><span class="s">&#39;found cell positions in </span><span class="si">%.2f</span><span class="s"> s&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">time</span><span class="p">()</span><span class="o">-</span><span class="n">tic</span><span class="p">))</span>
+            <span class="k">print</span><span class="p">(</span><span class="s1">&#39;found cell positions in </span><span class="si">%.2f</span><span class="s1"> s&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">time</span><span class="p">()</span><span class="o">-</span><span class="n">tic</span><span class="p">))</span>
 
-        <span class="k">return</span> <span class="n">COMM</span><span class="o">.</span><span class="n">bcast</span><span class="p">(</span><span class="n">pop_soma_pos</span><span class="p">,</span> <span class="n">root</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">COMM</span><span class="o">.</span><span class="n">bcast</span><span class="p">(</span><span class="n">pop_soma_pos</span><span class="p">,</span> <span class="n">root</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span></div>
 
-</div>
+
 <div class="viewcode-block" id="PopulationSuper.set_rotations"><a class="viewcode-back" href="../../index.html#hybridLFPy.PopulationSuper.set_rotations">[docs]</a>    <span class="k">def</span> <span class="nf">set_rotations</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
         <span class="sd">&quot;&quot;&quot;</span>
@@ -514,11 +514,11 @@
             <span class="n">rotations</span> <span class="o">=</span> <span class="bp">None</span>
 
         <span class="k">if</span> <span class="n">RANK</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">print</span><span class="p">(</span><span class="s">&#39;found cell rotations in </span><span class="si">%.2f</span><span class="s"> s&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">time</span><span class="p">()</span><span class="o">-</span><span class="n">tic</span><span class="p">))</span>
+            <span class="k">print</span><span class="p">(</span><span class="s1">&#39;found cell rotations in </span><span class="si">%.2f</span><span class="s1"> s&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">time</span><span class="p">()</span><span class="o">-</span><span class="n">tic</span><span class="p">))</span>
 
-        <span class="k">return</span> <span class="n">COMM</span><span class="o">.</span><span class="n">bcast</span><span class="p">(</span><span class="n">rotations</span><span class="p">,</span> <span class="n">root</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">COMM</span><span class="o">.</span><span class="n">bcast</span><span class="p">(</span><span class="n">rotations</span><span class="p">,</span> <span class="n">root</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span></div>
 
-</div>
+
 <div class="viewcode-block" id="PopulationSuper.calc_min_cell_interdist"><a class="viewcode-back" href="../../index.html#hybridLFPy.PopulationSuper.calc_min_cell_interdist">[docs]</a>    <span class="k">def</span> <span class="nf">calc_min_cell_interdist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculate cell interdistance from input coordinates.</span>
@@ -545,9 +545,9 @@
             <span class="n">cell_interdist</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span>
             <span class="n">min_cell_interdist</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">cell_interdist</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
 
-        <span class="k">return</span> <span class="n">min_cell_interdist</span>
+        <span class="k">return</span> <span class="n">min_cell_interdist</span></div>
 
-</div>
+
 <div class="viewcode-block" id="PopulationSuper.draw_rand_pos"><a class="viewcode-back" href="../../index.html#hybridLFPy.PopulationSuper.draw_rand_pos">[docs]</a>    <span class="k">def</span> <span class="nf">draw_rand_pos</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">radius</span><span class="p">,</span> <span class="n">z_min</span><span class="p">,</span> <span class="n">z_max</span><span class="p">,</span>
                       <span class="n">min_r</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">]),</span> <span class="n">min_cell_interdist</span><span class="o">=</span><span class="mf">10.</span><span class="p">,</span> <span class="o">**</span><span class="n">args</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -604,7 +604,7 @@
 
         <span class="n">R_z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">x</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">y</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
 
-        <span class="c">#want to make sure that no somas are in the same place.</span>
+        <span class="c1">#want to make sure that no somas are in the same place.</span>
         <span class="n">cell_interdist</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">calc_min_cell_interdist</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">)</span>
 
         <span class="p">[</span><span class="n">u</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">logical_or</span><span class="p">((</span><span class="n">R_z</span> <span class="o">&lt;</span> <span class="n">minrz</span><span class="p">)</span> <span class="o">!=</span> <span class="p">(</span><span class="n">R_z</span> <span class="o">&gt;</span> <span class="n">radius</span><span class="p">),</span>
@@ -627,7 +627,7 @@
                     <span class="n">minrz</span><span class="p">[</span><span class="n">u</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">z</span><span class="p">[</span><span class="n">u</span><span class="p">[</span><span class="n">i</span><span class="p">]],</span> <span class="n">min_r</span><span class="p">[</span><span class="mi">0</span><span class="p">,],</span> <span class="n">min_r</span><span class="p">[</span><span class="mi">1</span><span class="p">,])</span>
             <span class="n">R_z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">x</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">y</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
 
-            <span class="c">#want to make sure that no somas are in the same place.</span>
+            <span class="c1">#want to make sure that no somas are in the same place.</span>
             <span class="n">cell_interdist</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">calc_min_cell_interdist</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">)</span>
 
             <span class="p">[</span><span class="n">u</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">logical_or</span><span class="p">((</span><span class="n">R_z</span> <span class="o">&lt;</span> <span class="n">minrz</span><span class="p">)</span> <span class="o">!=</span> <span class="p">(</span><span class="n">R_z</span> <span class="o">&gt;</span> <span class="n">radius</span><span class="p">),</span>
@@ -636,12 +636,12 @@
         
         <span class="n">soma_pos</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">POPULATION_SIZE</span><span class="p">):</span>
-            <span class="n">soma_pos</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s">&#39;xpos&#39;</span> <span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="s">&#39;ypos&#39;</span> <span class="p">:</span> <span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="s">&#39;zpos&#39;</span> <span class="p">:</span> <span class="n">z</span><span class="p">[</span><span class="n">i</span><span class="p">]})</span>
+            <span class="n">soma_pos</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s1">&#39;xpos&#39;</span> <span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="s1">&#39;ypos&#39;</span> <span class="p">:</span> <span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="s1">&#39;zpos&#39;</span> <span class="p">:</span> <span class="n">z</span><span class="p">[</span><span class="n">i</span><span class="p">]})</span>
 
-        <span class="k">return</span> <span class="n">soma_pos</span>
+        <span class="k">return</span> <span class="n">soma_pos</span></div>
 
-</div>
-<div class="viewcode-block" id="PopulationSuper.calc_signal_sum"><a class="viewcode-back" href="../../index.html#hybridLFPy.PopulationSuper.calc_signal_sum">[docs]</a>    <span class="k">def</span> <span class="nf">calc_signal_sum</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">measure</span><span class="o">=</span><span class="s">&#39;LFP&#39;</span><span class="p">):</span>
+
+<div class="viewcode-block" id="PopulationSuper.calc_signal_sum"><a class="viewcode-back" href="../../index.html#hybridLFPy.PopulationSuper.calc_signal_sum">[docs]</a>    <span class="k">def</span> <span class="nf">calc_signal_sum</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">measure</span><span class="o">=</span><span class="s1">&#39;LFP&#39;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Superimpose each cell&#39;s contribution to the compound population signal,</span>
 <span class="sd">        i.e., the population CSD or LFP</span>
@@ -659,7 +659,7 @@
 <span class="sd">            The populations-specific compound signal.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c">#compute the total LFP of cells on this RANK</span>
+        <span class="c1">#compute the total LFP of cells on this RANK</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">RANK_CELLINDICES</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">cellindex</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">RANK_CELLINDICES</span><span class="p">):</span>
                 <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
@@ -667,23 +667,23 @@
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">data</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">[</span><span class="n">cellindex</span><span class="p">][</span><span class="n">measure</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">electrodeParams</span><span class="p">[</span><span class="s">&#39;x&#39;</span><span class="p">]),</span>
-                             <span class="bp">self</span><span class="o">.</span><span class="n">cellParams</span><span class="p">[</span><span class="s">&#39;tstopms&#39;</span><span class="p">]</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">dt_output</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">electrodeParams</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]),</span>
+                             <span class="bp">self</span><span class="o">.</span><span class="n">cellParams</span><span class="p">[</span><span class="s1">&#39;tstopms&#39;</span><span class="p">]</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">dt_output</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span>
                 <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
 
-        <span class="c">#container for full LFP on RANK 0</span>
+        <span class="c1">#container for full LFP on RANK 0</span>
         <span class="k">if</span> <span class="n">RANK</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">DATA</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">DATA</span> <span class="o">=</span> <span class="bp">None</span>
 
-        <span class="c">#sum to RANK 0 using automatic type discovery with MPI</span>
+        <span class="c1">#sum to RANK 0 using automatic type discovery with MPI</span>
         <span class="n">COMM</span><span class="o">.</span><span class="n">Reduce</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">DATA</span><span class="p">,</span> <span class="n">op</span><span class="o">=</span><span class="n">MPI</span><span class="o">.</span><span class="n">SUM</span><span class="p">,</span> <span class="n">root</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">DATA</span>
+        <span class="k">return</span> <span class="n">DATA</span></div>
 
-</div>
-<div class="viewcode-block" id="PopulationSuper.collectSingleContribs"><a class="viewcode-back" href="../../index.html#hybridLFPy.PopulationSuper.collectSingleContribs">[docs]</a>    <span class="k">def</span> <span class="nf">collectSingleContribs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">measure</span><span class="o">=</span><span class="s">&#39;LFP&#39;</span><span class="p">):</span>
+
+<div class="viewcode-block" id="PopulationSuper.collectSingleContribs"><a class="viewcode-back" href="../../index.html#hybridLFPy.PopulationSuper.collectSingleContribs">[docs]</a>    <span class="k">def</span> <span class="nf">collectSingleContribs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">measure</span><span class="o">=</span><span class="s1">&#39;LFP&#39;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Collect single cell data and save them to HDF5 file.</span>
 <span class="sd">        The function will also return signals generated by all cells</span>
@@ -705,14 +705,14 @@
             <span class="k">assert</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">recordSingleContribFrac</span> <span class="o">&lt;=</span> <span class="mi">1</span> <span class="ow">and</span>
                    <span class="bp">self</span><span class="o">.</span><span class="n">recordSingleContribFrac</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">AssertionError</span> <span class="k">as</span> <span class="n">ae</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">ae</span><span class="p">,</span> <span class="s">&#39;recordSingleContribFrac {} not in [0, 1]&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="k">raise</span> <span class="n">ae</span><span class="p">,</span> <span class="s1">&#39;recordSingleContribFrac {} not in [0, 1]&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
                                                 <span class="bp">self</span><span class="o">.</span><span class="n">recordSingleContribFrac</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">recordSingleContribFrac</span><span class="p">:</span>
             <span class="k">return</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="c">#reconstruct RANK_CELLINDICES of all RANKs for controlling</span>
-            <span class="c">#communication</span>
+            <span class="c1">#reconstruct RANK_CELLINDICES of all RANKs for controlling</span>
+            <span class="c1">#communication</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">recordSingleContribFrac</span> <span class="o">==</span> <span class="mf">1.</span><span class="p">:</span>
                 <span class="n">SAMPLESIZE</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">POPULATION_SIZE</span>
                 <span class="n">RANK_CELLINDICES</span> <span class="o">=</span> <span class="p">[]</span>
@@ -727,7 +727,7 @@
                     <span class="n">ids</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">CELLINDICES</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">CELLINDICES</span> <span class="o">%</span> <span class="n">SIZE</span> <span class="o">==</span> <span class="n">i</span><span class="p">]</span>
                     <span class="n">RANK_CELLINDICES</span> <span class="o">+=</span> <span class="p">[</span><span class="n">ids</span><span class="p">[</span><span class="n">ids</span> <span class="o">&lt;</span> <span class="n">SAMPLESIZE</span><span class="p">]]</span>
 
-            <span class="c">#gather data on this RANK</span>
+            <span class="c1">#gather data on this RANK</span>
             <span class="k">if</span> <span class="n">RANK_CELLINDICES</span><span class="p">[</span><span class="n">RANK</span><span class="p">]</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">cellindex</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">RANK_CELLINDICES</span><span class="p">[</span><span class="n">RANK</span><span class="p">]):</span>
                     <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
@@ -738,52 +738,52 @@
                     <span class="n">data_temp</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">[</span><span class="n">cellindex</span><span class="p">][</span><span class="n">measure</span><span class="p">]</span>
 
             <span class="k">if</span> <span class="n">RANK</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="c">#container of all output</span>
+                <span class="c1">#container of all output</span>
                 <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="n">SAMPLESIZE</span><span class="p">]</span> <span class="o">+</span>
                                  <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">[</span><span class="n">cellindex</span><span class="p">][</span><span class="n">measure</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">),</span>
                                  <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
 
-                <span class="c">#fill in values from this RANK</span>
+                <span class="c1">#fill in values from this RANK</span>
                 <span class="k">if</span> <span class="n">RANK_CELLINDICES</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
                     <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">RANK_CELLINDICES</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
                         <span class="n">data</span><span class="p">[</span><span class="n">k</span><span class="p">,</span> <span class="p">]</span> <span class="o">=</span> <span class="n">data_temp</span><span class="p">[</span><span class="n">j</span><span class="p">,</span> <span class="p">]</span>
 
-                <span class="c">#iterate over all other RANKs</span>
+                <span class="c1">#iterate over all other RANKs</span>
                 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">RANK_CELLINDICES</span><span class="p">)):</span>
                     <span class="k">if</span> <span class="n">RANK_CELLINDICES</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-                        <span class="c">#receive on RANK 0 from all other RANK</span>
+                        <span class="c1">#receive on RANK 0 from all other RANK</span>
                         <span class="n">data_temp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="n">RANK_CELLINDICES</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">size</span><span class="p">]</span> <span class="o">+</span>
                                         <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">[</span><span class="n">cellindex</span>
                                                          <span class="p">][</span><span class="n">measure</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">),</span>
                                         <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
                         <span class="n">COMM</span><span class="o">.</span><span class="n">Recv</span><span class="p">([</span><span class="n">data_temp</span><span class="p">,</span> <span class="n">MPI</span><span class="o">.</span><span class="n">FLOAT</span><span class="p">],</span> <span class="n">source</span><span class="o">=</span><span class="n">i</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="mi">13</span><span class="p">)</span>
 
-                        <span class="c">#fill in values</span>
+                        <span class="c1">#fill in values</span>
                         <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">RANK_CELLINDICES</span><span class="p">[</span><span class="n">i</span><span class="p">]):</span>
                             <span class="n">data</span><span class="p">[</span><span class="n">k</span><span class="p">,</span> <span class="p">]</span> <span class="o">=</span> <span class="n">data_temp</span><span class="p">[</span><span class="n">j</span><span class="p">,</span> <span class="p">]</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">data</span> <span class="o">=</span> <span class="bp">None</span>
                 <span class="k">if</span> <span class="n">RANK_CELLINDICES</span><span class="p">[</span><span class="n">RANK</span><span class="p">]</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-                    <span class="c">#send to RANK 0</span>
+                    <span class="c1">#send to RANK 0</span>
                     <span class="n">COMM</span><span class="o">.</span><span class="n">Send</span><span class="p">([</span><span class="n">data_temp</span><span class="p">,</span> <span class="n">MPI</span><span class="o">.</span><span class="n">FLOAT</span><span class="p">],</span> <span class="n">dest</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="mi">13</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="n">RANK</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="c">#save all single-cell data to file</span>
+                <span class="c1">#save all single-cell data to file</span>
                 <span class="n">fname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">populations_path</span><span class="p">,</span>
-                                     <span class="s">&#39;</span><span class="si">%s</span><span class="s">_</span><span class="si">%s</span><span class="s">s.h5&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">measure</span><span class="p">))</span>
-                <span class="n">f</span> <span class="o">=</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="s">&#39;w&#39;</span><span class="p">)</span>
-                <span class="n">f</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s">&#39;data&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">compression</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
-                <span class="n">f</span><span class="p">[</span><span class="s">&#39;srate&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s">&#39;srate&#39;</span><span class="p">]</span>
+                                     <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">_</span><span class="si">%s</span><span class="s1">s.h5&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">measure</span><span class="p">))</span>
+                <span class="n">f</span> <span class="o">=</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">compression</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+                <span class="n">f</span><span class="p">[</span><span class="s1">&#39;srate&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;srate&#39;</span><span class="p">]</span>
                 <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
                 <span class="k">assert</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">fname</span><span class="p">))</span>
 
-                <span class="k">print</span><span class="p">(</span><span class="s">&#39;file </span><span class="si">%s</span><span class="s">_</span><span class="si">%s</span><span class="s">s.h5 ok&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">measure</span><span class="p">))</span>
+                <span class="k">print</span><span class="p">(</span><span class="s1">&#39;file </span><span class="si">%s</span><span class="s1">_</span><span class="si">%s</span><span class="s1">s.h5 ok&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">measure</span><span class="p">))</span>
 
             <span class="n">COMM</span><span class="o">.</span><span class="n">Barrier</span><span class="p">()</span>
 
-            <span class="k">return</span> <span class="n">data</span>
+            <span class="k">return</span> <span class="n">data</span></div>
 
-</div>
+
 <div class="viewcode-block" id="PopulationSuper.collect_data"><a class="viewcode-back" href="../../index.html#hybridLFPy.PopulationSuper.collect_data">[docs]</a>    <span class="k">def</span> <span class="nf">collect_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Collect LFPs, CSDs and soma traces from each simulated population,</span>
@@ -800,80 +800,80 @@
 <span class="sd">        None</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c">#collect some measurements resolved per file and save to file</span>
-        <span class="k">for</span> <span class="n">measure</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&#39;LFP&#39;</span><span class="p">,</span> <span class="s">&#39;CSD&#39;</span><span class="p">]:</span>
+        <span class="c1">#collect some measurements resolved per file and save to file</span>
+        <span class="k">for</span> <span class="n">measure</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;LFP&#39;</span><span class="p">,</span> <span class="s1">&#39;CSD&#39;</span><span class="p">]:</span>
             <span class="k">if</span> <span class="n">measure</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">savelist</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">collectSingleContribs</span><span class="p">(</span><span class="n">measure</span><span class="p">)</span>
 
 
-        <span class="c">#calculate lfp from all cell contribs</span>
-        <span class="n">lfp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">calc_signal_sum</span><span class="p">(</span><span class="n">measure</span><span class="o">=</span><span class="s">&#39;LFP&#39;</span><span class="p">)</span>
+        <span class="c1">#calculate lfp from all cell contribs</span>
+        <span class="n">lfp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">calc_signal_sum</span><span class="p">(</span><span class="n">measure</span><span class="o">=</span><span class="s1">&#39;LFP&#39;</span><span class="p">)</span>
 
-        <span class="c">#calculate CSD in every lamina</span>
+        <span class="c1">#calculate CSD in every lamina</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">calculateCSD</span><span class="p">:</span>
-            <span class="n">csd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">calc_signal_sum</span><span class="p">(</span><span class="n">measure</span><span class="o">=</span><span class="s">&#39;CSD&#39;</span><span class="p">)</span>
+            <span class="n">csd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">calc_signal_sum</span><span class="p">(</span><span class="n">measure</span><span class="o">=</span><span class="s1">&#39;CSD&#39;</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">RANK</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">POPULATION_SIZE</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="c">#saving LFPs</span>
-            <span class="k">if</span> <span class="s">&#39;LFP&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">savelist</span><span class="p">:</span>
+            <span class="c1">#saving LFPs</span>
+            <span class="k">if</span> <span class="s1">&#39;LFP&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">savelist</span><span class="p">:</span>
                 <span class="n">fname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">populations_path</span><span class="p">,</span>
                                      <span class="bp">self</span><span class="o">.</span><span class="n">output_file</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">,</span>
-                                                             <span class="s">&#39;LFP&#39;</span><span class="p">)</span><span class="o">+</span><span class="s">&#39;.h5&#39;</span><span class="p">)</span>
-                <span class="n">f</span> <span class="o">=</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="s">&#39;w&#39;</span><span class="p">)</span>
-                <span class="n">f</span><span class="p">[</span><span class="s">&#39;srate&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1E3</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">dt_output</span>
-                <span class="n">f</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s">&#39;data&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">lfp</span><span class="p">,</span> <span class="n">compression</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+                                                             <span class="s1">&#39;LFP&#39;</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;.h5&#39;</span><span class="p">)</span>
+                <span class="n">f</span> <span class="o">=</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
+                <span class="n">f</span><span class="p">[</span><span class="s1">&#39;srate&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1E3</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">dt_output</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">lfp</span><span class="p">,</span> <span class="n">compression</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
                 <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
                 <span class="k">del</span> <span class="n">lfp</span>
                 <span class="k">assert</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">fname</span><span class="p">))</span>
-                <span class="k">print</span><span class="p">(</span><span class="s">&#39;save lfp ok&#39;</span><span class="p">)</span>
+                <span class="k">print</span><span class="p">(</span><span class="s1">&#39;save lfp ok&#39;</span><span class="p">)</span>
 
 
-            <span class="c">#saving CSDs</span>
-            <span class="k">if</span> <span class="s">&#39;CSD&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">savelist</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">calculateCSD</span><span class="p">:</span>
+            <span class="c1">#saving CSDs</span>
+            <span class="k">if</span> <span class="s1">&#39;CSD&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">savelist</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">calculateCSD</span><span class="p">:</span>
                 <span class="n">fname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">populations_path</span><span class="p">,</span>
                                      <span class="bp">self</span><span class="o">.</span><span class="n">output_file</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">,</span>
-                                                             <span class="s">&#39;CSD&#39;</span><span class="p">)</span><span class="o">+</span><span class="s">&#39;.h5&#39;</span><span class="p">)</span>
-                <span class="n">f</span> <span class="o">=</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="s">&#39;w&#39;</span><span class="p">)</span>
-                <span class="n">f</span><span class="p">[</span><span class="s">&#39;srate&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1E3</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">dt_output</span>
-                <span class="n">f</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s">&#39;data&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">csd</span><span class="p">,</span> <span class="n">compression</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+                                                             <span class="s1">&#39;CSD&#39;</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;.h5&#39;</span><span class="p">)</span>
+                <span class="n">f</span> <span class="o">=</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
+                <span class="n">f</span><span class="p">[</span><span class="s1">&#39;srate&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1E3</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">dt_output</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">csd</span><span class="p">,</span> <span class="n">compression</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
                 <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
                 <span class="k">del</span> <span class="n">csd</span>
                 <span class="k">assert</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">fname</span><span class="p">))</span>
-                <span class="k">print</span><span class="p">(</span><span class="s">&#39;save CSD ok&#39;</span><span class="p">)</span>
+                <span class="k">print</span><span class="p">(</span><span class="s1">&#39;save CSD ok&#39;</span><span class="p">)</span>
 
 
-            <span class="c">#save the somatic placements:</span>
+            <span class="c1">#save the somatic placements:</span>
             <span class="n">pop_soma_pos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">POPULATION_SIZE</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
-            <span class="n">keys</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;xpos&#39;</span><span class="p">,</span> <span class="s">&#39;ypos&#39;</span><span class="p">,</span> <span class="s">&#39;zpos&#39;</span><span class="p">]</span>
+            <span class="n">keys</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;xpos&#39;</span><span class="p">,</span> <span class="s1">&#39;ypos&#39;</span><span class="p">,</span> <span class="s1">&#39;zpos&#39;</span><span class="p">]</span>
             <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">POPULATION_SIZE</span><span class="p">):</span>
                 <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
                     <span class="n">pop_soma_pos</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pop_soma_pos</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">keys</span><span class="p">[</span><span class="n">j</span><span class="p">]]</span>
             <span class="n">fname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">populations_path</span><span class="p">,</span>
-                                 <span class="bp">self</span><span class="o">.</span><span class="n">output_file</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="s">&#39;somapos.gdf&#39;</span><span class="p">))</span>
+                                 <span class="bp">self</span><span class="o">.</span><span class="n">output_file</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="s1">&#39;somapos.gdf&#39;</span><span class="p">))</span>
             <span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">pop_soma_pos</span><span class="p">)</span>
             <span class="k">assert</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">fname</span><span class="p">))</span>
-            <span class="k">print</span><span class="p">(</span><span class="s">&#39;save somapos ok&#39;</span><span class="p">)</span>
+            <span class="k">print</span><span class="p">(</span><span class="s1">&#39;save somapos ok&#39;</span><span class="p">)</span>
 
-            <span class="c">#save rotations using hdf5</span>
+            <span class="c1">#save rotations using hdf5</span>
             <span class="n">fname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">populations_path</span><span class="p">,</span>
-                                    <span class="bp">self</span><span class="o">.</span><span class="n">output_file</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="s">&#39;rotations.h5&#39;</span><span class="p">))</span>
-            <span class="n">f</span> <span class="o">=</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="s">&#39;w&#39;</span><span class="p">)</span>
-            <span class="n">f</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s">&#39;x&#39;</span><span class="p">,</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rotations</span><span class="p">),))</span>
-            <span class="n">f</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s">&#39;y&#39;</span><span class="p">,</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rotations</span><span class="p">),))</span>
-            <span class="n">f</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s">&#39;z&#39;</span><span class="p">,</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rotations</span><span class="p">),))</span>
+                                    <span class="bp">self</span><span class="o">.</span><span class="n">output_file</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="s1">&#39;rotations.h5&#39;</span><span class="p">))</span>
+            <span class="n">f</span> <span class="o">=</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rotations</span><span class="p">),))</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rotations</span><span class="p">),))</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s1">&#39;z&#39;</span><span class="p">,</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rotations</span><span class="p">),))</span>
 
             <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">rot</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rotations</span><span class="p">):</span>
                 <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">rot</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
                     <span class="n">f</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
             <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
             <span class="k">assert</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">fname</span><span class="p">))</span>
-            <span class="k">print</span><span class="p">(</span><span class="s">&#39;save rotations ok&#39;</span><span class="p">)</span>
+            <span class="k">print</span><span class="p">(</span><span class="s1">&#39;save rotations ok&#39;</span><span class="p">)</span>
 
 
-        <span class="c">#resync threads</span>
-        <span class="n">COMM</span><span class="o">.</span><span class="n">Barrier</span><span class="p">()</span>
+        <span class="c1">#resync threads</span>
+        <span class="n">COMM</span><span class="o">.</span><span class="n">Barrier</span><span class="p">()</span></div></div>
 
-</div></div>
+
 <div class="viewcode-block" id="Population"><a class="viewcode-back" href="../../index.html#hybridLFPy.Population">[docs]</a><span class="k">class</span> <span class="nc">Population</span><span class="p">(</span><span class="n">PopulationSuper</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Class `hybridLFPy.Population`, inherited from class `PopulationSuper`.</span>
@@ -917,22 +917,26 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-                <span class="n">X</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;EX&#39;</span><span class="p">,</span> <span class="s">&#39;IN&#39;</span><span class="p">],</span>
-                <span class="n">networkSim</span> <span class="o">=</span> <span class="s">&#39;hybridLFPy.cachednetworks.CachedNetwork&#39;</span><span class="p">,</span>
+                <span class="n">X</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;EX&#39;</span><span class="p">,</span> <span class="s1">&#39;IN&#39;</span><span class="p">],</span>
+                <span class="n">networkSim</span> <span class="o">=</span> <span class="s1">&#39;hybridLFPy.cachednetworks.CachedNetwork&#39;</span><span class="p">,</span>
                 <span class="n">k_yXL</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">20</span><span class="p">,</span>  <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">20</span><span class="p">,</span> <span class="mi">10</span><span class="p">]],</span>
                 <span class="n">synParams</span> <span class="o">=</span> <span class="p">{</span>
-                    <span class="s">&#39;EX&#39;</span><span class="p">:</span> <span class="p">{</span>
-                        <span class="s">&#39;section&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;apic&#39;</span><span class="p">,</span> <span class="s">&#39;dend&#39;</span><span class="p">],</span>
-                        <span class="s">&#39;syntype&#39;</span><span class="p">:</span> <span class="s">&#39;AlphaISyn&#39;</span><span class="p">,</span>
-                        <span class="s">&#39;tau&#39;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">},</span>
-                    <span class="s">&#39;IN&#39;</span><span class="p">:</span> <span class="p">{</span>
-                        <span class="s">&#39;section&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;dend&#39;</span><span class="p">],</span>
-                        <span class="s">&#39;syntype&#39;</span><span class="p">:</span> <span class="s">&#39;AlphaISyn&#39;</span><span class="p">,</span>
-                        <span class="s">&#39;tau&#39;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">}},</span>
+                    <span class="s1">&#39;EX&#39;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="s1">&#39;section&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;apic&#39;</span><span class="p">,</span> <span class="s1">&#39;dend&#39;</span><span class="p">],</span>
+                        <span class="s1">&#39;syntype&#39;</span><span class="p">:</span> <span class="s1">&#39;AlphaISyn&#39;</span><span class="p">,</span>
+                        <span class="c1"># &#39;tau&#39;: [0.5, 0.5]</span>
+                        <span class="p">},</span>
+                    <span class="s1">&#39;IN&#39;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="s1">&#39;section&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;dend&#39;</span><span class="p">],</span>
+                        <span class="s1">&#39;syntype&#39;</span><span class="p">:</span> <span class="s1">&#39;AlphaISyn&#39;</span><span class="p">,</span>
+                        <span class="c1"># &#39;tau&#39;: [0.5, 0.5],</span>
+                        <span class="p">},</span>
+                    <span class="p">},</span>
                 <span class="n">synDelayLoc</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.5</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">],</span>
                 <span class="n">synDelayScale</span> <span class="o">=</span> <span class="p">[</span><span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">],</span>
                 <span class="n">J_yX</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.20680155243678455</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.2408093146207075</span><span class="p">],</span>
-                <span class="c">#calculateCSD = True,</span>
+                <span class="n">tau_yX</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],</span>
+                <span class="c1">#calculateCSD = True,</span>
                 <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Class `hybridLFPy.Population`, inherited from class `PopulationSuper`.</span>
@@ -954,14 +958,18 @@
 <span class="sd">        synParams : dict of dicts</span>
 <span class="sd">            Synapse parameters (cf. `LFPy.Synapse` class).</span>
 <span class="sd">            Each toplevel key denote each presynaptic population,</span>
-<span class="sd">            bottom-level dicts are parameters passed to `LFPy.Synapse`.</span>
+<span class="sd">            bottom-level dicts are parameters passed to `LFPy.Synapse`, however,</span>
+<span class="sd">            time constants `tau&#39; takes one value per presynaptic population. </span>
 <span class="sd">        synDelayLoc : list</span>
 <span class="sd">            Average synapse delay for each presynapse connection.</span>
 <span class="sd">        synDelayScale : list</span>
 <span class="sd">            Synapse delay std for each presynapse connection.</span>
 <span class="sd">        J_yX : list of floats</span>
-<span class="sd">            Synapse weights for connections of each presynaptic population, see</span>
-<span class="sd">            class `LFPy.Synapse`</span>
+<span class="sd">            Synapse weights for connections from each presynaptic population,</span>
+<span class="sd">            see class `LFPy.Synapse`</span>
+<span class="sd">        tau_yX : list of floats</span>
+<span class="sd">            Synapse time constants for connections from each presynaptic</span>
+<span class="sd">            population</span>
 <span class="sd">        #calculateCSD : bool</span>
 <span class="sd">        #    Flag for computing the ground-source CSD.</span>
 
@@ -979,33 +987,34 @@
         <span class="n">tic</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span>
 
         <span class="n">PopulationSuper</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="c">#set some class attributes</span>
+        <span class="c1">#set some class attributes</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">X</span> <span class="o">=</span> <span class="n">X</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">networkSim</span> <span class="o">=</span> <span class="n">networkSim</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">k_yXL</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">k_yXL</span><span class="p">)</span>
 
 
-        <span class="c">#local copy of synapse parameters</span>
+        <span class="c1">#local copy of synapse parameters</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">synParams</span> <span class="o">=</span> <span class="n">synParams</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">synDelayLoc</span> <span class="o">=</span> <span class="n">synDelayLoc</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">synDelayScale</span> <span class="o">=</span> <span class="n">synDelayScale</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">J_yX</span> <span class="o">=</span> <span class="n">J_yX</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tau_yX</span> <span class="o">=</span> <span class="n">tau_yX</span>
 
 
-        <span class="c">#Now loop over all cells in the population and assess</span>
-        <span class="c"># - number of synapses in each z-interval (from layerbounds)</span>
-        <span class="c"># - placement of synapses in each z-interval</span>
+        <span class="c1">#Now loop over all cells in the population and assess</span>
+        <span class="c1"># - number of synapses in each z-interval (from layerbounds)</span>
+        <span class="c1"># - placement of synapses in each z-interval</span>
 
-        <span class="c">#get in this order, the</span>
-        <span class="c"># - postsynaptic compartment indices</span>
-        <span class="c"># - presynaptic cell indices</span>
-        <span class="c"># - synapse delays per connection</span>
+        <span class="c1">#get in this order, the</span>
+        <span class="c1"># - postsynaptic compartment indices</span>
+        <span class="c1"># - presynaptic cell indices</span>
+        <span class="c1"># - synapse delays per connection</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">synIdx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_all_synIdx</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">SpCells</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_all_SpCells</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">synDelays</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_all_synDelays</span><span class="p">()</span>
 
         <span class="k">if</span> <span class="n">RANK</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">print</span><span class="p">(</span><span class="s">&quot;population initialized in </span><span class="si">%.2f</span><span class="s"> seconds&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">time</span><span class="p">()</span><span class="o">-</span><span class="n">tic</span><span class="p">))</span>
+            <span class="k">print</span><span class="p">(</span><span class="s2">&quot;population initialized in </span><span class="si">%.2f</span><span class="s2"> seconds&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">time</span><span class="p">()</span><span class="o">-</span><span class="n">tic</span><span class="p">))</span>
 
 
 <div class="viewcode-block" id="Population.get_all_synIdx"><a class="viewcode-back" href="../../index.html#hybridLFPy.Population.get_all_synIdx">[docs]</a>    <span class="k">def</span> <span class="nf">get_all_synIdx</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -1034,43 +1043,43 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">tic</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span>
 
-        <span class="c">#containers for synapse idxs existing on this rank</span>
+        <span class="c1">#containers for synapse idxs existing on this rank</span>
         <span class="n">synIdx</span> <span class="o">=</span> <span class="p">{}</span>
 
 
-        <span class="c">#ok then, we will draw random numbers across ranks, which have to</span>
-        <span class="c">#be unique per cell. Now, we simply record the random state,</span>
-        <span class="c">#change the seed per cell, and put the original state back below.</span>
+        <span class="c1">#ok then, we will draw random numbers across ranks, which have to</span>
+        <span class="c1">#be unique per cell. Now, we simply record the random state,</span>
+        <span class="c1">#change the seed per cell, and put the original state back below.</span>
         <span class="n">randomstate</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">get_state</span><span class="p">()</span>
 
         <span class="k">for</span> <span class="n">cellindex</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">RANK_CELLINDICES</span><span class="p">:</span>
-            <span class="c">#set the random seed on for each cellindex</span>
+            <span class="c1">#set the random seed on for each cellindex</span>
             <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">POPULATIONSEED</span> <span class="o">+</span> <span class="n">cellindex</span><span class="p">)</span>
 
-            <span class="c">#find synapse locations for cell in parallel</span>
+            <span class="c1">#find synapse locations for cell in parallel</span>
             <span class="n">synIdx</span><span class="p">[</span><span class="n">cellindex</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_synidx</span><span class="p">(</span><span class="n">cellindex</span><span class="p">)</span>
 
-        <span class="c">#reset the random number generator</span>
+        <span class="c1">#reset the random number generator</span>
         <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span><span class="n">randomstate</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">RANK</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">print</span><span class="p">(</span><span class="s">&#39;found synapse locations in </span><span class="si">%.2f</span><span class="s"> seconds&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">time</span><span class="p">()</span><span class="o">-</span><span class="n">tic</span><span class="p">))</span>
+            <span class="k">print</span><span class="p">(</span><span class="s1">&#39;found synapse locations in </span><span class="si">%.2f</span><span class="s1"> seconds&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">time</span><span class="p">()</span><span class="o">-</span><span class="n">tic</span><span class="p">))</span>
 
-        <span class="c">#print the number of synapses per layer from which presynapse population</span>
+        <span class="c1">#print the number of synapses per layer from which presynapse population</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">cellindex</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">RANK_CELLINDICES</span><span class="p">:</span>
                 <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">synidx</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">synIdx</span><span class="p">[</span><span class="n">cellindex</span><span class="p">]):</span>
-                    <span class="k">print</span><span class="p">(</span><span class="s">&#39;to:</span><span class="se">\t</span><span class="si">%s</span><span class="se">\t</span><span class="s">cell:</span><span class="se">\t</span><span class="si">%i</span><span class="se">\t</span><span class="s">from:</span><span class="se">\t</span><span class="si">%s</span><span class="s">:&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">,</span>
+                    <span class="k">print</span><span class="p">(</span><span class="s1">&#39;to:</span><span class="se">\t</span><span class="si">%s</span><span class="se">\t</span><span class="s1">cell:</span><span class="se">\t</span><span class="si">%i</span><span class="se">\t</span><span class="s1">from:</span><span class="se">\t</span><span class="si">%s</span><span class="s1">:&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">,</span>
                                                 <span class="n">cellindex</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">i</span><span class="p">]),)</span>
                     <span class="n">idxcount</span> <span class="o">=</span> <span class="mi">0</span>
                     <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">synidx</span><span class="p">:</span>
                         <span class="n">idxcount</span> <span class="o">+=</span> <span class="n">idx</span><span class="o">.</span><span class="n">size</span>
-                        <span class="k">print</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\t</span><span class="si">%i</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">idx</span><span class="o">.</span><span class="n">size</span><span class="p">,)</span>
-                    <span class="k">print</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\t</span><span class="s">total </span><span class="si">%i</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">idxcount</span><span class="p">)</span>
+                        <span class="k">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t</span><span class="si">%i</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">idx</span><span class="o">.</span><span class="n">size</span><span class="p">,)</span>
+                    <span class="k">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">total </span><span class="si">%i</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">idxcount</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">synIdx</span>
+        <span class="k">return</span> <span class="n">synIdx</span></div>
 
-</div>
+
 <div class="viewcode-block" id="Population.get_all_SpCells"><a class="viewcode-back" href="../../index.html#hybridLFPy.Population.get_all_SpCells">[docs]</a>    <span class="k">def</span> <span class="nf">get_all_SpCells</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        For each postsynaptic cell existing on this RANK, load or compute</span>
@@ -1098,16 +1107,16 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">tic</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span>
 
-        <span class="c">#container</span>
+        <span class="c1">#container</span>
         <span class="n">SpCells</span> <span class="o">=</span> <span class="p">{}</span>
 
-        <span class="c">#ok then, we will draw random numbers across ranks, which have to</span>
-        <span class="c">#be unique per cell. Now, we simply record the random state,</span>
-        <span class="c">#change the seed per cell, and put the original state back below.</span>
+        <span class="c1">#ok then, we will draw random numbers across ranks, which have to</span>
+        <span class="c1">#be unique per cell. Now, we simply record the random state,</span>
+        <span class="c1">#change the seed per cell, and put the original state back below.</span>
         <span class="n">randomstate</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">get_state</span><span class="p">()</span>
 
         <span class="k">for</span> <span class="n">cellindex</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">RANK_CELLINDICES</span><span class="p">:</span>
-            <span class="c">#set the random seed on for each cellindex</span>
+            <span class="c1">#set the random seed on for each cellindex</span>
             <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">POPULATIONSEED</span> <span class="o">+</span> <span class="n">cellindex</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">POPULATION_SIZE</span><span class="p">)</span>
 
             <span class="n">SpCells</span><span class="p">[</span><span class="n">cellindex</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
@@ -1115,15 +1124,15 @@
                 <span class="n">SpCells</span><span class="p">[</span><span class="n">cellindex</span><span class="p">][</span><span class="n">X</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fetchSpCells</span><span class="p">(</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">networkSim</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">X</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">k_yXL</span><span class="p">[:,</span> <span class="n">i</span><span class="p">])</span>
 
-        <span class="c">#reset the random number generator</span>
+        <span class="c1">#reset the random number generator</span>
         <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span><span class="n">randomstate</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">RANK</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">print</span><span class="p">(</span><span class="s">&#39;found presynaptic cells in </span><span class="si">%.2f</span><span class="s"> seconds&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">time</span><span class="p">()</span><span class="o">-</span><span class="n">tic</span><span class="p">))</span>
+            <span class="k">print</span><span class="p">(</span><span class="s1">&#39;found presynaptic cells in </span><span class="si">%.2f</span><span class="s1"> seconds&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">time</span><span class="p">()</span><span class="o">-</span><span class="n">tic</span><span class="p">))</span>
 
-        <span class="k">return</span> <span class="n">SpCells</span>
+        <span class="k">return</span> <span class="n">SpCells</span></div>
 
-</div>
+
 <div class="viewcode-block" id="Population.get_all_synDelays"><a class="viewcode-back" href="../../index.html#hybridLFPy.Population.get_all_synDelays">[docs]</a>    <span class="k">def</span> <span class="nf">get_all_synDelays</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Create and load arrays of connection delays per connection on this rank</span>
@@ -1155,16 +1164,16 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">tic</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span>
 
-        <span class="c">#ok then, we will draw random numbers across ranks, which have to</span>
-        <span class="c">#be unique per cell. Now, we simply record the random state,</span>
-        <span class="c">#change the seed per cell, and put the original state back below.</span>
+        <span class="c1">#ok then, we will draw random numbers across ranks, which have to</span>
+        <span class="c1">#be unique per cell. Now, we simply record the random state,</span>
+        <span class="c1">#change the seed per cell, and put the original state back below.</span>
         <span class="n">randomstate</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">get_state</span><span class="p">()</span>
 
-        <span class="c">#container</span>
+        <span class="c1">#container</span>
         <span class="n">delays</span> <span class="o">=</span> <span class="p">{}</span>
 
         <span class="k">for</span> <span class="n">cellindex</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">RANK_CELLINDICES</span><span class="p">:</span>
-            <span class="c">#set the random seed on for each cellindex</span>
+            <span class="c1">#set the random seed on for each cellindex</span>
             <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">POPULATIONSEED</span> <span class="o">+</span> <span class="n">cellindex</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">POPULATION_SIZE</span><span class="p">)</span>
 
             <span class="n">delays</span><span class="p">[</span><span class="n">cellindex</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
@@ -1187,15 +1196,15 @@
                         <span class="n">delay</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">synDelayLoc</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
                     <span class="n">delays</span><span class="p">[</span><span class="n">cellindex</span><span class="p">][</span><span class="n">X</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">delay</span><span class="p">)</span>
 
-        <span class="c">#reset the random number generator</span>
+        <span class="c1">#reset the random number generator</span>
         <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span><span class="n">randomstate</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">RANK</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">print</span><span class="p">(</span><span class="s">&#39;found delays in </span><span class="si">%.2f</span><span class="s"> seconds&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">time</span><span class="p">()</span><span class="o">-</span><span class="n">tic</span><span class="p">))</span>
+            <span class="k">print</span><span class="p">(</span><span class="s1">&#39;found delays in </span><span class="si">%.2f</span><span class="s1"> seconds&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">time</span><span class="p">()</span><span class="o">-</span><span class="n">tic</span><span class="p">))</span>
 
-        <span class="k">return</span> <span class="n">delays</span>
+        <span class="k">return</span> <span class="n">delays</span></div>
 
-</div>
+
 <div class="viewcode-block" id="Population.get_synidx"><a class="viewcode-back" href="../../index.html#hybridLFPy.Population.get_synidx">[docs]</a>    <span class="k">def</span> <span class="nf">get_synidx</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cellindex</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Local function, draw and return synapse locations corresponding</span>
@@ -1220,23 +1229,23 @@
 <span class="sd">        Population.get_all_synIdx, Population.fetchSynIdxCell</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c">#create a cell instance</span>
+        <span class="c1">#create a cell instance</span>
         <span class="n">cell</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cellsim</span><span class="p">(</span><span class="n">cellindex</span><span class="p">,</span> <span class="n">return_just_cell</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 
 
-        <span class="c">#local containers</span>
+        <span class="c1">#local containers</span>
         <span class="n">synidx</span> <span class="o">=</span> <span class="p">{}</span>
 
-        <span class="c">#get synaptic placements and cells from the network,</span>
-        <span class="c">#then set spike times,</span>
+        <span class="c1">#get synaptic placements and cells from the network,</span>
+        <span class="c1">#then set spike times,</span>
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">X</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">):</span>
             <span class="n">synidx</span><span class="p">[</span><span class="n">X</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fetchSynIdxCell</span><span class="p">(</span><span class="n">cell</span><span class="o">=</span><span class="n">cell</span><span class="p">,</span>
                                              <span class="n">nidx</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">k_yXL</span><span class="p">[:,</span> <span class="n">i</span><span class="p">],</span>
                                              <span class="n">synParams</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">synParams</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
 
-        <span class="k">return</span> <span class="n">synidx</span>
+        <span class="k">return</span> <span class="n">synidx</span></div>
 
-</div>
+
 <div class="viewcode-block" id="Population.fetchSynIdxCell"><a class="viewcode-back" href="../../index.html#hybridLFPy.Population.fetchSynIdxCell">[docs]</a>    <span class="k">def</span> <span class="nf">fetchSynIdxCell</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cell</span><span class="p">,</span> <span class="n">nidx</span><span class="p">,</span> <span class="n">synParams</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Find possible synaptic placements for each cell</span>
@@ -1268,21 +1277,21 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="c">#segment indices in each layer is stored here, list of np.array</span>
+        <span class="c1">#segment indices in each layer is stored here, list of np.array</span>
         <span class="n">syn_idx</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="c">#loop over layer bounds, find synapse locations</span>
+        <span class="c1">#loop over layer bounds, find synapse locations</span>
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">zz</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">layerBoundaries</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">nidx</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="n">syn_idx</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">))</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">syn_idx</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cell</span><span class="o">.</span><span class="n">get_rand_idx_area_norm</span><span class="p">(</span>
-                                <span class="n">section</span><span class="o">=</span><span class="n">synParams</span><span class="p">[</span><span class="s">&#39;section&#39;</span><span class="p">],</span>
+                                <span class="n">section</span><span class="o">=</span><span class="n">synParams</span><span class="p">[</span><span class="s1">&#39;section&#39;</span><span class="p">],</span>
                                 <span class="n">nidx</span><span class="o">=</span><span class="n">nidx</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
                                 <span class="n">z_min</span><span class="o">=</span><span class="n">zz</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span>
-                                <span class="n">z_max</span><span class="o">=</span><span class="n">zz</span><span class="o">.</span><span class="n">max</span><span class="p">())</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s">&#39;int16&#39;</span><span class="p">))</span>
+                                <span class="n">z_max</span><span class="o">=</span><span class="n">zz</span><span class="o">.</span><span class="n">max</span><span class="p">())</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;int16&#39;</span><span class="p">))</span>
 
-        <span class="k">return</span> <span class="n">syn_idx</span>
-</div>
+        <span class="k">return</span> <span class="n">syn_idx</span></div>
+
 <div class="viewcode-block" id="Population.cellsim"><a class="viewcode-back" href="../../index.html#hybridLFPy.Population.cellsim">[docs]</a>    <span class="k">def</span> <span class="nf">cellsim</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cellindex</span><span class="p">,</span> <span class="n">return_just_cell</span> <span class="o">=</span> <span class="bp">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Do the actual simulations of LFP, using synaptic spike times from</span>
@@ -1314,7 +1323,7 @@
         <span class="n">cell</span><span class="o">.</span><span class="n">set_rotation</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">rotations</span><span class="p">[</span><span class="n">cellindex</span><span class="p">])</span>
 
         <span class="k">if</span> <span class="n">return_just_cell</span><span class="p">:</span>
-            <span class="c">#with several cells, NEURON can only hold one cell at the time</span>
+            <span class="c1">#with several cells, NEURON can only hold one cell at the time</span>
             <span class="n">allsecnames</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="n">allsec</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="k">for</span> <span class="n">sec</span> <span class="ow">in</span> <span class="n">cell</span><span class="o">.</span><span class="n">allseclist</span><span class="p">:</span>
@@ -1327,15 +1336,15 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">insert_all_synapses</span><span class="p">(</span><span class="n">cellindex</span><span class="p">,</span> <span class="n">cell</span><span class="p">)</span>
 
-            <span class="c">#electrode object where LFPs are calculated</span>
+            <span class="c1">#electrode object where LFPs are calculated</span>
             <span class="n">electrode</span> <span class="o">=</span> <span class="n">LFPy</span><span class="o">.</span><span class="n">RecExtElectrode</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">electrodeParams</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">calculateCSD</span><span class="p">:</span>
                 <span class="n">cell</span><span class="o">.</span><span class="n">tvec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">cell</span><span class="o">.</span><span class="n">totnsegs</span><span class="p">)</span>
                 <span class="n">cell</span><span class="o">.</span><span class="n">imem</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">cell</span><span class="o">.</span><span class="n">totnsegs</span><span class="p">)</span>
                 <span class="n">csdcoeff</span> <span class="o">=</span> <span class="n">csd</span><span class="o">.</span><span class="n">true_lam_csd</span><span class="p">(</span><span class="n">cell</span><span class="p">,</span>
-                                <span class="bp">self</span><span class="o">.</span><span class="n">populationParams</span><span class="p">[</span><span class="s">&#39;radius&#39;</span><span class="p">],</span> <span class="n">electrode</span><span class="o">.</span><span class="n">z</span><span class="p">)</span>
-                <span class="n">csdcoeff</span> <span class="o">*=</span> <span class="mf">1E6</span> <span class="c">#nA mum^-3 -&gt; muA mm^-3 conversion</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">populationParams</span><span class="p">[</span><span class="s1">&#39;radius&#39;</span><span class="p">],</span> <span class="n">electrode</span><span class="o">.</span><span class="n">z</span><span class="p">)</span>
+                <span class="n">csdcoeff</span> <span class="o">*=</span> <span class="mf">1E6</span> <span class="c1">#nA mum^-3 -&gt; muA mm^-3 conversion</span>
                 <span class="k">del</span> <span class="n">cell</span><span class="o">.</span><span class="n">tvec</span><span class="p">,</span> <span class="n">cell</span><span class="o">.</span><span class="n">imem</span>
                 <span class="n">cell</span><span class="o">.</span><span class="n">simulate</span><span class="p">(</span><span class="n">electrode</span><span class="p">,</span> <span class="n">dotprodcoeffs</span><span class="o">=</span><span class="p">[</span><span class="n">csdcoeff</span><span class="p">],</span>
                               <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">simulationParams</span><span class="p">)</span>
@@ -1355,22 +1364,22 @@
 
             <span class="n">cell</span><span class="o">.</span><span class="n">electrodecoeff</span> <span class="o">=</span> <span class="n">electrode</span><span class="o">.</span><span class="n">electrodecoeff</span>
 
-            <span class="c">#put all necessary cell output in output dict</span>
+            <span class="c1">#put all necessary cell output in output dict</span>
             <span class="k">for</span> <span class="n">attrbt</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">savelist</span><span class="p">:</span>
                 <span class="n">attr</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">cell</span><span class="p">,</span> <span class="n">attrbt</span><span class="p">)</span>
                 <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">[</span><span class="n">cellindex</span><span class="p">][</span><span class="n">attrbt</span><span class="p">]</span> <span class="o">=</span> <span class="n">attr</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s">&#39;float32&#39;</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">[</span><span class="n">cellindex</span><span class="p">][</span><span class="n">attrbt</span><span class="p">]</span> <span class="o">=</span> <span class="n">attr</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;float32&#39;</span><span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="k">try</span><span class="p">:</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">[</span><span class="n">cellindex</span><span class="p">][</span><span class="n">attrbt</span><span class="p">]</span> <span class="o">=</span> <span class="n">attr</span>
                     <span class="k">except</span><span class="p">:</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">[</span><span class="n">cellindex</span><span class="p">][</span><span class="n">attrbt</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">[</span><span class="n">cellindex</span><span class="p">][</span><span class="s">&#39;srate&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1E3</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">dt_output</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">[</span><span class="n">cellindex</span><span class="p">][</span><span class="s1">&#39;srate&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1E3</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">dt_output</span>
 
-            <span class="k">print</span><span class="p">(</span><span class="s">&#39;cell </span><span class="si">%s</span><span class="s"> population </span><span class="si">%s</span><span class="s"> in </span><span class="si">%.2f</span><span class="s"> s&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">cellindex</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">,</span>
-                                                              <span class="n">time</span><span class="p">()</span><span class="o">-</span><span class="n">tic</span><span class="p">))</span>
+            <span class="k">print</span><span class="p">(</span><span class="s1">&#39;cell </span><span class="si">%s</span><span class="s1"> population </span><span class="si">%s</span><span class="s1"> in </span><span class="si">%.2f</span><span class="s1"> s&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">cellindex</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">,</span>
+                                                              <span class="n">time</span><span class="p">()</span><span class="o">-</span><span class="n">tic</span><span class="p">))</span></div>
 
-</div>
+
 <div class="viewcode-block" id="Population.insert_all_synapses"><a class="viewcode-back" href="../../index.html#hybridLFPy.Population.insert_all_synapses">[docs]</a>    <span class="k">def</span> <span class="nf">insert_all_synapses</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cellindex</span><span class="p">,</span> <span class="n">cell</span><span class="p">):</span>
 
         <span class="sd">&quot;&quot;&quot;</span>
@@ -1396,10 +1405,11 @@
 <span class="sd">        Population.insert_synapse</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">X</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">):</span> <span class="c">#range(self.k_yXL.shape[1]):</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">X</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">):</span> <span class="c1">#range(self.k_yXL.shape[1]):</span>
             <span class="n">synParams</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">synParams</span>
             <span class="n">synParams</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
-                <span class="s">&#39;weight&#39;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">J_yX</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                <span class="s1">&#39;weight&#39;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">J_yX</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+                <span class="s1">&#39;tau&#39;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">tau_yX</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
                 <span class="p">})</span>
             <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">synIdx</span><span class="p">[</span><span class="n">cellindex</span><span class="p">][</span><span class="n">X</span><span class="p">])):</span>
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">synDelays</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
@@ -1412,11 +1422,11 @@
                                 <span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">synIdx</span><span class="p">[</span><span class="n">cellindex</span><span class="p">][</span><span class="n">X</span><span class="p">][</span><span class="n">j</span><span class="p">],</span>
                                 <span class="n">X</span><span class="o">=</span><span class="n">X</span><span class="p">,</span>
                                 <span class="n">SpCell</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">SpCells</span><span class="p">[</span><span class="n">cellindex</span><span class="p">][</span><span class="n">X</span><span class="p">][</span><span class="n">j</span><span class="p">],</span>
-                                <span class="n">synDelays</span> <span class="o">=</span> <span class="n">synDelays</span><span class="p">)</span>
+                                <span class="n">synDelays</span> <span class="o">=</span> <span class="n">synDelays</span><span class="p">)</span></div>
 
-</div>
+
 <div class="viewcode-block" id="Population.insert_synapses"><a class="viewcode-back" href="../../index.html#hybridLFPy.Population.insert_synapses">[docs]</a>    <span class="k">def</span> <span class="nf">insert_synapses</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cell</span><span class="p">,</span> <span class="n">cellindex</span><span class="p">,</span> <span class="n">synParams</span><span class="p">,</span> <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([]),</span>
-                        <span class="n">X</span><span class="o">=</span><span class="s">&#39;EX&#39;</span><span class="p">,</span> <span class="n">SpCell</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([]),</span>
+                        <span class="n">X</span><span class="o">=</span><span class="s1">&#39;EX&#39;</span><span class="p">,</span> <span class="n">SpCell</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([]),</span>
                         <span class="n">synDelays</span> <span class="o">=</span> <span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Insert synapse with `parameters`=`synparams` on cell=cell, with</span>
@@ -1452,32 +1462,32 @@
 <span class="sd">        Population.insert_all_synapses</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c">#Insert synapses in an iterative fashion</span>
+        <span class="c1">#Insert synapses in an iterative fashion</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">spikes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">networkSim</span><span class="o">.</span><span class="n">dbs</span><span class="p">[</span><span class="n">X</span><span class="p">]</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">SpCell</span><span class="p">[:</span><span class="n">idx</span><span class="o">.</span><span class="n">size</span><span class="p">])</span>
         <span class="k">except</span> <span class="ne">AttributeError</span> <span class="k">as</span> <span class="n">ae</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">ae</span><span class="p">,</span> <span class="s">&#39;could not open CachedNetwork database objects&#39;</span>
+            <span class="k">raise</span> <span class="n">ae</span><span class="p">,</span> <span class="s1">&#39;could not open CachedNetwork database objects&#39;</span>
 
 
-        <span class="c">#apply synaptic delays</span>
+        <span class="c1">#apply synaptic delays</span>
         <span class="k">if</span> <span class="n">synDelays</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">idx</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">delay</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">synDelays</span><span class="p">):</span>
                 <span class="k">if</span> <span class="n">spikes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
                     <span class="n">spikes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="n">delay</span>
 
-        <span class="c">#create synapse events:</span>
+        <span class="c1">#create synapse events:</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">idx</span><span class="o">.</span><span class="n">size</span><span class="p">):</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">spikes</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="k">pass</span>
-                <span class="c">#print &#39;no spike times, skipping network cell #%i&#39; % SpCell[i]</span>
+                <span class="c1">#print &#39;no spike times, skipping network cell #%i&#39; % SpCell[i]</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">synParams</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s">&#39;idx&#39;</span> <span class="p">:</span> <span class="n">idx</span><span class="p">[</span><span class="n">i</span><span class="p">]})</span>
-                <span class="c"># Create synapse(s) and setting times using class LFPy.Synapse</span>
+                <span class="n">synParams</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;idx&#39;</span> <span class="p">:</span> <span class="n">idx</span><span class="p">[</span><span class="n">i</span><span class="p">]})</span>
+                <span class="c1"># Create synapse(s) and setting times using class LFPy.Synapse</span>
                 <span class="n">synapse</span> <span class="o">=</span> <span class="n">LFPy</span><span class="o">.</span><span class="n">Synapse</span><span class="p">(</span><span class="n">cell</span><span class="p">,</span> <span class="o">**</span><span class="n">synParams</span><span class="p">)</span>
-                <span class="c">#SpCell is a vector, or do not exist</span>
-                <span class="n">synapse</span><span class="o">.</span><span class="n">set_spike_times</span><span class="p">(</span><span class="n">spikes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">cell</span><span class="o">.</span><span class="n">tstartms</span><span class="p">)</span>
+                <span class="c1">#SpCell is a vector, or do not exist</span>
+                <span class="n">synapse</span><span class="o">.</span><span class="n">set_spike_times</span><span class="p">(</span><span class="n">spikes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">cell</span><span class="o">.</span><span class="n">tstartms</span><span class="p">)</span></div>
 
-</div>
+
 <div class="viewcode-block" id="Population.fetchSpCells"><a class="viewcode-back" href="../../index.html#hybridLFPy.Population.fetchSpCells">[docs]</a>    <span class="k">def</span> <span class="nf">fetchSpCells</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nodes</span><span class="p">,</span> <span class="n">numSyn</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        For N (nodes count) nestSim-cells draw</span>
@@ -1509,13 +1519,14 @@
         <span class="n">SpCell</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">size</span> <span class="ow">in</span> <span class="n">numSyn</span><span class="p">:</span>
             <span class="n">SpCell</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="n">nodes</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">nodes</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span>
-                                            <span class="n">size</span><span class="o">=</span><span class="n">size</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s">&#39;int32&#39;</span><span class="p">))</span>
-        <span class="k">return</span> <span class="n">SpCell</span>
+                                            <span class="n">size</span><span class="o">=</span><span class="n">size</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;int32&#39;</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">SpCell</span></div></div>
 
-</div></div>
-<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
     <span class="kn">import</span> <span class="nn">doctest</span>
     <span class="n">doctest</span><span class="o">.</span><span class="n">testmod</span><span class="p">()</span>
+
 </pre></div>
 
           </div>
@@ -1531,9 +1542,6 @@
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -1549,13 +1557,13 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">hybridLFPy 0.1.1 documentation</a> &raquo;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">hybridLFPy 0.1.3 documentation</a> &raquo;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &copy; Copyright 2015, Espen Hagen.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1.
     </div>
   </body>
 </html>

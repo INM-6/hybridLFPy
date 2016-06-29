@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>hybridLFPy.gdf &mdash; hybridLFPy 0.1.1 documentation</title>
+    <title>hybridLFPy.gdf &mdash; hybridLFPy 0.1.3 documentation</title>
     
     <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.1.1',
+        VERSION:     '0.1.3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -23,7 +23,7 @@
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <link rel="top" title="hybridLFPy 0.1.1 documentation" href="../../index.html" />
+    <link rel="top" title="hybridLFPy 0.1.3 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
   </head>
   <body role="document">
@@ -36,7 +36,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">hybridLFPy 0.1.1 documentation</a> &raquo;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">hybridLFPy 0.1.3 documentation</a> &raquo;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
     </div>  
@@ -47,7 +47,7 @@
           <div class="body" role="main">
             
   <h1>Source code for hybridLFPy.gdf</h1><div class="highlight"><pre>
-<span class="sd">&quot;&quot;&quot;</span>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Create db from gdf files to be able to then select neuron spike times.</span>
 
 <span class="sd">Best use case:</span>
@@ -73,14 +73,14 @@
 
 <span class="n">plt</span><span class="o">.</span><span class="n">rcdefaults</span><span class="p">()</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
-    <span class="s">&#39;font.size&#39;</span> <span class="p">:</span> <span class="mi">16</span><span class="p">,</span>
-    <span class="s">&#39;axes.labelsize&#39;</span> <span class="p">:</span> <span class="mi">16</span><span class="p">,</span>
-    <span class="s">&#39;axes.titlesize&#39;</span> <span class="p">:</span> <span class="mi">16</span><span class="p">,</span>
-    <span class="s">&#39;legend.fontsize&#39;</span> <span class="p">:</span> <span class="mi">14</span><span class="p">,</span>
-    <span class="s">&#39;xtick.labelsize&#39;</span> <span class="p">:</span> <span class="mi">16</span><span class="p">,</span>
-    <span class="s">&#39;ytick.labelsize&#39;</span> <span class="p">:</span> <span class="mi">16</span><span class="p">,</span>
-    <span class="s">&#39;figure.subplot.wspace&#39;</span> <span class="p">:</span> <span class="mf">0.3</span><span class="p">,</span>
-    <span class="s">&#39;figure.subplot.hspace&#39;</span> <span class="p">:</span> <span class="mf">0.3</span><span class="p">,</span>
+    <span class="s1">&#39;font.size&#39;</span> <span class="p">:</span> <span class="mi">16</span><span class="p">,</span>
+    <span class="s1">&#39;axes.labelsize&#39;</span> <span class="p">:</span> <span class="mi">16</span><span class="p">,</span>
+    <span class="s1">&#39;axes.titlesize&#39;</span> <span class="p">:</span> <span class="mi">16</span><span class="p">,</span>
+    <span class="s1">&#39;legend.fontsize&#39;</span> <span class="p">:</span> <span class="mi">14</span><span class="p">,</span>
+    <span class="s1">&#39;xtick.labelsize&#39;</span> <span class="p">:</span> <span class="mi">16</span><span class="p">,</span>
+    <span class="s1">&#39;ytick.labelsize&#39;</span> <span class="p">:</span> <span class="mi">16</span><span class="p">,</span>
+    <span class="s1">&#39;figure.subplot.wspace&#39;</span> <span class="p">:</span> <span class="mf">0.3</span><span class="p">,</span>
+    <span class="s1">&#39;figure.subplot.hspace&#39;</span> <span class="p">:</span> <span class="mf">0.3</span><span class="p">,</span>
 <span class="p">})</span>
 
 <div class="viewcode-block" id="GDF"><a class="viewcode-back" href="../../index.html#hybridLFPy.GDF">[docs]</a><span class="k">class</span> <span class="nc">GDF</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
@@ -143,7 +143,7 @@
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">os</span><span class="o">.</span><span class="n">unlink</span><span class="p">(</span><span class="n">dbname</span><span class="p">)</span>
             <span class="k">except</span><span class="p">:</span>
-                <span class="k">print</span><span class="p">(</span><span class="s">&#39;creating new database file </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">dbname</span><span class="p">)</span>
+                <span class="k">print</span><span class="p">(</span><span class="s1">&#39;creating new database file </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">dbname</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">conn</span> <span class="o">=</span> <span class="n">sqlite</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">dbname</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
@@ -169,7 +169,7 @@
 <span class="sd">            file contents</span>
 <span class="sd">            </span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="s">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
                 <span class="n">a</span> <span class="o">=</span> <span class="p">[]</span>
                 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bsize</span><span class="p">):</span>
@@ -179,7 +179,7 @@
                 <span class="k">if</span> <span class="n">a</span> <span class="o">==</span> <span class="p">[]:</span> <span class="k">raise</span> <span class="ne">StopIteration</span>
                 <span class="k">yield</span> <span class="n">a</span>
 
-<div class="viewcode-block" id="GDF.create"><a class="viewcode-back" href="../../index.html#hybridLFPy.GDF.create">[docs]</a>    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">re</span><span class="o">=</span><span class="s">&#39;brunel-py-ex-*.gdf&#39;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+<div class="viewcode-block" id="GDF.create"><a class="viewcode-back" href="../../index.html#hybridLFPy.GDF.create">[docs]</a>    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">re</span><span class="o">=</span><span class="s1">&#39;brunel-py-ex-*.gdf&#39;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Create db from list of gdf file glob</span>
 
@@ -202,7 +202,7 @@
 <span class="sd">        sqlite3.connect.cursor, sqlite3.connect</span>
 <span class="sd">        </span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s">&#39;CREATE TABLE IF NOT EXISTS spikes (neuron INT UNSIGNED, time REAL)&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;CREATE TABLE IF NOT EXISTS spikes (neuron INT UNSIGNED, time REAL)&#39;</span><span class="p">)</span>
 
         <span class="n">tic</span> <span class="o">=</span> <span class="n">now</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">re</span><span class="p">):</span>
@@ -210,23 +210,23 @@
             <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
                 <span class="k">try</span><span class="p">:</span>
                     <span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_blockread</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">executemany</span><span class="p">(</span><span class="s">&#39;INSERT INTO spikes VALUES (?, ?)&#39;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">executemany</span><span class="p">(</span><span class="s1">&#39;INSERT INTO spikes VALUES (?, ?)&#39;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">conn</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
                 <span class="k">except</span><span class="p">:</span>
                     <span class="k">continue</span>
                 <span class="k">break</span>                
 
         <span class="n">toc</span> <span class="o">=</span> <span class="n">now</span><span class="p">()</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span> <span class="k">print</span><span class="p">(</span><span class="s">&#39;Inserts took </span><span class="si">%g</span><span class="s"> seconds.&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">toc</span><span class="o">-</span><span class="n">tic</span><span class="p">))</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span> <span class="k">print</span><span class="p">(</span><span class="s1">&#39;Inserts took </span><span class="si">%g</span><span class="s1"> seconds.&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">toc</span><span class="o">-</span><span class="n">tic</span><span class="p">))</span>
 
-        <span class="c"># Optionally, create index for speed</span>
+        <span class="c1"># Optionally, create index for speed</span>
         <span class="k">if</span> <span class="n">index</span><span class="p">:</span>
             <span class="n">tic</span> <span class="o">=</span> <span class="n">now</span><span class="p">()</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s">&#39;CREATE INDEX neuron_index on spikes (neuron)&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;CREATE INDEX neuron_index on spikes (neuron)&#39;</span><span class="p">)</span>
             <span class="n">toc</span> <span class="o">=</span> <span class="n">now</span><span class="p">()</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span> <span class="k">print</span><span class="p">(</span><span class="s">&#39;Indexed db in </span><span class="si">%g</span><span class="s"> seconds.&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">toc</span><span class="o">-</span><span class="n">tic</span><span class="p">))</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span> <span class="k">print</span><span class="p">(</span><span class="s1">&#39;Indexed db in </span><span class="si">%g</span><span class="s1"> seconds.&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">toc</span><span class="o">-</span><span class="n">tic</span><span class="p">))</span></div>
 
-</div>
+
 <div class="viewcode-block" id="GDF.create_from_list"><a class="viewcode-back" href="../../index.html#hybridLFPy.GDF.create_from_list">[docs]</a>    <span class="k">def</span> <span class="nf">create_from_list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">re</span><span class="o">=</span><span class="p">[],</span> <span class="n">index</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Create db from list of arrays.</span>
@@ -250,26 +250,26 @@
 <span class="sd">        sqlite3.connect.cursor, sqlite3.connect</span>
 <span class="sd">        </span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s">&#39;CREATE TABLE IF NOT EXISTS spikes (neuron INT UNSIGNED, time REAL)&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;CREATE TABLE IF NOT EXISTS spikes (neuron INT UNSIGNED, time REAL)&#39;</span><span class="p">)</span>
 
         <span class="n">tic</span> <span class="o">=</span> <span class="n">now</span><span class="p">()</span>
         <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">re</span><span class="p">:</span>
             <span class="n">data</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">([</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">x</span><span class="p">))</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">executemany</span><span class="p">(</span><span class="s">&#39;INSERT INTO spikes VALUES (?, ?)&#39;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">executemany</span><span class="p">(</span><span class="s1">&#39;INSERT INTO spikes VALUES (?, ?)&#39;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
             <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">conn</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
         <span class="n">toc</span> <span class="o">=</span> <span class="n">now</span><span class="p">()</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span> <span class="k">print</span><span class="p">(</span><span class="s">&#39;Inserts took </span><span class="si">%g</span><span class="s"> seconds.&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">toc</span><span class="o">-</span><span class="n">tic</span><span class="p">))</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span> <span class="k">print</span><span class="p">(</span><span class="s1">&#39;Inserts took </span><span class="si">%g</span><span class="s1"> seconds.&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">toc</span><span class="o">-</span><span class="n">tic</span><span class="p">))</span>
 
-        <span class="c"># Optionally, create index for speed</span>
+        <span class="c1"># Optionally, create index for speed</span>
         <span class="k">if</span> <span class="n">index</span><span class="p">:</span>
             <span class="n">tic</span> <span class="o">=</span> <span class="n">now</span><span class="p">()</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s">&#39;CREATE INDEX neuron_index on spikes (neuron)&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;CREATE INDEX neuron_index on spikes (neuron)&#39;</span><span class="p">)</span>
             <span class="n">toc</span> <span class="o">=</span> <span class="n">now</span><span class="p">()</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span> <span class="k">print</span><span class="p">(</span><span class="s">&#39;Indexed db in </span><span class="si">%g</span><span class="s"> seconds.&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">toc</span><span class="o">-</span><span class="n">tic</span><span class="p">))</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span> <span class="k">print</span><span class="p">(</span><span class="s1">&#39;Indexed db in </span><span class="si">%g</span><span class="s1"> seconds.&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">toc</span><span class="o">-</span><span class="n">tic</span><span class="p">))</span></div>
 
-</div>
+
 <div class="viewcode-block" id="GDF.select"><a class="viewcode-back" href="../../index.html#hybridLFPy.GDF.select">[docs]</a>    <span class="k">def</span> <span class="nf">select</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">neurons</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Select spike trains.</span>
@@ -294,13 +294,13 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">s</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">neuron</span> <span class="ow">in</span> <span class="n">neurons</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s">&#39;SELECT time FROM spikes where neuron = </span><span class="si">%d</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">neuron</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;SELECT time FROM spikes where neuron = </span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">neuron</span><span class="p">)</span>
             <span class="n">sel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
             <span class="n">spikes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">sel</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
             <span class="n">s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">spikes</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">s</span>
+        <span class="k">return</span> <span class="n">s</span></div>
 
-</div>
+
 <div class="viewcode-block" id="GDF.interval"><a class="viewcode-back" href="../../index.html#hybridLFPy.GDF.interval">[docs]</a>    <span class="k">def</span> <span class="nf">interval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1000</span><span class="p">]):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get all spikes in a time interval T.</span>
@@ -324,11 +324,11 @@
 <span class="sd">        sqlite3.connect.cursor</span>
 <span class="sd">        </span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s">&#39;SELECT * FROM spikes WHERE time BETWEEN </span><span class="si">%f</span><span class="s"> AND </span><span class="si">%f</span><span class="s">&#39;</span> <span class="o">%</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">T</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;SELECT * FROM spikes WHERE time BETWEEN </span><span class="si">%f</span><span class="s1"> AND </span><span class="si">%f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">T</span><span class="p">))</span>
         <span class="n">sel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
-        <span class="k">return</span> <span class="n">sel</span>
+        <span class="k">return</span> <span class="n">sel</span></div>
 
-</div>
+
 <div class="viewcode-block" id="GDF.select_neurons_interval"><a class="viewcode-back" href="../../index.html#hybridLFPy.GDF.select_neurons_interval">[docs]</a>    <span class="k">def</span> <span class="nf">select_neurons_interval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">neurons</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1000</span><span class="p">]):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get all spikes from neurons in a time interval T.</span>
@@ -355,15 +355,15 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">s</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">neuron</span> <span class="ow">in</span> <span class="n">neurons</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s">&#39;SELECT time FROM spikes WHERE time BETWEEN </span><span class="si">%f</span><span class="s"> AND </span><span class="si">%f</span><span class="s"> and neuron = </span><span class="si">%d</span><span class="s">&#39;</span>  <span class="o">%</span> <span class="p">(</span><span class="n">T</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">T</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">neuron</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;SELECT time FROM spikes WHERE time BETWEEN </span><span class="si">%f</span><span class="s1"> AND </span><span class="si">%f</span><span class="s1"> and neuron = </span><span class="si">%d</span><span class="s1">&#39;</span>  <span class="o">%</span> <span class="p">(</span><span class="n">T</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">T</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">neuron</span><span class="p">))</span>
             <span class="n">sel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
             <span class="n">spikes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">sel</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
 
             <span class="n">s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">spikes</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">s</span>
+        <span class="k">return</span> <span class="n">s</span></div>
 
-</div>
+
 <div class="viewcode-block" id="GDF.neurons"><a class="viewcode-back" href="../../index.html#hybridLFPy.GDF.neurons">[docs]</a>    <span class="k">def</span> <span class="nf">neurons</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return list of neuron indices.</span>
@@ -385,11 +385,11 @@
 <span class="sd">        sqlite3.connect.cursor</span>
 <span class="sd">        </span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s">&#39;SELECT DISTINCT neuron FROM spikes ORDER BY neuron&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;SELECT DISTINCT neuron FROM spikes ORDER BY neuron&#39;</span><span class="p">)</span>
         <span class="n">sel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">sel</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">sel</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span></div>
 
-</div>
+
 <div class="viewcode-block" id="GDF.num_spikes"><a class="viewcode-back" href="../../index.html#hybridLFPy.GDF.num_spikes">[docs]</a>    <span class="k">def</span> <span class="nf">num_spikes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return total number of spikes.</span>
@@ -405,13 +405,13 @@
 <span class="sd">        list</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s">&#39;SELECT Count(*) from spikes&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;SELECT Count(*) from spikes&#39;</span><span class="p">)</span>
         <span class="n">rows</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="c"># Check against &#39;wc -l *ex*.gdf&#39;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span> <span class="k">print</span><span class="p">(</span><span class="s">&#39;DB has </span><span class="si">%d</span><span class="s"> spikes&#39;</span> <span class="o">%</span> <span class="n">rows</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">rows</span>
+        <span class="c1"># Check against &#39;wc -l *ex*.gdf&#39;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span> <span class="k">print</span><span class="p">(</span><span class="s1">&#39;DB has </span><span class="si">%d</span><span class="s1"> spikes&#39;</span> <span class="o">%</span> <span class="n">rows</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">rows</span></div>
 
-</div>
+
 <div class="viewcode-block" id="GDF.close"><a class="viewcode-back" href="../../index.html#hybridLFPy.GDF.close">[docs]</a>    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Close `sqlite3.connect.cursor` and `sqlite3.connect` objects</span>
@@ -433,9 +433,9 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
 
-</div>
+
 <div class="viewcode-block" id="GDF.plotstuff"><a class="viewcode-back" href="../../index.html#hybridLFPy.GDF.plotstuff">[docs]</a>    <span class="k">def</span> <span class="nf">plotstuff</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1000</span><span class="p">]):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Create a scatter plot of the contents of the database,</span>
@@ -465,28 +465,28 @@
         <span class="n">neurons</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">neurons</span><span class="p">()</span>
         <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">select_neurons_interval</span><span class="p">(</span><span class="n">neurons</span><span class="p">,</span> <span class="n">T</span><span class="p">):</span>
-            <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">)</span> <span class="o">+</span> <span class="n">neurons</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="s">&#39;o&#39;</span><span class="p">,</span>
-                    <span class="n">markersize</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">markerfacecolor</span><span class="o">=</span><span class="s">&#39;k&#39;</span><span class="p">,</span> <span class="n">markeredgecolor</span><span class="o">=</span><span class="s">&#39;k&#39;</span><span class="p">,</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">)</span> <span class="o">+</span> <span class="n">neurons</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="s1">&#39;o&#39;</span><span class="p">,</span>
+                    <span class="n">markersize</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">markerfacecolor</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">markeredgecolor</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">,</span>
                     <span class="n">alpha</span><span class="o">=</span><span class="mf">0.25</span><span class="p">)</span>
             <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
-        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s">&#39;time (ms)&#39;</span><span class="p">)</span>
-        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s">&#39;neuron ID&#39;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;time (ms)&#39;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;neuron ID&#39;</span><span class="p">)</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">T</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">T</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="n">neurons</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">neurons</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
-        <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s">&#39;database content on T = [</span><span class="si">%.0f</span><span class="s">, </span><span class="si">%.0f</span><span class="s">]&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">T</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">T</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;database content on T = [</span><span class="si">%.0f</span><span class="s1">, </span><span class="si">%.0f</span><span class="s1">]&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">T</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">T</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span></div></div>
 
-</div></div>
+
 <span class="k">def</span> <span class="nf">test1</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot; Need have a bunch of gdf files in current directory.</span>
 <span class="sd">    Delete old db.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s">&#39;rm test.db&#39;</span><span class="p">)</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s1">&#39;rm test.db&#39;</span><span class="p">)</span>
 
-    <span class="c"># Create db from excitatory files</span>
-    <span class="n">gdb</span> <span class="o">=</span> <span class="n">GDF</span><span class="p">(</span><span class="s">&#39;test.db&#39;</span><span class="p">,</span> <span class="n">debug</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-    <span class="n">gdb</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">re</span><span class="o">=</span><span class="s">&#39;brunel-py-ex-*.gdf&#39;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="c1"># Create db from excitatory files</span>
+    <span class="n">gdb</span> <span class="o">=</span> <span class="n">GDF</span><span class="p">(</span><span class="s1">&#39;test.db&#39;</span><span class="p">,</span> <span class="n">debug</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">gdb</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">re</span><span class="o">=</span><span class="s1">&#39;brunel-py-ex-*.gdf&#39;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 
-    <span class="c"># Get spikes for neurons 1,2,3</span>
+    <span class="c1"># Get spikes for neurons 1,2,3</span>
     <span class="n">spikes</span> <span class="o">=</span> <span class="n">gdb</span><span class="o">.</span><span class="n">select</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">])</span>
 
     <span class="sd">&quot;&quot;&quot; Wont get any spikes for these neurons</span>
@@ -498,8 +498,8 @@
     <span class="k">print</span><span class="p">(</span><span class="n">spikes</span><span class="p">)</span>
     <span class="k">print</span><span class="p">(</span><span class="n">bad</span><span class="p">)</span>
 
-<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
-    <span class="c">#test1()</span>
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="c1">#test1()</span>
     <span class="kn">import</span> <span class="nn">doctest</span>
     <span class="n">doctest</span><span class="o">.</span><span class="n">testmod</span><span class="p">()</span>
 </pre></div>
@@ -517,9 +517,6 @@
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -535,13 +532,13 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">hybridLFPy 0.1.1 documentation</a> &raquo;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">hybridLFPy 0.1.3 documentation</a> &raquo;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &copy; Copyright 2015, Espen Hagen.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1.
     </div>
   </body>
 </html>
