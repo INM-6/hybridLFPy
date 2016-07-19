@@ -1,0 +1,1307 @@
+/*
+    microcircuit.sli
+
+    Implementation of a multi-layered local cortical network model.
+    Uses params.sli
+    
+    function definitions:
+    - CheckParameters
+    - PrepareSimulation
+    - DerivedParameters
+    - CreateNetworkNodes
+    - WriteGIDstoFile
+    - ConnectNetworkNodes
+
+    Tobias Potjans 2008, adapted 2013 by Sacha van Albada, David Dahmen and Markus Diesmann
+
+    TODO: check parameters further?
+*/
+
+/CheckParameters
+{
+    % non-exhaustive check of parameter dimensions and values
+     
+    % check if aerays have consistent dimensions
+    /num_layers full_scale_num_neurons length def % number of layers
+    /num_pops_per_layer full_scale_num_neurons Dimensions 1 get def % number of populations in each layer
+
+    conn_probs Dimensions 0 get
+    num_layers num_pops_per_layer mul 
+    eq not
+    conn_probs Dimensions 1 get
+    num_layers num_pops_per_layer mul 
+    eq not or
+    {
+        /CheckParameters /conn_probs_dimensions raiseerror
+    } if 
+
+    record_fraction_neurons_spikes
+    {
+        frac_rec_spikes 1 gt
+        {
+            /CheckParameters /frac_rec_spikes raiseerror
+        } if
+    }{
+        n_rec_spikes full_scale_num_neurons { Min } Map Min area mul gt
+        {
+            /CheckParameters /n_rec_spikes raiseerror
+        } if
+    } ifelse
+
+    record_fraction_neurons_voltage
+    {
+        frac_rec_voltage 1 gt
+        {
+            /CheckParameters /frac_rec_voltage raiseerror
+        } if
+    }{
+        n_rec_voltage full_scale_num_neurons { Min } Map Min area mul gt
+        {
+            /CheckParameters /n_rec_voltage raiseerror 
+        } if
+    } ifelse
+    
+    record_fraction_neurons_input_spikes
+    {
+        frac_rec_input_spikes 1 gt
+        {
+            /CheckParameters /frac_rec_input_spikes raiseerror
+        } if
+    }{
+        n_rec_input_spikes full_scale_num_neurons { Min } Map Min area mul gt
+        {
+            /CheckParameters /n_rec_input_spikes raiseerror
+        } if
+    } ifelse
+
+    n_rec_depth_resolved_input 0 gt
+    {
+	area 1. eq not
+	{
+	    /CheckParameters /area raiseerror
+	    (Depth resolved inputn currents currently only work for area = 1) ==
+	} if
+    } if
+    
+} def
+
+
+
+/PrepareSimulation
+{
+    ResetKernel
+  
+    % set global kernel parameters
+    0
+    <<
+      /resolution dt
+      /total_num_virtual_procs total_num_virtual_procs
+      /overwrite_files overwrite_existing_files
+      /rng_seeds [total_num_virtual_procs] Range seed_offset add
+      /grng_seed total_num_virtual_procs seed_offset add 1 add
+      /data_path raw_nest_output_path  
+    >> SetStatus
+
+    % initialize random number generators
+    rngdict /gsl_knuthran get 6508015 CreateRNG /script_rng Set
+    % normal distribution
+    script_rng rdevdict /normal get CreateRDV /normal_dv Set
+    % uniform distribution
+    script_rng rdevdict /uniform_int get CreateRDV /uniformint_dv Set
+    uniformint_dv << /high 100 /low -100 >> SetStatus
+    
+    % Make sure gdf files from spike_detector is closed after simulate()
+    /spike_detector <<
+        /close_after_simulate true
+        /flush_after_simulate true >> SetDefaults
+     
+} def
+
+
+/DerivedParameters
+{
+    % compute numbers of neurons for the given surface area
+    /num_neurons
+    full_scale_num_neurons { area mul cvi } [2] Map
+    def
+  
+    % compute PSC amplitude from PSP amplitude
+    neuron_model /iaf_psc_exp eq
+    {
+        model_params using
+        % factor for transforming PSP amplitude to PSC amplitude
+        /PSC_e_over_PSP_e (((C_m)^(-1)*tau_m*tau_syn_ex/(tau_syn_ex - tau_m)*((tau_m/tau_syn_ex)^(- tau_m/(tau_m-tau_syn_ex))-(tau_m/tau_syn_ex)^(- tau_syn_ex/(tau_m-tau_syn_ex))))^(-1)) ExecMath def
+        /PSC_i_over_PSP_i (((C_m)^(-1)*tau_m*tau_syn_in/(tau_syn_in - tau_m)*((tau_m/tau_syn_in)^(- tau_m/(tau_m-tau_syn_in))-(tau_m/tau_syn_in)^(- tau_syn_in/(tau_m-tau_syn_in))))^(-1)) ExecMath def
+        endusing
+    }{
+        Rank 0 eq
+        {      
+            M_ERROR (DerivedParameters)
+            (Neuron models other than /iaf_psc_exp have not yet been implemented.)
+            message  % this is written to the output file
+        } if 
+        /DerivedParameters /UnsupportedNeuronModel raiseerror
+    } ifelse
+
+    /PSC_e PSC_e_over_PSP_e PSP_e mul def
+    /PSP_i PSP_e g mul def
+    /PSC_i PSC_i_over_PSP_i PSP_i mul def
+    
+    /PSC_e_23_4 PSC_e_over_PSP_e PSP_23e_4e mul def     % L4e -> L23e
+    /PSP_4i_4e PSP_e g_4e_4i mul def			% L4i -> L4e
+    /PSC_4i_4e PSC_i_over_PSP_i PSP_4i_4e mul def   
+    
+    /PSC_ext PSC_e_over_PSP_e PSP_ext mul def % PSC amplitude for all external input
+        
+    % array of synaptic current amplitudes
+    [4 2 4] [PSC_e PSC_i] LayoutArray /PSC_array Set
+    PSC_array [0 0 1 0]  PSC_e_23_4 put /PSC_array Set    % L4e-> L23e
+    PSC_array [1 0 1 1] PSC_4i_4e put /PSC_array Set  	  % L4i -> L4e
+        
+    %% standard deviations of synaptic current amplitudes
+    %/PSC_sd [PSC_e PSC_i] PSC_rel_sd mul def
+    
+    % standard deviations of delays
+    /delays_sd delays delay_rel_sd mul def
+    
+    % compute numbers of neurons from which to record spikes
+    record_fraction_neurons_spikes
+    {
+        /num_neurons_rec_spikes num_neurons{ frac_rec_spikes mul cvi } [2] Map def
+    }{
+        /num_neurons_rec_spikes [num_layers num_pops_per_layer] n_rec_spikes LayoutArray def
+    } ifelse
+
+    % compute numbers of neurons from which to membrane potentials
+    record_fraction_neurons_voltage
+    {
+        /num_neurons_rec_voltage num_neurons{ frac_rec_voltage mul cvi } [2] Map def
+    }{
+        /num_neurons_rec_voltage [num_layers num_pops_per_layer] n_rec_voltage LayoutArray def
+    } ifelse
+
+    % compute numbers of neurons from which to weighted input spikes
+    record_fraction_neurons_input_spikes
+    {
+        /num_neurons_rec_input_spikes num_neurons{ frac_rec_input_spikes mul cvi } [2] Map def
+    }{
+        /num_neurons_rec_input_spikes [num_layers num_pops_per_layer] n_rec_input_spikes LayoutArray def
+    } ifelse
+         
+} def
+
+  
+
+% the following variables are created here: 
+
+% neuron_subnet_GIDs
+% spike_detector_GIDs
+% voltmeter_GIDs
+% multimeter_GIDs
+% poisson_GIDs
+% dc_GIDs
+% readout_cells_subnet_GID
+% readout_neuron_subnet_GIDs
+% dric_multimeter_GIDs
+
+% th_subnet
+% th_neuron_subnet_GID
+% th_device_subnet_GID
+% th_poisson_GID
+% th_spike_GID
+% th_smp_GID
+% th_pulsepacket_generator_subnet_GID
+% th_spike_detector_GID
+
+
+/CreateNetworkNodes
+{
+    % create and configure neurons
+    neuron_model model_params SetDefaults
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%% Create infrastructure of global ids and subnets  %%%
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    
+    /neuron_subnet_GIDs [num_layers num_pops_per_layer] 0 LayoutArray def  % neuron subnets
+    /spike_detector_GIDs [num_layers num_pops_per_layer] 0 LayoutArray def % spike detectors
+    /voltmeter_GIDs [num_layers num_pops_per_layer] 0 LayoutArray def 	   % voltmeters
+    /poisson_GIDs [num_layers num_pops_per_layer] 0 LayoutArray def	   % poisson generators   
+    /dc_GIDs  [num_layers num_pops_per_layer] 0 LayoutArray def		   % DC generators
+    /multimeter_GIDs [num_layers num_pops_per_layer] 0 LayoutArray def 	   % multimeters
+    /readout_neuron_subnet_GIDs [num_layers num_pops_per_layer] 0 LayoutArray def   % readout neurons
+    /dric_multimeter_GIDs [num_layers num_pops_per_layer] 0 LayoutArray def   % multimeters for depth resolved input currents
+
+    % Insert cell type and input layer structure
+    0 1 num_layers 1 sub % layer
+    {
+        /layer_index Set
+	0 1 num_pops_per_layer 1 sub % population
+        {
+	    /population_index Set
+	    
+	    readout_neuron_subnet_GIDs
+	    [layer_index population_index]
+	    [y_in_Y layer_index get population_index get length num_input_layers]
+	    0 LayoutArray put
+	    /readout_neuron_subnet_GIDs Set
+
+	    dric_multimeter_GIDs
+	    [layer_index population_index]
+	    [y_in_Y layer_index get population_index get length num_input_layers]
+	    0 LayoutArray put
+	    /dric_multimeter_GIDs Set
+	}for 
+    }for
+    
+
+   
+       
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%% 			CREATE THALAMUS			                   %%%
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    
+    0 ChangeSubnet
+    n_thal 0 gt
+    {
+        /subnet Create /th_subnet Set 
+        th_subnet ChangeSubnet
+
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	%%% Create thalamic parrots                              %%%
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	
+	/subnet Create /th_neuron_subnet_GID Set
+	th_neuron_subnet_GID ChangeSubnet
+        /parrot_neuron n_thal Create ;
+        th_subnet ChangeSubnet
+	
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	%%% Create thalamic stimuli (generators and devices)	 %%%
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+	/subnet Create /th_device_subnet_GID Set
+	th_device_subnet_GID ChangeSubnet
+	
+	%% Poisson generator
+        
+        /poisson_generator Create /th_poisson_GID Set				
+        th_poisson_GID << /rate th_poisson_rate 
+                          /start th_poisson_start 
+                          /stop th_poisson_start th_poisson_duration add 
+                       >> SetStatus
+        
+   	
+	%% Spike generator
+	        
+        /spike_generator Create /th_spike_GID Set  				
+        th_spike_GID << /spike_times th_spike_times >> SetStatus
+        
+        %% Sinusoidal Poisson generator
+        
+        /sinusoidal_poisson_generator Create /th_smp_GID Set	
+        th_smp_GID <<
+		  /start th_sin_start
+		  /stop th_sin_start th_sin_duration add
+		  /frequency th_sin_freq
+		  /rate th_sin_mean_rate
+		  /amplitude th_sin_fluc_rate
+                  /phase th_sin_phase
+		>> SetStatus
+		
+	%% Pulse-packet generators
+		
+	/subnet Create /th_pulsepacket_generator_subnet_GID Set			
+        th_pulsepacket_generator_subnet_GID ChangeSubnet
+	% need one pulsepacket_generator per thalamic neuron as pulsepacket_generators provide the same spike train to each target
+        /pulsepacket_generator n_thal Create ;					
+        th_pulsepacket_generator_subnet_GID GetGlobalNodes {
+		<<
+		  /pulse_times th_gauss_times
+		  /activity th_gauss_num_spikes_per_packet
+		  /sdev th_gauss_sd
+		>> SetStatus  
+	} forall
+	th_device_subnet_GID ChangeSubnet
+
+	%% Spike detector
+	
+        record_thalamic_spikes
+        {
+            /spike_detector Create /th_spike_detector_GID Set
+            th_spike_detector_GID
+	    <<
+	        % set thalamic spike detector label. The GID of the spike detector and the process number are appended automatically.
+	        /label th_spike_detector_label
+	        /to_file save_thalamic_spikes
+                /to_memory to_memory
+	    >> SetStatus
+        } if
+    } if  
+    
+
+    
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%% 			CREATE	CORTEX					     %%%
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    % loop over layers
+    0 1 num_layers 1 sub
+    {
+        /layer_index Set
+        0 ChangeSubnet   % change to the root node
+        /subnet Create /layer_subnet Set
+	
+	% loop over populations in layer
+        0 1 num_pops_per_layer 1 sub
+        {
+
+	    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	    %%% Create and configure cortical neuron populations       %%%
+	    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	    
+	    /population_index Set
+	    layer_subnet ChangeSubnet
+	    /subnet Create /population_subnet Set
+            population_subnet ChangeSubnet
+
+	    % create neurons
+	    /subnet Create /neuron_subnet Set
+	    neuron_subnet ChangeSubnet
+	    neuron_subnet_GIDs [layer_index population_index] neuron_subnet put
+            /neuron_subnet_GIDs Set
+
+	    neuron_model num_neurons layer_index get population_index get Create ;
+
+            % initialize membrane potentials
+            neuron_subnet GetGlobalNodes
+            {
+	        << /V_m  normal_dv Random Vm0_std mul Vm0_mean add 
+	           /V_th uniformint_dv Random 100. div V_th_std mul V_th_mean add
+	        >> SetStatus
+	    } forall
+
+	    
+	    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	    %%% Create and configure external stimuli                  %%%
+	    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+	    population_subnet ChangeSubnet
+	    
+	    /subnet Create /device_subnet Set
+	    device_subnet ChangeSubnet
+	    
+	    /poisson_generator Create /this_poisson_generator Set
+            K_bg layer_index get population_index get /this_K_bg Set
+	    this_poisson_generator
+	    <<
+		/rate this_K_bg bg_rate mul
+            >> SetStatus
+            poisson_GIDs [layer_index population_index] this_poisson_generator put
+	    /poisson_GIDs Set	    
+
+
+	    /dc_generator Create /this_dc_generator Set
+	    this_dc_generator
+	    <<
+	       /amplitude this_K_bg dc_amplitude mul
+	    >> SetStatus
+            dc_GIDs [layer_index population_index] this_dc_generator put
+	    /dc_GIDs Set
+	    
+	    
+	    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	    %%% Create and configure recording devices                 %%%
+	    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+	    % Spike detector
+	    /spike_detector Create /this_spike_detector Set
+	    this_spike_detector
+	    <<
+	       % set spike detector label for filenames. The GID of the spike detector
+	       % and the process number are appended automatically.
+	       /label spike_detector_label layer_index 2 mul population_index add 1 add cvs join
+	       /to_file save_cortical_spikes
+               /to_memory to_memory
+	    >> SetStatus 
+            spike_detector_GIDs [layer_index population_index] this_spike_detector put
+	    /spike_detector_GIDs Set
+
+	    % Voltmeter
+	    /voltmeter Create /this_voltmeter Set
+	    this_voltmeter
+	    <<
+	       %/label voltmeter_label layer_index cvs join (_) join population_index cvs join
+	       /label voltmeter_label layer_index 2 mul population_index add 1 add cvs join
+	       /to_file save_voltages
+               /to_memory to_memory
+               /interval dt
+	    >> SetStatus
+            voltmeter_GIDs [layer_index population_index] this_voltmeter put
+	    /voltmeter_GIDs Set
+
+	    % Multimeter for population resolved input currents
+	    /multimeter Create /this_multimeter Set	
+	    this_multimeter
+	    <<
+		/record_from [/weighted_spikes_ex /weighted_spikes_in]
+
+		/label weighted_input_spikes_label layer_index 2 mul population_index add 1 add cvs join
+		% /label weighted_input_spikes_label layer_index cvs join (_) join population_index cvs join
+		%/record_to [/file /memory]
+		/record_to [/file]
+                /to_memory to_memory
+		/interval dt
+	    >> SetStatus
+	    multimeter_GIDs [layer_index population_index] this_multimeter put
+	    /multimeter_GIDs Set
+
+
+
+	    
+	    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	    %%% Create multimeters and readout neurons for depth resolved input currents %%%
+	    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+	    % loop over cell-types
+	    0 1 y_in_Y layer_index get population_index get length 1 sub
+	    {
+		/cell_type Set
+
+		% loop over input layers
+		0 1 num_input_layers 1 sub
+		{
+		    /input_layer Set
+
+    		    device_subnet ChangeSubnet
+
+		    % Create multimeter
+		    /multimeter Create /this_multimeter Set
+		    this_multimeter
+		    <<
+			/record_from [/weighted_spikes_ex /weighted_spikes_in]
+			/label (depth_res_input_spikes-)
+			y_in_Y layer_index get population_index get cell_type get
+			(-)
+			input_layer cvs join join join
+			%/record_to [/file /memory]
+                        /record_to [/file]
+                        /to_memory to_memory
+			/interval dt
+		    >> SetStatus
+		    dric_multimeter_GIDs [layer_index population_index cell_type input_layer] this_multimeter put
+		    /dric_multimeter_GIDs Set
+		    		    
+		    % Create readout neurons
+		    n_rec_depth_resolved_input 0 gt
+		    {
+		    /subnet Create /readout_neuron_subnet Set
+		    readout_neuron_subnet ChangeSubnet
+		    readout_neuron_subnet_GIDs [layer_index population_index cell_type input_layer] readout_neuron_subnet put
+		    /readout_neuron_subnet_GIDs Set
+		    neuron_model n_rec_depth_resolved_input Create ;
+		    } if		    
+		}for % loop over input layers
+	    }for % loop over cell types
+
+        } for % loop over e and i populations
+    } for % loop over layers  
+
+ 
+} def
+
+
+/WriteGIDstoFile
+{
+    raw_nest_output_path (/) join GID_filename join
+    (w) ofsopen
+    ; /outputstream Set
+    Rank 0 eq
+    {
+        outputstream 
+    } if
+    
+    n_thal 0 gt {
+	th_neuron_subnet_GID GetGlobalNodes /GIDs Set
+	Rank 0 eq
+	{
+	    GIDs Min <- (\t) <- GIDs Max <- (\n) <-
+	} if
+    } if
+    
+    neuron_subnet_GIDs Flatten
+    {
+        GetGlobalNodes /GIDs Set    
+        Rank 0 eq
+        {
+            GIDs Min <- (\t) <- GIDs Max <- (\n) <-
+	} if
+    } forall
+    Rank 0 eq
+    {
+        close
+    } if
+} def
+
+
+
+/ConnectNetworkNodes
+{
+    tic
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%%    Physical connections            %%%
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    
+    0 1 num_layers 1 sub % target layer
+    {
+        /target_layer Set
+	
+        0 1 num_pops_per_layer 1 sub % target population
+        {
+	    /target_pop Set
+	    
+            % get neuron IDs
+            neuron_subnet_GIDs target_layer get target_pop get GetGlobalNodes
+            /target_nodes Set
+
+            % determine the number of target neurons that will be used to compute the number of synapses.
+	    % If in-degrees of the full-scale model are preserved, this means using the number of neurons
+	    % from the full-scale model (only for computing the number of synapses).
+            preserve_K
+            {
+	        /effective_num_targets full_scale_num_neurons target_layer get target_pop get def
+	    }{
+	        /effective_num_targets num_neurons target_layer get target_pop get def	      
+	    } ifelse      
+
+
+	    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	    %%% Create intra-columnar connections             %%%
+	    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+	    0 1 num_layers 1 sub % source layer
+	    {
+	        /source_layer Set
+		
+	        0 1 num_pops_per_layer 1 sub % source population
+	        {
+		   /source_pop Set
+		   
+		   % get neuron IDs
+                   neuron_subnet_GIDs source_layer get source_pop get GetGlobalNodes 
+                   /source_nodes Set
+		   
+		   % determine the number of source neurons that will be used to compute the number of synapses
+                   preserve_K
+                   {
+	              /effective_num_sources full_scale_num_neurons source_layer get source_pop get def
+	           }{
+	              /effective_num_sources num_neurons source_layer get source_pop get def	      
+	           } ifelse   
+		   
+		  
+                   % get connection probability
+		   conn_probs
+		   % pick row (target) in conn_probs
+		   target_layer num_pops_per_layer mul target_pop add get
+		   % pick column (source) in conn_probs
+		   source_layer num_pops_per_layer mul source_pop add get
+		   /this_conn Set % prob for this connection
+		    
+		  		     
+                   % compute numbers of synapses assuming binomial degree distributions and allowing for multapses
+		   % (see Potjans and Diesmann 2012 Cereb Cortex Eq. 1)
+                   ( log(1.-this_conn)/log((effective_num_sources*effective_num_targets-1.)/(effective_num_sources*effective_num_targets)) ) ExecMath
+                   cvi /this_num_synapses Set
+                 
+		    % define type of connection
+		    lognormal_weights {
+			/dist_type (lognormal) def
+			/weight_mean PSC_array target_layer get target_pop get source_layer get source_pop get def
+                        /weight_sd weight_mean PSC_rel_sd mul abs def
+                        %/weight_sd PSC_sd source_pop get abs def
+			
+			weight_mean 0 lt
+			   {
+				(sqrt(ln((weight_sd / (-1.*weight_mean ))^2 +1))) ExecMath /sigma Set
+				( -1.* (ln(-1.*weight_mean) - sigma^2/2.) ) ExecMath /mu Set
+			   }
+			   {
+				(sqrt(ln((weight_sd / weight_mean )^2 +1))) ExecMath /sigma Set
+				( ln(weight_mean) - sigma^2/2.) ExecMath /mu Set
+			   } ifelse
+		    }
+		    {
+			/dist_type (normal_clipped) def
+			/mu PSC_array target_layer get target_pop get source_layer get source_pop get def
+                        /sigma mu PSC_rel_sd mul abs def
+			%/sigma PSC_sd source_pop get abs def
+		    } ifelse
+		    
+		    % default synapse dictionary
+		    /syn_dict <<
+			/model /static_synapse
+			/weight <<
+			    /distribution dist_type
+			    /mu mu
+			    /sigma sigma
+			>>
+			/delay <<
+			    /distribution (normal_clipped)
+			    /low dt
+			    /mu delays source_pop get
+			    /sigma delays_sd source_pop get
+			>>
+		    >> def
+		    
+
+		    %% fill the weight dictionary for Connect and insert it into the synapse dictionary
+		    %weight_m 0 gt
+		    %{
+		    %  weight_dict_exc /mu mean_weight put
+		    %  weight_dict_exc /sigma PSC_sd source_pop get abs put
+		    %  syn_dict /weight weight_dict_exc put
+		    %}{
+		    %  weight_dict_inh /mu mean_weight put
+		    %  weight_dict_inh /sigma PSC_sd source_pop get abs put
+		    %  syn_dict /weight weight_dict_inh put
+		    %} ifelse
+		    %
+		    %% fill the delay dictionary for Connect and insert it into the synapse dictionary
+		    %delay_dict /mu delays source_pop get put
+		    %delay_dict /sigma delays_sd source_pop get abs put
+		    %syn_dict /delay delay_dict put 
+
+
+
+		   % connection pattern used in connection calls connecting populations
+		   % fill the connectivity dictionary with the number of synapses to be used
+                   /conn_dict <<
+			/rule /fixed_total_number
+			/N this_num_synapses
+		    >> def
+
+
+                   %source_nodes 
+                   %target_nodes 
+                   %this_num_synapses 
+                   %<< 
+                   %    %/fixed_total_n_syn true
+                   %    /delay_m delays source_pop get
+                   %    /delay_s delays_sd source_pop get
+                   %    /weight_m PSC_array target_layer get target_pop get source_layer get source_pop get  
+                   %    /weight_s PSC_sd source_pop get
+                   %    /lognormal_weights lognormal_weights
+                   %>> 
+                   %/static_synapse 
+                   %RandomPopulationConnectD
+		    source_nodes
+		    target_nodes
+		    conn_dict
+		    syn_dict
+		    Connect
+		    
+		%    1 1 10 {
+		%	/i Set
+		%	<< /source source_nodes /target target_nodes >> GetConnections i get GetStatus info
+		%	%<< /source source_nodes /target target_nodes >> GetConnections i get /weight get == 
+		%    } for
+		%    
+		    
+	        } for
+	    } for
+
+	    
+	    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	    %%% Create thalamo-cortical connections           %%%
+	    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	    
+            n_thal 0 gt
+            {
+                th_neuron_subnet_GID GetGlobalNodes 
+                /source_nodes Set
+            
+                C_th target_layer get target_pop get /this_conn Set
+            
+                % compute numbers of synapses assuming binomial degree distributions and allowing for multapses
+		% (see Potjans and Diesmann 2012 Cereb Cortex Eq. 1)
+                ( log(1.- this_conn)/log((n_thal*effective_num_targets-1.)/(n_thal*effective_num_targets)) ) ExecMath
+                cvi /this_num_synapses Set
+            
+                %source_nodes
+                %target_nodes
+                %this_num_synapses
+                %<<
+                %    %/fixed_total_n_syn true
+                %    /delay_m delay_th
+                %    /delay_s delay_th delay_th_rel_sd mul
+                %    /weight_m PSC_ext  
+                %    /weight_s PSC_ext PSC_rel_sd mul
+                %    /lognormal_weights lognormal_weights       
+                %>>
+                %/static_synapse
+                %RandomPopulationConnectD
+		
+		
+		
+		% define type of connection
+		lognormal_weights {
+		    /dist_type (lognormal) def
+		    /weight_mean PSC_ext def
+		    /weight_sd PSC_ext PSC_rel_sd mul abs def
+		    
+		    weight_mean 0 lt
+		       {
+			    (sqrt(ln((weight_sd / (-1.*weight_mean ))^2 +1))) ExecMath /sigma Set
+			    ( -1.* (ln(-1.*weight_mean) - sigma^2/2.) ) ExecMath /mu Set
+		       }
+		       {
+			    (sqrt(ln((weight_sd / weight_mean )^2 +1))) ExecMath /sigma Set
+			    ( ln(weight_mean) - sigma^2/2.) ExecMath /mu Set
+		       } ifelse
+		}
+		{
+		    /dist_type (normal_clipped) def
+		    /mu PSC_ext def
+		    /sigma PSC_ext PSC_rel_sd mul abs def
+		} ifelse
+		
+
+		% default synapse dictionary
+		/syn_dict <<
+		    /model /static_synapse
+		    /weight <<
+			/distribution dist_type
+			/mu mu
+			/sigma sigma
+		    >>
+		    /delay <<
+			/distribution (normal_clipped)
+			/low dt
+			/mu delay_th
+			/sigma delay_th delay_th_rel_sd mul
+		    >>
+		>> def
+		
+	    
+	       % connection pattern used in connection calls connecting populations
+	       % fill the connectivity dictionary with the number of synapses to be used
+	       /conn_dict <<
+		    /rule /fixed_total_number
+		    /N this_num_synapses
+		>> def		
+		
+		
+		
+		% Connect the thalamus
+		source_nodes
+		target_nodes
+		conn_dict
+		syn_dict
+		Connect 		
+                
+            } if
+
+
+	    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	    %%% Connect devices to cortical neurons           %%%
+	    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%	    
+
+
+            % Connect devices
+
+            % Connect to the spike detector
+            target_nodes
+            % record from a continuous range of IDs
+            % (appropriate for networks without topology)
+            num_neurons_rec_spikes target_layer get target_pop get
+            Take
+            spike_detector_GIDs target_layer get target_pop get
+            1 arraystore
+            /all_to_all 
+            Connect
+
+            % Connect to the voltmeter
+            voltmeter_GIDs target_layer get target_pop get
+	    1 arraystore
+            target_nodes
+            % record from a continuous range of IDs
+            num_neurons_rec_voltage target_layer get target_pop get
+            Take
+            /all_to_all 
+            Connect
+
+            % Connect to the Poisson generators
+            poisson_GIDs target_layer get target_pop get
+	    1 arraystore
+            target_nodes
+            /all_to_all 
+            << /weight PSC_ext /delay delays 0 get >>
+            Connect            
+
+            % Connect to the DC generators
+            dc_GIDs target_layer get target_pop get
+	    1 arraystore
+            target_nodes
+            /all_to_all
+            Connect
+
+%            % Connect to spike detector
+%            target_nodes
+%            % record from a continuous range of IDs - appropriate for networks without topology 
+%            num_neurons_rec_spikes target_layer get target_pop get
+%            Take
+%            spike_detector_GIDs target_layer get target_pop get
+%            ConvergentConnect
+%
+%            % Connect voltmeter
+%            voltmeter_GIDs target_layer get target_pop get
+%            target_nodes
+%            % record from a continuous range of IDs - appropriate for networks without topology 
+%            num_neurons_rec_voltage target_layer get target_pop get
+%            Take
+%            DivergentConnect
+%
+	    % Connect multimeter
+	    multimeter_GIDs target_layer get target_pop get
+	    1 arraystore
+            target_nodes
+            % record from a continuous range of IDs - appropriate for networks without topology 
+            num_neurons_rec_input_spikes target_layer get target_pop get
+            Take
+            /all_to_all
+	    Connect
+%
+%            % Connect Poisson generators
+%            poisson_GIDs target_layer get target_pop get
+%            target_nodes
+%            [PSC_ext]
+%            [delays 0 get]
+%            DivergentConnect
+%            
+%            % Connect DC generators
+%            dc_GIDs target_layer get target_pop get
+%            target_nodes
+%            DivergentConnect
+
+        } for
+    } for
+
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%% Connect stimuli to thalamic parrots           %%%
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    
+    n_thal 0 gt
+    {
+	% Connect thalamic poisson_generator to thalamic neurons (parrots)
+        th_poisson_GID
+        1 arraystore
+        th_neuron_subnet_GID GetGlobalNodes
+	/all_to_all 
+        Connect
+	
+	
+%	% Connect thalamic poisson_generator to thalamic neurons (parrots)
+%        th_poisson_GID
+%        th_neuron_subnet_GID GetGlobalNodes
+%        DivergentConnect  
+                
+        % Connect thalamic spike_generator to thalamic neurons (parrots)
+        th_spike_GID
+        1 arraystore
+        th_neuron_subnet_GID GetGlobalNodes
+	/all_to_all 
+        Connect
+
+	%th_spike_GID
+	%th_neuron_subnet_GID GetGlobalNodes
+	%DivergentConnect
+	
+	% Connect thalamic sinusoidal_poisson_generator to thalamic neurons (parrots)
+        th_smp_GID
+        1 arraystore
+        th_neuron_subnet_GID GetGlobalNodes
+	/all_to_all 
+        Connect
+
+	%
+	%th_smp_GID
+	%th_neuron_subnet_GID GetGlobalNodes
+	%DivergentConnect
+	
+	% Connect thalamic pulsepacket_generators to thalamic neurons (parrots)
+	[th_pulsepacket_generator_subnet_GID
+	GetGlobalNodes
+	th_neuron_subnet_GID GetGlobalNodes
+	] {Connect} ScanThread
+
+    } if    
+
+    
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%% Connect thalamic parrots to spike detector    %%%
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    
+    record_thalamic_spikes n_thal 0 gt and
+    { 
+        % Connect thalamic neurons to spike detector
+        th_neuron_subnet_GID GetGlobalNodes
+        th_spike_detector_GID
+	1 arraystore
+        /all_to_all
+	Connect
+    } if
+
+
+
+    
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%%    Readout connections             %%%
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % for depth resolved input currents
+    n_rec_depth_resolved_input 0 gt
+    {
+    
+    0 1 num_layers 1 sub % target layer
+    {
+        /target_layer Set
+	
+        0 1 num_pops_per_layer 1 sub % target population
+        {
+	    /target_pop Set
+
+	    0 1 y_in_Y target_layer get target_pop get length 1 sub % target cell-type
+	    { 
+		/cell_type Set
+			
+		0 1 num_input_layers 1 sub % target input layer
+		{ 
+		    /input_layer Set
+
+		    readout_neuron_subnet_GIDs target_layer get target_pop get cell_type get input_layer get GetGlobalNodes
+		    /target_nodes Set
+			    
+		    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+		    %%% Thalamus -> Readout neurons %%%
+		    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+		    th_neuron_subnet_GID GetGlobalNodes 
+		    /source_nodes Set
+
+		    % determine binzegger synapse distribution
+		    % L_yXL
+		    % y_in_Y target_layer get target_pop get cell_type get cvlit get 
+		    % input_layer get 
+		    % 0 get  
+		    % /binzegger_conn Set
+			    
+		    % % determine binzegger percentage of cells
+		    % F_yY 
+		    % target_layer get
+		    % target_pop get
+		    % cell_type get 
+		    % /binzegger_percentage Set
+		    
+		    % % get microcircuit connection probability
+		    % C_th
+		    % target_layer get
+		    % target_pop get
+		    % /microcircuit_conn Set % prob for this connection
+		    
+		    % /this_conn microcircuit_conn binzegger_conn binzegger_percentage mul mul  def 
+		    
+		    % /num_sources source_nodes length def
+			    
+		    % % compute numbers of synapses assuming binomial degree distributions and allowing for multapses
+		    % % (see Potjans and Diesmann 2012 Cereb Cortex Eq. 1)
+		    % ( log(1.-this_conn)/log((num_sources*n_rec_depth_resolved_input-1.)/(num_sources*n_rec_depth_resolved_input)) ) ExecMath
+		    % cvi /this_num_synapses Set
+
+		    % determine synapse distribution
+		    k_yXL
+		    y_in_Y target_layer get target_pop get cell_type get cvlit get 
+		    input_layer get 
+		    0 get
+		    n_rec_depth_resolved_input mul
+		    /this_num_synapses Set
+			    
+		%    source_nodes
+		%    target_nodes
+		%    /conn_spec
+		%    
+		%    
+		%    this_num_synapses 
+		%    << 
+		%	%/fixed_total_n_syn true
+		%	/delay_m delay_th
+		%	/delay_s delay_th delay_th_rel_sd mul
+		%	/weight_m PSC_ext  
+		%	/weight_s PSC_ext PSC_rel_sd mul
+		%	/lognormal_weights lognormal_weights       
+		%    >> 
+		%    /static_synapse
+		%    RandomPopulationConnectD
+    
+		    % define type of connection
+		    lognormal_weights {
+			/dist_type (lognormal) def
+			/weight_mean PSC_ext def
+			/weight_sd PSC_ext PSC_rel_sd mul abs def
+			
+			weight_mean 0 lt
+			   {
+				(sqrt(ln((weight_sd / (-1.*weight_mean ))^2 +1))) ExecMath /sigma Set
+				( -1.* (ln(-1.*weight_mean) - sigma^2/2.) ) ExecMath /mu Set
+			   }
+			   {
+				(sqrt(ln((weight_sd / weight_mean )^2 +1))) ExecMath /sigma Set
+				( ln(weight_mean) - sigma^2/2.) ExecMath /mu Set
+			   } ifelse
+		    }
+		    {
+			/dist_type (normal_clipped) def
+			/mu PSC_ext def
+			/sigma PSC_ext PSC_rel_sd mul abs def
+		    } ifelse
+		    
+    
+		    % default synapse dictionary
+		    /syn_dict <<
+			/model /static_synapse
+			/weight <<
+			    /distribution dist_type
+			    /mu mu
+			    /sigma sigma
+			>>
+			/delay <<
+			    /distribution (normal_clipped)
+			    /low dt
+			    /mu delay_th
+			    /sigma delay_th delay_th_rel_sd mul
+			>>
+		    >> def
+			
+		
+		   % connection pattern used in connection calls connecting populations
+		   % fill the connectivity dictionary with the number of synapses to be used
+		   /conn_dict <<
+			/rule /fixed_total_number
+			/N this_num_synapses
+		    >> def		
+		    
+		    
+		    % Connect the thalamus
+		    source_nodes
+		    target_nodes
+		    conn_dict
+		    syn_dict
+		    Connect 		
+
+
+		    
+		    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+		    %%% Column -> Readout neurons   %%%
+		    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+		    0 1 num_layers 1 sub % source layer
+		    {
+			/source_layer Set	
+
+			0 1 num_pops_per_layer 1 sub % source population
+			{
+			    /source_pop Set
+
+			    neuron_subnet_GIDs source_layer get source_pop get GetGlobalNodes
+			    /source_nodes Set
+
+			    % % determine binzegger synapse distribution
+			    % L_yXL
+			    % y_in_Y target_layer get target_pop get cell_type get cvlit get 
+			    % input_layer get 
+			    % source_layer 2 mul source_pop add 1 add get 
+			    % /binzegger_conn Set
+			    
+			    
+			    % % determine binzegger percentage of cells
+			    % F_yY 
+			    % target_layer get
+			    % target_pop get
+			    % cell_type get 
+			    % /binzegger_percentage Set
+			    	
+			    	    
+			    % % get microcircuit connection probability
+			    % conn_probs
+			    % % pick row (target) in conn_probs
+			    % target_layer num_pops_per_layer mul target_pop add get
+			    % % pick column (source) in conn_probs
+			    % source_layer num_pops_per_layer mul source_pop add get
+			    % /microcircuit_conn Set % prob for this connection
+			    
+			    % /this_conn microcircuit_conn binzegger_conn binzegger_percentage mul mul  def 
+			    
+			    
+			    % % determine the number of source neurons that will be used to compute the number of synapses
+			    % preserve_K
+			    % {
+			    % 	/effective_num_sources full_scale_num_neurons source_layer get source_pop get def
+			    % }{
+			    % 	/effective_num_sources num_neurons source_layer get source_pop get def	      
+			    % } ifelse
+			    
+			    % % compute numbers of synapses assuming binomial degree distributions and allowing for multapses
+			    % % (see Potjans and Diesmann 2012 Cereb Cortex Eq. 1)
+			    % ( log(1.-this_conn)/log((effective_num_sources*n_rec_depth_resolved_input-1.)/(effective_num_sources*n_rec_depth_resolved_input)) ) ExecMath
+			    % cvi /this_num_synapses Set
+
+			    % determine synapse distribution
+			    k_yXL
+			    y_in_Y target_layer get target_pop get cell_type get cvlit get 
+			    input_layer get 
+			    source_layer 2 mul source_pop add 1 add get
+			    n_rec_depth_resolved_input mul
+			    /this_num_synapses Set
+			    
+			%    source_nodes
+			%    target_nodes
+			%    this_num_synapses 
+			%    << 
+			%	%/fixed_total_n_syn true
+			%	/delay_m delays source_pop get
+			%	/delay_s delays_sd source_pop get
+			%	/weight_m PSC_array target_layer get target_pop get source_layer get source_pop get  
+			%	/weight_s PSC_sd source_pop get
+			%	/lognormal_weights lognormal_weights       
+			%    >> 
+			%    /static_synapse
+			%    RandomPopulationConnectD
+			
+			    % define type of connection
+			    lognormal_weights {
+				/dist_type (lognormal) def
+				/weight_mean PSC_array target_layer get target_pop get source_layer get source_pop get def
+				/weight_sd weight_mean PSC_rel_sd mul abs def
+                                %/weight_sd PSC_sd source_pop get abs def
+				
+				weight_mean 0 lt
+				   {
+					(sqrt(ln((weight_sd / (-1.*weight_mean ))^2 +1))) ExecMath /sigma Set
+					( -1.* (ln(-1.*weight_mean) - sigma^2/2.) ) ExecMath /mu Set
+				   }
+				   {
+					(sqrt(ln((weight_sd / weight_mean )^2 +1))) ExecMath /sigma Set
+					( ln(weight_mean) - sigma^2/2.) ExecMath /mu Set
+				   } ifelse
+			    }
+			    {
+				/dist_type (normal_clipped) def
+				/mu PSC_array target_layer get target_pop get source_layer get source_pop get def
+				/sigma mu PSC_rel_sd mul abs def
+                                %/sigma PSC_sd source_pop get abs def
+			    } ifelse
+			    
+	    
+			    % default synapse dictionary
+			    /syn_dict <<
+				/model /static_synapse
+				/weight <<
+				    /distribution dist_type
+				    /mu mu
+				    /sigma sigma
+				>>
+				/delay <<
+				    /distribution (normal_clipped)
+				    /low dt
+				    /mu delays source_pop get
+				    /sigma delays_sd source_pop get
+				>>
+			    >> def
+			    
+			
+			   % connection pattern used in connection calls connecting populations
+			   % fill the connectivity dictionary with the number of synapses to be used
+			   /conn_dict <<
+				/rule /fixed_total_number
+				/N this_num_synapses
+			    >> def		
+			    
+			    
+			    % Connect the thalamus
+			    source_nodes
+			    target_nodes
+			    conn_dict
+			    syn_dict
+			    Connect 		
+
+			    
+			}for
+		    }for
+
+			    
+		    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+		    %%% Ext. inp.-> Readout neurons %%%
+		    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+		    % not implemented
+
+		    
+		    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+		    %%% Multimeters -> Readout neurons %%%
+		    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+		   
+		    dric_multimeter_GIDs target_layer get target_pop get cell_type get input_layer get
+		    target_nodes
+		    /all_to_all
+		    Connect
+		    
+		}for      
+	    }for
+	}for
+    }for
+    }if
+
+    toc /ConnectTime Set
+ 
+} def
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%     	Executive section		%%%        
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+clear
+
+CheckParameters
+
+PrepareSimulation
+
+DerivedParameters
+
+CreateNetworkNodes
+
+WriteGIDstoFile
+
+ConnectNetworkNodes
+
+tic
+tstop tstart sub Simulate
+toc /SimTime Set
+
+%memory_thisjob ==
+
+Rank 0 eq
+{ 
+    (Connecting took ) ConnectTime cvs join ( s\n) join
+    (Simulating took ) join SimTime cvs join ( s) join
+    M_INFO
+    message  
+} if
+
