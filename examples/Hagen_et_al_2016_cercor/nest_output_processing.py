@@ -7,7 +7,6 @@ This file reformats NEST output in a convinient way.
 import os
 import numpy as np
 from glob import glob
-from cellsim16popsParams import point_neuron_network_params
 from analysis_params import params
 from hybridLFPy import helpers
 from mpi4py import MPI
@@ -68,25 +67,4 @@ def merge_gdf(model_params, raw_label='spikes_', file_type='gdf',
 
     return
 
-
-if __name__ == '__main__':    
-    # Load model and analysis parameters
-    networkParams = point_neuron_network_params()
-     
-    #test functions
-    merge_gdf(networkParams,
-            raw_label=networkParams.spike_detector_label,
-            file_type='gdf',
-            fileprefix=params.networkSimParams['label'])
-    merge_gdf(networkParams,
-            raw_label=networkParams.voltmeter_label,
-            file_type='dat',
-            fileprefix='voltages')
-    merge_gdf(networkParams,
-            raw_label=networkParams.weighted_input_spikes_label,
-            file_type='dat',
-            fileprefix='population_input_spikes')
-    
-    #create_spatial_input_spikes_hdf5(networkParams,
-    #                                 fileprefix='depth_res_input_spikes-')
 
