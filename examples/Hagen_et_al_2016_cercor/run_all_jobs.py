@@ -1,8 +1,10 @@
 #!/usr/bin/env python
 '''
 create jobscripts for clusters running the Slurm Workload Manager
-(http://slurm.schedmd.com) for all network-model simulations in
+(http://slurm.schedmd.com) for all network-model and LFP simulations in
 Hagen et al., 2016. DOI: 10.1093/cercor/bhw237
+
+All jobs will be submitted to the queue. 
 
 Modify according to the set up on your cluster.
 
