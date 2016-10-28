@@ -1349,9 +1349,11 @@ def plotPowers(ax, params, popkeys, dataset, linestyles, linewidths, transient=2
                  markerfacecolor=colors[i],
                  markeredgecolor=colors[i],
                  label=layer,
-                 clip_on=True)
+                 clip_on=True
+                 )
+    
         f.close()
-
+    
     f = h5py.File(os.path.join(params.savefolder, '%ssum' % dataset + SCALING_POSTFIX + '.h5' ))
     ax.plot(f['data'].value[:, transient:].var(axis=1), depth,
                  'k', label='SUM', lw=1.25, clip_on=False)
