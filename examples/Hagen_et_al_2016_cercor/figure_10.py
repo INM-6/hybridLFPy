@@ -201,12 +201,19 @@ if __name__ == '__main__':
     fig, axes = plt.subplots(2,5)
     fig.subplots_adjust(left=0.06, right=0.96, wspace=0.4, hspace=0.16, bottom=0.05, top=0.95)
 
-    fig_exc_inh_contrib(fig, axes[0], params, savefolders=['simulation_output_modified_ac_exc', 'simulation_output_modified_ac_inh', 'simulation_output_modified_ac_input'], T=[800, 1000], transient=200, panel_labels='ABCDE', show_xlabels=False)
-    fig_exc_inh_contrib(fig, axes[1], params, savefolders=['simulation_output_modified_regular_exc', 'simulation_output_modified_regular_inh', 'simulation_output_modified_regular_input'], T=[890, 920], transient=200, panel_labels='FGHIJ')
-    fig.savefig(os.path.join('simulation_output_modified_ac_input',
-                             'figures', 'figure_10.pdf'), dpi=300, bbox_inches='tight', pad_inches=0)
-    fig.savefig(os.path.join('simulation_output_modified_ac_input',
-                             'figures', 'figure_10.eps'), bbox_inches='tight', pad_inches=0.01)
+    fig_exc_inh_contrib(fig, axes[0], params,
+                        savefolders=['simulation_output_modified_ac_exc',
+                                     'simulation_output_modified_ac_inh',
+                                     'simulation_output_modified_ac_input'],
+                        T=[800, 1000], transient=200, panel_labels='ABCDE',
+                        show_xlabels=False)
+    fig_exc_inh_contrib(fig, axes[1], params,
+                        savefolders=['simulation_output_modified_regular_exc',
+                                     'simulation_output_modified_regular_inh',
+                                     'simulation_output_modified_regular_input'],
+                        T=[890, 920], transient=200, panel_labels='FGHIJ')
+    fig.savefig('figure_10.pdf', dpi=300, bbox_inches='tight', pad_inches=0)
+    fig.savefig('figure_10.eps', bbox_inches='tight', pad_inches=0.01)
 
 
     plt.show()

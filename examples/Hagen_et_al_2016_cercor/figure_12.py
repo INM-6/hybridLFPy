@@ -298,7 +298,8 @@ if __name__ == '__main__':
 
     for i in range(2):
         savefolder = savefolders[i]
-        params.savefolder = savefolder
+        params.savefolder = os.path.join(os.path.split(params.savefolder)[0],
+                                         savefolder)
         params.figures_path = os.path.join(params.savefolder, 'figures')
         params.spike_output_path = os.path.join(params.savefolder,
                                                            'processed_nest_output')
@@ -311,7 +312,7 @@ if __name__ == '__main__':
                         lag=lags[i], show_titles=show_titles[i],
                         show_xlabels=show_xlabels[i])
 
-    fig.savefig(os.path.join(params.figures_path, 'figure_12.pdf'), dpi=300, bbox_inches='tight', pad_inches=0)
-    fig.savefig(os.path.join(params.figures_path, 'figure_12.eps'), bbox_inches='tight', pad_inches=0.01)
+    fig.savefig('figure_12.pdf', dpi=300, bbox_inches='tight', pad_inches=0)
+    fig.savefig('figure_12.eps', bbox_inches='tight', pad_inches=0.01)
 
     plt.show()

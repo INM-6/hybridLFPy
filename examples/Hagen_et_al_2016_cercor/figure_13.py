@@ -119,7 +119,8 @@ def fig_kernel_lfp(savefolders, params, transient=200, T=[800., 1000.], X='L5E',
     
     
     # path to simulation files
-    params.savefolder = 'simulation_output_spikegen'
+    params.savefolder = os.path.join(os.path.split(params.savefolder)[0],
+                                     'simulation_output_spikegen')
     params.figures_path = os.path.join(params.savefolder, 'figures')
     params.spike_output_path = os.path.join(params.savefolder,
                                                        'processed_nest_output')
@@ -127,7 +128,7 @@ def fig_kernel_lfp(savefolders, params, transient=200, T=[800., 1000.], X='L5E',
     
     
     # Get the spikegen LFP:
-    f = h5py.File(os.path.join('simulation_output_spikegen', 'LFPsum.h5'))
+    f = h5py.File(os.path.join(params.savefolder, 'LFPsum.h5'))
     srate = f['srate'].value
     tvec = np.arange(f['data'].shape[1]) * 1000. / srate
     
@@ -243,7 +244,7 @@ def fig_kernel_lfp(savefolders, params, transient=200, T=[800., 1000.], X='L5E',
         f.close()
     
         # Get the spikegen LFP:
-        f = h5py.File(os.path.join('simulation_output_spikegen', 'LFPsum.h5'))
+        f = h5py.File(os.path.join(os.path.split(params.savefolder)[0], 'simulation_output_spikegen', 'LFPsum.h5'))
         data_sg_raw = f['data'].value
         
         f.close()
@@ -1279,9 +1280,7 @@ if __name__ == '__main__':
         fig, PSD_LFP_reconst, PSD_data = fig_kernel_lfp(savefolders, params,
                                                         transient=100, T=[800., 900.], X=X, lags=lags)
         
-        for sf in savefolders:
-            fig.savefig('figure_13_{}.pdf'.format(X), dpi=300, bbox_inches='tight', pad_inches=0)
-        for sf in savefolders:
-            fig.savefig('figure_13_{}.eps'.format(X), bbox_inches='tight', pad_inches=0.01)
+        fig.savefig('figure_13_{}.pdf'.format(X), dpi=300, bbox_inches='tight', pad_inches=0)
+        fig.savefig('figure_13_{}.eps'.format(X), bbox_inches='tight', pad_inches=0.01)
 
     plt.show()
