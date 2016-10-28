@@ -4,7 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import plotting_helpers as phlp
 from plot_methods import getMeanInpCurrents, getMeanVoltages, plot_population, plot_signal_sum
-from cellsim16popsParams import multicompartment_params 
+from cellsim16popsParams_modified_spontan import multicompartment_params 
 import analysis_params
 from hybridLFPy import CachedNetwork, helpers
 import cPickle as pickle
@@ -410,18 +410,19 @@ if __name__ == '__main__':
 
     for i, savefolder in enumerate(savefolders):
         # path to simulation files
-        params.savefolder = savefolder
+        params.savefolder = os.path.join(os.path.split(params.savefolder)[0],
+                                         savefolder)
         params.figures_path = os.path.join(params.savefolder, 'figures')
         params.spike_output_path = os.path.join(params.savefolder,
-                                                           'processed_nest_output')
+                                                'processed_nest_output')
         params.networkSimParams['spike_output_path'] = params.spike_output_path
 
         fig = plt.figure()
         plot_multi_scale_output_a(fig)        
         plot_multi_scale_output_b(fig)
-        fig.savefig(os.path.join(params.figures_path, 'figure_06.pdf'), dpi=300,
+        fig.savefig('figure_06.pdf', dpi=300,
                     bbox_inches='tight', pad_inches=0, compression=9)
-        fig.savefig(os.path.join(params.figures_path, 'figure_06.eps'),
+        fig.savefig('figure_06.eps',
                     bbox_inches='tight', pad_inches=0.01)
         
     plt.show()

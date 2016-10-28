@@ -12,7 +12,7 @@ import analysis_params
 ### OUTSIDE SCOPE DEFINITIONS      ###
 ######################################
 
-from cellsim16popsParams import multicompartment_params 
+from cellsim16popsParams_modified_spontan import multicompartment_params 
 #params = multicompartment_params()
 
 ana_params = analysis_params.params()
@@ -45,7 +45,8 @@ def fig_lfp_corr(params, savefolders, transient=200,
 
     for i, (savefolder, letters) in enumerate(zip(savefolders, letterslist)):
         # path to simulation files
-        params.savefolder = savefolder
+        params.savefolder = os.path.join(os.path.split(params.savefolder)[0],
+                                         savefolder)
         params.figures_path = os.path.join(params.savefolder, 'figures')
         params.spike_output_path = os.path.join(params.savefolder,
                                                            'processed_nest_output')
@@ -240,8 +241,8 @@ if __name__ == '__main__':
                        Df=None, mlab=True, NFFT=256, noverlap=128,
                        window=plt.mlab.window_hanning, letterslist=letterslist)
   
-    fig.savefig(os.path.join(params.figures_path, 'figure_11.pdf'), dpi=300, bbox_inches='tight', pad_inches=0)
-    fig.savefig(os.path.join(params.figures_path, 'figure_11.eps'), bbox_inches='tight', pad_inches=0.01)
+    fig.savefig('figure_11.pdf', dpi=300, bbox_inches='tight', pad_inches=0)
+    fig.savefig('figure_11.eps', bbox_inches='tight', pad_inches=0.01)
     
 
     plt.show()

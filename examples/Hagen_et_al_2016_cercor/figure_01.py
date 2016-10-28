@@ -11,7 +11,7 @@ import analysis_params
 ### OUTSIDE SCOPE DEFINITIONS      ###
 ######################################
 
-from cellsim16popsParams import multicompartment_params 
+from cellsim16popsParams_modified_regular_input import multicompartment_params 
 
 
 ######################################
@@ -127,19 +127,18 @@ if __name__ == '__main__':
 
     for i, savefolder in enumerate(savefolders):
         # path to simulation files
-        params.savefolder = savefolder
+        params.savefolder = os.path.join(os.path.split(params.savefolder)[0],
+                                         savefolder)
         params.figures_path = os.path.join(params.savefolder, 'figures')
         params.spike_output_path = os.path.join(params.savefolder,
-                                                           'processed_nest_output')
+                                                'processed_nest_output')
         params.networkSimParams['spike_output_path'] = params.spike_output_path
         
         fig = fig_intro(params, ana_params, T=[875, 950], fraction=1.)
         
-        fig.savefig(os.path.join(params.figures_path,
-                                 'figure_01.pdf'),
+        fig.savefig('figure_01.pdf',
                     dpi=450,
                     bbox_inches='tight', pad_inches=0)
-        fig.savefig(os.path.join(params.figures_path,
-                                 'figure_01.eps'),
+        fig.savefig('figure_01.eps',
                     bbox_inches='tight', pad_inches=0.01)
     plt.show()

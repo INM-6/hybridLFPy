@@ -13,7 +13,7 @@ import analysis_params
 ### OUTSIDE SCOPE DEFINITIONS      ###
 ######################################
 
-from cellsim16popsParams import multicompartment_params 
+from cellsim16popsParams_default import multicompartment_params 
 
 #
 ana_params = analysis_params.params()
@@ -329,7 +329,8 @@ if __name__ == '__main__':
     
     for savefolder, letters, ttl, xlbl, bottom, top in zip(savefolders, letterslist, show_titles, show_xlabels, bottoms, tops):
         # path to simulation files
-        params.savefolder = savefolder
+        params.savefolder = os.path.join(os.path.split(params.savefolder)[0],
+                                         savefolder)
         params.figures_path = os.path.join(params.savefolder, 'figures')
         params.spike_output_path = os.path.join(params.savefolder,
                                                            'processed_nest_output')
@@ -341,10 +342,10 @@ if __name__ == '__main__':
                                     window=plt.mlab.window_hanning, noverlap=128, letters=letters,
                                     show_titles=ttl, show_xlabels=xlbl)
         
-    fig.savefig(os.path.join(params.figures_path, 'figure_08.pdf'),
+    fig.savefig('figure_08.pdf',
                 dpi=450, 
                 compression=9, bbox_inches='tight', pad_inches=0)
-    fig.savefig(os.path.join(params.figures_path, 'figure_08.eps'), bbox_inches='tight', pad_inches=0.01)
+    fig.savefig('figure_08.eps', bbox_inches='tight', pad_inches=0.01)
         
     
     plt.show()

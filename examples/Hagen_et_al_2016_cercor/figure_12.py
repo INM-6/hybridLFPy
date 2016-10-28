@@ -12,7 +12,7 @@ import analysis_params
 ### OUTSIDE SCOPE DEFINITIONS      ###
 ######################################
 
-from cellsim16popsParams import multicompartment_params 
+from cellsim16popsParams_modified_spontan import multicompartment_params 
 params = multicompartment_params()
 
 #

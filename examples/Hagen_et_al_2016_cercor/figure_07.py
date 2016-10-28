@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 from matplotlib import gridspec
 import plotting_helpers as phlp
 from plot_methods import plot_signal_sum, plot_signal_sum_colorplot
-from cellsim16popsParams import multicompartment_params 
+from cellsim16popsParams_modified_regular_input import multicompartment_params 
 import analysis_params
 from hybridLFPy import CachedNetwork
     
@@ -16,7 +16,6 @@ if __name__ == '__main__':
     ana_params = analysis_params.params()
     ana_params.set_PLOS_2column_fig_style(ratio=0.5)
 
-    params.savefolder = 'simulation_output_modified_regular_input'
     params.figures_path = os.path.join(params.savefolder, 'figures')
     params.spike_output_path = os.path.join(params.savefolder,
                                                        'processed_nest_output')
@@ -174,9 +173,9 @@ if __name__ == '__main__':
     ax7.set_yticklabels([])
     
 
-    fig.savefig(os.path.join(params.figures_path, 'figure_07.pdf'),
+    fig.savefig('figure_07.pdf',
                 dpi=450, compression=9,
                 )
-    fig.savefig(os.path.join(params.figures_path, 'figure_07.eps'))
+    fig.savefig('figure_07.eps')
     plt.show()
   

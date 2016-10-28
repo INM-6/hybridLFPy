@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import h5py
 import plotting_helpers as phlp
 from plot_methods import plot_signal_sum, plot_signal_sum_colorplot
-from cellsim16popsParams import multicompartment_params 
+from cellsim16popsParams_modified_spontan import multicompartment_params 
 import analysis_params
 
 def fig_exc_inh_contrib(fig, axes, params, savefolders, T=[800, 1000], transient=200,
@@ -88,11 +88,12 @@ def fig_exc_inh_contrib(fig, axes, params, savefolders, T=[800, 1000], transient
         vlim_LFP = 0
         vlim_CSD = 0
         for savefolder in savefolders:
-            vlimround0 = plot_signal_sum(dum_ax, params, os.path.join(savefolder, file_name),
+            vlimround0 = plot_signal_sum(dum_ax, params,
+                                         os.path.join(os.path.split(params.savefolder)[0], savefolder, file_name),
                                          rasterized=False)
             if vlimround0 > vlim_LFP:
                 vlim_LFP = vlimround0
-            im = plot_signal_sum_colorplot(dum_ax, params, os.path.join(savefolder, file_name),
+            im = plot_signal_sum_colorplot(dum_ax, params, os.path.join(os.path.split(params.savefolder)[0], savefolder, file_name),
                                            cmap=plt.get_cmap('gray', 21) if analysis_params.bw else plt.get_cmap('bwr_r', 21),
                                            rasterized=False)
             if abs(im.get_array()).max() > vlim_CSD:
@@ -104,13 +105,13 @@ def fig_exc_inh_contrib(fig, axes, params, savefolders, T=[800, 1000], transient
         for j, savefolder in enumerate(savefolders):
             ax = axes[j]
             if i == 1:
-                plot_signal_sum(ax, params, os.path.join(savefolder, file_name),
+                plot_signal_sum(ax, params, os.path.join(os.path.split(params.savefolder)[0], savefolder, file_name),
                             unit=units[i], T=T,
                             color='k',
                             # color='k' if analysis_params.bw else colors[j],
                             vlimround=vlim_LFP, rasterized=False)
             elif i == 0:
-                im = plot_signal_sum_colorplot(ax, params, os.path.join(savefolder, file_name),
+                im = plot_signal_sum_colorplot(ax, params, os.path.join(os.path.split(params.savefolder)[0], savefolder, file_name),
                               unit=r'($\mu$Amm$^{-3}$)', T=T, ylabels=True,
                               colorbar=False,
                               fancy=False, cmap=plt.get_cmap('gray', 21) if analysis_params.bw else plt.get_cmap('bwr_r', 21),
@@ -142,7 +143,7 @@ def fig_exc_inh_contrib(fig, axes, params, savefolders, T=[800, 1000], transient
     ax = axes[3]
     datas = []    
     for j, savefolder in enumerate(savefolders):
-        f = h5py.File(os.path.join(savefolder, 'CSDsum.h5'))
+        f = h5py.File(os.path.join(os.path.split(params.savefolder)[0], savefolder, 'CSDsum.h5'))
         var = f['data'].value[:, transient:].var(axis=1)
         ax.semilogx(var, depth,
                     color=colors[j], label=labels[j], lw=lws[j], clip_on=False)
@@ -166,7 +167,7 @@ def fig_exc_inh_contrib(fig, axes, params, savefolders, T=[800, 1000], transient
 
     datas = []
     for j, savefolder in enumerate(savefolders):
-        f = h5py.File(os.path.join(savefolder, 'LFPsum.h5'))
+        f = h5py.File(os.path.join(os.path.split(params.savefolder)[0], savefolder, 'LFPsum.h5'))
         var = f['data'].value[:, transient:].var(axis=1)
         ax.semilogx(var, depth,
                     color=colors[j], label=labels[j], lw=lws[j], clip_on=False)

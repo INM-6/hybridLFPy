@@ -9,7 +9,7 @@ import analysis_params
 ### OUTSIDE SCOPE DEFINITIONS      ###
 ######################################
 
-from cellsim16popsParams import multicompartment_params 
+from cellsim16popsParams_modified_spontan import multicompartment_params 
 
 
 ######################################
@@ -39,8 +39,11 @@ def fig_lfp_decomposition(fig, axes, params, transient=200, X=['L23E', 'L6E'], s
         linestyles = ['-', '-', '-', '-', '-', '-', '-', '-']
         markerstyles = ['s', 's', 'v', 'v', 'o', 'o', '^', '^']
     else:
-        # linestyles = ['-', ':']*(len(params.Y) / 2)
-        linestyles = ['-', (0, (1,1))]*(len(params.Y) / 2)
+        if plt.matplotlib.__version__ == '1.5.x':
+            linestyles = ['-', ':']*(len(params.Y) / 2)
+            print('CSD variance semi log plots may fail with matplotlib.__version__ {}'.format(plt.matplotlib.__version__))
+        else:
+            linestyles = ['-', (0, (1,1))]*(len(params.Y) / 2) #cercor version
         # markerstyles = ['s', 's', 'v', 'v', 'o', 'o', '^', '^']
         markerstyles = [None]*len(params.Y)
         linewidths = [1.25 for i in range(len(linestyles))]
@@ -164,20 +167,22 @@ if __name__ == '__main__':
     fig, axes = plt.subplots(2,5)
     fig.subplots_adjust(left=0.06, right=0.96, wspace=0.4, hspace=0.2, bottom=0.05, top=0.95)
 
-    savefolder = 'simulation_output_modified_spontan'
-    params.savefolder = savefolder
-    params.figures_path = os.path.join(params.savefolder, 'figures')
-    params.populations_path = os.path.join(params.savefolder, 'populations')
-    params.spike_output_path = os.path.join(params.savefolder,
-                                                       'processed_nest_output')
-    params.networkSimParams['spike_output_path'] = params.spike_output_path
+    # params.figures_path = os.path.join(params.savefolder, 'figures')
+    # params.populations_path = os.path.join(params.savefolder, 'populations')
+    # params.spike_output_path = os.path.join(params.savefolder,
+    #                                                    'processed_nest_output')
+    # params.networkSimParams['spike_output_path'] = params.spike_output_path
 
     fig_lfp_decomposition(fig, axes[0], params, transient=200, show_xlabels=False)
-    fig_exc_inh_contrib(fig, axes[1], params, savefolders=['simulation_output_modified_spontan_exc', 'simulation_output_modified_spontan_inh', 'simulation_output_modified_spontan'], T=[800, 1000], transient=200, panel_labels='FGHIJ')
-    fig.savefig(os.path.join(params.figures_path,
-                             'figure_09.pdf'), dpi=300, bbox_inches='tight', pad_inches=0)
-    fig.savefig(os.path.join(params.figures_path,
-                             'figure_09.eps'), bbox_inches='tight', pad_inches=0.01)
+    fig_exc_inh_contrib(fig, axes[1], params,
+                        savefolders=['simulation_output_modified_spontan_exc',
+                                     'simulation_output_modified_spontan_inh',
+                                     'simulation_output_modified_spontan'],
+                        T=[800, 1000], transient=200, panel_labels='FGHIJ')
+    fig.savefig('figure_09.pdf',
+                dpi=300, bbox_inches='tight', pad_inches=0)
+    fig.savefig('figure_09.eps',
+                bbox_inches='tight', pad_inches=0.01)
 
 
     plt.show()

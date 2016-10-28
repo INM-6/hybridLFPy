@@ -14,7 +14,7 @@ import analysis_params
 ### OUTSIDE SCOPE DEFINITIONS      ###
 ######################################
 
-from cellsim16popsParams import multicompartment_params 
+from cellsim16popsParams_modified_spontan import multicompartment_params 
 params = multicompartment_params()
 
 ana_params = analysis_params.params()
@@ -217,7 +217,8 @@ def fig_kernel_lfp(savefolders, params, transient=200, T=[800., 1000.], X='L5E',
     for i, (savefolder, lag) in enumerate(zip(savefolders, lags)):
         
         # path to simulation files
-        params.savefolder = savefolder
+        params.savefolder = os.path.join(os.path.split(params.savefolder)[0],
+                                         savefolder)
         params.figures_path = os.path.join(params.savefolder, 'figures')
         params.spike_output_path = os.path.join(params.savefolder,
                                                 'processed_nest_output')
@@ -613,7 +614,8 @@ def fig_kernel_lfp_CINPLA(savefolders, params, transient=200, X='L5E', lags=[20,
     for i, (savefolder, lag) in enumerate(zip(savefolders, lags)):
         
         # path to simulation files
-        params.savefolder = savefolder
+        params.savefolder = os.path.join(os.path.split(params.savefolder)[0],
+                                         savefolder)
         params.figures_path = os.path.join(params.savefolder, 'figures')
         params.spike_output_path = os.path.join(params.savefolder,
                                                 'processed_nest_output')
@@ -733,7 +735,8 @@ def fig_kernel_lfp_EITN_I(savefolders, params, transient=200, T=[800., 1000.], X
     
     
     # path to simulation files
-    params.savefolder = 'simulation_output_spikegen'
+    params.savefolder = os.path.join(os.path.split(params.savefolder)[0],
+                                         'simulation_output_spikegen')
     params.figures_path = os.path.join(params.savefolder, 'figures')
     params.spike_output_path = os.path.join(params.savefolder,
                                                        'processed_nest_output')
@@ -825,7 +828,8 @@ def fig_kernel_lfp_EITN_I(savefolders, params, transient=200, T=[800., 1000.], X
     for i, (savefolder, lag) in enumerate(zip(savefolders, lags)):
         
         # path to simulation files
-        params.savefolder = savefolder
+        params.savefolder = os.path.join(os.path.split(params.savefolder)[0],
+                                         savefolder)
         params.figures_path = os.path.join(params.savefolder, 'figures')
         params.spike_output_path = os.path.join(params.savefolder,
                                                 'processed_nest_output')
@@ -947,7 +951,9 @@ def fig_kernel_lfp_EITN_II(savefolders, params, transient=200, T=[800., 1000.], 
     
     
     # path to simulation files
-    params.savefolder = 'simulation_output_spikegen'
+    savefolder = 'simulation_output_spikegen'
+    params.savefolder = os.path.join(os.path.split(params.savefolder)[0],
+                                         savefolder)
     params.figures_path = os.path.join(params.savefolder, 'figures')
     params.spike_output_path = os.path.join(params.savefolder,
                                                        'processed_nest_output')
@@ -1039,7 +1045,8 @@ def fig_kernel_lfp_EITN_II(savefolders, params, transient=200, T=[800., 1000.], 
     for i, (savefolder, lag) in enumerate(zip(savefolders, lags)):
         
         # path to simulation files
-        params.savefolder = savefolder
+        params.savefolder = os.path.join(os.path.split(params.savefolder)[0],
+                                         savefolder)
         params.figures_path = os.path.join(params.savefolder, 'figures')
         params.spike_output_path = os.path.join(params.savefolder,
                                                 'processed_nest_output')
@@ -1273,8 +1280,8 @@ if __name__ == '__main__':
                                                         transient=100, T=[800., 900.], X=X, lags=lags)
         
         for sf in savefolders:
-            fig.savefig(os.path.join(sf, 'figures', 'figure_13_{}.pdf'.format(X)), dpi=300, bbox_inches='tight', pad_inches=0)
+            fig.savefig('figure_13_{}.pdf'.format(X), dpi=300, bbox_inches='tight', pad_inches=0)
         for sf in savefolders:
-            fig.savefig(os.path.join(sf, 'figures', 'figure_13_{}.eps'.format(X)), bbox_inches='tight', pad_inches=0.01)
+            fig.savefig('figure_13_{}.eps'.format(X), bbox_inches='tight', pad_inches=0.01)
 
     plt.show()

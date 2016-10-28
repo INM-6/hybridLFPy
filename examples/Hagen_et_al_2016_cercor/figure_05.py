@@ -5,82 +5,12 @@ import matplotlib.pyplot as plt
 from matplotlib import gridspec
 import numpy as np
 import os
-from cellsim16popsParams import multicompartment_params 
+from cellsim16popsParams_default import multicompartment_params 
 import analysis_params
 
 #parameters
 params = multicompartment_params()
 ana_params = analysis_params.params()
-
-
-#def tree(ax):
-#
-#    #ana_params.set_PLOS_2column_fig_style(ratio=0.5)
-#    ax.axison = False
-#
-#    # tree
-#    ax.plot([0,5],[5,2],color='k',linewidth = 1.)
-#    ax.plot([0,5],[4,2],color='k',linewidth = 1.)
-#    ax.plot([0,5],[3,2],color='k',linewidth = 1.)
-#    ax.plot([0,5],[2,2],color='k',linewidth = 1.)
-#    ax.plot([0,5],[1,2],color='k',linewidth = 1.)
-#
-#    ax.plot([0,5],[-5,-2],color='k',linewidth = 1.)
-#    ax.plot([0,5],[-4,-2],color='k',linewidth = 1.)
-#    ax.plot([0,5],[-3,-2],color='k',linewidth = 1.)
-#    ax.plot([0,5],[-2,-2],color='k',linewidth = 1.)
-#    ax.plot([0,5],[-1,-2],color='k',linewidth = 1.)
-#    
-#    ax.plot([5,10],[2,0],color='k',linewidth = 3.)
-#    ax.plot([5,10],[2,0],color='k',linewidth = 3.)
-#    
-#    ax.plot([5,10],[-2,0],color='k',linewidth = 3.)
-#    ax.plot([5,10],[-2,0],color='k',linewidth = 3.)
-#    
-#    ax.plot([10,15],[0,0],color='k',linewidth = 5.)
-#    
-#    # tree labels
-#    ax.text(15.2,-1.5,'$X$',size=7)
-#    ax.text(10.2,-1.5,'$Y$',size=7)
-#    ax.text(5.,-1.5,'$y^{\prime}$',size=7)
-#    ax.text(5.,0.95,'$y$',size=7)
-#    ax.text(-1.,0.5,'$L6$',size=7)
-#    ax.text(-1.,1.5,'$L5$',size=7)
-#    ax.text(-1.,2.5,'$L4$',size=7)
-#    ax.text(-1.,3.5,'$L23$',size=7)
-#    ax.text(-1.,4.5,'$L1$',size=7)
-#    ax.text(-1.,-1.5,'$L1$',size=7)
-#    ax.text(-1.,-2.5,'$L23$',size=7)
-#    ax.text(-1.,-3.5,'$L4$',size=7)
-#    ax.text(-1.,-4.5,'$L5$',size=7)
-#    ax.text(-1.,-5.5,'$L6$',size=7)
-#    
-#    # top arrow
-#    ax.arrow(0.,6.,14.5,0., head_width=0.3, head_length=0.5, fc='k', ec='k')
-#    # bottom arrow
-#    ax.arrow(15.,-6.,-14.5,0., head_width=0.3, head_length=0.5, fc='k', ec='k')
-#    
-#    # formulas for top arrow
-#    ax.text(-2.,7.1,'$K_{yXL}$',size=7)
-#    ax.text(6.,7.1,'$K_{yX}=\sum_{L} K_{yXL}$',size=7)
-#    ax.text(15.,7.1,'$K_{YX}=\sum_{y} K_{yX}$',size=7)
-#    
-#    # formulas for bottom arrow
-#    ax.text(-2.,-7.5,'$K_{yXL}=\mathcal{L}_{yXL}\cdot K_{yX} $',size=7)
-#    ax.text(6.,-7.5,'$K_{yX}=\mathcal{T}_{yX} \cdot K_{YX}$',size=7)
-#    ax.text(15.,-7.5,'$K_{YX}$',size=7)
-#    
-#    # double arrows
-#    ax.arrow(-1.5,9.,0.,1., head_width=0.3, head_length=0.5, fc='k', ec='k')
-#    ax.arrow(-1.5,10.,0.,-1., head_width=0.3, head_length=0.5, fc='k', ec='k')
-#    ax.arrow(15.5,9.,0.,1., head_width=0.3, head_length=0.5, fc='k', ec='k')
-#    ax.arrow(15.5,10.,0.,-1., head_width=0.3, head_length=0.5, fc='k', ec='k')
-#    
-#    ax.set_ylim([-10,12])
-#    ax.set_xlim([-2,17])
-#    
-#    return ax
-
 
 if analysis_params.bw:
     cmap = plt.get_cmap('gray_r', 30)
@@ -294,11 +224,9 @@ if __name__ == '__main__':
          })
 
     fig = fig_connectivity()
-    fig.savefig(os.path.join(params.figures_path,
-                             'figure_05.pdf'),
+    fig.savefig('figure_05.pdf',
                 dpi=300, bbox_inches='tight', pad_inches=0)
-    fig.savefig(os.path.join(params.figures_path,
-                             'figure_05.eps'),
+    fig.savefig('figure_05.eps',
                 bbox_inches='tight', pad_inches=0.01)
 
 
