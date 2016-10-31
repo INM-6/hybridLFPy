@@ -12,6 +12,7 @@ Contact: e.hagen@fz-juelich.de.
 
 
 Usage (after installing all prerequisites, see above README.txt):
+    nrnivmodl # to compile the synapse .mod file in this folder
     python Fig3.py
     
 The script will generate the pdf 'Fig3.pdf'
