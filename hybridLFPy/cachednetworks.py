@@ -615,8 +615,6 @@ class CachedNoiseNetwork(CachedNetwork):
         if len(self.frate) != self.N_X.size:
             raise Exception('self.frate.size != self.N_X.size')
 
-        self.spike_output_path = spike_output_path
-
         self.total_num_virtual_procs = SIZE
 
         # Reset nest kernel and set some kernel status variables, destroy old
@@ -656,10 +654,14 @@ class CachedNoiseNetwork(CachedNetwork):
             mystring = os.path.join(self.spike_output_path, self.dbname)
             print('db %s exist, will not rerun sim or collect gdf!' % mystring)
         else:
-            # Create spike detector
-            self.spikes = nest.Create("spike_detector", 1,
-                            {'label' : os.path.join(self.spike_output_path,
-                                                    self.label)})
+            # Create on spike detector per population
+            self.spikes = nest.Create("spike_detector", len(self.N_X))
+            # set label per spike detector
+            for spt, X in zip(self.spikes, self.X):
+                nest.SetStatus([spt],
+                               dict(label=os.path.join(self.spike_output_path,
+                                                       self.label + '_' + X)))
+            
 
             """ Create independent poisson spike trains with the some rate,
              but each layer population should really have different rates.
@@ -676,18 +678,21 @@ class CachedNoiseNetwork(CachedNetwork):
                                                   {"rate" : rate}))
 
             ## Connect parrots and spike detector
-            for layer in self.X:
-                nest.ConvergentConnect(self.nodes[layer], self.spikes,
-                                       model='static_synapse')
+            for layer, spt in zip(self.X, self.spikes):
+                nest.Connect(self.nodes[layer], [spt],
+                                       syn_spec='static_synapse')
 
             # Connect noise generators and nodes
             for i, layer in enumerate(self.X):
-                nest.ConvergentConnect(self.noise[i], self.nodes[layer],
-                                       model='static_synapse')
+                nest.Connect(self.noise[i], self.nodes[layer],
+                                       syn_spec='static_synapse')
 
             # Run simulation
             nest.Simulate(self.simtime)
 
+            # sync
+            COMM.Barrier()
+            
             # Collect the gdf files
             self.collect_gdf()
 
