@@ -40,8 +40,9 @@ def get_raw_gids(model_params):
 def merge_gdf(model_params, raw_label='spikes_', file_type='gdf',
               fileprefix='spikes'):
     '''
-    NEST produces one file per virtual process containing voltages. 
-    This function gathers and combines them into one single file per hybridLFPy.
+    NEST produces one file per virtual process per recorder
+    (spike detector, voltmeter etc.). 
+    This function gathers and combines them into one single file per population.
     '''
     #some preprocessing
     raw_gids = get_raw_gids(model_params)

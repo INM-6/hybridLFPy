@@ -93,6 +93,7 @@ class CachedNetwork(object):
                  label = 'spikes',
                  ext = 'gdf',
                  GIDs={'EX' : [1, 400], 'IN' : [401, 100]},
+                 X=['EX', 'IN'],
                  autocollect=True,
                  cmap='Set1',
                  ):
@@ -140,8 +141,7 @@ class CachedNetwork(object):
         self.ext = ext
         self.dbname = ':memory:'
         self.GIDs = GIDs
-        self.X = GIDs.keys()
-        self.X.sort()
+        self.X = X
         self.autocollect = autocollect
 
         # Create a dictionary of nodes with proper layernames
@@ -168,7 +168,7 @@ class CachedNetwork(object):
             self.colors += [plt.get_cmap(cmap, numcolors)(i)]
 
         if 'TC' in self.X:
-            self.colors += ['k']
+            self.colors = ['k'] + self.colors
         
 
     def collect_gdf(self):
@@ -573,8 +573,7 @@ class CachedNoiseNetwork(CachedNetwork):
 
     """
     def __init__(self,
-                 frate=[(200., 15., 210.), 0.992, 3.027, 4.339, 5.962,
-                        7.628, 8.669, 1.118, 7.859],
+                 frate=dict(EX=5., IN=10.),
                  autocollect=False,
                  **kwargs):
         """
@@ -584,8 +583,8 @@ class CachedNoiseNetwork(CachedNetwork):
     
         Parameters
         ----------
-        frate : list
-            Rate of each layer, may be tuple (onset, rate, offset).
+        frate : dict
+            Rate of each layer, value may be tuple (onset, rate, offset).
         autocollect : bool
             whether or not to automatically gather gdf file output
         **kwargs : see parent class `hybridLFPy.cachednetworks.CachedNetwork`
@@ -602,7 +601,6 @@ class CachedNoiseNetwork(CachedNetwork):
         
         """
         CachedNetwork.__init__(self, autocollect=autocollect, **kwargs)
-
         """
         Putting import nest here, avoid making `nest` a mandatory
         `hybridLFPy` dependency.
@@ -612,8 +610,8 @@ class CachedNoiseNetwork(CachedNetwork):
 
         #set some attributes:
         self.frate = frate
-        if len(self.frate) != self.N_X.size:
-            raise Exception('self.frate.size != self.N_X.size')
+        if len(self.frate.keys()) != self.N_X.size:
+            raise Exception('self.frate.keys().size != self.N_X.size')
 
         self.total_num_virtual_procs = SIZE
 
@@ -645,7 +643,8 @@ class CachedNoiseNetwork(CachedNetwork):
             'to_memory' : False,
         })
 
-        # Create some populations of parrot neurons that echo the poisson noise
+        # Create some populations of parrot neurons that echo the input Poisson
+        # spike times
         self.nodes = {}
         for i, N in enumerate(self.N_X):
             self.nodes[self.X[i]] = nest.Create('parrot_neuron', N)
@@ -667,7 +666,9 @@ class CachedNoiseNetwork(CachedNetwork):
              but each layer population should really have different rates.
              """
             self.noise = []
-            for rate in self.frate:
+            # for X, rate in self.frate.items():
+            for X in self.X:
+                rate = self.frate[X]
                 if type(rate) == tuple:
                     self.noise.append(nest.Create("poisson_generator", 1,
                                                   { "start" : rate[0],
@@ -678,13 +679,13 @@ class CachedNoiseNetwork(CachedNetwork):
                                                   {"rate" : rate}))
 
             ## Connect parrots and spike detector
-            for layer, spt in zip(self.X, self.spikes):
-                nest.Connect(self.nodes[layer], [spt],
+            for X, spt in zip(self.X, self.spikes):
+                nest.Connect(self.nodes[X], [spt],
                                        syn_spec='static_synapse')
 
             # Connect noise generators and nodes
-            for i, layer in enumerate(self.X):
-                nest.Connect(self.noise[i], self.nodes[layer],
+            for i, X in enumerate(self.X):
+                nest.Connect(self.noise[i], self.nodes[X],
                                        syn_spec='static_synapse')
 
             # Run simulation
