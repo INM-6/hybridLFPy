@@ -764,6 +764,7 @@ class multicompartment_params(point_neuron_network_params):
             'label' :       'population_spikes',
             'ext' :         'gdf',
             'GIDs' : self.get_GIDs(),
+            'X' : self.X,
         }
 
 
