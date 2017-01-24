@@ -90,8 +90,7 @@ class PopulationSuper(object):
                     'lambda_f': 100,
                     'nsegs_method': 'lambda_f',
                     'rm': 20000.0,
-                    'timeres_NEURON': 0.1,
-                    'timeres_python': 0.1,
+                    'dt': 0.1,
                     'tstartms': 0,
                     'tstopms': 1000.0,
                     'v_init': 0.0,
@@ -187,7 +186,7 @@ class PopulationSuper(object):
         """
 
         self.cellParams = cellParams
-        self.dt = self.cellParams['timeres_python']
+        self.dt = self.cellParams['dt']
         self.rand_rot_axis = rand_rot_axis
         self.simulationParams = simulationParams
         self.populationParams = populationParams

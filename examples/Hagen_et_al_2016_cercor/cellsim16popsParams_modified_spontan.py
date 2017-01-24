@@ -903,8 +903,7 @@ class multicompartment_params(point_neuron_network_params):
             'e_pas' : self.model_params['E_L'],    
             'nsegs_method' : 'lambda_f',
             'lambda_f' : 100,
-            'timeres_NEURON' : self.dt,
-            'timeres_python' : self.dt,
+            'dt' : self.dt,
             'tstartms' : self.tstart,
             'tstopms' : self.tstop,
             'verbose' : False,
@@ -1006,8 +1005,7 @@ class multicompartment_params(point_neuron_network_params):
         #these variables will be saved to file for each cell and electrdoe object
         self.savelist = [
             'somav',
-            'timeres_NEURON',
-            'timeres_python',
+            'dt',
             'somapos',
             'x',
             'y',
