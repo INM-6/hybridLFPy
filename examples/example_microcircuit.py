@@ -36,11 +36,12 @@ compute facility is strongly encouraged.
 import os
 import numpy as np
 from time import time
+import neuron # NEURON compiled with MPI must be imported before NEST and mpi4py
+              # to avoid being aware of MPI.
 import nest
 from hybridLFPy import PostProcess, Population, CachedNetwork
 from hybridLFPy import setup_file_dest, helpers
 from glob import glob
-import neuron
 from mpi4py import MPI
 
 

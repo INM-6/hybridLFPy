@@ -8,6 +8,8 @@ sys.path += [os.path.split(os.environ['PWD'])[0]]
 
 import LFPy
 import numpy as np
+import matplotlib.style
+matplotlib.style.use('classic')
 import matplotlib.pyplot as plt
 from matplotlib.collections import PolyCollection
 from matplotlib.colors import LogNorm
@@ -38,8 +40,8 @@ cell_parameters = {          # various cell parameters,
     'lambda_f' : 100.,
     'dt' : 2.**-4,      # [ms] dt's should be in powers of 2 for both, need
                         # binary representation
-    'tstartms' : 0.,    # start time of simulation, recorders start at t=0
-    'tstopms' : 10.,   # stop simulation at 200 ms. These can be overridden
+    'tstart' : 0.,    # start time of simulation, recorders start at t=0
+    'tstop' : 10.,   # stop simulation at 200 ms. These can be overridden
                         # by setting these arguments i cell.simulation()
 }
 

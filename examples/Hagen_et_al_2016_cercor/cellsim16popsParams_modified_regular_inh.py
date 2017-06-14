@@ -906,8 +906,8 @@ class multicompartment_params(point_neuron_network_params):
             'nsegs_method' : 'lambda_f',
             'lambda_f' : 100,
             'dt' : self.dt,
-            'tstartms' : self.tstart,
-            'tstopms' : self.tstop,
+            'tstart' : self.tstart,
+            'tstop' : self.tstop,
             'verbose' : False,
         }
         
@@ -998,7 +998,7 @@ class multicompartment_params(point_neuron_network_params):
             'n' : 50,
             'seedvalue' : None,
             #dendrite line sources, soma sphere source (Linden2014)
-            'method' : 'som_as_point',
+            'method' : 'soma_as_point',
             #no somas within the constraints of the "electrode shank":
             'r_z': np.array([[-1E199, -1600, -1550, 1E99],[0, 0, 10, 10]]),
         }

@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 import os
 import numpy as np
+import matplotlib.style
+matplotlib.style.use('classic')
 import matplotlib.pyplot as plt
 import plotting_helpers as phlp
 from plot_methods import getMeanInpCurrents, getMeanVoltages, plot_population, plot_signal_sum

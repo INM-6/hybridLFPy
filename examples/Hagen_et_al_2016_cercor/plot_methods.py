@@ -7,6 +7,8 @@ import numpy as np
 if not os.environ.has_key('DISPLAY'):
     import matplotlib
     matplotlib.use('Agg')
+import matplotlib.style
+matplotlib.style.use('classic')
 import matplotlib.pyplot as plt
 from matplotlib import patches
 from matplotlib.path import Path

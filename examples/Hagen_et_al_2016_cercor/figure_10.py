@@ -1,7 +1,8 @@
 #!/usr/bin/env python
-
 import os
 import numpy as np
+import matplotlib.style
+matplotlib.style.use('classic')
 import matplotlib.pyplot as plt
 import h5py
 import plotting_helpers as phlp

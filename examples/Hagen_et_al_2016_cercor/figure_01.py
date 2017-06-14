@@ -1,4 +1,6 @@
 import numpy as np
+import matplotlib.style
+matplotlib.style.use('classic')
 import matplotlib.pyplot as plt
 from matplotlib import gridspec
 import os

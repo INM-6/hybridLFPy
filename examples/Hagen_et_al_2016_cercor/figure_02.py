@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 from plot_methods import os, plt, plotMorphologyTable
 from cellsim16popsParams_default import multicompartment_params
 import analysis_params

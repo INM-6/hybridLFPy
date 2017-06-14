@@ -6,6 +6,8 @@ import os
 import numpy as np
 import h5py
 import LFPy
+import matplotlib.style
+matplotlib.style.use('classic')
 import matplotlib.pyplot as plt
 from matplotlib import gridspec
 from matplotlib.collections import PolyCollection

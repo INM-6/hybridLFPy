@@ -42,14 +42,18 @@ import numpy as np
 if 'DISPLAY' not in os.environ:
     import matplotlib
     matplotlib.use('Agg')
+import matplotlib.style
+matplotlib.style.use('classic')
 import matplotlib.pyplot as plt
 from matplotlib import gridspec
 from time import time
-import nest #not used, but load order determine if network is run in parallel
+import neuron # NEURON compiled with MPI must be imported before NEST and mpi4py
+              # to avoid being aware of MPI
+import nest # import not used, but we load NEST anyway in order determine if
+            # network is run in parallel
 from hybridLFPy import PostProcess, Population, CachedNetwork, setup_file_dest
 from NeuroTools.parameters import ParameterSet
 import h5py
-import neuron
 from mpi4py import MPI
 
 ########## matplotlib settings #################################################
@@ -130,30 +134,32 @@ PS.update(dict(
         EX = dict(
             morphology = 'morphologies/ex.hoc',
             v_init = BN.neuron_params['E_L'],
-            rm = BN.neuron_params['tau_m'] * 1E3 / 1.0, #assume cm=1.
             cm = 1.0,
             Ra = 150,
-            e_pas = BN.neuron_params['E_L'],    
+            passive = True,
+            passive_parameters = dict(g_pas=1./BN.neuron_params['tau_m'] * 1E3 / 1.0, #assyme cm=1
+                                      e_pas=BN.neuron_params['E_L']), 
             nsegs_method = 'lambda_f',
             lambda_f = 100,
             dt = BN.dt,
-            tstartms = 0,
-            tstopms = BN.simtime,
+            tstart = 0,
+            tstop = BN.simtime,
             verbose = False,        
         ),
         #inhibitory cells
         IN = dict(
             morphology = 'morphologies/in.hoc',
             v_init = BN.neuron_params['E_L'],
-            rm = BN.neuron_params['tau_m'] * 1E3 / 1.0, #assume cm=1.
             cm = 1.0,
             Ra = 150,
-            e_pas = BN.neuron_params['E_L'],    
+            passive = True,
+            passive_parameters = dict(g_pas=1./BN.neuron_params['tau_m'] * 1E3 / 1.0, #assyme cm=1
+                                      e_pas=BN.neuron_params['E_L']), 
             nsegs_method = 'lambda_f',
             lambda_f = 100,
             dt = BN.dt,
-            tstartms = 0,
-            tstopms = BN.simtime,
+            tstart = 0,
+            tstop = BN.simtime,
             verbose = False,                    
     )),
     
@@ -203,7 +209,7 @@ PS.update(dict(
             n = 20,
             seedvalue = None,
             #dendrite line sources, soma as sphere source (Linden2014)
-            method = 'som_as_point',
+            method = 'soma_as_point',
             #no somas within the constraints of the "electrode shank":
             r_z = [[-1E199, -600, -550, 1E99],[0, 0, 10, 10]],
     ),
@@ -517,6 +523,7 @@ if RANK == 0:
     plot_signal_sum(ax1, z=PS.electrodeParams['z'],
                     fname=os.path.join(PS.savefolder, 'CSDsum.h5'),
                     unit='$\mu$Amm$^{-3}$', T=(500, 1000))
+    ax1.set_xlabel('')
     
     plot_signal_sum(ax2, z=PS.electrodeParams['z'],
                     fname=os.path.join(PS.savefolder, 'LFPsum.h5'),
@@ -549,6 +556,7 @@ if RANK == 0:
                     fname=os.path.join(PS.populations_path,
                                        'EX_population_CSD.h5'),
                     unit='$\mu$Amm$^{-3}$', T=(500, 1000),color='r')
+    ax1.set_xlabel('')
     
     plot_signal_sum(ax2, z=PS.electrodeParams['z'],
                     fname=os.path.join(PS.populations_path,
@@ -582,6 +590,7 @@ if RANK == 0:
                     fname=os.path.join(PS.populations_path,
                                        'IN_population_CSD.h5'),
                     unit='$\mu$Amm$^{-3}$', T=(500, 1000),color='b')
+    ax1.set_xlabel('')
     
     plot_signal_sum(ax2, z=PS.electrodeParams['z'],
                     fname=os.path.join(PS.populations_path,
