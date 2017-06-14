@@ -27,7 +27,8 @@ class TestHybridLFPy(unittest.TestCase):
             spike_output_path=os.path.join(hybridLFPy.__path__[0], 'testing'),
             label='testing',
             ext='gdf',
-            GIDs={'X' : [1, 100]}   
+            GIDs={'X' : [1, 100]},
+            X=['X'],
         )
 
     def test_CachedNetwork_01(self):
@@ -63,7 +64,7 @@ class TestHybridLFPy(unittest.TestCase):
         nt.assert_array_equal(self.networkSim.dbs['X'].select_neurons_interval(self.networkSim.dbs['X'].neurons(), (0,1000)), [np.array([ 200.]), np.array([ 100.])])
 
 
-def test(verbosity=2):
+def _test(verbosity=2):
     '''
     Run unittests for the CSD toolbox
     
@@ -84,4 +85,4 @@ def test(verbosity=2):
 
 
 if __name__ == '__main__':
-    test()
+    _test()

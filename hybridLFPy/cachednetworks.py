@@ -70,6 +70,8 @@ class CachedNetwork(object):
     GIDs : dict
         dictionary keys are population names and item a list with first
         GID in population and population size            
+    X : list
+        names of each network population
     autocollect : bool
         If True, class init will process gdf files.
     cmap : str
