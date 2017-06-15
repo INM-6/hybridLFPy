@@ -34,6 +34,9 @@ compute facility is strongly encouraged.
 
 '''
 import os
+if 'DISPLAY' not in os.environ:
+    import matplotlib
+    matplotlib.use('Agg')
 import numpy as np
 from time import time
 import neuron # NEURON compiled with MPI must be imported before NEST and mpi4py
@@ -363,6 +366,7 @@ print 'Execution time: %.3f seconds' %  (time() - tic)
 ################################################################################
 
 ########## matplotlib settings #################################################
+
 import matplotlib.pyplot as plt
 from example_plotting import *
 
