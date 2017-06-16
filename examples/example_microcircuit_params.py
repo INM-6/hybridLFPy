@@ -882,7 +882,7 @@ class multicompartment_params(point_neuron_network_params):
             'cm' : 1.0,
             'Ra' : 150,
             'passive' : True,
-            'passive_parameters' : dict(g_pas=1./self.model_params['tau_m'] * 1E3 / 1.0, #assyme cm=1
+            'passive_parameters' : dict(g_pas=1./(self.model_params['tau_m'] * 1E3), #assyme cm=1
                                         e_pas=self.model_params['E_L']),
             'nsegs_method' : 'lambda_f',
             'lambda_f' : 100,
@@ -892,7 +892,6 @@ class multicompartment_params(point_neuron_network_params):
             'verbose' : False,
         }
         
-
         # layer specific LFPy.Cell-parameters as nested dictionary
         self.yCellParams = self._yCellParams()
         

@@ -137,7 +137,7 @@ PS.update(dict(
             cm = 1.0,
             Ra = 150,
             passive = True,
-            passive_parameters = dict(g_pas=1./BN.neuron_params['tau_m'] * 1E3 / 1.0, #assyme cm=1
+            passive_parameters = dict(g_pas=1./(BN.neuron_params['tau_m'] * 1E3), #assyme cm=1
                                       e_pas=BN.neuron_params['E_L']), 
             nsegs_method = 'lambda_f',
             lambda_f = 100,
@@ -153,7 +153,7 @@ PS.update(dict(
             cm = 1.0,
             Ra = 150,
             passive = True,
-            passive_parameters = dict(g_pas=1./BN.neuron_params['tau_m'] * 1E3 / 1.0, #assyme cm=1
+            passive_parameters = dict(g_pas=1./(BN.neuron_params['tau_m'] * 1E3), #assyme cm=1
                                       e_pas=BN.neuron_params['E_L']), 
             nsegs_method = 'lambda_f',
             lambda_f = 100,
