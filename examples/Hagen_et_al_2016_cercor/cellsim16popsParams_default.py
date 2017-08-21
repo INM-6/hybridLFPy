@@ -553,7 +553,7 @@ class point_neuron_network_params(general_params):
         ####################################  
        
         # scaling parameter for population sizes
-        self.area = 1.
+        self.area = 1.0
         
         # preserve indegrees when downscaling
         self.preserve_K = False         
@@ -896,11 +896,11 @@ class multicompartment_params(point_neuron_network_params):
         # Some passive parameters will not be fully consistent with LIF params
         self.cellParams = {
             'v_init' : self.model_params['E_L'],
-            'passive' : True,
-            'rm' : self.model_params['tau_m'] * 1E3 / 1.0, #assyme cm=1
             'cm' : 1.0,
             'Ra' : 150,
-            'e_pas' : self.model_params['E_L'],    
+            'passive' : True,
+            'passive_parameters' : dict(g_pas=1./(self.model_params['tau_m'] * 1E3), #assume cm=1
+                                        e_pas=self.model_params['E_L']),
             'nsegs_method' : 'lambda_f',
             'lambda_f' : 100,
             'dt' : self.dt,
