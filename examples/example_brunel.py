@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 '''
 Hybrid LFP scheme example script, applying the methodology with a model
 implementation similar to:

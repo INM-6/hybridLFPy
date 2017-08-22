@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 '''
 Hybrid LFP scheme example script, applying the methodology with the model of:
 
@@ -92,7 +93,7 @@ networkSim = CachedFixedSpikesNetwork(activationtimes=activationtimes,
 
 
 toc = time() - tic
-print 'NEST simulation and gdf file processing done in  %.3f seconds' % toc
+print('NEST simulation and gdf file processing done in  %.3f seconds' % toc)
 
 
 ####### Set up populations #####################################################
@@ -154,4 +155,4 @@ postproc.run()
 postproc.create_tar_archive()
 
 #tic toc
-print 'Execution time: %.3f seconds' %  (time() - tic)
+print('Execution time: %.3f seconds' %  (time() - tic))

@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 """
 Create db from gdf files to be able to then select neuron spike times.
 

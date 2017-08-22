@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 '''
 Documentation:
 
@@ -67,8 +69,8 @@ def merge_gdf(model_params, raw_label='spikes_', file_type='gdf',
                     line[0] = line[0] - raw_first_gids[pop_idx] + converted_first_gids[pop_idx]
                     gdf.append(line)
             
-            print 'writing: {}'.format(os.path.join(model_params.spike_output_path,
-                                                    fileprefix + '_{}.gdf'.format(model_params.X[pop_idx])))
+            print('writing: {}'.format(os.path.join(model_params.spike_output_path,
+                                                    fileprefix + '_{}.gdf'.format(model_params.X[pop_idx]))))
             helpers.write_gdf(gdf, os.path.join(model_params.spike_output_path,
                                                 fileprefix + '_{}.gdf'.format(model_params.X[pop_idx])))
     

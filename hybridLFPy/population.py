@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 """
 Class methods defining multicompartment neuron populations in the hybrid scheme
 """
@@ -204,8 +205,8 @@ class PopulationSuper(object):
         #check that decimate fraction is actually a whole number
         try:
             assert int(self.dt_output / self.dt) == self.dt_output / self.dt
-        except AssertionError as ae:
-            raise ae, 'dt_output not an integer multiple of dt'
+        except AssertionError:
+            raise AssertionError('dt_output not an integer multiple of dt')
         
         self.decimatefrac = int(self.dt_output / self.dt)
         self.POPULATIONSEED = POPULATIONSEED
@@ -654,9 +655,9 @@ class PopulationSuper(object):
         try:
             assert(self.recordSingleContribFrac <= 1 and
                    self.recordSingleContribFrac >= 0)
-        except AssertionError as ae:
-            raise ae, 'recordSingleContribFrac {} not in [0, 1]'.format(
-                                                self.recordSingleContribFrac)
+        except AssertionError:
+            raise AssertionError('recordSingleContribFrac {} not in [0, 1]'.format(
+                                                self.recordSingleContribFrac))
 
         if not self.recordSingleContribFrac:
             return
@@ -1415,8 +1416,8 @@ class Population(PopulationSuper):
         #Insert synapses in an iterative fashion
         try:
             spikes = self.networkSim.dbs[X].select(SpCell[:idx.size])
-        except AttributeError as ae:
-            raise ae, 'could not open CachedNetwork database objects'
+        except AttributeError:
+            raise AssertionError('could not open CachedNetwork database objects')
 
 
         #apply synaptic delays

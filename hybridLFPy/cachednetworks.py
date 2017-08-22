@@ -1,9 +1,9 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 """
 Cached networks to use with the population classes, as the only
 variables being used is "nodes_ex" and "nodes_in" VERSION THAT WORKS.
 """
-
 import numpy as np
 import os
 import glob
@@ -13,7 +13,6 @@ if 'DISPLAY' not in os.environ:
 from .gdf import GDF
 import matplotlib.pyplot as plt
 from mpi4py import MPI
-
 
 ################# Initialization of MPI stuff ##################################
 COMM = MPI.COMM_WORLD

@@ -1,7 +1,8 @@
-'''
-Documentation:
-
-'''
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+"""
+Shared parameters for analysis
+"""
 
 import matplotlib.pyplot as plt
 

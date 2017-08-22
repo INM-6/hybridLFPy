@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 '''
 create jobscripts for clusters running the Slurm Workload Manager
 (http://slurm.schedmd.com) for all network-model and LFP simulations in

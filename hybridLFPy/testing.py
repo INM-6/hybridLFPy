@@ -1,5 +1,11 @@
 #!/usr/bin/env python
-'''Tests for hybridLFPy classes and methods'''
+# -*- coding: utf-8 -*-
+"""
+Documentation:
+
+Tests for hybridLFPy classes and methods
+"""
+
 import os
 import sys
 import numpy as np

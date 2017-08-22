@@ -1,9 +1,9 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 """
 Documentation:
 
-This is a script containing general helper functions which can be applied
-to specialized cases.
+This is a script containing general helper functions.
 """
 
 import numpy as np

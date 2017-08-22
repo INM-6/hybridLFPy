@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 import matplotlib.pyplot as plt
 import numpy as np
 import analysis_params
@@ -8,7 +10,7 @@ import analysis_params
 
 def add_gdf_to_dot_display(ax, gdf, color= '0.', alpha= 1.):
     plt.sca(ax)
-    gids,times = zip(*gdf)
+    gids,times = list(zip(*gdf))
     ax.plot(times,gids,'k o', ms = 0.5, mfc=color , mec=color, alpha=alpha)
     plt.xlabel('t in ms')
     plt.ylabel('neuron id')
@@ -167,7 +169,7 @@ def large_fig_style():
 
 def remove_axis_junk(ax, which=['right', 'top']):
     '''remove upper and right axis'''
-    for loc, spine in ax.spines.iteritems():
+    for loc, spine in ax.spines.items():
         if loc in which:
             spine.set_color('none')            
     ax.xaxis.set_ticks_position('bottom')
@@ -186,7 +188,7 @@ def annotate_subplot(ax, ncols=1, nrows=1, letter='a',
 def get_colors(num=16, cmap=plt.cm.Set1):
     '''return a list of color tuples to use in plots'''
     colors = []
-    for i in xrange(num):
+    for i in range(num):
         if analysis_params.bw:
             colors.append('k' if i % 2 == 0 else 'gray')
         else:

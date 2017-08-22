@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 import numpy as np
 import matplotlib.style
 matplotlib.style.use('classic')
@@ -44,7 +45,7 @@ def fig_lfp_decomposition(fig, axes, params, transient=200, X=['L23E', 'L6E'], s
     else:
         if plt.matplotlib.__version__ == '1.5.x':
             linestyles = ['-', ':']*(len(params.Y) / 2)
-            print('CSD variance semi log plots may fail with matplotlib.__version__ {}'.format(plt.matplotlib.__version__))
+            print(('CSD variance semi log plots may fail with matplotlib.__version__ {}'.format(plt.matplotlib.__version__)))
         else:
             linestyles = ['-', (0, (1,1))]*(len(params.Y) / 2) #cercor version
         # markerstyles = ['s', 's', 'v', 'v', 'o', 'o', '^', '^']

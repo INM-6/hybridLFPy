@@ -1,4 +1,11 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
+"""
+Documentation:
+
+Defines class hybridLFPy.PostProcess for handling simulated output mainly by
+class hybridLFPy.Population
+"""
 import numpy as np
 import h5py
 import os

@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 import numpy as np
 import matplotlib.style
 matplotlib.style.use('classic')
@@ -164,7 +165,7 @@ def fig_kernel_lfp(savefolders, params, transient=200, T=[800., 1000.], X='L5E',
               ]
     
     COUNTER = 0 
-    for i, X__ in enumerate(([['TC']]) + zip(params.X[1::2], params.X[2::2])):        
+    for i, X__ in enumerate(([['TC']]) + list(zip(params.X[1::2], params.X[2::2]))):        
         ax = fig.add_subplot(gs[:len(channels), i])
         if i == 0:
             phlp.annotate_subplot(ax, ncols=7, nrows=4, letter=alphabet[0], linear_offset=0.02)
@@ -412,7 +413,7 @@ def fig_kernel_lfp(savefolders, params, transient=200, T=[800., 1000.], X='L5E',
         for h, x in enumerate(cc):
             p += [(chance[h, ] >= x).sum() / float(N)]
         
-        print('p-values:', p)
+        print(('p-values:', p))
 
 
         #compute the 99% percentile of the chance data
@@ -428,8 +429,8 @@ def fig_kernel_lfp(savefolders, params, transient=200, T=[800., 1000.], X='L5E',
         ax.set_xlabel('$cc$ (-)', labelpad=0.1)
         ax.set_title('corr. \n coef.')
     
-        print 'correlation coefficients:'
-        print cc
+        print('correlation coefficients:')
+        print(cc)
 
 
         ###########################################################################
@@ -572,7 +573,7 @@ def fig_kernel_lfp_CINPLA(savefolders, params, transient=200, X='L5E', lags=[20,
               ]
     
     COUNTER = 0 
-    for i, X__ in enumerate(([['TC']]) + zip(params.X[1::2], params.X[2::2])):        
+    for i, X__ in enumerate(([['TC']]) + list(zip(params.X[1::2], params.X[2::2]))):        
         ax = fig.add_subplot(gs[0, i])
         if i == 0:
             phlp.annotate_subplot(ax, ncols=7, nrows=4, letter=alphabet[0], linear_offset=0.02)
@@ -781,7 +782,7 @@ def fig_kernel_lfp_EITN_I(savefolders, params, transient=200, T=[800., 1000.], X
               ]
     
     COUNTER = 0 
-    for i, X__ in enumerate(([['TC']]) + zip(params.X[1::2], params.X[2::2])):        
+    for i, X__ in enumerate(([['TC']]) + list(zip(params.X[1::2], params.X[2::2]))):        
         ax = fig.add_subplot(gs[0, i])
         if i == 0:
             phlp.annotate_subplot(ax, ncols=7, nrows=4, letter=alphabet[0], linear_offset=0.02)
@@ -1207,8 +1208,8 @@ def fig_kernel_lfp_EITN_II(savefolders, params, transient=200, T=[800., 1000.], 
         ax.set_xlabel('$cc$ (-)', labelpad=0.1)
         ax.set_title('corr. \n coef.')
     
-        print 'correlation coefficients:'
-        print cc
+        print('correlation coefficients:')
+        print(cc)
 
 
         ###########################################################################

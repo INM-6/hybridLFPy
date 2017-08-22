@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 '''
 Hybrid LFP scheme example script, applying the methodology with the model of:
 
@@ -151,9 +152,9 @@ def merge_gdf(model_params, raw_label='spikes_', file_type='gdf',
                               converted_first_gids[pop_idx]
                     gdf.append(line)
             
-            print 'writing: %s' % os.path.join(model_params.spike_output_path,
+            print('writing: %s' % os.path.join(model_params.spike_output_path,
                                             fileprefix +
-                                            '_%s.gdf' % model_params.X[pop_idx])
+                                            '_%s.gdf' % model_params.X[pop_idx]))
             helpers.write_gdf(gdf, os.path.join(model_params.spike_output_path,
                                         fileprefix +
                                         '_%s.gdf' % model_params.X[pop_idx]))
@@ -178,7 +179,7 @@ def dict_of_numpyarray_to_dict_of_list(d):
         modified dictionary
     
     '''
-    for key,value in d.iteritems():
+    for key,value in d.items():
         if isinstance(value,dict):  # if value == dict 
             # recurse
             d[key] = dict_of_numpyarray_to_dict_of_list(value)
@@ -200,7 +201,7 @@ def send_nest_params_to_sli(p):
     -------
     None
     '''
-    for name in p.keys():
+    for name in list(p.keys()):
         value = p[name]
         if type(value) == np.ndarray:
             value = value.tolist()
@@ -214,16 +215,16 @@ def send_nest_params_to_sli(p):
                 nest.sli_run('eval')
                 nest.sli_run('def')
             except: 
-                print 'Could not put variable %s on SLI stack' % (name)
-                print type(value)
+                print('Could not put variable %s on SLI stack' % (name))
+                print(type(value))
         else:
             try:
                 nest.sli_run('/'+name)
                 nest.sli_push(value)
                 nest.sli_run('def')
             except: 
-                print 'Could not put variable %s on SLI stack' % (name)
-                print type(value)
+                print('Could not put variable %s on SLI stack' % (name))
+                print(type(value))
     return
 
 
@@ -292,7 +293,7 @@ networkSim = CachedNetwork(**params.networkSimParams)
 
 
 toc = time() - tic
-print 'NEST simulation and gdf file processing done in  %.3f seconds' % toc
+print('NEST simulation and gdf file processing done in  %.3f seconds' % toc)
 
 
 ####### Set up populations #####################################################
@@ -358,7 +359,7 @@ if properrun:
     postproc.create_tar_archive()
 
 #tic toc
-print 'Execution time: %.3f seconds' %  (time() - tic)
+print('Execution time: %.3f seconds' %  (time() - tic))
 
 
 ################################################################################

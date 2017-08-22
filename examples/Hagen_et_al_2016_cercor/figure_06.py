@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 import os
 import numpy as np
 import matplotlib.style
@@ -9,7 +10,7 @@ from plot_methods import getMeanInpCurrents, getMeanVoltages, plot_population, p
 from cellsim16popsParams_modified_spontan import multicompartment_params 
 import analysis_params
 from hybridLFPy import CachedNetwork, helpers
-import cPickle as pickle
+import pickle as pickle
 
 
 def plot_multi_scale_output_a(fig):    
@@ -145,7 +146,7 @@ def plot_multi_scale_output_a(fig):
             verticalalignment='bottom',
             transform=ax3.transAxes)
         
-    for loc, spine in ax3.spines.iteritems():
+    for loc, spine in ax3.spines.items():
         if loc in ['right', 'top']:
             spine.set_color('none')            
     ax3.xaxis.set_ticks_position('bottom')
@@ -158,7 +159,7 @@ def plot_multi_scale_output_a(fig):
     ############################################################################
         
     #set up subplots
-    nrows = len(meanInpCurrents.keys())
+    nrows = len(list(meanInpCurrents.keys()))
     high = top
     low = bottom
     thickn = (high-low) / nrows - sep
@@ -234,7 +235,7 @@ def plot_multi_scale_output_a(fig):
     # D part, plot membrane voltage population resolved 
     ############################################################################
         
-    nrows = len(meanVoltages.keys())    
+    nrows = len(list(meanVoltages.keys()))    
     high = top
     low = bottom
     thickn = (high-low) / nrows - sep

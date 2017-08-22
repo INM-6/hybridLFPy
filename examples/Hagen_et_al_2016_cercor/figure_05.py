@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 import matplotlib.style
 matplotlib.style.use('classic')
 import matplotlib.pyplot as plt

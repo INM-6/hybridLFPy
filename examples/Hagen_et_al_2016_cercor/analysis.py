@@ -1,3 +1,8 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+"""
+Analysis module for example files
+"""
 import numpy as np
 import matplotlib.pyplot as plt
 import h5py
@@ -54,8 +59,8 @@ def create_downsampled_data(params):
 
         try:
             assert(ana_params.scaling <= params.recordSingleContribFrac)
-        except AssertionError as ae:
-            raise ae, 'scaling parameter must be less than simulation recordSingleContribFrac'
+        except AssertionError:
+            raise AssertionError('scaling parameter must be less than simulation recordSingleContribFrac')
         
         samples = int(1. / ana_params.scaling)
         if samples > maxsamples:
@@ -70,7 +75,7 @@ def create_downsampled_data(params):
                         fname = os.path.join(params.savefolder, 'populations', '%s_%ss.h5' \
                                              % (y, data_type))
                         f = h5py.File(fname)
-                        print 'Load %s' % str(f.filename)
+                        print(('Load %s' % str(f.filename)))
                         raw_data = f['data'].value
                         srate = f['srate'].value
                         f.close()
@@ -82,8 +87,8 @@ def create_downsampled_data(params):
                         N = int(params.N_y[np.array(params.y) == y]*ana_params.scaling)
                         try:
                             assert(N <= raw_data.shape[0])
-                        except AssertionError as ae:
-                            raise ae, 'shape mismatch with sample size'
+                        except AssertionError:
+                            raise AssetionError('shape mismatch with sample size')
 
 
                         for sample in range(samples): # loop over samples
@@ -96,7 +101,7 @@ def create_downsampled_data(params):
                                                  '%s_%ss_%i_%i.h5' \
                                                  % (y, data_type, ana_params.scaling*100, sample))
                             f = h5py.File(fname, 'w')
-                            print 'Write %s' % str(f.filename)
+                            print(('Write %s' % str(f.filename)))
                             f['data'] = data
                             f['srate'] = srate
                             f.close()
@@ -106,7 +111,7 @@ def create_downsampled_data(params):
                                                  '%s_population_%s_%i_%i.h5' \
                                                  % (y,data_type,ana_params.scaling*100,sample))
                             f = h5py.File(fname, 'w')
-                            print 'Write %s' % str(f.filename)
+                            print(('Write %s' % str(f.filename)))
                             f['data'] = data.sum(axis=0)
                             f['srate'] = srate
                             f.close()
@@ -148,7 +153,7 @@ def create_downsampled_data(params):
                                              % (params.Y[2*j+k], data_type,
                                                 ana_params.scaling*100, sample))
                         f = h5py.File(fname,'w')
-                        print 'Write %s' % str(f.filename)
+                        print(('Write %s' % str(f.filename)))
                         f['data'] = data_Y
                         f['srate'] = srate
                         f.close() 
@@ -160,7 +165,7 @@ def create_downsampled_data(params):
                 fname = os.path.join(params.savefolder,'populations','subsamples',
                                      '%ssum_%i_%i.h5' % (data_type,ana_params.scaling*100,sample))
                 f = h5py.File(fname,'w')
-                print 'Write %s' % str(f.filename)
+                print(('Write %s' % str(f.filename)))
                 f['data'] = data_full
                 f['srate'] = srate
                 f.close()
@@ -264,7 +269,7 @@ def calc_uncorrelated_signal_power(params):
                
             for y in params.y:
     
-                print 'processing ', y
+                print(('processing ', y))
                 # Load data
                 f = h5py.File(os.path.join(params.populations_path, '%s_%ss' %
                                            (y,data_type) + '.h5'),'r')
