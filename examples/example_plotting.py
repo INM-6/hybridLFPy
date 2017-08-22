@@ -170,7 +170,7 @@ def plot_population(ax,
 
     #outline of populations:
     #fetch the population radius from some population
-    r = populationParams[populationParams.keys()[0]]['radius']
+    r = populationParams[X[0]]['radius']
 
     theta0 = np.linspace(0, np.pi, 20)
     theta1 = np.linspace(np.pi, 2*np.pi, 20)

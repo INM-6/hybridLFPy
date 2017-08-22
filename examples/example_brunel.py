@@ -53,7 +53,7 @@ import neuron # NEURON compiled with MPI must be imported before NEST and mpi4py
 import nest # import not used, but we load NEST anyway in order determine if
             # network is run in parallel
 from hybridLFPy import PostProcess, Population, CachedNetwork, setup_file_dest
-from NeuroTools.parameters import ParameterSet
+from parameters import ParameterSet
 import h5py
 from mpi4py import MPI
 
