@@ -35,9 +35,5 @@ setup(
             'Intended Audience :: Science/Research',
             'Development Status :: 4 - Beta',
             ],
-    install_requires = [
-        'numpy', 'scipy', 'matplotlib', 'LFPy', 'mpi4py',
-        'NeuroTools',
-        ],
-
+    install_requires = ['numpy', 'scipy', 'matplotlib', 'LFPy', 'mpi4py'],
 )
