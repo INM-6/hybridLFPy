@@ -423,7 +423,7 @@ class general_params(object):
         #number of incoming connections per cell type per layer per cell 
         self.k_yXL = {}
         for y, N_y in zip(self.y, self.N_y):
-            self.k_yXL.update({y : (1. * self.K_yXL[y]).astype(int) / N_y})
+            self.k_yXL.update({y : (1. * self.K_yXL[y]).astype(int) // N_y})
 
         #calculate corresponding connectivity to K_yXL
         self.C_yXL = {}
