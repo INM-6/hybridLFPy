@@ -32,11 +32,6 @@ mpirun -np 4 python example_brunel.py
 Not recommended, but running it serially should also work, e.g., calling
 python example_brunel.py
 
-
-Given the size of the network and demands for the multi-compartment LFP-
-predictions using the present scheme, running the model on nothing but a large-
-scale compute facility is strongly discouraged.
-
 '''
 import os
 import numpy as np
@@ -281,9 +276,7 @@ PS.update(dict(
     synDelayScale = dict(
         EX = [None, None],
         IN = [None, None],
-    ),
-    
-    
+    ),    
 ))
 
 
@@ -410,14 +403,11 @@ print('Execution time: %.3f seconds' %  (time() - tic))
 #import some plotter functions
 from example_plotting import *
 
-#turn off interactive plotting
-plt.ioff()
-
 if RANK == 0:
     #create network raster plot
     fig = networkSim.raster_plots(xlim=(500, 1000), markersize=2.)
     fig.savefig(os.path.join(PS.figures_path, 'network.pdf'), dpi=300)
-    
+    plt.close(fig)
 
     #plot cell locations
     fig, ax = plt.subplots(1,1, figsize=(5,8))
@@ -427,6 +417,7 @@ if RANK == 0:
                     layers = ['upper', 'lower'],
                     isometricangle=np.pi/12, aspect='equal')
     fig.savefig(os.path.join(PS.figures_path, 'layers.pdf'), dpi=300)
+    plt.close(fig)
     
 
     #plot cell locations
@@ -441,6 +432,7 @@ if RANK == 0:
                         markers=['^', 'o'], colors=['r', 'b'],
                         isometricangle=np.pi/12, )
     fig.savefig(os.path.join(PS.figures_path, 'soma_locations.pdf'), dpi=300)
+    plt.close(fig)
     
 
     #plot morphologies in their respective locations
@@ -455,6 +447,7 @@ if RANK == 0:
                     populations_path=PS.populations_path,
                     cellParams=PS.cellParams)
     fig.savefig(os.path.join(PS.figures_path, 'populations.pdf'), dpi=300)
+    plt.close(fig)
     
 
     #plot morphologies in their respective locations
@@ -470,6 +463,7 @@ if RANK == 0:
                                  cellParams=PS.cellParams,
                                  populationParams=PS.populationParams)
     fig.savefig(os.path.join(PS.figures_path, 'cell_models.pdf'), dpi=300)
+    plt.close(fig)
     
 
     #plot EX morphologies in their respective locations
@@ -484,6 +478,7 @@ if RANK == 0:
                     populations_path=PS.populations_path,
                     cellParams=PS.cellParams)
     fig.savefig(os.path.join(PS.figures_path, 'EX_population.pdf'), dpi=300)
+    plt.close(fig)
 
 
     #plot IN morphologies in their respective locations
@@ -498,6 +493,7 @@ if RANK == 0:
                     populations_path=PS.populations_path,
                     cellParams=PS.cellParams)
     fig.savefig(os.path.join(PS.figures_path, 'IN_population.pdf'), dpi=300)
+    plt.close(fig)
 
     
     #plot compound LFP and CSD traces
@@ -531,6 +527,7 @@ if RANK == 0:
                     unit='mV', T=(500, 1000))
     
     fig.savefig(os.path.join(PS.figures_path, 'compound_signals.pdf'), dpi=300)
+    plt.close(fig)
 
 
     #plot compound LFP and CSD traces
@@ -565,6 +562,7 @@ if RANK == 0:
                     unit='mV', T=(500, 1000), color='r')
     fig.savefig(os.path.join(PS.figures_path, 'population_EX_signals.pdf'),
                 dpi=300)
+    plt.close(fig)
 
 
     #plot compound LFP and CSD traces
@@ -599,6 +597,7 @@ if RANK == 0:
                     unit='mV', T=(500, 1000), color='b')
     fig.savefig(os.path.join(PS.figures_path, 'population_IN_signals.pdf'),
                 dpi=300)
+    plt.close(fig)
 
 
     #correlate global firing rate of network with CSD/LFP across channels
@@ -636,6 +635,7 @@ if RANK == 0:
 
     fig.savefig(os.path.join(PS.figures_path,
                              'compound_signal_correlations.pdf'), dpi=300)
+    plt.close(fig)
 
 
     #plot morphologies in their respective locations
@@ -669,12 +669,7 @@ if RANK == 0:
              lw=1, ec='w', alpha=1, zorder=500)    
     
     fig.savefig(os.path.join(PS.figures_path, 'populations_vII.pdf'), dpi=300)
-
-
-    if SIZE == 1:
-        plt.show()
-    else:
-        plt.close('all')
+    plt.close(fig)
 
 COMM.Barrier()
 

@@ -373,9 +373,6 @@ from example_plotting import *
 
 plt.close('all')
 
-#turn off interactive plotting
-plt.ioff()
-
 if RANK == 0:
     #create network raster plot
     x, y = networkSim.get_xy((500, 1000), fraction=1)
