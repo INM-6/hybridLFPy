@@ -389,7 +389,7 @@ if RANK == 0:
     ax.set_title('network raster')
     fig.savefig(os.path.join(params.figures_path, 'network_raster.pdf'),
                 dpi=300)
-    #raise Exception
+    plt.close(fig)
     
     #plot cell locations
     fig, ax = plt.subplots(1,1, figsize=(5,8))
@@ -403,6 +403,7 @@ if RANK == 0:
                     isometricangle=np.pi/24, aspect='equal')
     ax.set_title('layers')
     fig.savefig(os.path.join(params.figures_path, 'layers.pdf'), dpi=300)
+    plt.close(fig)
     
 
     #plot cell locations
@@ -423,6 +424,7 @@ if RANK == 0:
     ax.set_title('soma positions')
     fig.savefig(os.path.join(params.figures_path, 'soma_locations.pdf'),
                 dpi=150)
+    plt.close(fig)
     
     
     #plot morphologies in their respective locations
@@ -445,6 +447,7 @@ if RANK == 0:
                       fraction=0.02)
     ax.set_title('LFP generators')
     fig.savefig(os.path.join(params.figures_path, 'populations.pdf'), dpi=300)
+    plt.close(fig)
 
 
     #plot morphologies in their respective locations
@@ -465,6 +468,7 @@ if RANK == 0:
                    populationParams=params.populationParams)
     ax.set_title('morphologies')
     fig.savefig(os.path.join(params.figures_path, 'cell_models.pdf'), dpi=300)
+    plt.close(fig)
 
 
     #plot compound LFP and CSD traces
@@ -503,6 +507,5 @@ if RANK == 0:
     
     fig.savefig(os.path.join(params.figures_path, 'compound_signals.pdf'),
                 dpi=300)
-
-    plt.show()
+    plt.close(fig)
 
