@@ -18,12 +18,9 @@ Juelich Research Centre and JARA, Juelich, Germany
 (http://www.fz-juelich.de/inm/inm-6/EN/).
 
 
-Manuscript
-----------
+Citation
+--------
 
-A preprint of our manuscript on the hybrid scheme implemented in ``hybridLFPy`` is available on arXiv.org at http://arxiv.org/abs/1511.01681
-
-Citation:
 Espen Hagen, David Dahmen, Maria L. Stavrinou, Henrik Lindén, Tom Tetzlaff, Sacha J. van Albada, Sonja Grün, Markus Diesmann, Gaute T. Einevoll;
 Hybrid Scheme for Modeling Local Field Potentials from Point-Neuron Networks, Cerebral Cortex, Volume 26, Issue 12, 1 December 2016, Pages 4461–4496, https://doi.org/10.1093/cercor/bhw237
 
