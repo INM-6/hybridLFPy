@@ -30,12 +30,12 @@ plt.close('all')
 # Define cell parameters
 cell_parameters = {          # various cell parameters,
     #'morphology' : 'patdemo/cells/j4a.hoc', # Mainen&Sejnowski, 1996
-    'rm' : 10000.,      # membrane resistance
     'cm' : 1.0,         # membrane capacitance
     'Ra' : 150,        # axial resistance
     'v_init' : -65.,    # initial crossmembrane potential
-    'e_pas' : -65.,     # reversal potential passive mechs
     'passive' : True,   # switch on passive mechs
+    'passive_parameters' : dict(g_pas=1./10000, # membrane specific conductance
+                                e_pas=-65.), # passive reversal potential
     'nsegs_method' : 'lambda_f',
     'lambda_f' : 100.,
     'dt' : 2.**-4,      # [ms] dt's should be in powers of 2 for both, need

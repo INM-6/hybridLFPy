@@ -899,7 +899,6 @@ class multicompartment_params(point_neuron_network_params):
         # Some passive parameters will not be fully consistent with LIF params
         self.cellParams = {
             'v_init' : self.model_params['E_L'],
-            'rm' : self.model_params['tau_m'] * 1E3 / 1.0, #assyme cm=1
             'cm' : 1.0,
             'Ra' : 150,
             'passive' : True,
