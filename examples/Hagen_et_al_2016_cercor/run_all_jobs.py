@@ -45,7 +45,7 @@ if __name__ == '__main__':
         oe = os.path.join(logdir, job+'.txt')
         
         fname = os.path.join(jobscriptdir, job + '.job')
-        f = file(fname, 'w')
+        f = open(fname, 'w')
         f.write(content.format(job, stime, oe, oe, ntasks, mpiexec, sim))
         f.close()
         
