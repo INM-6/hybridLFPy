@@ -41,8 +41,8 @@ if 'DISPLAY' not in os.environ:
 import numpy as np
 from time import time
 import neuron # NEURON compiled with MPI must be imported before NEST and mpi4py
-              # to avoid being aware of MPI.
-import nest
+              # to avoid NEURON being aware of MPI.
+import nest   # Import not used, but done in order to ensure correct execution
 from hybridLFPy import PostProcess, Population, CachedNetwork
 from hybridLFPy import setup_file_dest, helpers
 from glob import glob
