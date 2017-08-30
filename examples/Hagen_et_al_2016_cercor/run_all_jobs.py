@@ -48,7 +48,7 @@ if __name__ == '__main__':
         
         fname = os.path.join(jobscriptdir, job + '.job')
         f = open(fname, 'w')
-        f.write(content.format(job, stime, oe, oe, ntasks, memPerCPU, mpiexec, sim))
+        f.write(content.format(job, stime, oe, oe, memPerCPU, ntasks, mpiexec, sim))
         f.close()
         
         jobscripts.append(fname)
