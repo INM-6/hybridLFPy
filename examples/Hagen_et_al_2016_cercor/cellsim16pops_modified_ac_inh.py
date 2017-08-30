@@ -36,6 +36,9 @@ scale compute facility is strongly discouraged.
 import os
 import numpy as np
 from time import time
+import neuron # NEURON compiled with MPI must be imported before NEST and mpi4py
+              # to avoid NEURON being aware of MPI.
+import nest   # Import not used, but done in order to ensure correct execution
 import nest_simulation
 from hybridLFPy import PostProcess, Population, CachedNetwork, setup_file_dest
 import nest_output_processing
