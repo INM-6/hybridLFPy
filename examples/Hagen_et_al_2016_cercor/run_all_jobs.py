@@ -27,7 +27,7 @@ unset DISPLAY # slurm appear to create a problem with too many displays
 '''
 
 # set up
-ntasks = 512            # number of MPI threads
+ntasks = 400            # number of MPI threads
 stime = '04:00:00'      # expected simulation time 'HH:MM:SS'
 mpiexec = 'srun --mpi=pmi2'      # what executable to use w. OpenMPI (mpirun, srun etc.)
 jobscriptdir = 'jobs'   # put all job scripts here
