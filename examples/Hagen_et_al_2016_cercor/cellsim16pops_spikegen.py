@@ -79,7 +79,7 @@ tic = time()
 #                        fname='microcircuit.sli')
 
 #create some dummy spike times
-activationtimes = [x*100 for x in range(3,11)] + [200]
+activationtimes = [x*100 for x in range(2,11)]
 networkSim = CachedFixedSpikesNetwork(activationtimes=activationtimes,
                                             **params.networkSimParams)
 
