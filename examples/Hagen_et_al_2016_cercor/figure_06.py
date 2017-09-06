@@ -21,12 +21,12 @@ def plot_multi_scale_output_a(fig):
         meanInpCurrents = getMeanInpCurrents(params, params.n_rec_input_spikes,
                                         os.path.join(params.spike_output_path,
                                                      'population_input_spikes'))
-        f = file(os.path.join(params.savefolder, 'data_analysis',
+        f = open(os.path.join(params.savefolder, 'data_analysis',
                               'meanInpCurrents.pickle'), 'wb')
         pickle.dump(meanInpCurrents, f)
         f.close()
     else:
-        f = file(os.path.join(params.savefolder, 'data_analysis',
+        f = open(os.path.join(params.savefolder, 'data_analysis',
                               'meanInpCurrents.pickle'), 'rb')
         meanInpCurrents = pickle.load(f)
         f.close()
@@ -36,12 +36,12 @@ def plot_multi_scale_output_a(fig):
         meanVoltages = getMeanVoltages(params, params.n_rec_voltage,
                                        os.path.join(params.spike_output_path,
                                                        'voltages'))
-        f = file(os.path.join(params.savefolder, 'data_analysis',
+        f = open(os.path.join(params.savefolder, 'data_analysis',
                               'meanVoltages.pickle'), 'wb')
         pickle.dump(meanVoltages, f)
         f.close()
     else:
-        f = file(os.path.join(params.savefolder, 'data_analysis',
+        f = open(os.path.join(params.savefolder, 'data_analysis',
                               'meanVoltages.pickle'), 'rb')
         meanVoltages = pickle.load(f)
         f.close()
@@ -281,6 +281,8 @@ def plot_multi_scale_output_a(fig):
     
         if i == 0:
             ax4.set_title('voltages')
+        
+        ax4.set_xlim(T)
     
 
 

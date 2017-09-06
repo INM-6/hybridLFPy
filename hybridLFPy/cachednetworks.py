@@ -96,7 +96,7 @@ class CachedNetwork(object):
                  GIDs={'EX' : [1, 400], 'IN' : [401, 100]},
                  X=['EX', 'IN'],
                  autocollect=True,
-                 cmap='Set1',
+                 cmap='Dark2',
                  ):
         """
         Offline processing and storing of network spike events, used by other

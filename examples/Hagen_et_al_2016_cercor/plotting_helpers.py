@@ -185,14 +185,14 @@ def annotate_subplot(ax, ncols=1, nrows=1, letter='a',
         transform=ax.transAxes)
 
 
-def get_colors(num=16, cmap=plt.cm.Set1):
+def get_colors(num=16, cmap=plt.cm.Dark2):
     '''return a list of color tuples to use in plots'''
     colors = []
     for i in range(num):
         if analysis_params.bw:
             colors.append('k' if i % 2 == 0 else 'gray')
         else:
-            i *= 256.
+            i *= float(cmap.N)
             if num > 1:
                 i /= num - 1.
             else:

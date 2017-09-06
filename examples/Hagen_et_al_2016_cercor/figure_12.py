@@ -154,7 +154,7 @@ def fig_lfp_scaling(fig, params, bottom=0.55, top=0.95, channels=[0,3,7,11,13], 
     for i, x in enumerate(cc):
         p += [(chance[i, ] >= x).sum() / float(N)]
     
-    print(('p-values:', p))
+    print('p-values:', p)
     
     
     #compute the 99% percentile of the chance data

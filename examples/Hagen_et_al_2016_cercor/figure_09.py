@@ -44,10 +44,10 @@ def fig_lfp_decomposition(fig, axes, params, transient=200, X=['L23E', 'L6E'], s
         markerstyles = ['s', 's', 'v', 'v', 'o', 'o', '^', '^']
     else:
         if plt.matplotlib.__version__ == '1.5.x':
-            linestyles = ['-', ':']*(len(params.Y) / 2)
+            linestyles = ['-', ':']*(len(params.Y) // 2)
             print(('CSD variance semi log plots may fail with matplotlib.__version__ {}'.format(plt.matplotlib.__version__)))
         else:
-            linestyles = ['-', (0, (1,1))]*(len(params.Y) / 2) #cercor version
+            linestyles = ['-', (0, (1,1))]*(len(params.Y) // 2) #cercor version
         # markerstyles = ['s', 's', 'v', 'v', 'o', 'o', '^', '^']
         markerstyles = [None]*len(params.Y)
         linewidths = [1.25 for i in range(len(linestyles))]

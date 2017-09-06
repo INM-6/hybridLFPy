@@ -88,7 +88,7 @@ def shiftedColorMap(cmap, start=0, midpoint=0.5, stop=1.0, name='shiftedcmap'):
 
 
 def fig_kernel_lfp(savefolders, params, transient=200, T=[800., 1000.], X='L5E',
-                   lags=[20, 20], channels=[0,3,7,11,13]):
+                   lags=[20., 20.], channels=[0,3,7,11,13]):
 
     '''
     This function calculates the  STA of LFP, extracts kernels and recontructs the LFP from kernels.
@@ -144,7 +144,7 @@ def fig_kernel_lfp(savefolders, params, transient=200, T=[800., 1000.], X='L5E',
     f.close()
     
     # kernel width
-    kwidth = 20
+    kwidth = 20.
     
     # create some dummy spike times
     activationtimes = np.array([x*100 for x in range(3,11)] + [200])
@@ -190,7 +190,7 @@ def fig_kernel_lfp(savefolders, params, transient=200, T=[800., 1000.], X='L5E',
             # plot kernel as correlation of spikegen LFP signal with delta spike train
             xcorr, vlimround = plotting_correlation(params,
                                                     x0_sg/x0_sg.sum()**2, 
-                                                    data_sg_raw[:, cinds[:-1]]*1E3,
+                                                    data_sg_raw[:, cinds[:-1].astype(int)]*1E3,
                                                     ax, normalize=False,
                                                     lag=kwidth,
                                                     color=color,
@@ -320,9 +320,9 @@ def fig_kernel_lfp(savefolders, params, transient=200, T=[800., 1000.], X='L5E',
                               linear_offset=0.02)
           
         # extract kernels, force negative lags to be zero
-        kernels = np.zeros((len(params.N_X), 16, kwidth*2))
+        kernels = np.zeros((len(params.N_X), 16, int(kwidth*2)))
         for j in range(len(params.X)):
-            kernels[j, :, kwidth:] = data_sg_raw[:, (j+2)*100:kwidth+(j+2)*100]/params.N_X[j]
+            kernels[j, :, kwidth:] = data_sg_raw[:, (j+2)*100:int(kwidth)+(j+2)*100]/params.N_X[j]
     
         LFP_reconst_raw = np.zeros(data_raw.shape)
     
@@ -592,7 +592,7 @@ def fig_kernel_lfp_CINPLA(savefolders, params, transient=200, X='L5E', lags=[20,
             
             # plot kernel as correlation of spikegen LFP signal with delta spike train
             xcorr, vlimround = plotting_correlation(x0_sg/x0_sg.sum()**2, 
-                                 data_sg_raw[:, cinds[:-1]]*1E3,
+                                 data_sg_raw[:, cinds[:-1].astype(int)]*1E3,
                                  ax, normalize=False,
                                  lag=kwidth,
                                  color=color,
@@ -802,7 +802,7 @@ def fig_kernel_lfp_EITN_I(savefolders, params, transient=200, T=[800., 1000.], X
             # plot kernel as correlation of spikegen LFP signal with delta spike train
             xcorr, vlimround = plotting_correlation(params,
                                                     x0_sg/x0_sg.sum()**2, 
-                                                    data_sg_raw[:, cinds[:-1]]*1E3,
+                                                    data_sg_raw[:, cinds[:-1].astype(int)]*1E3,
                                                     ax, normalize=False,
                                                     lag=kwidth,
                                                     color=color,
@@ -1278,11 +1278,11 @@ if __name__ == '__main__':
         'simulation_output_modified_spontan',
         'simulation_output_modified_ac_input',
     ]
-    lags = [20, 50]
+    lags = [20., 50.]
     
     for X in ['L5E']: #params.X:
         fig, PSD_LFP_reconst, PSD_data = fig_kernel_lfp(savefolders, params,
-                                                        transient=100, T=[800., 900.], X=X, lags=lags)
+                                                        transient=100., T=[800., 900.], X=X, lags=lags)
         
         fig.savefig('figure_13_{}.pdf'.format(X), dpi=300, bbox_inches='tight', pad_inches=0)
         fig.savefig('figure_13_{}.eps'.format(X), bbox_inches='tight', pad_inches=0.01)

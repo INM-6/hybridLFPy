@@ -543,7 +543,7 @@ def plot_population(ax,
 
 
     # DRAW UNITS
-    pop = zip(*params.mapping_Yy)[0]
+    pop = next(zip(*params.mapping_Yy))
     
     #plot a symbol in each location with a unit 
     if plot_somas:
@@ -852,6 +852,7 @@ def plot_signal_sum(ax, params, fname='LFPsum.h5', unit='mV', scaling_factor=1.,
     ax.yaxis.set_ticks_position('left')
     ax.set_xlabel(r'$t$ (ms)', labelpad=0.1)
     ax.set_ylim(ylim)
+    ax.set_xlim(T)
     
     return vlimround
 
@@ -1218,6 +1219,7 @@ def plot_signal_sum_colorplot(ax, params, fname='LFPsum.h5', unit='mV', N=1, yla
     plt.axis('tight')
 
     ax.set_ylim(ylim)
+    ax.set_xlim(T)
 
     
     f.close()
@@ -1394,7 +1396,7 @@ def plotting_correlation(params, x0, x1, ax, lag=20., scaling=None, normalize=Tr
     zvec = np.r_[params.electrodeParams['z']]
     zvec = np.r_[zvec, zvec[-1] + np.diff(zvec)[-1]]
     
-    xcorr_all=np.zeros((params.electrodeParams['z'].size, x0.shape[-1]))
+    xcorr_all=np.zeros((params.electrodeParams['z'].size, x0.shape[-1]), dtype=float)
     
     if normalize:
         for i, z in enumerate(params.electrodeParams['z']):
@@ -1430,7 +1432,7 @@ def plotting_correlation(params, x0, x1, ax, lag=20., scaling=None, normalize=Tr
     
     #temporal slicing
     lagvector = np.arange(-lag, lag+1).astype(int)
-    inds = lagvector + x0.shape[-1] / 2
+    inds = lagvector + x0.shape[-1] // 2
     
     
     for i, z in enumerate(params.electrodeParams['z']):
