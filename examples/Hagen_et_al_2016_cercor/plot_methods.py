@@ -3,6 +3,7 @@
 '''
 Plotting function helper script
 '''
+from builtins import open, zip
 import os
 import numpy as np
 if 'DISPLAY' not in os.environ:

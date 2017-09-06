@@ -299,7 +299,7 @@ def fig_kernel_lfp(savefolders, params, transient=200, T=[800., 1000.], X='L5E',
                 
         # create spikegen histogram for population Y
         x0_sg = np.zeros(x0.shape, dtype=float)
-        x0_sg[activationtimes[Xind]] += params.N_X[Xind]
+        x0_sg[activationtimes[Xind].astype(int)] += params.N_X[Xind]
         
 
         ax.set_yticklabels([])
@@ -322,7 +322,7 @@ def fig_kernel_lfp(savefolders, params, transient=200, T=[800., 1000.], X='L5E',
         # extract kernels, force negative lags to be zero
         kernels = np.zeros((len(params.N_X), 16, int(kwidth*2)))
         for j in range(len(params.X)):
-            kernels[j, :, kwidth:] = data_sg_raw[:, (j+2)*100:int(kwidth)+(j+2)*100]/params.N_X[j]
+            kernels[j, :, int(kwidth):] = data_sg_raw[:, (j+2)*100:int(kwidth)+(j+2)*100]/params.N_X[j]
     
         LFP_reconst_raw = np.zeros(data_raw.shape)
     
