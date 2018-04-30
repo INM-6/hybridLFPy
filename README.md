@@ -1,4 +1,3 @@
-=====================
 Module **hybridLFPy**
 =====================
 
@@ -19,32 +18,27 @@ Juelich Research Centre and JARA, Juelich, Germany
 (http://www.fz-juelich.de/inm/inm-6/EN/).
 
 
-Manuscript
-----------
+Citation
+--------
 
-A preprint of our manuscript on the hybrid scheme implemented in ``hybridLFPy`` is available on arXiv.org at http://arxiv.org/abs/1511.01681
-
-Citation:
-Espen Hagen, David Dahmen, Maria L. Stavrinou, Henrik Linden, Tom Tetzlaff, Sacha Jennifer van Albada, Sonja Gruen, Markus Diesmann, Gaute T. Einevoll. Hybrid scheme for modeling local field potentials from point-neuron networks. arXiv:1511.01681 [q-bio.NC]
+Espen Hagen, David Dahmen, Maria L. Stavrinou, Henrik Lindén, Tom Tetzlaff, Sacha J. van Albada, Sonja Grün, Markus Diesmann, Gaute T. Einevoll;
+Hybrid Scheme for Modeling Local Field Potentials from Point-Neuron Networks, Cerebral Cortex, Volume 26, Issue 12, 1 December 2016, Pages 4461–4496, https://doi.org/10.1093/cercor/bhw237
 
 Bibtex source:
 ::
     
-    @ARTICLE{2015arXiv151101681H,
-       author = {{Hagen}, E. and {Dahmen}, D. and {Stavrinou}, M.~L. and {Lind{\'e}n}, H. and 
-            {Tetzlaff}, T. and {van Albada}, S.~J. and {Gr{\"u}n}, S. and 
-            {Diesmann}, M. and {Einevoll}, G.~T.},
-        title = "{Hybrid scheme for modeling local field potentials from point-neuron networks}",
-      journal = {ArXiv e-prints},
-    archivePrefix = "arXiv",
-       eprint = {1511.01681},
-     primaryClass = "q-bio.NC",
-     keywords = {Quantitative Biology - Neurons and Cognition},
-         year = 2015,
-        month = nov,
-       adsurl = {http://adsabs.harvard.edu/abs/2015arXiv151101681H},
-      adsnote = {Provided by the SAO/NASA Astrophysics Data System}
-    }    
+    @article{doi:10.1093/cercor/bhw237,
+    author = {Hagen, Espen and Dahmen, David and Stavrinou, Maria L. and Lindén, Henrik and Tetzlaff, Tom and van Albada, Sacha J. and Grün, Sonja and Diesmann, Markus and Einevoll, Gaute T.},
+    title = {Hybrid Scheme for Modeling Local Field Potentials from Point-Neuron Networks},
+    journal = {Cerebral Cortex},
+    volume = {26},
+    number = {12},
+    pages = {4461-4496},
+    year = {2016},
+    doi = {10.1093/cercor/bhw237},
+    URL = { + http://dx.doi.org/10.1093/cercor/bhw237},
+    eprint = {/oup/backfile/content_public/journal/cercor/26/12/10.1093_cercor_bhw237/2/bhw237.pdf}
+    }   
 
 Tutorial slides
 ---------------
@@ -65,7 +59,6 @@ Warranty
 This software comes without any form of warranty. 
 
 
-============
 Installation
 ============
 
@@ -77,14 +70,13 @@ First download all the ``hybridLFPy`` source files using ``git``
     git clone https://github.com/INM-6/hybridLFPy.git
     
 
-To use ``hybridLFPy`` from any working folder without installing files, add this
-path to ``$PYTHONPATH``. Edit your ``.bash_profile`` or similar file, and add:
+To use ``hybridLFPy`` from any working folder without copying files, run: 
 ::    
     
-    export $PYTHONPATH=$PYTHONPATH:/PATH/TO/THIS/FOLDER:
+    (sudo) python setup.py develop (--user)
     
 Installing it is also possible, but not recommended as things might change with
-any pull request from the repository:
+pulls from the repository:
 ::    
     
     (sudo) python setup.py install (--user)
