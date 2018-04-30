@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 """
 Function true_lam_csd specification for calculation of true laminar CSD
 from the current-distribution on `LFPy.cell.Cell` objects, assuming line

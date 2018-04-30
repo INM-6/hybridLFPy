@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 '''
 **hybridLFPy**
 ==============
@@ -70,4 +71,4 @@ from .postproc import PostProcess
 from . import csd
 from . import helpers
 from .helpers import setup_file_dest
-from .testing import test
+from .testing import _test as test

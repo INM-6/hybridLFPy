@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 '''
 Hybrid LFP scheme example script, applying the methodology with a model
 implementation similar to:
@@ -31,25 +32,24 @@ mpirun -np 4 python example_brunel.py
 Not recommended, but running it serially should also work, e.g., calling
 python example_brunel.py
 
-
-Given the size of the network and demands for the multi-compartment LFP-
-predictions using the present scheme, running the model on nothing but a large-
-scale compute facility is strongly discouraged.
-
 '''
 import os
 import numpy as np
 if 'DISPLAY' not in os.environ:
     import matplotlib
     matplotlib.use('Agg')
+import matplotlib.style
+matplotlib.style.use('classic')
 import matplotlib.pyplot as plt
 from matplotlib import gridspec
 from time import time
-import nest #not used, but load order determine if network is run in parallel
+import neuron # NEURON compiled with MPI must be imported before NEST and mpi4py
+              # to avoid being aware of MPI
+import nest # import not used, but we load NEST anyway in order determine if
+            # network is run in parallel
 from hybridLFPy import PostProcess, Population, CachedNetwork, setup_file_dest
-from NeuroTools.parameters import ParameterSet
+from parameters import ParameterSet
 import h5py
-import neuron
 from mpi4py import MPI
 
 ########## matplotlib settings #################################################
@@ -130,32 +130,32 @@ PS.update(dict(
         EX = dict(
             morphology = 'morphologies/ex.hoc',
             v_init = BN.neuron_params['E_L'],
-            rm = BN.neuron_params['tau_m'] * 1E3 / 1.0, #assume cm=1.
             cm = 1.0,
             Ra = 150,
-            e_pas = BN.neuron_params['E_L'],    
+            passive = True,
+            passive_parameters = dict(g_pas=1./(BN.neuron_params['tau_m'] * 1E3), #assyme cm=1
+                                      e_pas=BN.neuron_params['E_L']), 
             nsegs_method = 'lambda_f',
             lambda_f = 100,
-            timeres_NEURON = BN.dt,
-            timeres_python = BN.dt,
-            tstartms = 0,
-            tstopms = BN.simtime,
+            dt = BN.dt,
+            tstart = 0,
+            tstop = BN.simtime,
             verbose = False,        
         ),
         #inhibitory cells
         IN = dict(
             morphology = 'morphologies/in.hoc',
             v_init = BN.neuron_params['E_L'],
-            rm = BN.neuron_params['tau_m'] * 1E3 / 1.0, #assume cm=1.
             cm = 1.0,
             Ra = 150,
-            e_pas = BN.neuron_params['E_L'],    
+            passive = True,
+            passive_parameters = dict(g_pas=1./(BN.neuron_params['tau_m'] * 1E3), #assyme cm=1
+                                      e_pas=BN.neuron_params['E_L']), 
             nsegs_method = 'lambda_f',
             lambda_f = 100,
-            timeres_NEURON = BN.dt,
-            timeres_python = BN.dt,
-            tstartms = 0,
-            tstopms = BN.simtime,
+            dt = BN.dt,
+            tstart = 0,
+            tstop = BN.simtime,
             verbose = False,                    
     )),
     
@@ -205,7 +205,7 @@ PS.update(dict(
             n = 20,
             seedvalue = None,
             #dendrite line sources, soma as sphere source (Linden2014)
-            method = 'som_as_point',
+            method = 'soma_as_point',
             #no somas within the constraints of the "electrode shank":
             r_z = [[-1E199, -600, -550, 1E99],[0, 0, 10, 10]],
     ),
@@ -276,9 +276,7 @@ PS.update(dict(
     synDelayScale = dict(
         EX = [None, None],
         IN = [None, None],
-    ),
-    
-    
+    ),    
 ))
 
 
@@ -318,6 +316,7 @@ networkSim = CachedNetwork(
     label = BN.label,
     ext = 'gdf',
     GIDs = {'EX' : [1, BN.NE], 'IN' : [BN.NE+1, BN.NI]},
+    X = ['EX', 'IN'],
     cmap='rainbow_r',
 )
 
@@ -404,14 +403,11 @@ print('Execution time: %.3f seconds' %  (time() - tic))
 #import some plotter functions
 from example_plotting import *
 
-#turn off interactive plotting
-plt.ioff()
-
 if RANK == 0:
     #create network raster plot
     fig = networkSim.raster_plots(xlim=(500, 1000), markersize=2.)
     fig.savefig(os.path.join(PS.figures_path, 'network.pdf'), dpi=300)
-    
+    plt.close(fig)
 
     #plot cell locations
     fig, ax = plt.subplots(1,1, figsize=(5,8))
@@ -421,6 +417,7 @@ if RANK == 0:
                     layers = ['upper', 'lower'],
                     isometricangle=np.pi/12, aspect='equal')
     fig.savefig(os.path.join(PS.figures_path, 'layers.pdf'), dpi=300)
+    plt.close(fig)
     
 
     #plot cell locations
@@ -435,6 +432,7 @@ if RANK == 0:
                         markers=['^', 'o'], colors=['r', 'b'],
                         isometricangle=np.pi/12, )
     fig.savefig(os.path.join(PS.figures_path, 'soma_locations.pdf'), dpi=300)
+    plt.close(fig)
     
 
     #plot morphologies in their respective locations
@@ -449,6 +447,7 @@ if RANK == 0:
                     populations_path=PS.populations_path,
                     cellParams=PS.cellParams)
     fig.savefig(os.path.join(PS.figures_path, 'populations.pdf'), dpi=300)
+    plt.close(fig)
     
 
     #plot morphologies in their respective locations
@@ -464,6 +463,7 @@ if RANK == 0:
                                  cellParams=PS.cellParams,
                                  populationParams=PS.populationParams)
     fig.savefig(os.path.join(PS.figures_path, 'cell_models.pdf'), dpi=300)
+    plt.close(fig)
     
 
     #plot EX morphologies in their respective locations
@@ -478,6 +478,7 @@ if RANK == 0:
                     populations_path=PS.populations_path,
                     cellParams=PS.cellParams)
     fig.savefig(os.path.join(PS.figures_path, 'EX_population.pdf'), dpi=300)
+    plt.close(fig)
 
 
     #plot IN morphologies in their respective locations
@@ -492,6 +493,7 @@ if RANK == 0:
                     populations_path=PS.populations_path,
                     cellParams=PS.cellParams)
     fig.savefig(os.path.join(PS.figures_path, 'IN_population.pdf'), dpi=300)
+    plt.close(fig)
 
     
     #plot compound LFP and CSD traces
@@ -518,12 +520,14 @@ if RANK == 0:
     plot_signal_sum(ax1, z=PS.electrodeParams['z'],
                     fname=os.path.join(PS.savefolder, 'CSDsum.h5'),
                     unit='$\mu$Amm$^{-3}$', T=(500, 1000))
+    ax1.set_xlabel('')
     
     plot_signal_sum(ax2, z=PS.electrodeParams['z'],
                     fname=os.path.join(PS.savefolder, 'LFPsum.h5'),
                     unit='mV', T=(500, 1000))
     
     fig.savefig(os.path.join(PS.figures_path, 'compound_signals.pdf'), dpi=300)
+    plt.close(fig)
 
 
     #plot compound LFP and CSD traces
@@ -550,6 +554,7 @@ if RANK == 0:
                     fname=os.path.join(PS.populations_path,
                                        'EX_population_CSD.h5'),
                     unit='$\mu$Amm$^{-3}$', T=(500, 1000),color='r')
+    ax1.set_xlabel('')
     
     plot_signal_sum(ax2, z=PS.electrodeParams['z'],
                     fname=os.path.join(PS.populations_path,
@@ -557,6 +562,7 @@ if RANK == 0:
                     unit='mV', T=(500, 1000), color='r')
     fig.savefig(os.path.join(PS.figures_path, 'population_EX_signals.pdf'),
                 dpi=300)
+    plt.close(fig)
 
 
     #plot compound LFP and CSD traces
@@ -583,6 +589,7 @@ if RANK == 0:
                     fname=os.path.join(PS.populations_path,
                                        'IN_population_CSD.h5'),
                     unit='$\mu$Amm$^{-3}$', T=(500, 1000),color='b')
+    ax1.set_xlabel('')
     
     plot_signal_sum(ax2, z=PS.electrodeParams['z'],
                     fname=os.path.join(PS.populations_path,
@@ -590,6 +597,7 @@ if RANK == 0:
                     unit='mV', T=(500, 1000), color='b')
     fig.savefig(os.path.join(PS.figures_path, 'population_IN_signals.pdf'),
                 dpi=300)
+    plt.close(fig)
 
 
     #correlate global firing rate of network with CSD/LFP across channels
@@ -627,6 +635,7 @@ if RANK == 0:
 
     fig.savefig(os.path.join(PS.figures_path,
                              'compound_signal_correlations.pdf'), dpi=300)
+    plt.close(fig)
 
 
     #plot morphologies in their respective locations
@@ -660,12 +669,7 @@ if RANK == 0:
              lw=1, ec='w', alpha=1, zorder=500)    
     
     fig.savefig(os.path.join(PS.figures_path, 'populations_vII.pdf'), dpi=300)
-
-
-    if SIZE == 1:
-        plt.show()
-    else:
-        plt.close('all')
+    plt.close(fig)
 
 COMM.Barrier()
 
