@@ -297,9 +297,11 @@ def setup_file_dest(params, clearDestination=True):
                   'microcircuit.sli']:
             if os.path.isfile(f):
                 if not os.path.exists(os.path.join(params.sim_scripts_path, f)):
+                    print('copying {} as {}'.format(f, os.path.join(params.sim_scripts_path, f)))
                     shutil.copy(f, os.path.join(params.sim_scripts_path, f))
                     os.chmod(os.path.join(params.sim_scripts_path, f),
                              stat.S_IREAD)
+        print('done preparing file destinations')
        
     COMM.Barrier()
     
