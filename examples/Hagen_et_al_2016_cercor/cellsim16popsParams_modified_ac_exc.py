@@ -646,7 +646,14 @@ class point_neuron_network_params(general_params):
         #       Gaussian pulse packet which is different for each thalamic neuron
         self.th_spike_times = [self.off]	# time of the thalamic pulses (ms)
 
-
+        
+        # create n_thal spikegenerator nodes connected to each respective
+        # postsynaptic parrot_neuron. Expected format is a len(self.n_thal) list
+        # of lists of activation times.
+        # Turn activation off by setting it as [[] for i in range(self.n_thal)]
+        self.th_spike_generator_times = [[] for i in range (self.n_thal)]
+        
+        
         ## sinusoidal_poisson_generator (oscillatory Poisson input)
         self.th_sin_start = 0.      	# onset (ms)
         self.th_sin_duration = 5000.  	        # duration (ms)
