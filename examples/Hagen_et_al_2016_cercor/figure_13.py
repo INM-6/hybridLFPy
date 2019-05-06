@@ -133,13 +133,13 @@ def fig_kernel_lfp(savefolders, params, transient=200, T=[800., 1000.], X='L5E',
     
     # Get the spikegen LFP:
     f = h5py.File(os.path.join(params.savefolder, 'LFPsum.h5'))
-    srate = f['srate'].value
+    srate = f['srate'][()]
     tvec = np.arange(f['data'].shape[1]) * 1000. / srate
     
     # slice
     inds = (tvec < params.tstop) & (tvec >= transient)
     
-    data_sg_raw = f['data'].value.astype(float)
+    data_sg_raw = f['data'][()].astype(float)
     data_sg = data_sg_raw[:, inds]
     f.close()
     
@@ -236,8 +236,8 @@ def fig_kernel_lfp(savefolders, params, transient=200, T=[800., 1000.], X='L5E',
     
         # Get the Compound LFP: LFPsum : data[nchannels, timepoints ]
         f = h5py.File(os.path.join(params.savefolder, 'LFPsum.h5'))
-        data_raw = f['data'].value
-        srate = f['srate'].value
+        data_raw = f['data'][()]
+        srate = f['srate'][()]
         tvec = np.arange(data_raw.shape[1]) * 1000. / srate
         # slice
         inds = (tvec < params.tstop) & (tvec >= transient)
@@ -249,7 +249,7 @@ def fig_kernel_lfp(savefolders, params, transient=200, T=[800., 1000.], X='L5E',
     
         # Get the spikegen LFP:
         f = h5py.File(os.path.join(os.path.split(params.savefolder)[0], 'simulation_output_spikegen', 'LFPsum.h5'))
-        data_sg_raw = f['data'].value
+        data_sg_raw = f['data'][()]
         
         f.close()
     
@@ -537,13 +537,13 @@ def fig_kernel_lfp(savefolders, params, transient=200, T=[800., 1000.], X='L5E',
 #     
 #     # Get the spikegen LFP:
 #     f = h5py.File(os.path.join('simulation_output_spikegen', 'LFPsum.h5'))
-#     srate = f['srate'].value
+#     srate = f['srate'][()]
 #     tvec = np.arange(f['data'].shape[1]) * 1000. / srate
 #     
 #     # slice
 #     inds = (tvec < params.tstop) & (tvec >= transient)
 #     
-#     data_sg_raw = f['data'].value.astype(float)
+#     data_sg_raw = f['data'][()].astype(float)
 #     f.close()
 #     #
 #     # kernel width
@@ -633,8 +633,8 @@ def fig_kernel_lfp(savefolders, params, transient=200, T=[800., 1000.], X='L5E',
 #     
 #         # Get the Compound LFP: LFPsum : data[nchannels, timepoints ]
 #         f = h5py.File(os.path.join(params.savefolder, 'LFPsum.h5'))
-#         data_raw = f['data'].value
-#         srate = f['srate'].value
+#         data_raw = f['data'][()]
+#         srate = f['srate'][()]
 #         tvec = np.arange(data_raw.shape[1]) * 1000. / srate
 #         # slice
 #         inds = (tvec < params.tstop) & (tvec >= transient)
@@ -646,7 +646,7 @@ def fig_kernel_lfp(savefolders, params, transient=200, T=[800., 1000.], X='L5E',
 #     
 #         # Get the spikegen LFP:
 #         f = h5py.File(os.path.join('simulation_output_spikegen', 'LFPsum.h5'))
-#         data_sg_raw = f['data'].value
+#         data_sg_raw = f['data'][()]
 #         # slice
 #         data_sg = data_sg_raw[:,inds[data_sg_raw.shape[1]]]
 #         f.close()
@@ -750,13 +750,13 @@ def fig_kernel_lfp(savefolders, params, transient=200, T=[800., 1000.], X='L5E',
 #     
 #     # Get the spikegen LFP:
 #     f = h5py.File(os.path.join('simulation_output_spikegen', 'LFPsum.h5'))
-#     srate = f['srate'].value
+#     srate = f['srate'][()]
 #     tvec = np.arange(f['data'].shape[1]) * 1000. / srate
 #     
 #     # slice
 #     inds = (tvec < params.tstop) & (tvec >= transient)
 #     
-#     data_sg_raw = f['data'].value.astype(float)
+#     data_sg_raw = f['data'][()].astype(float)
 #     data_sg = data_sg_raw[:, inds]
 #     f.close()
 #     
@@ -847,8 +847,8 @@ def fig_kernel_lfp(savefolders, params, transient=200, T=[800., 1000.], X='L5E',
 #     
 #         # Get the Compound LFP: LFPsum : data[nchannels, timepoints ]
 #         f = h5py.File(os.path.join(params.savefolder, 'LFPsum.h5'))
-#         data_raw = f['data'].value
-#         srate = f['srate'].value
+#         data_raw = f['data'][()]
+#         srate = f['srate'][()]
 #         tvec = np.arange(data_raw.shape[1]) * 1000. / srate
 #         # slice
 #         inds = (tvec < params.tstop) & (tvec >= transient)
@@ -860,7 +860,7 @@ def fig_kernel_lfp(savefolders, params, transient=200, T=[800., 1000.], X='L5E',
 #     
 #         # Get the spikegen LFP:
 #         f = h5py.File(os.path.join('simulation_output_spikegen', 'LFPsum.h5'))
-#         data_sg_raw = f['data'].value
+#         data_sg_raw = f['data'][()]
 #         
 #         f.close()
 #     
@@ -967,13 +967,13 @@ def fig_kernel_lfp(savefolders, params, transient=200, T=[800., 1000.], X='L5E',
 #     
 #     # Get the spikegen LFP:
 #     f = h5py.File(os.path.join('simulation_output_spikegen', 'LFPsum.h5'))
-#     srate = f['srate'].value
+#     srate = f['srate'][()]
 #     tvec = np.arange(f['data'].shape[1]) * 1000. / srate
 #     
 #     # slice
 #     inds = (tvec < params.tstop) & (tvec >= transient)
 #     
-#     data_sg_raw = f['data'].value.astype(float)
+#     data_sg_raw = f['data'][()].astype(float)
 #     data_sg = data_sg_raw[:, inds]
 #     f.close()
 #     
@@ -1064,8 +1064,8 @@ def fig_kernel_lfp(savefolders, params, transient=200, T=[800., 1000.], X='L5E',
 #         
 #         # Get the Compound LFP: LFPsum : data[nchannels, timepoints ]
 #         f = h5py.File(os.path.join(params.savefolder, 'LFPsum.h5'))
-#         data_raw = f['data'].value
-#         srate = f['srate'].value
+#         data_raw = f['data'][()]
+#         srate = f['srate'][()]
 #         tvec = np.arange(data_raw.shape[1]) * 1000. / srate
 #         # slice
 #         inds = (tvec < params.tstop) & (tvec >= transient)
@@ -1077,7 +1077,7 @@ def fig_kernel_lfp(savefolders, params, transient=200, T=[800., 1000.], X='L5E',
 #         
 #         # Get the spikegen LFP:
 #         f = h5py.File(os.path.join('simulation_output_spikegen', 'LFPsum.h5'))
-#         data_sg_raw = f['data'].value
+#         data_sg_raw = f['data'][()]
 #         
 #         f.close()
 #         #

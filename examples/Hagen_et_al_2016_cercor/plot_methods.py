@@ -776,12 +776,12 @@ def plot_signal_sum(ax, params, fname='LFPsum.h5', unit='mV', scaling_factor=1.,
     if type(fname) == str and os.path.isfile(fname):
         f = h5py.File(fname)
         #load data
-        data = f['data'].value
+        data = f['data'][()]
             
-        tvec = np.arange(data.shape[1]) * 1000. / f['srate'].value    
+        tvec = np.arange(data.shape[1]) * 1000. / f['srate'][()]    
 
         #for mean subtraction
-        datameanaxis1 = f['data'].value[:, tvec >= transient].mean(axis=1)
+        datameanaxis1 = f['data'][()][:, tvec >= transient].mean(axis=1)
         
         #close dataset
         f.close()
@@ -1175,11 +1175,11 @@ def plot_signal_sum_colorplot(ax, params, fname='LFPsum.h5', unit='mV', N=1, yla
         N : integer, set to number of LFP generators in order to get the normalized signal
     '''
     f = h5py.File(fname)
-    data = f['data'].value
-    tvec = np.arange(data.shape[1]) * 1000. / f['srate'].value
+    data = f['data'][()]
+    tvec = np.arange(data.shape[1]) * 1000. / f['srate'][()]
     
     #for mean subtraction
-    datameanaxis1 = f['data'].value[:, tvec >= transient].mean(axis=1)
+    datameanaxis1 = f['data'][()][:, tvec >= transient].mean(axis=1)
     
     # slice
     slica = (tvec <= T[1]) & (tvec >= T[0])
@@ -1239,8 +1239,8 @@ def calc_signal_power(params, fname, transient=200, Df=None, mlab=True, NFFT=100
     if type(fname) is str and os.path.isfile(fname):
         #open file
         f = h5py.File(fname)
-        data = f['data'].value
-        srate = f['srate'].value 
+        data = f['data'][()]
+        srate = f['srate'][()] 
         tvec = np.arange(data.shape[1]) * 1000. / srate
         f.close()
     elif type(fname) is np.ndarray:
@@ -1346,7 +1346,7 @@ def plotPowers(ax, params, popkeys, dataset, linestyles, linewidths, transient=2
     for i, layer in enumerate(popkeys):
         f = h5py.File(os.path.join(params.populations_path,
                                    '%s_population_%s' % (layer, dataset) + SCALING_POSTFIX + '.h5' ))
-        ax.semilogx(f['data'].value[:, transient:].var(axis=1), depth,
+        ax.semilogx(f['data'][()][:, transient:].var(axis=1), depth,
                  color=colors[i],
                  ls=linestyles[i],
                  lw=linewidths[i],
@@ -1361,7 +1361,7 @@ def plotPowers(ax, params, popkeys, dataset, linestyles, linewidths, transient=2
         f.close()
     
     f = h5py.File(os.path.join(params.savefolder, '%ssum' % dataset + SCALING_POSTFIX + '.h5' ))
-    ax.plot(f['data'].value[:, transient:].var(axis=1), depth,
+    ax.plot(f['data'][()][:, transient:].var(axis=1), depth,
                  'k', label='SUM', lw=1.25, clip_on=False)
     
     f.close()

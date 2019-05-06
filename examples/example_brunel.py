@@ -627,7 +627,7 @@ if RANK == 0:
 
     fname=os.path.join(PS.savefolder, 'LFPsum.h5')
     f = h5py.File(fname, 'r')
-    data = f['data'].value
+    data = f['data'][()]
     
     r, t = np.histogram(xx, bins)
     plot_correlation(z_vec=PS.electrodeParams['z'], x0=r, x1=data[:, 1:],

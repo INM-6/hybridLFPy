@@ -126,14 +126,14 @@ def load_h5_data(path='', data_type='LFP', y=None, electrode=None,
     
     if y is not None:
         f = h5py.File(os.path.join(path, '%s_%ss.h5' %(y,data_type)))
-        data = f['data'].value[:,:, warmup:]
+        data = f['data'][()][:,:, warmup:]
         if scaling != 1.:
             np.random.shuffle(data)
             num_cells = int(len(data)*scaling)
             data = data[:num_cells,:, warmup:]
     else:
         f = h5py.File(os.path.join(path, '%ssum.h5' %data_type))
-        data = f['data'].value[:, warmup:]
+        data = f['data'][()][:, warmup:]
 
     return data
 

@@ -40,10 +40,10 @@ def plot_signal_sum(ax, z, fname='LFPsum.h5', unit='mV',
     '''    
     #open file and get data, samplingrate
     f = h5py.File(fname)
-    data = f['data'].value
+    data = f['data'][()]
     dataT = data.T - data.mean(axis=1)
     data = dataT.T
-    srate = f['srate'].value
+    srate = f['srate'][()]
     
     #close file object
     f.close()

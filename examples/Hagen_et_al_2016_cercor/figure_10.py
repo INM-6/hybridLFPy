@@ -146,10 +146,10 @@ def fig_exc_inh_contrib(fig, axes, params, savefolders, T=[800, 1000], transient
     datas = []    
     for j, savefolder in enumerate(savefolders):
         f = h5py.File(os.path.join(os.path.split(params.savefolder)[0], savefolder, 'CSDsum.h5'))
-        var = f['data'].value[:, transient:].var(axis=1)
+        var = f['data'][()][:, transient:].var(axis=1)
         ax.semilogx(var, depth,
                     color=colors[j], label=labels[j], lw=lws[j], clip_on=False)
-        datas.append(f['data'].value[:, transient:])
+        datas.append(f['data'][()][:, transient:])
         f.close()
     #control variances
     vardiff = datas[0].var(axis=1) + datas[1].var(axis=1) + np.array([2*np.cov(x,y)[0,1] for (x,y) in zip(datas[0], datas[1])]) - datas[2].var(axis=1)
@@ -170,10 +170,10 @@ def fig_exc_inh_contrib(fig, axes, params, savefolders, T=[800, 1000], transient
     datas = []
     for j, savefolder in enumerate(savefolders):
         f = h5py.File(os.path.join(os.path.split(params.savefolder)[0], savefolder, 'LFPsum.h5'))
-        var = f['data'].value[:, transient:].var(axis=1)
+        var = f['data'][()][:, transient:].var(axis=1)
         ax.semilogx(var, depth,
                     color=colors[j], label=labels[j], lw=lws[j], clip_on=False)
-        datas.append(f['data'].value[:, transient:])
+        datas.append(f['data'][()][:, transient:])
         f.close()
     #control variances
     vardiff = datas[0].var(axis=1) + datas[1].var(axis=1) + np.array([2*np.cov(x,y)[0,1] for (x,y) in zip(datas[0], datas[1])]) - datas[2].var(axis=1)
