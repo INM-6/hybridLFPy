@@ -249,7 +249,7 @@ def plot_morphologies(ax, X, isometricangle, markers, colors,
         f = h5py.File(fname, 'r')
         
         for key, value in list(f.items()):
-            for i, rot in enumerate(value.value):
+            for i, rot in enumerate(value[()]):
                 rotations[i].update({key : rot})
         
         
