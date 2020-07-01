@@ -60,7 +60,7 @@ class PostProcess(object):
         class `PostProcess`: Methods to deal with the contributions of every
         postsynaptic sub-population.
 
-    
+
         Parameters
         ----------
         y : list
@@ -86,8 +86,8 @@ class PostProcess(object):
         compound_file : str
             formattable file name for population signals, e.g.,
             '{}sum.h5'
-        
-    
+
+
         """
         #set some attributes
         self.y = y
@@ -100,7 +100,7 @@ class PostProcess(object):
         self.figures_path = os.path.join(savefolder, figures_subfolder)
         self.output_file = output_file
         self.compound_file = compound_file
-        
+
         #set up subfolders
         if RANK == 0:
             self._set_up_savefolder()
@@ -125,7 +125,7 @@ class PostProcess(object):
                 f['srate'] = 1E3 / self.dt_output
                 f.create_dataset('data', data=self.LFPsum, compression=4)
                 f.close()
-    
+
                 for key, value in list(self.LFPdictLayer.items()):
                     f = h5py.File(os.path.join(self.populations_path,
                                                self.output_file.format(key,
@@ -139,7 +139,7 @@ class PostProcess(object):
                 #get the per population CSDs and total CSD from all populations:
                 self.CSDdict, self.CSDsum = self.calc_csd()
                 self.CSDdictLayer = self.calc_csd_layer()
-    
+
                 #save global CSD sum, and from L23E, L4I etc.:
                 f = h5py.File(os.path.join(self.savefolder,
                                            self.compound_file.format('CSD')),
@@ -147,7 +147,7 @@ class PostProcess(object):
                 f['srate'] = 1E3 / self.dt_output
                 f.create_dataset('data', data=self.CSDsum, compression=4)
                 f.close()
-    
+
                 for key, value in list(self.CSDdictLayer.items()):
                     f = h5py.File(os.path.join(self.populations_path,
                                                self.output_file.format(key,
@@ -189,7 +189,7 @@ class PostProcess(object):
             fil = os.path.join(self.populations_path,
                                self.output_file.format(y, 'LFP.h5'))
 
-            f = h5py.File(fil)
+            f = h5py.File(fil, 'r')
 
             if i == 0:
                 LFParray = np.zeros((len(self.y),
@@ -219,7 +219,7 @@ class PostProcess(object):
             fil = os.path.join(self.populations_path,
                                self.output_file.format(y, 'CSD.h5'))
 
-            f = h5py.File(fil)
+            f = h5py.File(fil, 'r')
 
             if i == 0:
                 CSDarray = np.zeros((len(self.y),
@@ -323,4 +323,3 @@ class PostProcess(object):
 
         #resync
         COMM.Barrier()
-
