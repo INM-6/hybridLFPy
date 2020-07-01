@@ -16,7 +16,7 @@ Synopsis of the main simulation procedure:
 3. network simulation
     a. execute network simulation using NEST (www.nest-simulator.org)
     b. merge nest spike output from different MPI ranks
-4. Create a object-representation that uses sqlite3 of all the spiking output 
+4. Create a object-representation that uses sqlite3 of all the spiking output
 5. Iterate over post-synaptic populations:
     a. Create Population object with appropriate parameters for
        each specific population
@@ -71,7 +71,7 @@ if not hasattr(neuron.h, 'ExpSynI'):
         os.system('nrnivmodl')
     COMM.Barrier()
     neuron.load_mechanisms('.')
-    
+
 
 ################################################################################
 ## PARAMETERS
@@ -91,46 +91,46 @@ params = multicompartment_params()
 def merge_gdf(model_params, raw_label='spikes_', file_type='gdf',
               fileprefix='spikes'):
     '''
-    NEST produces one file per virtual process containing recorder output. 
-    This function gathers and combines them into one single file per 
+    NEST produces one file per virtual process containing recorder output.
+    This function gathers and combines them into one single file per
     network population.
-    
+
     Parameters
     ----------
     model_params : object
         network parameters object
-    
+
     Returns
     -------
     None
-    
+
     '''
     def get_raw_gids(model_params):
         '''
         Reads text file containing gids of neuron populations as created within
         the NEST simulation. These gids are not continuous as in the simulation
         devices get created in between.
-        
+
         Parameters
         ----------
         model_params : object
             network parameters object
-        
-        
+
+
         Returns
         -------
         gids : list
             list of neuron ids and value (spike time, voltage etc.)
-        
+
         '''
         gidfile = open(os.path.join(model_params.raw_nest_output_path,
-                                    model_params.GID_filename),'r') 
-        gids = [] 
+                                    model_params.GID_filename),'r')
+        gids = []
         for l in gidfile :
             a = l.split()
             gids.append([int(a[0]),int(a[1])])
         return gids
-    
+
     #some preprocessing
     raw_gids = get_raw_gids(model_params)
     pop_sizes = [raw_gids[i][1]-raw_gids[i][0]+1
@@ -151,14 +151,14 @@ def merge_gdf(model_params, raw_label='spikes_', file_type='gdf',
                     line[0] = line[0] - raw_first_gids[pop_idx] + \
                               converted_first_gids[pop_idx]
                     gdf.append(line)
-            
+
             print('writing: %s' % os.path.join(model_params.spike_output_path,
                                             fileprefix +
                                             '_%s.gdf' % model_params.X[pop_idx]))
             helpers.write_gdf(gdf, os.path.join(model_params.spike_output_path,
                                         fileprefix +
                                         '_%s.gdf' % model_params.X[pop_idx]))
-    
+
     COMM.Barrier()
 
     return
@@ -167,20 +167,20 @@ def merge_gdf(model_params, raw_label='spikes_', file_type='gdf',
 def dict_of_numpyarray_to_dict_of_list(d):
     '''
     Convert dictionary containing numpy arrays to dictionary containing lists
-    
+
     Parameters
     ----------
     d : dict
         sli parameter name and value as dictionary key and value pairs
-    
+
     Returns
     -------
     d : dict
         modified dictionary
-    
+
     '''
     for key,value in d.items():
-        if isinstance(value,dict):  # if value == dict 
+        if isinstance(value,dict):  # if value == dict
             # recurse
             d[key] = dict_of_numpyarray_to_dict_of_list(value)
         elif isinstance(value,np.ndarray): # or isinstance(value,list) :
@@ -191,12 +191,12 @@ def dict_of_numpyarray_to_dict_of_list(d):
 def send_nest_params_to_sli(p):
     '''
     Read parameters and send them to SLI
-    
+
     Parameters
     ----------
     p : dict
         sli parameter name and value as dictionary key and value pairs
-    
+
     Returns
     -------
     None
@@ -210,19 +210,19 @@ def send_nest_params_to_sli(p):
         if name == 'neuron_model': # special case as neuron_model is a
                                    # NEST model and not a string
             try:
-                nest.sli_run('/'+name)
-                nest.sli_push(value)
-                nest.sli_run('eval')
-                nest.sli_run('def')
-            except: 
+                nest.ll_api.sli_run('/'+name)
+                nest.ll_api.sli_push(value)
+                nest.ll_api.sli_run('eval')
+                nest.ll_api.sli_run('def')
+            except:
                 print('Could not put variable %s on SLI stack' % (name))
                 print(type(value))
         else:
             try:
-                nest.sli_run('/'+name)
-                nest.sli_push(value)
-                nest.sli_run('def')
-            except: 
+                nest.ll_api.sli_run('/'+name)
+                nest.ll_api.sli_push(value)
+                nest.ll_api.sli_run('def')
+            except:
                 print('Could not put variable %s on SLI stack' % (name))
                 print(type(value))
     return
@@ -234,7 +234,7 @@ def sli_run(parameters=object(),
     '''
     Takes parameter-class and name of main sli-script as input, initiating the
     simulation.
-    
+
     Parameters
     ----------
     parameters : object
@@ -243,21 +243,21 @@ def sli_run(parameters=object(),
         path to sli codes to be executed
     verbosity : str,
         nest verbosity flag
-    
+
     Returns
     -------
     None
-    
+
     '''
     # Load parameters from params file, and pass them to nest
     # Python -> SLI
     send_nest_params_to_sli(vars(parameters))
-    
+
     #set SLI verbosity
-    nest.sli_run("%s setverbosity" % verbosity)
-    
+    nest.ll_api.sli_run("%s setverbosity" % verbosity)
+
     # Run NEST/SLI simulation
-    nest.sli_run('(%s) run' % fname)
+    nest.ll_api.sli_run('(%s) run' % fname)
 
 
 ###############################################################################
@@ -279,7 +279,7 @@ if properrun:
     sli_run(parameters=networkParams,
             fname='microcircuit.sli',
             verbosity='M_WARNING')
-    
+
     #preprocess the gdf files containing spiking output, voltages, weighted and
     #spatial input spikes and currents:
     merge_gdf(networkParams,
@@ -290,7 +290,6 @@ if properrun:
 
 #Create an object representation of the simulation output that uses sqlite3
 networkSim = CachedNetwork(**params.networkSimParams)
-
 
 toc = time() - tic
 print('NEST simulation and gdf file processing done in  %.3f seconds' % toc)
@@ -315,7 +314,7 @@ if properrun:
                 savelist = params.savelist,
                 savefolder = params.savefolder,
                 calculateCSD = params.calculateCSD,
-                dt_output = params.dt_output, 
+                dt_output = params.dt_output,
                 POPULATIONSEED = SIMULATIONSEED + i,
                 #daughter class kwargs
                 X = params.X,
@@ -328,11 +327,11 @@ if properrun:
                 tau_yX = params.tau_yX[y],
                 recordSingleContribFrac = params.recordSingleContribFrac,
             )
-    
+
         #run population simulation and collect the data
         pop.run()
         pop.collect_data()
-    
+
         #object no longer needed
         del pop
 
@@ -351,10 +350,10 @@ if properrun:
                            savefolder = params.savefolder,
                            mapping_Yy = params.mapping_Yy,
                            )
-    
+
     #run through the procedure
     postproc.run()
-    
+
     #create tar-archive with output
     postproc.create_tar_archive()
 
@@ -387,7 +386,7 @@ if RANK == 0:
     fig.savefig(os.path.join(params.figures_path, 'network_raster.pdf'),
                 dpi=300)
     plt.close(fig)
-    
+
     #plot cell locations
     fig, ax = plt.subplots(1,1, figsize=(5,8))
     fig.subplots_adjust(left=0.2)
@@ -401,7 +400,7 @@ if RANK == 0:
     ax.set_title('layers')
     fig.savefig(os.path.join(params.figures_path, 'layers.pdf'), dpi=300)
     plt.close(fig)
-    
+
 
     #plot cell locations
     fig, ax = plt.subplots(1,1, figsize=(5,8))
@@ -422,8 +421,8 @@ if RANK == 0:
     fig.savefig(os.path.join(params.figures_path, 'soma_locations.pdf'),
                 dpi=150)
     plt.close(fig)
-    
-    
+
+
     #plot morphologies in their respective locations
     fig, ax = plt.subplots(1,1, figsize=(5,8))
     fig.subplots_adjust(left=0.2)
@@ -473,7 +472,7 @@ if RANK == 0:
     fig.subplots_adjust(left=0.075, right=0.95, bottom=0.075, top=0.95,
                         hspace=0.2, wspace=0.2)
     gs = gridspec.GridSpec(2,2)
-    
+
     ax0 = fig.add_subplot(gs[:,0])
     ax1 = fig.add_subplot(gs[0, 1])
     ax2 = fig.add_subplot(gs[1, 1])
@@ -482,27 +481,26 @@ if RANK == 0:
     ax2.set_title('LFP')
 
     T=(500, 700)
-    
+
     x, y = networkSim.get_xy(T, fraction=1)
     networkSim.plot_raster(ax0, T, x, y, markersize=1, marker='o',
                            alpha=.5,legend=False, pop_names=True)
     remove_axis_junk(ax0)
     ax0.set_xlabel(r'$t$ (ms)', labelpad=0.1)
     ax0.set_ylabel('population', labelpad=0.1)
-    
+
 
     plot_signal_sum(ax1, z=params.electrodeParams['z'],
                     fname=os.path.join(params.savefolder, 'CSDsum.h5'),
                     unit='$\mu$Amm$^{-3}$', T=T)
     ax1.set_xticklabels([])
     ax1.set_xlabel('')
-    
+
     plot_signal_sum(ax2, z=params.electrodeParams['z'],
                     fname=os.path.join(params.savefolder, 'LFPsum.h5'),
                     unit='mV', T=T)
     ax2.set_xlabel('$t$ (ms)')
-    
+
     fig.savefig(os.path.join(params.figures_path, 'compound_signals.pdf'),
                 dpi=300)
     plt.close(fig)
-
