@@ -17,7 +17,7 @@ def dict_of_numpyarray_to_dict_of_list(d):
     Convert dictionary containing numpy arrays to dictionary containing lists
     '''
     for key,value in d.items():
-        if isinstance(value,dict):  # if value == dict 
+        if isinstance(value,dict):  # if value == dict
             # recurse
             d[key] = dict_of_numpyarray_to_dict_of_list(value)
         elif isinstance(value,numpy.ndarray): # or isinstance(value,list) :
@@ -36,19 +36,19 @@ def send_nest_params_to_sli(p):
             value = dict_of_numpyarray_to_dict_of_list(value)
         if name == 'neuron_model': # special case as neuron_model should is a NEST model and not a string
             try:
-                nest.sli_run('/'+name)
-                nest.sli_push(value)
-                nest.sli_run('eval')
-                nest.sli_run('def')
-            except: 
+                nest.ll_api.sli_run('/'+name)
+                nest.ll_api.sli_push(value)
+                nest.ll_api.sli_run('eval')
+                nest.ll_api.sli_run('def')
+            except:
                 print('Could not put variable %s on SLI stack' % (name))
                 print(type(value))
         else:
             try:
-                nest.sli_run('/'+name)
-                nest.sli_push(value)
-                nest.sli_run('def')
-            except: 
+                nest.ll_api.sli_run('/'+name)
+                nest.ll_api.sli_push(value)
+                nest.ll_api.sli_run('def')
+            except:
                 print('Could not put variable %s on SLI stack' % (name))
                 print(type(value))
     return
@@ -60,7 +60,7 @@ def sli_run(parameters=object(),
     '''
     Takes parameter-class and name of main sli-script as input, initiating the
     simulation.
-    
+
     kwargs:
     ::
         parameters : object, parameter class instance
@@ -70,12 +70,12 @@ def sli_run(parameters=object(),
     # Load parameters from params file, and pass them to nest
     # Python -> SLI
     send_nest_params_to_sli(vars(parameters))
-    
+
     #set SLI verbosity
-    nest.sli_run("%s setverbosity" % verbosity)
-    
+    nest.ll_api.sli_run("%s setverbosity" % verbosity)
+
     # Run NEST/SLI simulation
-    nest.sli_run('(%s) run' % fname)
+    nest.ll_api.sli_run('(%s) run' % fname)
 
 
 if __name__ == '__main__':
