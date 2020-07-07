@@ -9,7 +9,7 @@ with open('README.md') as file:
 
 
 d = {}
-exec(open(os.path.join('LFPy', 'version.py').read(), None, d)
+exec(open(os.path.join('hybridLFPy', 'version.py')).read(), None, d)
 version = d['version']
 
 setup(
