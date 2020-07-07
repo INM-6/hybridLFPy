@@ -269,16 +269,12 @@ def simulate():
 
     nest.SetStatus(espikes,[{
                        "label": os.path.join(spike_output_path, label + "-EX"),
-                       "withtime": True,
-                       "withgid": True,
-                       "to_file": True,
+                       "record_to": 'ascii',
                        }])
 
     nest.SetStatus(ispikes,[{
                        "label": os.path.join(spike_output_path, label + "-IN"),
-                       "withtime": True,
-                       "withgid": True,
-                       "to_file": True,}])
+                       "record_to": 'ascii',}])
 
     print("Connecting devices")
 

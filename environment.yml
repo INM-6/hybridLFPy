@@ -5,7 +5,7 @@ channels:
 dependencies:
   - python=3
   - lfpy>=2.1
-  - nest-simulator=*=mpi*
+  # - nest-simulator=*=mpi*
   - openmpi-mpicc
   - ipython
   - pip

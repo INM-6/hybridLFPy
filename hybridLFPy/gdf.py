@@ -104,7 +104,7 @@ class GDF(object):
         self.debug = debug
 
 
-    def _blockread(self, fname):
+    def _blockread(self, fname, skiprows):
         """
         Generator yields bsize lines from gdf file.
         Hidden method.
@@ -114,6 +114,8 @@ class GDF(object):
         ----------
         fname : str
             Name of gdf-file.
+        skiprows : int
+            Number of skipped first lines
 
 
         Yields
@@ -125,6 +127,8 @@ class GDF(object):
         with open(fname, 'r') as f:
             while True:
                 a = []
+                for i in range(skiprows):
+                    next(f)
                 for i in range(self.bsize):
                     line = f.readline()
                     if not line: break
@@ -133,7 +137,7 @@ class GDF(object):
                     raise StopIteration
                 yield a
 
-    def create(self, re='brunel-py-ex-*.gdf', index=True):
+    def create(self, re='brunel-py-ex-*.gdf', index=True, skiprows=0):
         """
         Create db from list of gdf file glob
 
@@ -144,6 +148,8 @@ class GDF(object):
             File glob to load.
         index : bool
             Create index on neurons for speed.
+        skiprows : int
+            Number of skipped first lines
 
 
         Returns
@@ -162,7 +168,7 @@ class GDF(object):
             print(f)
             while True:
                 try:
-                    for data in self._blockread(f):
+                    for data in self._blockread(f, skiprows):
                         self.cursor.executemany('INSERT INTO spikes VALUES (?, ?)', data)
                         self.conn.commit()
                 except:

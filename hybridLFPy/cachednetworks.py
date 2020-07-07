@@ -61,18 +61,18 @@ class CachedNetwork(object):
     dt : float,
         Simulation timestep size.
     spike_output_path : str
-        Path to gdf-files with spikes.
+        Path to gdf/dat-files with spikes.
     label : str
-        Prefix of spiking gdf-files.
+        Prefix of spiking gdf/dat-files.
     ext : str
-        File extension of gdf-files.
+        File extension of gdf/dat-files.
     GIDs : dict
         dictionary keys are population names and item a list with first
         GID in population and population size
     X : list
         names of each network population
     autocollect : bool
-        If True, class init will process gdf files.
+        If True, class init will process gdf/dat files.
     cmap : str
         Name of colormap, must be in `dir(plt.cm)`.
 
@@ -96,6 +96,7 @@ class CachedNetwork(object):
                  GIDs={'EX' : [1, 400], 'IN' : [401, 100]},
                  X=['EX', 'IN'],
                  autocollect=True,
+                 skiprows=0,
                  cmap='Dark2',
                  ):
         """
@@ -122,6 +123,8 @@ class CachedNetwork(object):
             names of each network population
         autocollect : bool
             If True, class init will process gdf files.
+        skiprows : int
+            Number of skipped first lines
         cmap : str
             Name of colormap, must be in dir(plt.cm).
 
@@ -146,6 +149,7 @@ class CachedNetwork(object):
         self.GIDs = GIDs
         self.X = X
         self.autocollect = autocollect
+        self.skiprows = skiprows
 
         # Create a dictionary of nodes with proper layernames
         self.nodes = {}
@@ -207,7 +211,8 @@ class CachedNetwork(object):
             db.create(re=os.path.join(self.spike_output_path,
                                       '{0}*{1}*{2}'.format(self.label, X,
                                                            self.ext)),
-                      index=True)
+                      index=True,
+                      skiprows=self.skiprows)
             self.dbs.update({
                     X : db
                 })

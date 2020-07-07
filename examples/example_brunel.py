@@ -313,10 +313,11 @@ networkSim = CachedNetwork(
     dt = BN.dt,
     spike_output_path = BN.spike_output_path,
     label = BN.label,
-    ext = 'gdf',
+    ext = 'dat',
     GIDs = {'EX' : [1, BN.NE], 'IN' : [BN.NE+1, BN.NI]},
     X = ['EX', 'IN'],
     cmap='rainbow_r',
+    skiprows=3,
 )
 
 
