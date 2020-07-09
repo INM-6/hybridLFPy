@@ -89,7 +89,7 @@ params = multicompartment_params()
 ################################################################################
 
 def merge_gdf(model_params, raw_label='spikes_', file_type='gdf',
-              fileprefix='spikes'):
+              fileprefix='spikes', skiprows=0):
     '''
     NEST produces one file per virtual process containing recorder output.
     This function gathers and combines them into one single file per
@@ -99,6 +99,10 @@ def merge_gdf(model_params, raw_label='spikes_', file_type='gdf',
     ----------
     model_params : object
         network parameters object
+    raw_label : str
+    file_type : str
+    fileprefix : str
+    skiprows : int
 
     Returns
     -------
@@ -124,9 +128,9 @@ def merge_gdf(model_params, raw_label='spikes_', file_type='gdf',
 
         '''
         gidfile = open(os.path.join(model_params.raw_nest_output_path,
-                                    model_params.GID_filename),'r')
+                                    model_params.GID_filename), 'r')
         gids = []
-        for l in gidfile :
+        for l in gidfile:
             a = l.split()
             gids.append([int(a[0]),int(a[1])])
         return gids
@@ -146,7 +150,7 @@ def merge_gdf(model_params, raw_label='spikes_', file_type='gdf',
                                       '*.' + file_type))
             gdf = [] # init
             for f in files:
-                new_gdf = helpers.read_gdf(f)
+                new_gdf = helpers.read_gdf(f, skiprows)
                 for line in new_gdf:
                     line[0] = line[0] - raw_first_gids[pop_idx] + \
                               converted_first_gids[pop_idx]
@@ -154,10 +158,10 @@ def merge_gdf(model_params, raw_label='spikes_', file_type='gdf',
 
             print('writing: %s' % os.path.join(model_params.spike_output_path,
                                             fileprefix +
-                                            '_%s.gdf' % model_params.X[pop_idx]))
+                                            '_{}.{}'.format(model_params.X[pop_idx], file_type)))
             helpers.write_gdf(gdf, os.path.join(model_params.spike_output_path,
                                         fileprefix +
-                                        '_%s.gdf' % model_params.X[pop_idx]))
+                                        '_{}.{}'.format(model_params.X[pop_idx], file_type)))
 
     COMM.Barrier()
 
@@ -230,7 +234,7 @@ def send_nest_params_to_sli(p):
 
 def sli_run(parameters=object(),
             fname='microcircuit.sli',
-            verbosity='M_ERROR'):
+            verbosity='M_INFO'):
     '''
     Takes parameter-class and name of main sli-script as input, initiating the
     simulation.
@@ -278,14 +282,15 @@ if properrun:
     networkParams = point_neuron_network_params()
     sli_run(parameters=networkParams,
             fname='microcircuit.sli',
-            verbosity='M_WARNING')
+            verbosity='M_INFO')
 
     #preprocess the gdf files containing spiking output, voltages, weighted and
     #spatial input spikes and currents:
     merge_gdf(networkParams,
               raw_label=networkParams.spike_detector_label,
-              file_type='gdf',
-              fileprefix=params.networkSimParams['label'])
+              file_type='dat',
+              fileprefix=params.networkSimParams['label'],
+              skiprows=3)
 
 
 #Create an object representation of the simulation output that uses sqlite3
@@ -293,7 +298,6 @@ networkSim = CachedNetwork(**params.networkSimParams)
 
 toc = time() - tic
 print('NEST simulation and gdf file processing done in  %.3f seconds' % toc)
-
 
 ####### Set up populations #####################################################
 

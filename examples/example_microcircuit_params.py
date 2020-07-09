@@ -452,7 +452,7 @@ class point_neuron_network_params(general_params):
     ####################################
 
         # use same number of threads as MPI COMM.size()
-        self.total_num_virtual_procs = SIZE * 2
+        self.total_num_virtual_procs = SIZE * 4
 
         ####################################
         # RNG PROPERTIES                   #
@@ -465,8 +465,6 @@ class point_neuron_network_params(general_params):
         ####################################
         # RECORDING PARAMETERS             #
         ####################################
-
-        self.to_memory = False
 
         self.overwrite_existing_files = True
 
@@ -494,22 +492,22 @@ class point_neuron_network_params(general_params):
         if self.record_fraction_neurons_input_spikes:
             self.frac_rec_input_spikes = 0.1
         else:
-            self.n_rec_input_spikes = 0
+            self.n_rec_input_spikes = 100
 
         # number of recorded neurons for depth resolved input currents
         self.n_rec_depth_resolved_input = 0
 
         # whether to write any recorded cortical spikes to file
-        self.save_cortical_spikes = True
+        self.record_to = 'ascii'
 
         # whether to write any recorded membrane potentials to file
-        self.save_voltages = False
+        #self.save_voltages = 'ascii'
 
         # whether to record thalamic spikes
         self.record_thalamic_spikes = True
 
         # whether to write any recorded thalamic spikes to file
-        self.save_thalamic_spikes = True
+        #self.save_thalamic_spikes = 'ascii'
 
         # global ID file name
         self.GID_filename = 'population_GIDs.dat'
@@ -768,9 +766,10 @@ class multicompartment_params(point_neuron_network_params):
             'dt' :          self.dt,
             'spike_output_path' : self.spike_output_path,
             'label' :       'population_spikes',
-            'ext' :         'gdf',
+            'ext' :         'dat',
             'GIDs' : self.get_GIDs(),
             'X' : self.X,
+            'skiprows' : 3,
         }
 
 
