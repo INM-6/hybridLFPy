@@ -1,9 +1,9 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 """
 Documentation:
 
-This is a script containing general helper functions which can be applied
-to specialized cases.
+This is a script containing general helper functions.
 """
 
 import numpy as np
@@ -126,14 +126,14 @@ def load_h5_data(path='', data_type='LFP', y=None, electrode=None,
     
     if y is not None:
         f = h5py.File(os.path.join(path, '%s_%ss.h5' %(y,data_type)))
-        data = f['data'].value[:,:, warmup:]
+        data = f['data'][()][:,:, warmup:]
         if scaling != 1.:
             np.random.shuffle(data)
             num_cells = int(len(data)*scaling)
             data = data[:num_cells,:, warmup:]
     else:
         f = h5py.File(os.path.join(path, '%ssum.h5' %data_type))
-        data = f['data'].value[:, warmup:]
+        data = f['data'][()][:, warmup:]
 
     return data
 
@@ -297,9 +297,11 @@ def setup_file_dest(params, clearDestination=True):
                   'microcircuit.sli']:
             if os.path.isfile(f):
                 if not os.path.exists(os.path.join(params.sim_scripts_path, f)):
+                    print('copying {} as {}'.format(f, os.path.join(params.sim_scripts_path, f)))
                     shutil.copy(f, os.path.join(params.sim_scripts_path, f))
                     os.chmod(os.path.join(params.sim_scripts_path, f),
                              stat.S_IREAD)
+        print('done preparing file destinations')
        
     COMM.Barrier()
     

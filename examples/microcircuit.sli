@@ -207,6 +207,7 @@
 % th_subnet
 % th_neuron_subnet_GID
 % th_device_subnet_GID
+% th_spike_generators_subnet_GID
 % th_poisson_GID
 % th_spike_GID
 % th_smp_GID
@@ -309,13 +310,28 @@
 		  /amplitude th_sin_fluc_rate
                   /phase th_sin_phase
 		>> SetStatus
-		
+
+
+    %% n_thal spike_generators, need one per thalamic neuron
+    %% as we want to provide unique spike sequences to each as defined from the
+    %% Python parameter file
+        /subnet Create /th_spike_generators_subnet_GID Set
+    th_spike_generators_subnet_GID ChangeSubnet
+        /spike_generator n_thal Create ;
+        0 /i Set
+        th_spike_generators_subnet_GID GetGlobalNodes {
+        << /spike_times th_spike_generator_times i get >> SetStatus
+        1 i add /i Set
+    } forall    
+    th_device_subnet_GID ChangeSubnet
+    
+    
 	%% Pulse-packet generators
 		
 	/subnet Create /th_pulsepacket_generator_subnet_GID Set			
         th_pulsepacket_generator_subnet_GID ChangeSubnet
 	% need one pulsepacket_generator per thalamic neuron as pulsepacket_generators provide the same spike train to each target
-        /pulsepacket_generator n_thal Create ;					
+        /pulsepacket_generator n_thal Create ;
         th_pulsepacket_generator_subnet_GID GetGlobalNodes {
 		<<
 		  /pulse_times th_gauss_times
@@ -929,16 +945,24 @@
 	/all_to_all 
         Connect
 
+    % Connect the population of n_thal spike_generators providing unique spike
+    % sequences to each parrot neuron
+        [th_spike_generators_subnet_GID
+        GetGlobalNodes
+    	th_neuron_subnet_GID GetGlobalNodes
+        ] {Connect} ScanThread
+
+
 	%
 	%th_smp_GID
 	%th_neuron_subnet_GID GetGlobalNodes
 	%DivergentConnect
 	
 	% Connect thalamic pulsepacket_generators to thalamic neurons (parrots)
-	[th_pulsepacket_generator_subnet_GID
-	GetGlobalNodes
-	th_neuron_subnet_GID GetGlobalNodes
-	] {Connect} ScanThread
+        [th_pulsepacket_generator_subnet_GID
+        GetGlobalNodes
+        th_neuron_subnet_GID GetGlobalNodes
+    	] {Connect} ScanThread
 
     } if    
 

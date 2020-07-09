@@ -1,13 +1,17 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
+from builtins import open, zip
 import os
 import numpy as np
+import matplotlib.style
+matplotlib.style.use('classic')
 import matplotlib.pyplot as plt
 import plotting_helpers as phlp
 from plot_methods import getMeanInpCurrents, getMeanVoltages, plot_population, plot_signal_sum
 from cellsim16popsParams_modified_spontan import multicompartment_params 
 import analysis_params
 from hybridLFPy import CachedNetwork, helpers
-import cPickle as pickle
+import pickle as pickle
 
 
 def plot_multi_scale_output_a(fig):    
@@ -18,12 +22,12 @@ def plot_multi_scale_output_a(fig):
         meanInpCurrents = getMeanInpCurrents(params, params.n_rec_input_spikes,
                                         os.path.join(params.spike_output_path,
                                                      'population_input_spikes'))
-        f = file(os.path.join(params.savefolder, 'data_analysis',
+        f = open(os.path.join(params.savefolder, 'data_analysis',
                               'meanInpCurrents.pickle'), 'wb')
         pickle.dump(meanInpCurrents, f)
         f.close()
     else:
-        f = file(os.path.join(params.savefolder, 'data_analysis',
+        f = open(os.path.join(params.savefolder, 'data_analysis',
                               'meanInpCurrents.pickle'), 'rb')
         meanInpCurrents = pickle.load(f)
         f.close()
@@ -33,12 +37,12 @@ def plot_multi_scale_output_a(fig):
         meanVoltages = getMeanVoltages(params, params.n_rec_voltage,
                                        os.path.join(params.spike_output_path,
                                                        'voltages'))
-        f = file(os.path.join(params.savefolder, 'data_analysis',
+        f = open(os.path.join(params.savefolder, 'data_analysis',
                               'meanVoltages.pickle'), 'wb')
         pickle.dump(meanVoltages, f)
         f.close()
     else:
-        f = file(os.path.join(params.savefolder, 'data_analysis',
+        f = open(os.path.join(params.savefolder, 'data_analysis',
                               'meanVoltages.pickle'), 'rb')
         meanVoltages = pickle.load(f)
         f.close()
@@ -143,7 +147,7 @@ def plot_multi_scale_output_a(fig):
             verticalalignment='bottom',
             transform=ax3.transAxes)
         
-    for loc, spine in ax3.spines.iteritems():
+    for loc, spine in ax3.spines.items():
         if loc in ['right', 'top']:
             spine.set_color('none')            
     ax3.xaxis.set_ticks_position('bottom')
@@ -156,7 +160,7 @@ def plot_multi_scale_output_a(fig):
     ############################################################################
         
     #set up subplots
-    nrows = len(meanInpCurrents.keys())
+    nrows = len(list(meanInpCurrents.keys()))
     high = top
     low = bottom
     thickn = (high-low) / nrows - sep
@@ -232,7 +236,7 @@ def plot_multi_scale_output_a(fig):
     # D part, plot membrane voltage population resolved 
     ############################################################################
         
-    nrows = len(meanVoltages.keys())    
+    nrows = len(list(meanVoltages.keys()))    
     high = top
     low = bottom
     thickn = (high-low) / nrows - sep
@@ -278,6 +282,8 @@ def plot_multi_scale_output_a(fig):
     
         if i == 0:
             ax4.set_title('voltages')
+        
+        ax4.set_xlim(T)
     
 
 

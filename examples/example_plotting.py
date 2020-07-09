@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 '''
 file containing plotter functions for example scripts
 '''
@@ -6,6 +7,8 @@ import os
 import numpy as np
 import h5py
 import LFPy
+import matplotlib.style
+matplotlib.style.use('classic')
 import matplotlib.pyplot as plt
 from matplotlib import gridspec
 from matplotlib.collections import PolyCollection
@@ -37,10 +40,10 @@ def plot_signal_sum(ax, z, fname='LFPsum.h5', unit='mV',
     '''    
     #open file and get data, samplingrate
     f = h5py.File(fname)
-    data = f['data'].value
+    data = f['data'][()]
     dataT = data.T - data.mean(axis=1)
     data = dataT.T
-    srate = f['srate'].value
+    srate = f['srate'][()]
     
     #close file object
     f.close()
@@ -167,7 +170,7 @@ def plot_population(ax,
 
     #outline of populations:
     #fetch the population radius from some population
-    r = populationParams[populationParams.keys()[0]]['radius']
+    r = populationParams[X[0]]['radius']
 
     theta0 = np.linspace(0, np.pi, 20)
     theta1 = np.linspace(np.pi, 2*np.pi, 20)
@@ -246,7 +249,7 @@ def plot_morphologies(ax, X, isometricangle, markers, colors,
         f = h5py.File(fname, 'r')
         
         for key, value in list(f.items()):
-            for i, rot in enumerate(value.value):
+            for i, rot in enumerate(value[()]):
                 rotations[i].update({key : rot})
         
         

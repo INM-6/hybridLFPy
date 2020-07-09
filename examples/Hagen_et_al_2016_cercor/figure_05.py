@@ -1,6 +1,7 @@
 #!/usr/bin/env python
-
-#from introfig import params
+# -*- coding: utf-8 -*-
+import matplotlib.style
+matplotlib.style.use('classic')
 import matplotlib.pyplot as plt
 from matplotlib import gridspec
 import numpy as np
@@ -105,7 +106,7 @@ def quantity_yXL(fig, left, bottom, top, quantity=params.L_yXL, label=r'$\mathca
     gs = gridspec.GridSpec(4, 4, left=left, bottom=bottom, top=top)
     
     for i, y in enumerate(params.y):
-        ax = fig.add_subplot(gs[i/4, i%4])
+        ax = fig.add_subplot(gs[i//4, i%4])
 
         masked_array = np.ma.array(quantity[y], mask=quantity[y]==0)
         # cmap = plt.get_cmap('hot', 20)

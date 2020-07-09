@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 '''
 Hybrid LFP scheme example script, applying the methodology with the model of:
 
@@ -35,6 +36,9 @@ scale compute facility is strongly discouraged.
 import os
 import numpy as np
 from time import time
+import neuron # NEURON compiled with MPI must be imported before NEST and mpi4py
+              # to avoid NEURON being aware of MPI.
+import nest   # Import not used, but done in order to ensure correct execution
 import nest_simulation
 from hybridLFPy import PostProcess, Population, CachedNetwork, setup_file_dest
 import nest_output_processing
@@ -100,7 +104,7 @@ networkSim = CachedNetwork(**params.networkSimParams)
 
 
 toc = time() - tic
-print 'NEST simulation and gdf file processing done in  %.3f seconds' % toc
+print('NEST simulation and gdf file processing done in  %.3f seconds' % toc)
 
 
 ####### Set up populations #####################################################
@@ -162,4 +166,4 @@ postproc.run()
 postproc.create_tar_archive()
 
 #tic toc
-print 'Execution time: %.3f seconds' %  (time() - tic)
+print('Execution time: %.3f seconds' %  (time() - tic))

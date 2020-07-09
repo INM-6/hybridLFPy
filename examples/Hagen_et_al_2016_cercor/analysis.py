@@ -1,3 +1,8 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+"""
+Analysis module for example files
+"""
 import numpy as np
 import matplotlib.pyplot as plt
 import h5py
@@ -54,8 +59,8 @@ def create_downsampled_data(params):
 
         try:
             assert(ana_params.scaling <= params.recordSingleContribFrac)
-        except AssertionError as ae:
-            raise ae, 'scaling parameter must be less than simulation recordSingleContribFrac'
+        except AssertionError:
+            raise AssertionError('scaling parameter must be less than simulation recordSingleContribFrac')
         
         samples = int(1. / ana_params.scaling)
         if samples > maxsamples:
@@ -70,9 +75,9 @@ def create_downsampled_data(params):
                         fname = os.path.join(params.savefolder, 'populations', '%s_%ss.h5' \
                                              % (y, data_type))
                         f = h5py.File(fname)
-                        print 'Load %s' % str(f.filename)
-                        raw_data = f['data'].value
-                        srate = f['srate'].value
+                        print(('Load %s' % str(f.filename)))
+                        raw_data = f['data'][()]
+                        srate = f['srate'][()]
                         f.close()
 
                         ## shuffle data
@@ -82,8 +87,8 @@ def create_downsampled_data(params):
                         N = int(params.N_y[np.array(params.y) == y]*ana_params.scaling)
                         try:
                             assert(N <= raw_data.shape[0])
-                        except AssertionError as ae:
-                            raise ae, 'shape mismatch with sample size'
+                        except AssertionError:
+                            raise AssetionError('shape mismatch with sample size')
 
 
                         for sample in range(samples): # loop over samples
@@ -96,7 +101,7 @@ def create_downsampled_data(params):
                                                  '%s_%ss_%i_%i.h5' \
                                                  % (y, data_type, ana_params.scaling*100, sample))
                             f = h5py.File(fname, 'w')
-                            print 'Write %s' % str(f.filename)
+                            print(('Write %s' % str(f.filename)))
                             f['data'] = data
                             f['srate'] = srate
                             f.close()
@@ -106,7 +111,7 @@ def create_downsampled_data(params):
                                                  '%s_population_%s_%i_%i.h5' \
                                                  % (y,data_type,ana_params.scaling*100,sample))
                             f = h5py.File(fname, 'w')
-                            print 'Write %s' % str(f.filename)
+                            print(('Write %s' % str(f.filename)))
                             f['data'] = data.sum(axis=0)
                             f['srate'] = srate
                             f.close()
@@ -138,8 +143,8 @@ def create_downsampled_data(params):
                                                     sample))
                             f = h5py.File(fname, 'r')    
                             # Update population sum:
-                            data_Y += f['data'].value
-                            srate = f['srate'].value
+                            data_Y += f['data'][()]
+                            srate = f['srate'][()]
                             f.close()
 
                         # write population sum
@@ -148,7 +153,7 @@ def create_downsampled_data(params):
                                              % (params.Y[2*j+k], data_type,
                                                 ana_params.scaling*100, sample))
                         f = h5py.File(fname,'w')
-                        print 'Write %s' % str(f.filename)
+                        print(('Write %s' % str(f.filename)))
                         f['data'] = data_Y
                         f['srate'] = srate
                         f.close() 
@@ -160,7 +165,7 @@ def create_downsampled_data(params):
                 fname = os.path.join(params.savefolder,'populations','subsamples',
                                      '%ssum_%i_%i.h5' % (data_type,ana_params.scaling*100,sample))
                 f = h5py.File(fname,'w')
-                print 'Write %s' % str(f.filename)
+                print(('Write %s' % str(f.filename)))
                 f['data'] = data_full
                 f['srate'] = srate
                 f.close()
@@ -191,8 +196,8 @@ def calc_signal_power(params):
                                    str.split(data_type,'_')[2] + '.h5')
             #open file
             f = h5py.File(fname)
-            data = f['data'].value
-            srate = f['srate'].value 
+            data = f['data'][()]
+            srate = f['srate'][()] 
             tvec = np.arange(data.shape[1]) * 1000. / srate
         
             # slice
@@ -251,8 +256,8 @@ def calc_uncorrelated_signal_power(params):
             # Determine size of PSD matrix
     
             f = h5py.File(os.path.join(params.savefolder, data_type + 'sum.h5'),'r')
-            data = f['data'].value
-            srate = f['srate'].value
+            data = f['data'][()]
+            srate = f['srate'][()]
             if ana_params.mlab:
                 Psum, freqs = plt.mlab.psd(data[0], NFFT=ana_params.NFFT, Fs=srate,
                                     noverlap=ana_params.noverlap, window=ana_params.window)
@@ -264,16 +269,16 @@ def calc_uncorrelated_signal_power(params):
                
             for y in params.y:
     
-                print 'processing ', y
+                print(('processing ', y))
                 # Load data
                 f = h5py.File(os.path.join(params.populations_path, '%s_%ss' %
                                            (y,data_type) + '.h5'),'r')
-                data_y = f['data'].value[:,:, ana_params.transient:]
+                data_y = f['data'][()][:,:, ana_params.transient:]
                 # subtract mean
                 for j in range(len(data_y)):
                     data_yT = data_y[j].T - data_y[j].mean(axis=1)
                     data_y[j] = data_yT.T
-                srate = f['srate'].value
+                srate = f['srate'][()]
                 tvec = np.arange(data_y.shape[2]) * 1000. / srate
                 f.close()
     
@@ -337,12 +342,12 @@ def calc_variances(params):
             for celltype in params.y:
                 f_in = h5py.File(os.path.join(params.populations_path,
                                               '%s_population_%s' % (celltype,data_type) + '.h5' ))
-                var = f_in['data'].value[:, ana_params.transient:].var(axis=1)
+                var = f_in['data'][()][:, ana_params.transient:].var(axis=1)
                 f_in.close()
                 f_out[celltype]= var
             
             f_in = h5py.File(os.path.join(params.savefolder, data_type + 'sum.h5' ))
-            var= f_in['data'].value[:, ana_params.transient:].var(axis=1)
+            var= f_in['data'][()][:, ana_params.transient:].var(axis=1)
             f_in.close()
             f_out['sum']= var
         

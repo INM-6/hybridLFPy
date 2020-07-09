@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 '''
 Modified parameters file for the Hybrid LFP scheme, applying the methodology with
 the model of:
@@ -80,7 +81,7 @@ def get_L_yXL(fname, y, x_in_X, L):
     
         
         # Get number of synapses
-        if layer in [str(key) for key in data['data'][y]['syn_dict'].keys()]:
+        if layer in [str(key) for key in list(data['data'][y]['syn_dict'].keys())]:
             #init variables
             k_yXL = 0
             k_yX = 0
@@ -90,7 +91,7 @@ def get_L_yXL(fname, y, x_in_X, L):
                 k_yL = data['data'][y]['syn_dict'][layer]['number of synapses per neuron']
                 k_yXL += p_yxL * k_yL
                 
-            for l in [str(key) for key in data['data'][y]['syn_dict'].keys()]:
+            for l in [str(key) for key in list(data['data'][y]['syn_dict'].keys())]:
                 for x in x_in_X[X_index]:
                     p_yxL = data['data'][y]['syn_dict'][l][x] / 100.
                     k_yL = data['data'][y]['syn_dict'][l]['number of synapses per neuron']
@@ -144,7 +145,7 @@ def get_T_yX(fname, y, y_in_Y, x_in_X, F_y):
         #init variables
         k_yX = 0.
         
-        for l in [str(key) for key in data['data'][y]['syn_dict'].keys()]:
+        for l in [str(key) for key in list(data['data'][y]['syn_dict'].keys())]:
             for x in x_in_X[X_index]:
                 p_yxL = data['data'][y]['syn_dict'][l][x] / 100.
                 k_yL = data['data'][y]['syn_dict'][l]['number of synapses per neuron']
@@ -371,12 +372,12 @@ class general_params(object):
         
         
         #map the pre-synaptic populations to the post-syn populations
-        self.mapping_Yy = zip(
+        self.mapping_Yy = list(zip(
                   ['L23E', 'L23I', 'L23I',
                    'L4E', 'L4E', 'L4E', 'L4I', 'L4I',
                    'L5E', 'L5E', 'L5I', 'L5I',
                    'L6E', 'L6E', 'L6I', 'L6I'],
-                  self.y)
+                  self.y))
 
         # Frequency of occurrence of each cell type (F_y); 1-d array 
         self.F_y = get_F_y(fname=self.connectivity_table, y=self.y)
@@ -393,7 +394,7 @@ class general_params(object):
         
         #compute the number of synapses as in Potjans&Diesmann 2012
         K_YX = np.zeros(self.C_YX.shape)
-        for i in xrange(K_YX.shape[1]):
+        for i in range(K_YX.shape[1]):
             K_YX[:, i] = (np.log(1. - self.C_YX[:, i]) /
                                 np.log(1. - 1./(self.N_X[1:]*
                                                 self.N_X[i])))
@@ -415,7 +416,7 @@ class general_params(object):
                              y_in_Y=self.y_in_Y, x_in_X=self.x_in_X,
                              F_y=self.F_y)
         
-        Y, y = zip(*self.mapping_Yy)
+        Y, y = list(zip(*self.mapping_Yy))
 
         #assess relative distribution of synapses for a given celltype
         self.K_yXL = {}
@@ -427,7 +428,7 @@ class general_params(object):
         #number of incoming connections per cell type per layer per cell 
         self.k_yXL = {}
         for y, N_y in zip(self.y, self.N_y):
-            self.k_yXL.update({y : (1. * self.K_yXL[y]).astype(int) / N_y})
+            self.k_yXL.update({y : (1. * self.K_yXL[y]).astype(int) // N_y})
 
         #calculate corresponding connectivity to K_yXL
         self.C_yXL = {}
@@ -645,6 +646,13 @@ class point_neuron_network_params(general_params):
         #       Gaussian pulse packet which is different for each thalamic neuron
         self.th_spike_times = [self.off]	# time of the thalamic pulses (ms)
 
+        
+        # create n_thal spikegenerator nodes connected to each respective
+        # postsynaptic parrot_neuron. Expected format is a len(self.n_thal) list
+        # of lists of activation times.
+        # Turn activation off by setting it as [[] for i in range(self.n_thal)]
+        self.th_spike_generator_times = [[] for i in range (self.n_thal)]
+        
 
         ## sinusoidal_poisson_generator (oscillatory Poisson input)
         self.th_sin_start = self.off      	# onset (ms)
@@ -781,6 +789,7 @@ class multicompartment_params(point_neuron_network_params):
             'label' :       'population_spikes',
             'ext' :         'gdf',
             'GIDs' : self.get_GIDs(),
+            'X' : self.X,
         }
 
 
@@ -881,8 +890,8 @@ class multicompartment_params(point_neuron_network_params):
         self.depths = self._calcDepths()
         
         # make a nice structure with data for each subpopulation
-        self.y_zip_list = zip(self.y, self.m_y,
-                            self.depths, self.N_y)
+        self.y_zip_list = list(zip(self.y, self.m_y,
+                            self.depths, self.N_y))
 
 
 
@@ -895,17 +904,16 @@ class multicompartment_params(point_neuron_network_params):
         # Some passive parameters will not be fully consistent with LIF params
         self.cellParams = {
             'v_init' : self.model_params['E_L'],
-            'passive' : True,
-            'rm' : self.model_params['tau_m'] * 1E3 / 1.0, #assyme cm=1
             'cm' : 1.0,
             'Ra' : 150,
-            'e_pas' : self.model_params['E_L'],    
+            'passive' : True,
+            'passive_parameters' : dict(g_pas=1./(self.model_params['tau_m'] * 1E3), #assume cm=1
+                                        e_pas=self.model_params['E_L']),
             'nsegs_method' : 'lambda_f',
             'lambda_f' : 100,
-            'timeres_NEURON' : self.dt,
-            'timeres_python' : self.dt,
-            'tstartms' : self.tstart,
-            'tstopms' : self.tstop,
+            'dt' : self.dt,
+            'tstart' : self.tstart,
+            'tstop' : self.tstop,
             'verbose' : False,
         }
         
@@ -996,7 +1004,7 @@ class multicompartment_params(point_neuron_network_params):
             'n' : 50,
             'seedvalue' : None,
             #dendrite line sources, soma sphere source (Linden2014)
-            'method' : 'som_as_point',
+            'method' : 'soma_as_point',
             #no somas within the constraints of the "electrode shank":
             'r_z': np.array([[-1E199, -1600, -1550, 1E99],[0, 0, 10, 10]]),
         }
@@ -1005,8 +1013,7 @@ class multicompartment_params(point_neuron_network_params):
         #these variables will be saved to file for each cell and electrdoe object
         self.savelist = [
             'somav',
-            'timeres_NEURON',
-            'timeres_python',
+            'dt',
             'somapos',
             'x',
             'y',
@@ -1085,7 +1092,7 @@ class multicompartment_params(point_neuron_network_params):
             elif y in ['p6(L4)', 'p6(L56)', 'b6', 'nb6']:
                 depth_y = np.r_[depth_y, depths[3]]
             else:
-                raise Exception, 'this aint right'
+                raise Exception('Error, revise parameters')
                 
         return depth_y
 
@@ -1108,4 +1115,4 @@ class multicompartment_params(point_neuron_network_params):
 if __name__ == '__main__':
     params = multicompartment_params()
      
-    print dir(params)
+    print(dir(params))

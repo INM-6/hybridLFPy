@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 """
 Class methods defining multicompartment neuron populations in the hybrid scheme
 """
@@ -90,10 +91,9 @@ class PopulationSuper(object):
                     'lambda_f': 100,
                     'nsegs_method': 'lambda_f',
                     'rm': 20000.0,
-                    'timeres_NEURON': 0.1,
-                    'timeres_python': 0.1,
-                    'tstartms': 0,
-                    'tstopms': 1000.0,
+                    'dt': 0.1,
+                    'tstart': 0,
+                    'tstop': 1000.0,
                     'v_init': 0.0,
                     'verbose': False},
                  rand_rot_axis=[],
@@ -187,7 +187,7 @@ class PopulationSuper(object):
         """
 
         self.cellParams = cellParams
-        self.dt = self.cellParams['timeres_python']
+        self.dt = self.cellParams['dt']
         self.rand_rot_axis = rand_rot_axis
         self.simulationParams = simulationParams
         self.populationParams = populationParams
@@ -205,8 +205,8 @@ class PopulationSuper(object):
         #check that decimate fraction is actually a whole number
         try:
             assert int(self.dt_output / self.dt) == self.dt_output / self.dt
-        except AssertionError as ae:
-            raise ae, 'dt_output not an integer multiple of dt'
+        except AssertionError:
+            raise AssertionError('dt_output not an integer multiple of dt')
         
         self.decimatefrac = int(self.dt_output / self.dt)
         self.POPULATIONSEED = POPULATIONSEED
@@ -504,7 +504,7 @@ class PopulationSuper(object):
         """
         Draw some random location within radius, z_min, z_max,
         and constrained by min_r and the minimum cell interdistance.
-        Returned argument is a list of dicts [{'xpos', 'ypos', 'zpos'},].
+        Returned argument is a list of dicts with keys ['x', 'y', 'z'].
 
 
         Parameters
@@ -527,7 +527,7 @@ class PopulationSuper(object):
         -------
         soma_pos : list
             List of dicts of len population size
-            where dict have keys xpos, ypos, zpos specifying
+            where dict have keys x, y, z specifying
             xyz-coordinates of cell at list entry `i`.
 
 
@@ -587,7 +587,7 @@ class PopulationSuper(object):
         
         soma_pos = []
         for i in range(self.POPULATION_SIZE):
-            soma_pos.append({'xpos' : x[i], 'ypos' : y[i], 'zpos' : z[i]})
+            soma_pos.append({'x' : x[i], 'y' : y[i], 'z' : z[i]})
 
         return soma_pos
 
@@ -619,7 +619,7 @@ class PopulationSuper(object):
                     data += self.output[cellindex][measure]
         else:
             data = np.zeros((len(self.electrodeParams['x']),
-                             self.cellParams['tstopms']/self.dt_output + 1),
+                             self.cellParams['tstop']//self.dt_output + 1),
                 dtype=np.float32)
 
         #container for full LFP on RANK 0
@@ -655,9 +655,9 @@ class PopulationSuper(object):
         try:
             assert(self.recordSingleContribFrac <= 1 and
                    self.recordSingleContribFrac >= 0)
-        except AssertionError as ae:
-            raise ae, 'recordSingleContribFrac {} not in [0, 1]'.format(
-                                                self.recordSingleContribFrac)
+        except AssertionError:
+            raise AssertionError('recordSingleContribFrac {} not in [0, 1]'.format(
+                                                self.recordSingleContribFrac))
 
         if not self.recordSingleContribFrac:
             return
@@ -795,7 +795,7 @@ class PopulationSuper(object):
 
             #save the somatic placements:
             pop_soma_pos = np.zeros((self.POPULATION_SIZE, 3))
-            keys = ['xpos', 'ypos', 'zpos']
+            keys = ['x', 'y', 'z']
             for i in range(self.POPULATION_SIZE):
                 for j in range(3):
                     pop_soma_pos[i, j] = self.pop_soma_pos[i][keys[j]]
@@ -1416,8 +1416,8 @@ class Population(PopulationSuper):
         #Insert synapses in an iterative fashion
         try:
             spikes = self.networkSim.dbs[X].select(SpCell[:idx.size])
-        except AttributeError as ae:
-            raise ae, 'could not open CachedNetwork database objects'
+        except AttributeError:
+            raise AssertionError('could not open CachedNetwork database objects')
 
 
         #apply synaptic delays
@@ -1436,7 +1436,7 @@ class Population(PopulationSuper):
                 # Create synapse(s) and setting times using class LFPy.Synapse
                 synapse = LFPy.Synapse(cell, **synParams)
                 #SpCell is a vector, or do not exist
-                synapse.set_spike_times(spikes[i] + cell.tstartms)
+                synapse.set_spike_times(spikes[i] + cell.tstart)
 
 
     def fetchSpCells(self, nodes, numSyn):

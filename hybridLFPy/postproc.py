@@ -1,4 +1,11 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
+"""
+Documentation:
+
+Defines class hybridLFPy.PostProcess for handling simulated output mainly by
+class hybridLFPy.Population
+"""
 import numpy as np
 import h5py
 import os
@@ -189,9 +196,9 @@ class PostProcess(object):
                                     f['data'].shape[0], f['data'].shape[1]))
 
             #fill in
-            LFParray[i, ] = f['data'].value
+            LFParray[i, ] = f['data'][()]
 
-            LFPdict.update({y : f['data'].value})
+            LFPdict.update({y : f['data'][()]})
 
             f.close()
 
@@ -219,9 +226,9 @@ class PostProcess(object):
                                     f['data'].shape[0], f['data'].shape[1]))
 
             #fill in
-            CSDarray[i, ] = f['data'].value
+            CSDarray[i, ] = f['data'][()]
 
-            CSDdict.update({y : f['data'].value})
+            CSDdict.update({y : f['data'][()]})
 
             f.close()
 

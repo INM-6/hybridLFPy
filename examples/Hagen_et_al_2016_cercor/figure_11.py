@@ -1,4 +1,8 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 import numpy as np
+import matplotlib.style
+matplotlib.style.use('classic')
 import matplotlib.pyplot as plt
 from matplotlib.colors import LogNorm
 from matplotlib import gridspec 
@@ -55,14 +59,14 @@ def fig_lfp_corr(params, savefolders, transient=200,
 
         ## Including correlations
         f = h5py.File(os.path.join(params.savefolder, ana_params.analysis_folder, data_type + ana_params.fname_psd),'r')
-        freqs = f['freqs'].value
-        LFP_PSD_corr = f['psd'].value
+        freqs = f['freqs'][()]
+        LFP_PSD_corr = f['psd'][()]
         f.close()
     
         ## Excluding correlations
         f = h5py.File(os.path.join(params.savefolder, ana_params.analysis_folder, data_type +  ana_params.fname_psd_uncorr),'r')
-        freqs = f['freqs'].value
-        LFP_PSD_uncorr = f['psd'].value
+        freqs = f['freqs'][()]
+        LFP_PSD_uncorr = f['psd'][()]
         f.close()
         
      

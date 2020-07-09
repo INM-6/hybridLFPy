@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 '''
 create jobscripts for clusters running the Slurm Workload Manager
 (http://slurm.schedmd.com) for all network-model and LFP simulations in
@@ -18,6 +19,7 @@ content = '''#!/bin/bash
 #SBATCH --time {}
 #SBATCH -o {}
 #SBATCH -e {}
+#SBATCH --mem-per-cpu={}
 #SBATCH --ntasks {}
 ################################################################################
 unset DISPLAY # slurm appear to create a problem with too many displays
@@ -25,11 +27,12 @@ unset DISPLAY # slurm appear to create a problem with too many displays
 '''
 
 # set up
-ntasks = 512            # number of MPI threads
+ntasks = 400            # number of MPI threads
 stime = '04:00:00'      # expected simulation time 'HH:MM:SS'
-mpiexec = 'mpirun'      # what executable to use w. OpenMPI (mpirun, srun etc.)
+mpiexec = 'srun --mpi=pmi2'      # what executable to use w. OpenMPI (mpirun, srun etc.)
 jobscriptdir = 'jobs'   # put all job scripts here
 logdir = 'logs'         # put all simulation logs here
+memPerCPU='2000MB'      # memory per MPI thread
 simscripts = glob.glob("cellsim16pops_*.py") # list all simulation scripts
 
 if __name__ == '__main__':
@@ -44,8 +47,8 @@ if __name__ == '__main__':
         oe = os.path.join(logdir, job+'.txt')
         
         fname = os.path.join(jobscriptdir, job + '.job')
-        f = file(fname, 'w')
-        f.write(content.format(job, stime, oe, oe, ntasks, mpiexec, sim))
+        f = open(fname, 'w')
+        f.write(content.format(job, stime, oe, oe, memPerCPU, ntasks, mpiexec, sim))
         f.close()
         
         jobscripts.append(fname)

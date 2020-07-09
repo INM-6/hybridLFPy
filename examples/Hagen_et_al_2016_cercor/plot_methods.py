@@ -1,12 +1,16 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 '''
 Plotting function helper script
 '''
+from builtins import open, zip
 import os
 import numpy as np
-if not os.environ.has_key('DISPLAY'):
+if 'DISPLAY' not in os.environ:
     import matplotlib
     matplotlib.use('Agg')
+import matplotlib.style
+matplotlib.style.use('classic')
 import matplotlib.pyplot as plt
 from matplotlib import patches
 from matplotlib.path import Path
@@ -156,7 +160,7 @@ def network_sketch(ax, highlight=None, labels=True, yscaling=1.):
     ## cortex
     layer_pos=[]
     c_pop_pos=[]
-    for i in xrange(4):
+    for i in range(4):
 
         ## cortex layers
         layer_pos+=[[layer_x,layer6_y+i*layer_height*yscaling,layer_width,layer_height]] ## layer positions
@@ -199,27 +203,27 @@ def network_sketch(ax, highlight=None, labels=True, yscaling=1.):
     c_axon_y=[]
 
     # x positions of vertical intracortical axons
-    for i in xrange(4): # pre layer
+    for i in range(4): # pre layer
         exc=c_pop_pos[i][0][0]+c_pop_size+axon_cell_sep+i*axon_x_dist ## E
         inh=exc+4.*axon_x_dist ## I
         c_axon_x+=[[exc,inh]]
 
     # y positions of horizontal intracortical axons
-    for i in xrange(4): ## post layer
+    for i in range(4): ## post layer
         c_axon_y+=[[]]
-        for j in xrange(4): ## pre layer
+        for j in range(4): ## pre layer
             exc=c_pop_pos[i][0][1]+(j+1.)*axon_y_dist ## E
             inh=c_pop_pos[i][0][1]+c_pop_size-(j+1.)*axon_y_dist ## I        
             c_axon_y[i]+=[[exc,inh]]
 
     ## vertical intracortical axons
-    for i in xrange(4):
+    for i in range(4):
         draw_line(ax,[[c_axon_x[i][0],c_axon_y[0][i][0]],[c_axon_x[i][0],c_axon_y[-1][i][0]]],lw=lw_axons,ls='solid',lclr=exc_clr,zorder=1)
         draw_line(ax,[[c_axon_x[i][1],c_axon_y[0][i][1]],[c_axon_x[i][1],c_axon_y[-1][i][1]]],lw=lw_axons,ls='solid',lclr=inh_clr,zorder=0)
 
     ## horizontal intracortical axons
-    for i in xrange(4): ## post layer
-        for j in xrange(4): ## pre layer
+    for i in range(4): ## post layer
+        for j in range(4): ## pre layer
             path=[[c_axon_x[j][0],c_axon_y[i][j][0]],[c_pop_pos[i][0][0]+c_pop_size,c_axon_y[i][j][0]]]        
             draw_arrow(ax,path,lw=lw_axons,ls='solid',lclr=exc_clr,arrow_size=arrow_size,zorder=1)
 
@@ -237,7 +241,7 @@ def network_sketch(ax, highlight=None, labels=True, yscaling=1.):
             draw_circle(ax,[c_axon_x[j][1],c_axon_y[i][j][1]],conn_radius,lw=0,fclr=inh_clr,zorder=0)        
 
     ## cell outputs
-    for i in xrange(4):
+    for i in range(4):
 
         path=[[c_pop_pos[i][0][0]+c_pop_size/2.,c_pop_pos[i][0][1]],
               [c_pop_pos[i][0][0]+c_pop_size/2.,c_pop_pos[i][0][1]-axon_y_dist],
@@ -276,7 +280,7 @@ def network_sketch(ax, highlight=None, labels=True, yscaling=1.):
     draw_circle(ax,path[0],conn_radius,lw=0,fclr=exc_clr,zorder=0) ## connector
 
     ## horizontal branches (arrows)
-    for i in xrange(4):
+    for i in range(4):
         ## cc input to excitatory populations
         path=[[c_pop_pos[-1][0][0]-axon_cell_sep,c_pop_pos[i][0][1]+cc_input_y*c_pop_size],
               [c_pop_pos[-1][0][0],c_pop_pos[i][0][1]+cc_input_y*c_pop_size],]
@@ -540,7 +544,7 @@ def plot_population(ax,
 
 
     # DRAW UNITS
-    pop = zip(*params.mapping_Yy)[0]
+    pop = next(zip(*params.mapping_Yy))
     
     #plot a symbol in each location with a unit 
     if plot_somas:
@@ -548,11 +552,11 @@ def plot_population(ax,
             colors = phlp.get_colors(np.unique(pop).size)
 
             #restructure 
-            E, I = zip(*params.y_in_Y)
+            E, I = list(zip(*params.y_in_Y))
             pops_ = []
 
             if Y is None:
-                for i in xrange(len(E)):
+                for i in range(len(E)):
                     pops_.append(E[i])
                     pops_.append(I[i])
             else:
@@ -618,9 +622,9 @@ def plot_population(ax,
             colors = phlp.get_colors(np.unique(pop).size)
 
             #restructure 
-            E, I = zip(*params.y_in_Y)
+            E, I = list(zip(*params.y_in_Y))
             pops_ = []
-            for i in xrange(len(E)):
+            for i in range(len(E)):
                 pops_.append(E[i])
                 pops_.append(I[i])
 
@@ -668,7 +672,7 @@ def plot_population(ax,
                     #set up a polycollection
                     zips = []
                     for x, z in cell.get_idx_polygons():
-                        zips.append(zip(x, z-somapos[j, 1] * np.sin(isometricangle)))
+                        zips.append(list(zip(x, z-somapos[j, 1] * np.sin(isometricangle))))
                     
                     polycol = PolyCollection(zips,
                                              edgecolors=colors[i],
@@ -718,7 +722,7 @@ def plot_population(ax,
                     #set up a polycollection
                     zips = []
                     for x, z in cell.get_idx_polygons():
-                        zips.append(zip(x, z-somapos[j, 1] * np.sin(isometricangle)))
+                        zips.append(list(zip(x, z-somapos[j, 1] * np.sin(isometricangle))))
                     
                     polycol = PolyCollection(zips,
                                              edgecolors=colors[i],
@@ -772,12 +776,12 @@ def plot_signal_sum(ax, params, fname='LFPsum.h5', unit='mV', scaling_factor=1.,
     if type(fname) == str and os.path.isfile(fname):
         f = h5py.File(fname)
         #load data
-        data = f['data'].value
+        data = f['data'][()]
             
-        tvec = np.arange(data.shape[1]) * 1000. / f['srate'].value    
+        tvec = np.arange(data.shape[1]) * 1000. / f['srate'][()]    
 
         #for mean subtraction
-        datameanaxis1 = f['data'].value[:, tvec >= transient].mean(axis=1)
+        datameanaxis1 = f['data'][()][:, tvec >= transient].mean(axis=1)
         
         #close dataset
         f.close()
@@ -786,7 +790,7 @@ def plot_signal_sum(ax, params, fname='LFPsum.h5', unit='mV', scaling_factor=1.,
         tvec = np.arange(data.shape[1]) * params.dt_output
         datameanaxis1 = data[:, tvec >= transient].mean(axis=1)
     else:
-        raise Exception, 'type(fname)={} not str or numpy.ndarray'.format(type(fname))
+        raise Exception('type(fname)={} not str or numpy.ndarray'.format(type(fname)))
 
     # slice
     slica = (tvec <= T[1]) & (tvec >= T[0])
@@ -842,13 +846,14 @@ def plot_signal_sum(ax, params, fname='LFPsum.h5', unit='mV', scaling_factor=1.,
     else:
         ax.yaxis.set_ticklabels([])
 
-    for loc, spine in ax.spines.iteritems():
+    for loc, spine in ax.spines.items():
         if loc in ['right', 'top']:
             spine.set_color('none')            
     ax.xaxis.set_ticks_position('bottom')
     ax.yaxis.set_ticks_position('left')
     ax.set_xlabel(r'$t$ (ms)', labelpad=0.1)
     ax.set_ylim(ylim)
+    ax.set_xlim(T)
     
     return vlimround
 
@@ -907,12 +912,12 @@ def plotMorphologyTable(fig, params, rasterized=True):
         'i5',
     ]
 
-    y_zip_list = zip(params.y,
+    y_zip_list = list(zip(params.y,
                    params.m_y,
                    params.depths,
                    params.N_y,
                    composition,
-                   morphotypes)
+                   morphotypes))
 
     xpos = 300
     xvec = [xpos]
@@ -937,7 +942,7 @@ def plotMorphologyTable(fig, params, rasterized=True):
     
         zips = []
         for x, z in cell.get_idx_polygons():
-            zips.append(zip(x, z))
+            zips.append(list(zip(x, z)))
 
         if COUNTER > 0 and prevpop != morpho.split('_')[0]:
             COUNTER_J += 1
@@ -970,7 +975,7 @@ def plotMorphologyTable(fig, params, rasterized=True):
     for i, z in enumerate(params.layerBoundaries.mean(axis=1)):
         ax.text(-50, z, layers[i], verticalalignment='center')
     
-    for loc, spine in ax.spines.iteritems():
+    for loc, spine in ax.spines.items():
         spine.set_color('none') # don't draw spine
     ax.yaxis.set_ticks_position('left')
             
@@ -1060,7 +1065,7 @@ def getMeanInpCurrents(params, numunits=100,
         if i % SIZE == RANK:
             #file to open
             fname = glob.glob(filepattern+'*' + Y + '*')[0]
-            print fname
+            print(fname)
             #read in read data and assess units, up to numunits
             rawdata = np.array(helpers.read_gdf(fname))
             units = np.unique(rawdata[:, 0])
@@ -1097,7 +1102,7 @@ def getMeanInpCurrents(params, numunits=100,
     
     data = COMM.allgather(data)
     
-    return {k: v for d in data for k, v in d.items()}
+    return {k: v for d in data for k, v in list(d.items())}
 
 
 def getMeanVoltages(params, numunits=100,
@@ -1117,7 +1122,7 @@ def getMeanVoltages(params, numunits=100,
         if i % SIZE == RANK:
             #read in read data and assess units, up to numunits
             fname = glob.glob(filepattern+'*' + Y + '*')[0]
-            print fname
+            print(fname)
             rawdata = np.array(helpers.read_gdf(fname))
             units = np.unique(rawdata[:, 0])
             if numunits > units.size:
@@ -1152,7 +1157,7 @@ def getMeanVoltages(params, numunits=100,
     
     data = COMM.allgather(data)
     
-    return {k: v for d in data for k, v in d.items()}
+    return {k: v for d in data for k, v in list(d.items())}
 
 
 def plot_signal_sum_colorplot(ax, params, fname='LFPsum.h5', unit='mV', N=1, ylabels = True,
@@ -1170,11 +1175,11 @@ def plot_signal_sum_colorplot(ax, params, fname='LFPsum.h5', unit='mV', N=1, yla
         N : integer, set to number of LFP generators in order to get the normalized signal
     '''
     f = h5py.File(fname)
-    data = f['data'].value
-    tvec = np.arange(data.shape[1]) * 1000. / f['srate'].value
+    data = f['data'][()]
+    tvec = np.arange(data.shape[1]) * 1000. / f['srate'][()]
     
     #for mean subtraction
-    datameanaxis1 = f['data'].value[:, tvec >= transient].mean(axis=1)
+    datameanaxis1 = f['data'][()][:, tvec >= transient].mean(axis=1)
     
     # slice
     slica = (tvec <= T[1]) & (tvec >= T[0])
@@ -1215,6 +1220,7 @@ def plot_signal_sum_colorplot(ax, params, fname='LFPsum.h5', unit='mV', N=1, yla
     plt.axis('tight')
 
     ax.set_ylim(ylim)
+    ax.set_xlim(T)
 
     
     f.close()
@@ -1233,8 +1239,8 @@ def calc_signal_power(params, fname, transient=200, Df=None, mlab=True, NFFT=100
     if type(fname) is str and os.path.isfile(fname):
         #open file
         f = h5py.File(fname)
-        data = f['data'].value
-        srate = f['srate'].value 
+        data = f['data'][()]
+        srate = f['srate'][()] 
         tvec = np.arange(data.shape[1]) * 1000. / srate
         f.close()
     elif type(fname) is np.ndarray:
@@ -1242,7 +1248,7 @@ def calc_signal_power(params, fname, transient=200, Df=None, mlab=True, NFFT=100
         srate = 1000.
         tvec = np.arange(data.shape[1]) * 1000. / srate
     else:
-        raise Exception, '{} not a file or array'.format(fname)
+        raise Exception('{} not a file or array'.format(fname))
     
     # slice
     slica = (tvec >= transient)
@@ -1340,7 +1346,7 @@ def plotPowers(ax, params, popkeys, dataset, linestyles, linewidths, transient=2
     for i, layer in enumerate(popkeys):
         f = h5py.File(os.path.join(params.populations_path,
                                    '%s_population_%s' % (layer, dataset) + SCALING_POSTFIX + '.h5' ))
-        ax.semilogx(f['data'].value[:, transient:].var(axis=1), depth,
+        ax.semilogx(f['data'][()][:, transient:].var(axis=1), depth,
                  color=colors[i],
                  ls=linestyles[i],
                  lw=linewidths[i],
@@ -1355,7 +1361,7 @@ def plotPowers(ax, params, popkeys, dataset, linestyles, linewidths, transient=2
         f.close()
     
     f = h5py.File(os.path.join(params.savefolder, '%ssum' % dataset + SCALING_POSTFIX + '.h5' ))
-    ax.plot(f['data'].value[:, transient:].var(axis=1), depth,
+    ax.plot(f['data'][()][:, transient:].var(axis=1), depth,
                  'k', label='SUM', lw=1.25, clip_on=False)
     
     f.close()
@@ -1391,7 +1397,7 @@ def plotting_correlation(params, x0, x1, ax, lag=20., scaling=None, normalize=Tr
     zvec = np.r_[params.electrodeParams['z']]
     zvec = np.r_[zvec, zvec[-1] + np.diff(zvec)[-1]]
     
-    xcorr_all=np.zeros((params.electrodeParams['z'].size, x0.shape[-1]))
+    xcorr_all=np.zeros((params.electrodeParams['z'].size, x0.shape[-1]), dtype=float)
     
     if normalize:
         for i, z in enumerate(params.electrodeParams['z']):
@@ -1427,7 +1433,7 @@ def plotting_correlation(params, x0, x1, ax, lag=20., scaling=None, normalize=Tr
     
     #temporal slicing
     lagvector = np.arange(-lag, lag+1).astype(int)
-    inds = lagvector + x0.shape[-1] / 2
+    inds = lagvector + x0.shape[-1] // 2
     
     
     for i, z in enumerate(params.electrodeParams['z']):

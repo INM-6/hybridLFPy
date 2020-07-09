@@ -1,6 +1,9 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 import os
 import numpy as np
+import matplotlib.style
+matplotlib.style.use('classic')
 import matplotlib.pyplot as plt
 from matplotlib import gridspec
 import plotting_helpers as phlp
@@ -96,7 +99,7 @@ if __name__ == '__main__':
             transform=ax3.transAxes)
     
   
-    for loc, spine in ax3.spines.iteritems():
+    for loc, spine in ax3.spines.items():
         if loc in ['right', 'top']:
             spine.set_color('none')            
     ax3.xaxis.set_ticks_position('bottom')

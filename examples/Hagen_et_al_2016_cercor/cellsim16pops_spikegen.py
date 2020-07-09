@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 '''
 Hybrid LFP scheme example script, applying the methodology with the model of:
 
@@ -35,6 +36,9 @@ scale compute facility is strongly discouraged.
 import os
 import numpy as np
 from time import time
+import neuron # NEURON compiled with MPI must be imported before NEST and mpi4py
+              # to avoid NEURON being aware of MPI.
+import nest   # Import not used, but done in order to ensure correct execution
 import nest_simulation
 from hybridLFPy import PostProcess, Population, CachedFixedSpikesNetwork, setup_file_dest
 
@@ -75,7 +79,7 @@ tic = time()
 #                        fname='microcircuit.sli')
 
 #create some dummy spike times
-activationtimes = [x*100 for x in range(3,11)] + [200]
+activationtimes = [x*100 for x in range(2,11)]
 networkSim = CachedFixedSpikesNetwork(activationtimes=activationtimes,
                                             **params.networkSimParams)
 
@@ -92,7 +96,7 @@ networkSim = CachedFixedSpikesNetwork(activationtimes=activationtimes,
 
 
 toc = time() - tic
-print 'NEST simulation and gdf file processing done in  %.3f seconds' % toc
+print('NEST simulation and gdf file processing done in  %.3f seconds' % toc)
 
 
 ####### Set up populations #####################################################
@@ -154,4 +158,4 @@ postproc.run()
 postproc.create_tar_archive()
 
 #tic toc
-print 'Execution time: %.3f seconds' %  (time() - tic)
+print('Execution time: %.3f seconds' %  (time() - tic))

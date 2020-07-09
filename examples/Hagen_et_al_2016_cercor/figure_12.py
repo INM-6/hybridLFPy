@@ -1,4 +1,8 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 import numpy as np
+import matplotlib.style
+matplotlib.style.use('classic')
 import matplotlib.pyplot as plt
 from matplotlib import gridspec
 import os
@@ -97,7 +101,7 @@ def fig_lfp_scaling(fig, params, bottom=0.55, top=0.95, channels=[0,3,7,11,13], 
                                             'subsamples', 'LFPsum_10_0.h5')]
     for fil in files:
         f = h5py.File(fil)
-        datas.append(f['data'].value[:, 200:])
+        datas.append(f['data'][()][:, 200:])
         f.close()
     
 

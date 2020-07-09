@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 """
 Create db from gdf files to be able to then select neuron spike times.
 
@@ -120,7 +122,7 @@ class GDF(object):
             file contents
             
         """
-        with open(fname, 'rb') as f:
+        with open(fname, 'r') as f:
             while True:
                 a = []
                 for i in range(self.bsize):
@@ -435,10 +437,12 @@ def test1():
 
     # Create db from excitatory files
     gdb = GDF('test.db', debug=True)
-    gdb.create(re='brunel-py-ex-*.gdf', index=True)
+    gdb.create(re=os.path.join('testing', 'testing-X-0.gdf'), index=True)
+
+    print(gdb.neurons())
 
     # Get spikes for neurons 1,2,3
-    spikes = gdb.select([1,2,3])
+    spikes = gdb.select([1,50])
 
     """ Wont get any spikes for these neurons
     cause they dont exist"""

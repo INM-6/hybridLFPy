@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 import sys
 import os
 if os.environ['USER'] == 'dahmen':
@@ -14,7 +16,7 @@ def dict_of_numpyarray_to_dict_of_list(d):
     '''
     Convert dictionary containing numpy arrays to dictionary containing lists
     '''
-    for key,value in d.iteritems():
+    for key,value in d.items():
         if isinstance(value,dict):  # if value == dict 
             # recurse
             d[key] = dict_of_numpyarray_to_dict_of_list(value)
@@ -26,7 +28,7 @@ def send_nest_params_to_sli(p):
     '''
     Read parameters and send them to SLI
     '''
-    for name in p.keys():
+    for name in list(p.keys()):
         value = p[name]
         if type(value) == numpy.ndarray:
             value = value.tolist()
@@ -39,16 +41,16 @@ def send_nest_params_to_sli(p):
                 nest.sli_run('eval')
                 nest.sli_run('def')
             except: 
-                print 'Could not put variable %s on SLI stack' % (name)
-                print type(value)
+                print('Could not put variable %s on SLI stack' % (name))
+                print(type(value))
         else:
             try:
                 nest.sli_run('/'+name)
                 nest.sli_push(value)
                 nest.sli_run('def')
             except: 
-                print 'Could not put variable %s on SLI stack' % (name)
-                print type(value)
+                print('Could not put variable %s on SLI stack' % (name))
+                print(type(value))
     return
 
 

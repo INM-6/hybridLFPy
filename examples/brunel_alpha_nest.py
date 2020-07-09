@@ -1,4 +1,5 @@
 #!/usr/env/bin python
+# -*- coding: utf-8 -*-
 #
 # brunel_alpha_nest.py
 #
@@ -22,7 +23,7 @@
 # Modified as an example with hybridLFPy (https:/github.com/INM-6/hybridLFPy)
 # for calculating local field potentials from spiking point-neuron networks
 
-'''
+"""
 Random balanced network (alpha synapses) connected with NEST
 ------------------------------------------------------------
 
@@ -41,11 +42,11 @@ allow for querying the number of created synapses. Using spike
 detectors the average firing rates of the neurons in the populations
 are established. The building as well as the simulation time of the
 network are recorded.
-'''
+"""
 
-'''
+"""
 Importing all necessary modules for simulation, analysis and plotting.
-'''
+"""
 from scipy.optimize import fsolve
 
 import nest
