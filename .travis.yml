@@ -16,6 +16,7 @@ install:
   - conda info -a
 
   # Replace dep1 dep2 ... with your dependencies
+  - conda config --add channels conda-forge
   - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION pytest lfpy>=2.1 numpy scipy matplotlib mpi4py
   - conda activate test-environment
   - python setup.py install
