@@ -8,6 +8,7 @@ dependencies:
   - nest-simulator=*=mpi*
   - openmpi-mpicc
   - ipython
+  - pytest
   - pip
   - pip:
       - git+https://github.com/NeuralEnsemble/parameters

@@ -41,4 +41,5 @@ setup(
             'Development Status :: 4 - Beta',
             ],
     install_requires=['numpy', 'scipy', 'matplotlib', 'LFPy', 'mpi4py'],
+    extras_require = {'tests': ['pytest']}
 )

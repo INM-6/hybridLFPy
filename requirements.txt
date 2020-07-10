@@ -4,3 +4,4 @@ scipy
 matplotlib
 LFPy>=2.1
 mpi4py
+pytest
