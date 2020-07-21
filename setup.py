@@ -7,18 +7,23 @@ from setuptools import setup
 with open('README.md') as file:
     long_description = file.read()
 
+
+d = {}
+exec(open(os.path.join('hybridLFPy', 'version.py')).read(), None, d)
+version = d['version']
+
 setup(
-    name = 'hybridLFPy',
-    version = '0.1.3',
-    maintainer = 'Espen Hagen',
-    maintainer_email = 'espe.hage@fys.uio.no',
-    url = 'https://github.com/INM-6/hybridLFPy',
-    download_url = 'https://github.com/INM-6/hybridLFPy/tarball/v0.1.3',
-    packages = ['hybridLFPy'],
-    provides = ['hybridLFPy'],
-    package_data = {'hybridLFPy' : [os.path.join('testing', 'testing-X-0.gdf')]},
-    description = 'methods to calculate LFPs with spike events from network sim',
-    long_description = long_description,
+    name='hybridLFPy',
+    version=version,
+    maintainer='Espen Hagen',
+    maintainer_email='espenhgn@users.noreply.github.com',
+    url='https://github.com/INM-6/hybridLFPy',
+    download_url='https://github.com/INM-6/hybridLFPy/tarball/v{}'.format(version),
+    packages=['hybridLFPy'],
+    provides=['hybridLFPy'],
+    package_data={'hybridLFPy': [os.path.join('testing', 'testing-X-0.gdf')]},
+    description='methods to calculate LFPs with spike events from network sim',
+    long_description=long_description,
     license='LICENSE',
         classifiers=[
             'License :: OSI Approved :: GNU General Public License (GPL)',
@@ -35,5 +40,6 @@ setup(
             'Intended Audience :: Science/Research',
             'Development Status :: 4 - Beta',
             ],
-    install_requires = ['numpy', 'scipy', 'matplotlib', 'LFPy', 'mpi4py'],
+    install_requires=['numpy', 'scipy', 'matplotlib', 'LFPy', 'mpi4py'],
+    extras_require = {'tests': ['pytest']}
 )

@@ -17,7 +17,7 @@ Synopsis of the main simulation procedure:
 3. network simulation
     a. execute network simulation using NEST (www.nest-initiative.org)
     b. merge network output (spikes, currents, voltages)
-4. Create a object-representation that uses sqlite3 of all the spiking output 
+4. Create a object-representation that uses sqlite3 of all the spiking output
 5. Iterate over post-synaptic populations:
     a. Create Population object with appropriate parameters for
        each specific population
@@ -97,22 +97,22 @@ import brunel_alpha_nest as BN
 PS = ParameterSet(dict(
     #Main folder of simulation output
     savefolder = 'simulation_output_example_brunel',
-    
+
     #make a local copy of main files used in simulations
     sim_scripts_path = os.path.join('simulation_output_example_brunel',
                                     'sim_scripts'),
-    
+
     #destination of single-cell output during simulation
     cells_path = os.path.join('simulation_output_example_brunel', 'cells'),
-    
+
     #destination of cell- and population-specific signals, i.e., compund LFPs,
     #CSDs etc.
     populations_path = os.path.join('simulation_output_example_brunel',
                                     'populations'),
-    
+
     #location of spike output from the network model
     spike_output_path = BN.spike_output_path,
-    
+
     #destination of figure file output generated during model execution
     figures_path = os.path.join('simulation_output_example_brunel', 'figures')
 ))
@@ -123,7 +123,7 @@ PS.update(dict(
     #no cell type specificity within each E-I population
     #hence X == x and Y == X
     X = ["EX", "IN"],
-    
+
     #population-specific LFPy.Cell parameters
     cellParams = dict(
         #excitory cells
@@ -134,13 +134,13 @@ PS.update(dict(
             Ra = 150,
             passive = True,
             passive_parameters = dict(g_pas=1./(BN.neuron_params['tau_m'] * 1E3), #assyme cm=1
-                                      e_pas=BN.neuron_params['E_L']), 
+                                      e_pas=BN.neuron_params['E_L']),
             nsegs_method = 'lambda_f',
             lambda_f = 100,
             dt = BN.dt,
             tstart = 0,
             tstop = BN.simtime,
-            verbose = False,        
+            verbose = False,
         ),
         #inhibitory cells
         IN = dict(
@@ -150,25 +150,25 @@ PS.update(dict(
             Ra = 150,
             passive = True,
             passive_parameters = dict(g_pas=1./(BN.neuron_params['tau_m'] * 1E3), #assyme cm=1
-                                      e_pas=BN.neuron_params['E_L']), 
+                                      e_pas=BN.neuron_params['E_L']),
             nsegs_method = 'lambda_f',
             lambda_f = 100,
             dt = BN.dt,
             tstart = 0,
             tstop = BN.simtime,
-            verbose = False,                    
+            verbose = False,
     )),
-    
+
     #assuming excitatory cells are pyramidal
     rand_rot_axis = dict(
         EX = ['z'],
         IN = ['x', 'y', 'z'],
     ),
-    
-    
+
+
     #kwargs passed to LFPy.Cell.simulate()
     simulationParams = dict(),
-    
+
     #set up parameters corresponding to cylindrical model populations
     populationParams = dict(
         EX = dict(
@@ -176,21 +176,21 @@ PS.update(dict(
             radius = 100,
             z_min = -450,
             z_max = -350,
-            min_cell_interdist = 1.,            
+            min_cell_interdist = 1.,
             ),
         IN = dict(
             number = BN.NI,
             radius = 100,
             z_min = -450,
             z_max = -350,
-            min_cell_interdist = 1.,            
+            min_cell_interdist = 1.,
             ),
     ),
-    
+
     #set the boundaries between the "upper" and "lower" layer
     layerBoundaries = [[0., -300],
                       [-300, -500]],
-    
+
     #set the geometry of the virtual recording device
     electrodeParams = dict(
             #contact locations:
@@ -209,7 +209,7 @@ PS.update(dict(
             #no somas within the constraints of the "electrode shank":
             r_z = [[-1E199, -600, -550, 1E99],[0, 0, 10, 10]],
     ),
-    
+
     #runtime, cell-specific attributes and output that will be stored
     savelist = [
         'somav',
@@ -220,15 +220,15 @@ PS.update(dict(
         'LFP',
         'CSD',
     ],
-    
+
     #flag for switching on calculation of CSD
     calculateCSD = True,
-    
+
     #time resolution of saved signals
-    dt_output = 1. 
+    dt_output = 1.
 ))
 
- 
+
 #for each population, define layer- and population-specific connectivity
 #parameters
 PS.update(dict(
@@ -240,7 +240,7 @@ PS.update(dict(
         IN = [[0, 0],
               [BN.CE, BN.CI]],
     ),
-    
+
     #set up table of synapse weights from each possible presynaptic population
     J_yX = dict(
         EX = [BN.J_ex*1E-3, BN.J_in*1E-3],
@@ -257,16 +257,16 @@ PS.update(dict(
         IN = dict(
             section = ['dend', 'soma'],
             # tau = [BN.tauSyn, BN.tauSyn],
-            syntype = 'AlphaISyn'            
+            syntype = 'AlphaISyn'
         ),
     ),
-    
+
     #set up table of synapse time constants from each presynaptic populations
     tau_yX = dict(
         EX = [BN.tauSyn, BN.tauSyn],
         IN = [BN.tauSyn, BN.tauSyn]
     ),
-    
+
     #set up delays, here using fixed delays of network
     synDelayLoc = dict(
         EX = [BN.delay, BN.delay],
@@ -276,7 +276,7 @@ PS.update(dict(
     synDelayScale = dict(
         EX = [None, None],
         IN = [None, None],
-    ),    
+    ),
 ))
 
 
@@ -304,7 +304,6 @@ if properrun:
 
 #wait for the network simulation to finish, resync MPI threads
 COMM.Barrier()
-
 
 #Create an object representation containing the spiking activity of the network
 #simulation output that uses sqlite3. Again, kwargs are derived from the brunel
@@ -343,7 +342,7 @@ if properrun:
                 savelist = PS.savelist,
                 savefolder = PS.savefolder,
                 calculateCSD = PS.calculateCSD,
-                dt_output = PS.dt_output, 
+                dt_output = PS.dt_output,
                 POPULATIONSEED = SIMULATIONSEED + i,
                 X = PS.X,
                 networkSim = networkSim,
@@ -354,11 +353,11 @@ if properrun:
                 J_yX = PS.J_yX[Y],
                 tau_yX = PS.tau_yX[Y],
             )
-    
+
         #run population simulation and collect the data
         pop.run()
         pop.collect_data()
-    
+
         #object no longer needed
         del pop
 
@@ -381,14 +380,14 @@ if properrun:
                            populations_subfolder = os.path.split(PS.populations_path)[-1],
                            figures_subfolder = os.path.split(PS.figures_path)[-1]
                            )
-    
+
     #run through the procedure
     postproc.run()
-    
+
     #create tar-archive with output for plotting, ssh-ing etc.
     postproc.create_tar_archive()
-    
-    
+
+
 COMM.Barrier()
 
 #tic toc
@@ -418,7 +417,7 @@ if RANK == 0:
                     isometricangle=np.pi/12, aspect='equal')
     fig.savefig(os.path.join(PS.figures_path, 'layers.pdf'), dpi=300)
     plt.close(fig)
-    
+
 
     #plot cell locations
     fig, ax = plt.subplots(1,1, figsize=(5,8))
@@ -433,7 +432,7 @@ if RANK == 0:
                         isometricangle=np.pi/12, )
     fig.savefig(os.path.join(PS.figures_path, 'soma_locations.pdf'), dpi=300)
     plt.close(fig)
-    
+
 
     #plot morphologies in their respective locations
     fig, ax = plt.subplots(1,1, figsize=(5,8))
@@ -448,7 +447,7 @@ if RANK == 0:
                     cellParams=PS.cellParams)
     fig.savefig(os.path.join(PS.figures_path, 'populations.pdf'), dpi=300)
     plt.close(fig)
-    
+
 
     #plot morphologies in their respective locations
     fig, ax = plt.subplots(1,1, figsize=(5,8))
@@ -464,7 +463,7 @@ if RANK == 0:
                                  populationParams=PS.populationParams)
     fig.savefig(os.path.join(PS.figures_path, 'cell_models.pdf'), dpi=300)
     plt.close(fig)
-    
+
 
     #plot EX morphologies in their respective locations
     fig, ax = plt.subplots(1,1, figsize=(5,8))
@@ -495,11 +494,11 @@ if RANK == 0:
     fig.savefig(os.path.join(PS.figures_path, 'IN_population.pdf'), dpi=300)
     plt.close(fig)
 
-    
+
     #plot compound LFP and CSD traces
     fig = plt.figure()
     gs = gridspec.GridSpec(2,8)
-    
+
     ax0 = fig.add_subplot(gs[:,:2])
     ax1 = fig.add_subplot(gs[0, 4:])
     ax2 = fig.add_subplot(gs[1, 4:])
@@ -521,11 +520,11 @@ if RANK == 0:
                     fname=os.path.join(PS.savefolder, 'CSDsum.h5'),
                     unit='$\mu$Amm$^{-3}$', T=(500, 1000))
     ax1.set_xlabel('')
-    
+
     plot_signal_sum(ax2, z=PS.electrodeParams['z'],
                     fname=os.path.join(PS.savefolder, 'LFPsum.h5'),
                     unit='mV', T=(500, 1000))
-    
+
     fig.savefig(os.path.join(PS.figures_path, 'compound_signals.pdf'), dpi=300)
     plt.close(fig)
 
@@ -533,7 +532,7 @@ if RANK == 0:
     #plot compound LFP and CSD traces
     fig = plt.figure()
     gs = gridspec.GridSpec(2,8)
-    
+
     ax0 = fig.add_subplot(gs[:,:2])
     ax1 = fig.add_subplot(gs[0, 4:])
     ax2 = fig.add_subplot(gs[1, 4:])
@@ -555,7 +554,7 @@ if RANK == 0:
                                        'EX_population_CSD.h5'),
                     unit='$\mu$Amm$^{-3}$', T=(500, 1000),color='r')
     ax1.set_xlabel('')
-    
+
     plot_signal_sum(ax2, z=PS.electrodeParams['z'],
                     fname=os.path.join(PS.populations_path,
                                        'EX_population_LFP.h5'),
@@ -568,7 +567,7 @@ if RANK == 0:
     #plot compound LFP and CSD traces
     fig = plt.figure()
     gs = gridspec.GridSpec(2,8)
-    
+
     ax0 = fig.add_subplot(gs[:,:2])
     ax1 = fig.add_subplot(gs[0, 4:])
     ax2 = fig.add_subplot(gs[1, 4:])
@@ -590,7 +589,7 @@ if RANK == 0:
                                        'IN_population_CSD.h5'),
                     unit='$\mu$Amm$^{-3}$', T=(500, 1000),color='b')
     ax1.set_xlabel('')
-    
+
     plot_signal_sum(ax2, z=PS.electrodeParams['z'],
                     fname=os.path.join(PS.populations_path,
                                        'IN_population_LFP.h5'),
@@ -604,14 +603,14 @@ if RANK == 0:
     #compute firing rates
     x, y = networkSim.get_xy((0, BN.simtime))
     bins = np.arange(0, BN.simtime + 1)
-        
+
     xx = np.r_[x['EX'], x['IN']]
-        
-            
+
+
     fig = plt.figure()
     fig.subplots_adjust(hspace=0.5, wspace=0.5)
     gs = gridspec.GridSpec(4,3)
-    
+
     ax0 = fig.add_subplot(gs[0, :2])
     ax1 = fig.add_subplot(gs[1:, :2])
     ax2 = fig.add_subplot(gs[:, 2])
@@ -628,7 +627,7 @@ if RANK == 0:
     fname=os.path.join(PS.savefolder, 'LFPsum.h5')
     f = h5py.File(fname, 'r')
     data = f['data'][()]
-    
+
     r, t = np.histogram(xx, bins)
     plot_correlation(z_vec=PS.electrodeParams['z'], x0=r, x1=data[:, 1:],
                      ax=ax2, lag=50, title='rate-LFP xcorr')
@@ -652,7 +651,7 @@ if RANK == 0:
 
     #keep current axes bounds, so we can put it back
     axis = ax.axis()
-    
+
     #some additional plot annotations
     ax.text(-275, -300, 'EX', clip_on=False, va='center', zorder=500)
     ax.add_patch(plt.Rectangle((-290, -340), fc='r', ec='k', alpha=0.5,
@@ -661,17 +660,14 @@ if RANK == 0:
              fc='r', lw=1, ec='w', alpha=1, zorder=500)
     ax.arrow(-210, -300, 50, -50, head_width=20, head_length=20, width=10,
              fc='r', lw=1, ec='w', alpha=1, zorder=500)
-    
+
     ax.text(-275, -400, 'IN', clip_on=False, va='center', zorder=500)
     ax.add_patch(plt.Rectangle((-290, -440), fc='b', ec='k', alpha=0.5,
         width=80, height=80, clip_on=False, zorder=500))
     ax.arrow(-210, -400, 50, 0, head_width=20, head_length=20, width=10, fc='b',
-             lw=1, ec='w', alpha=1, zorder=500)    
-    
+             lw=1, ec='w', alpha=1, zorder=500)
+
     fig.savefig(os.path.join(PS.figures_path, 'populations_vII.pdf'), dpi=300)
     plt.close(fig)
 
 COMM.Barrier()
-
-
-

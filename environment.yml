@@ -1,0 +1,14 @@
+name: hybridlfpy
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3
+  - lfpy>=2.1
+  - nest-simulator=*=mpi*
+  - openmpi-mpicc
+  - ipython
+  - pytest
+  - pip
+  - pip:
+      - git+https://github.com/NeuralEnsemble/parameters
