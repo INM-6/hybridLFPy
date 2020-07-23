@@ -599,37 +599,65 @@
 			/weight_mean PSC_array target_layer get target_pop get source_layer get source_pop get def
                         /weight_sd weight_mean PSC_rel_sd mul abs def
 
-			weight_mean 0 lt
-			   {
-				(sqrt(ln((weight_sd / (-1.*weight_mean ))^2 +1))) ExecMath /sigma Set
-				( -1.* (ln(-1.*weight_mean) - sigma^2/2.) ) ExecMath /mu Set
-			   }
-			   {
-				(sqrt(ln((weight_sd / weight_mean )^2 +1))) ExecMath /sigma Set
-				( ln(weight_mean) - sigma^2/2.) ExecMath /mu Set
-			   } ifelse
+
+            % define mu (mean) and sigma (std) of lognormal distribution
+            weight_mean 0 lt
+			    {
+				    (sqrt(ln((weight_sd / (-1.*weight_mean ))^2 +1))) ExecMath /sigma Set
+				    %( -1.* (ln(-1.*weight_mean) - sigma^2/2.) ) ExecMath /mu Set
+                    ( (ln(-1.*weight_mean) - sigma^2/2.) ) ExecMath /mu Set
+			    }
+			    {
+			 	    (sqrt(ln((weight_sd / weight_mean )^2 +1))) ExecMath /sigma Set
+			 	    ( ln(weight_mean) - sigma^2/2.) ExecMath /mu Set
+			    } ifelse
+
+            % sign of connection multiplied with lognormal weights
+            << /constant << /value weight_mean Sign 1. mul >> >> CreateParameter /sign Set
+
+            % create parameter for lognormal weights
+            << /lognormal
+                << /mean mu
+                   /std sigma
+                >>
+            >>
+            CreateParameter /logn Set
+
+            % default synapse dictionary
+            /syn_dict <<
+                % /model /static_synapse
+                /weight logn sign mul
+            	/delay <<
+            	    /distribution (normal_clipped)
+            	    /low dt
+            	    /mu delays source_pop get
+            	    /sigma delays_sd source_pop get
+            	>>
+   		    >> def
+
 		    }
 		    {
 			/dist_type (normal_clipped) def
 			/mu PSC_array target_layer get target_pop get source_layer get source_pop get def
                         /sigma mu PSC_rel_sd mul abs def
-			} ifelse
 
 		    % default synapse dictionary
 		    /syn_dict <<
-			/model /static_synapse
-			/weight <<
-			    /distribution dist_type
-			    /mu mu
-			    /sigma sigma
-			>>
-			/delay <<
-			    /distribution (normal_clipped)
-			    /low dt
-			    /mu delays source_pop get
-			    /sigma delays_sd source_pop get
-			>>
+    			/model /static_synapse
+    			/weight <<
+    			    /distribution dist_type
+    			    /mu mu
+    			    /sigma sigma
+    			>>
+    			/delay <<
+    			    /distribution (normal_clipped)
+    			    /low dt
+    			    /mu delays source_pop get
+    			    /sigma delays_sd source_pop get
+    			>>
 		    >> def
+
+            } ifelse
 
 
 		   % connection pattern used in connection calls connecting populations
@@ -674,52 +702,52 @@
 
     		    weight_mean 0 lt
                 {
-                (sqrt(ln((weight_sd / (-1.*weight_mean ))^2 +1))) ExecMath /sigma Set
-                ( -1.* (ln(-1.*weight_mean) - sigma^2/2.) ) ExecMath /mu Set
+                    (sqrt(ln((weight_sd / (-1.*weight_mean ))^2 +1))) ExecMath /sigma Set
+                    ( -1.* (ln(-1.*weight_mean) - sigma^2/2.) ) ExecMath /mu Set
                 }
                 {
-                (sqrt(ln((weight_sd / weight_mean )^2 +1))) ExecMath /sigma Set
-                ( ln(weight_mean) - sigma^2/2.) ExecMath /mu Set
+                    (sqrt(ln((weight_sd / weight_mean )^2 +1))) ExecMath /sigma Set
+                    ( ln(weight_mean) - sigma^2/2.) ExecMath /mu Set
                 } ifelse
 		    }
-		{
-		    /dist_type (normal_clipped) def
-		    /mu PSC_ext def
-		    /sigma PSC_ext PSC_rel_sd mul abs def
-		} ifelse
+    		{
+    		    /dist_type (normal_clipped) def
+    		    /mu PSC_ext def
+    		    /sigma PSC_ext PSC_rel_sd mul abs def
+    		} ifelse
 
 
-		% default synapse dictionary
-		/syn_dict <<
-		    /model /static_synapse
-		    /weight <<
-			/distribution dist_type
-			/mu mu
-			/sigma sigma
-		    >>
-		    /delay <<
-			/distribution (normal_clipped)
-			/low dt
-			/mu delay_th
-			/sigma delay_th delay_th_rel_sd mul
-		    >>
-		>> def
+    		% default synapse dictionary
+    		/syn_dict <<
+    		    /model /static_synapse
+    		    /weight <<
+        			/distribution dist_type
+        			/mu mu
+        			/sigma sigma
+    		    >>
+    		    /delay <<
+        			/distribution (normal_clipped)
+        			/low dt
+        			/mu delay_th
+        			/sigma delay_th delay_th_rel_sd mul
+    		    >>
+    		>> def
 
 
-        % connection pattern used in connection calls connecting populations
-        % fill the connectivity dictionary with the number of synapses to be used
-        /conn_dict <<
-            /rule /fixed_total_number
-            /N this_num_synapses
-        >> def
+            % connection pattern used in connection calls connecting populations
+            % fill the connectivity dictionary with the number of synapses to be used
+            /conn_dict <<
+                /rule /fixed_total_number
+                /N this_num_synapses
+            >> def
 
 
-		% Connect the thalamus
-		source_nodes
-		target_nodes
-		conn_dict
-		syn_dict
-		Connect
+    		% Connect the thalamus
+    		source_nodes
+    		target_nodes
+    		conn_dict
+    		syn_dict
+    		Connect
 
         } if
 
