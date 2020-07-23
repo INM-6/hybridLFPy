@@ -292,6 +292,8 @@ class general_params(object):
                                     [0.0548,0.0269, 0.0257, 0.0022, 0.06,   0.3158, 0.0086,  0.    ],  # 5i
                                     [0.0156,0.0066, 0.0211, 0.0166, 0.0572, 0.0197, 0.0396,  0.2252],  # 6e
                                     [0.0364,0.001,  0.0034, 0.0005, 0.0277, 0.008,  0.0658,  0.1443]]) # 6i
+        self.conn_probs *= 1.0
+
 
         # connection probabilities for thalamic input
         self.C_th = [[0.0,       # layer 23 e
@@ -452,7 +454,7 @@ class point_neuron_network_params(general_params):
     ####################################
 
         # use same number of threads as MPI COMM.size()
-        self.total_num_virtual_procs = SIZE * 4
+        self.total_num_virtual_procs = SIZE
 
         ####################################
         # RNG PROPERTIES                   #
@@ -924,7 +926,7 @@ class multicompartment_params(point_neuron_network_params):
         for y, _, depth, N_y in self.y_zip_list:
             self.populationParams.update({
                 y : {
-                    'number' : int(N_y*self.SCALING),
+                    'number' : 50, #int(N_y*self.SCALING),
                     'radius' : np.sqrt(1000**2 / np.pi),
                     'z_min' : depth - 25,
                     'z_max' : depth + 25,
