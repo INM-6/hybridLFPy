@@ -292,7 +292,7 @@ class general_params(object):
                                     [0.0548,0.0269, 0.0257, 0.0022, 0.06,   0.3158, 0.0086,  0.    ],  # 5i
                                     [0.0156,0.0066, 0.0211, 0.0166, 0.0572, 0.0197, 0.0396,  0.2252],  # 6e
                                     [0.0364,0.001,  0.0034, 0.0005, 0.0277, 0.008,  0.0658,  0.1443]]) # 6i
-        self.conn_probs *= 0.1
+        self.conn_probs *= 1.0
 
 
         # connection probabilities for thalamic input
