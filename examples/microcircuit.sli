@@ -702,8 +702,10 @@
 
     		    weight_mean 0 lt
                 {
-                    (sqrt(ln((weight_sd / (-1.*weight_mean ))^2 +1))) ExecMath /sigma Set
-                    ( -1.* (ln(-1.*weight_mean) - sigma^2/2.) ) ExecMath /mu Set
+                    cerr (Do not use negative weights with TC connections!) print endl ;
+                    /weight_mean /PositiveValueExpected raiseerror
+                    %(sqrt(ln((weight_sd / (-1.*weight_mean ))^2 +1))) ExecMath /sigma Set
+                    %( -1.* (ln(-1.*weight_mean) - sigma^2/2.) ) ExecMath /mu Set
                 }
                 {
                     (sqrt(ln((weight_sd / weight_mean )^2 +1))) ExecMath /sigma Set
