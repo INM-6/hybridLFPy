@@ -487,36 +487,31 @@
 
 /WriteGIDstoFile
 {
-    raw_nest_output_path (/) join GID_filename join
-    (w) ofsopen
-    ; /outputstream Set
     Rank 0 eq
     {
+        raw_nest_output_path (/) join GID_filename join
+        (w) ofsopen
+        ; /outputstream Set
         outputstream
-    } if
 
-    n_thal 0 gt {
-	th_neuron_subnet_GID %GetGlobalNodes
-    /GIDs Set
-	Rank 0 eq
-	{
-	    GIDs Min <- (\t) <- GIDs Max <- (\n) <-
-	} if
-    } if
-
-    neuron_subnet_GIDs Flatten
-    {
-        %GetGlobalNodes
-        /GIDs Set
-        Rank 0 eq
-        {
+        n_thal 0 gt {
+            th_neuron_subnet_GID
+            /GIDs Set
+            GIDs ==
             GIDs Min <- (\t) <- GIDs Max <- (\n) <-
-	} if
-    } forall
-    Rank 0 eq
-    {
+        } if
+
+        neuron_subnet_GIDs Flatten {
+            /GIDs Set
+            GIDs ==
+            GIDs Min <- (\t) <- GIDs Max <- (\n) <-
+        } forall
         close
+
     } if
+
+    SyncProcesses % MPI_BARRIER()
+
 } def
 
 
