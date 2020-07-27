@@ -506,12 +506,10 @@
             GIDs ==
             GIDs Min <- (\t) <- GIDs Max <- (\n) <-
         } forall
+
         close
 
     } if
-
-    SyncProcesses % MPI_BARRIER()
-
 } def
 
 
@@ -1085,6 +1083,7 @@ CreateNetworkNodes
 WriteGIDstoFile
 ConnectNetworkNodes
 
+
 tic
 tstop tstart sub Simulate
 toc /SimTime Set
@@ -1094,6 +1093,5 @@ Rank 0 eq
 {
     (Connecting took ) ConnectTime cvs join ( s\n) join
     (Simulating took ) join SimTime cvs join ( s) join
-    M_INFO
-    message
+    M_INFO message
 } if
