@@ -22,6 +22,7 @@ import sqlite3 as sqlite
 import os, glob
 from time import time as now
 import matplotlib.pyplot as plt
+import sys
 
 
 plt.rcdefaults()
@@ -138,6 +139,7 @@ class GDF(object):
                     raise StopIteration
                 yield a
 
+
     def create(self, re='brunel-py-ex-*.gdf', index=True, skiprows=0):
         """
         Create db from list of gdf file glob
@@ -167,13 +169,21 @@ class GDF(object):
         tic = now()
         for f in glob.glob(re):
             print(f)
-            while True:
+            if sys.version < "3.7":
                 try:
                     for data in self._blockread(f, skiprows):
                         self.cursor.executemany('INSERT INTO spikes VALUES (?, ?)', data)
                         self.conn.commit()
                 except RuntimeError:
                     break
+            else:
+                while True:
+                    try:
+                        for data in self._blockread(f, skiprows):
+                            self.cursor.executemany('INSERT INTO spikes VALUES (?, ?)', data)
+                            self.conn.commit()
+                    except RuntimeError:
+                        break
 
         toc = now()
         if self.debug: print('Inserts took %g seconds.' % (toc-tic))
