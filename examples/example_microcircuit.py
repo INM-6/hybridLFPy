@@ -62,7 +62,7 @@ RANK = COMM.Get_rank()
 
 #if True, execute full model. If False, do only the plotting. Simulation results
 #must exist.
-properrun = False
+properrun = True
 
 
 #check if mod file for synapse model specified in expisyn.mod is loaded
@@ -299,10 +299,6 @@ networkSim = CachedNetwork(**params.networkSimParams)
 toc = time() - tic
 print('NEST simulation and gdf file processing done in  %.3f seconds' % toc)
 
-networkSim.raster_plots()
-import matplotlib.pyplot as plt
-plt.show()
-raise Exception
 
 ####### Set up populations #####################################################
 
