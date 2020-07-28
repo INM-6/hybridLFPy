@@ -299,6 +299,8 @@ networkSim = CachedNetwork(**params.networkSimParams)
 toc = time() - tic
 print('NEST simulation and gdf file processing done in  %.3f seconds' % toc)
 
+raise Exception
+
 ####### Set up populations #####################################################
 
 if properrun:

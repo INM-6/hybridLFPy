@@ -771,7 +771,7 @@ class multicompartment_params(point_neuron_network_params):
             'ext' :         'dat',
             'GIDs' : self.get_GIDs(),
             'X' : self.X,
-            'skiprows' : 3,
+            'skiprows' : 0,
         }
 
 

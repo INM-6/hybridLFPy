@@ -131,7 +131,8 @@ class GDF(object):
                     next(f)
                 for i in range(self.bsize):
                     line = f.readline()
-                    if not line: break
+                    if not line:
+                        break
                     a.append(line.split())
                 if a == []:
                     raise StopIteration
@@ -166,13 +167,14 @@ class GDF(object):
         tic = now()
         for f in glob.glob(re):
             print(f)
-            while True:
-                try:
-                    for data in self._blockread(f, skiprows):
-                        self.cursor.executemany('INSERT INTO spikes VALUES (?, ?)', data)
-                        self.conn.commit()
-                except:
-                    break
+            #while True:
+            try:
+                for data in self._blockread(f, skiprows):
+                    self.cursor.executemany('INSERT INTO spikes VALUES (?, ?)', data)
+                    self.conn.commit()
+            except:
+                raise Exception
+#                break
 
         toc = now()
         if self.debug: print('Inserts took %g seconds.' % (toc-tic))
