@@ -201,17 +201,17 @@ class PopulationSuper(object):
         self.dt_output = dt_output
         self.recordSingleContribFrac = recordSingleContribFrac
         self.output_file = output_file
-        
+
         #check that decimate fraction is actually a whole number
         try:
             assert int(self.dt_output / self.dt) == self.dt_output / self.dt
         except AssertionError:
             raise AssertionError('dt_output not an integer multiple of dt')
-        
+
         self.decimatefrac = int(self.dt_output / self.dt)
         self.POPULATIONSEED = POPULATIONSEED
         self.verbose = verbose
-        
+
         #put revision info in savefolder
         if self.savefolder is not None:
             os.system('git rev-parse HEAD -> %s/populationRevision.txt' % \
@@ -342,7 +342,7 @@ class PopulationSuper(object):
 
         """
         tic = time()
-        
+
         electrode = LFPy.RecExtElectrode(**self.electrodeParams)
 
         cellParams = self.cellParams.copy()
@@ -584,7 +584,7 @@ class PopulationSuper(object):
             [u] = np.where(np.logical_or((R_z < minrz) != (R_z > radius),
                 cell_interdist < min_cell_interdist))
 
-        
+
         soma_pos = []
         for i in range(self.POPULATION_SIZE):
             soma_pos.append({'x' : x[i], 'y' : y[i], 'z' : z[i]})
@@ -910,7 +910,7 @@ class Population(PopulationSuper):
             Synapse parameters (cf. `LFPy.Synapse` class).
             Each toplevel key denote each presynaptic population,
             bottom-level dicts are parameters passed to `LFPy.Synapse`, however,
-            time constants `tau' takes one value per presynaptic population. 
+            time constants `tau' takes one value per presynaptic population.
         synDelayLoc : list
             Average synapse delay for each presynapse connection.
         synDelayScale : list
@@ -1243,7 +1243,7 @@ class Population(PopulationSuper):
 
         return syn_idx
 
-    def cellsim(self, cellindex, return_just_cell = False):
+    def cellsim(self, cellindex, return_just_cell=False):
         """
         Do the actual simulations of LFP, using synaptic spike times from
         network simulation.
@@ -1268,7 +1268,7 @@ class Population(PopulationSuper):
         hybridLFPy.csd, LFPy.Cell, LFPy.Synapse, LFPy.RecExtElectrode
         """
         tic = time()
-        
+
         cell = LFPy.Cell(**self.cellParams)
         cell.set_pos(**self.pop_soma_pos[cellindex])
         cell.set_rotation(**self.rotations[cellindex])
@@ -1477,4 +1477,3 @@ class Population(PopulationSuper):
 if __name__ == '__main__':
     import doctest
     doctest.testmod()
-
