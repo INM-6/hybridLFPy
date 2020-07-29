@@ -486,7 +486,7 @@ class point_neuron_network_params(general_params):
         if self.record_fraction_neurons_voltage:
             self.frac_rec_voltage = 0.1
         else:
-            self.n_rec_voltage = 100
+            self.n_rec_voltage = 0
 
         # whether to record weighted input spikes from a fixed fraction of neurons in each population
         self.record_fraction_neurons_input_spikes = False
@@ -494,22 +494,16 @@ class point_neuron_network_params(general_params):
         if self.record_fraction_neurons_input_spikes:
             self.frac_rec_input_spikes = 0.1
         else:
-            self.n_rec_input_spikes = 100
+            self.n_rec_input_spikes = 0
 
         # number of recorded neurons for depth resolved input currents
         self.n_rec_depth_resolved_input = 0
 
-        # whether to write any recorded cortical spikes to file
+        # NESTio recording format
         self.record_to = 'ascii'
-
-        # whether to write any recorded membrane potentials to file
-        #self.save_voltages = 'ascii'
 
         # whether to record thalamic spikes
         self.record_thalamic_spikes = True
-
-        # whether to write any recorded thalamic spikes to file
-        #self.save_thalamic_spikes = 'ascii'
 
         # global ID file name
         self.GID_filename = 'population_GIDs.dat'
