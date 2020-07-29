@@ -619,8 +619,9 @@ class PopulationSuper(object):
                     data += self.output[cellindex][measure]
         else:
             data = np.zeros((len(self.electrodeParams['x']),
-                             self.cellParams['tstop']//self.dt_output + 1),
-                dtype=np.float32)
+                             int(self.cellParams['tstop'] //
+                                 self.dt_output) + 1),
+                            dtype=np.float32)
 
         #container for full LFP on RANK 0
         if RANK == 0:
