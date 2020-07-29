@@ -762,14 +762,16 @@
         /all_to_all
         Connect
 
-
-        % Connect to the voltmeter
-        voltmeter_GIDs target_layer get target_pop get
-        target_nodes
-        % record from a continuous range of IDs
-        num_neurons_rec_voltage target_layer get target_pop get Take
-        /all_to_all
-        Connect
+        % Connect to the voltmeter,
+	% but skip if number of requested neurons is 0 (Take will complain)
+	num_neurons_rec_voltage target_layer get target_pop get 0 gt {
+	    voltmeter_GIDs target_layer get target_pop get
+            target_nodes
+            % record from a continuous range of IDs
+	    num_neurons_rec_voltage target_layer get target_pop get Take
+            /all_to_all
+       	    Connect
+	} if
 
 
         % Connect to the Poisson generators
@@ -786,12 +788,15 @@
         Connect
 
 
-        % Connect multimeter
+        % Connect multimeter,
+	% but skip if number of requested neurons is 0 (Take will complain)
+	target_nodes num_neurons_rec_input_spikes target_layer get target_pop get 0 gt {
 	    multimeter_GIDs target_layer get target_pop get
-        % record from a continuous range of IDs - appropriate for networks without topology
-        target_nodes num_neurons_rec_input_spikes target_layer get target_pop get Take
-        /all_to_all
+            % record from a continuous range of IDs - appropriate for networks without topology
+            target_nodes num_neurons_rec_input_spikes target_layer get target_pop get Take
+            /all_to_all
 	    Connect
+	} if 
 
         } for
     } for
