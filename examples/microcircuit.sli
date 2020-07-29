@@ -618,7 +618,7 @@
 
             % default synapse dictionary
             /syn_dict <<
-                % /model /static_synapse
+                /synapse_model /static_synapse
                 /weight logn sign mul
             	/delay <<
             	    /distribution (normal_clipped)
@@ -636,7 +636,7 @@
 
 		    % default synapse dictionary
 		    /syn_dict <<
-    			/model /static_synapse
+    			/synapse_model /static_synapse
     			/weight <<
     			    /distribution dist_type
     			    /mu mu
@@ -714,7 +714,7 @@
 
     		% default synapse dictionary
     		/syn_dict <<
-    		    /model /static_synapse
+    		    /synapse_model /static_synapse
     		    /weight <<
         			/distribution dist_type
         			/mu mu
@@ -923,18 +923,18 @@
 
 		    % default synapse dictionary
 		    /syn_dict <<
-			/model /static_synapse
-			/weight <<
-			    /distribution dist_type
-			    /mu mu
-			    /sigma sigma
-			>>
-			/delay <<
-			    /distribution (normal_clipped)
-			    /low dt
-			    /mu delay_th
-			    /sigma delay_th delay_th_rel_sd mul
-			>>
+    			/synapse_model /static_synapse
+    			/weight <<
+    			    /distribution dist_type
+    			    /mu mu
+    			    /sigma sigma
+    			>>
+    			/delay <<
+    			    /distribution (normal_clipped)
+    			    /low dt
+    			    /mu delay_th
+    			    /sigma delay_th delay_th_rel_sd mul
+    			>>
 		    >> def
 
 
@@ -1007,18 +1007,18 @@
 
 			    % default synapse dictionary
 			    /syn_dict <<
-				/model /static_synapse
-				/weight <<
-				    /distribution dist_type
-				    /mu mu
-				    /sigma sigma
-				>>
-				/delay <<
-				    /distribution (normal_clipped)
-				    /low dt
-				    /mu delays source_pop get
-				    /sigma delays_sd source_pop get
-				>>
+    				/synapse_model /static_synapse
+    				/weight <<
+    				    /distribution dist_type
+    				    /mu mu
+    				    /sigma sigma
+				    >>
+    				/delay <<
+    				    /distribution (normal_clipped)
+    				    /low dt
+    				    /mu delays source_pop get
+    				    /sigma delays_sd source_pop get
+    				>>
 			    >> def
 
 

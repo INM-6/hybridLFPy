@@ -332,7 +332,7 @@ class general_params(object):
         self.g = -4.
 
         # set L4i ->L4e stronger in order to get rid of 84 Hz peak
-        self.g_4e_4i = self.g*1.15
+        self.g_4e_4i = self.g * 1.15
 
         # Whether to use lognormal weights or not
         self.lognormal_weights = False

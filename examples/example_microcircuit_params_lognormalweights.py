@@ -454,7 +454,7 @@ class point_neuron_network_params(general_params):
     ####################################
 
         # use same number of threads as MPI COMM.size()
-        self.total_num_virtual_procs = SIZE *2
+        self.total_num_virtual_procs = SIZE
 
         ####################################
         # RNG PROPERTIES                   #
@@ -771,7 +771,7 @@ class multicompartment_params(point_neuron_network_params):
             'ext' :         'dat',
             'GIDs' : self.get_GIDs(),
             'X' : self.X,
-            'skiprows' : 3,
+            'skiprows' : 0,
         }
 
 
@@ -926,7 +926,7 @@ class multicompartment_params(point_neuron_network_params):
         for y, _, depth, N_y in self.y_zip_list:
             self.populationParams.update({
                 y : {
-                    'number' : 48, #int(N_y*self.SCALING),
+                    'number' : int(N_y*self.SCALING),
                     'radius' : np.sqrt(1000**2 / np.pi),
                     'z_min' : depth - 25,
                     'z_max' : depth + 25,

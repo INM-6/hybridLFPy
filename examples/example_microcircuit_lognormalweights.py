@@ -292,14 +292,8 @@ if properrun:
               fileprefix=params.networkSimParams['label'],
               skiprows=3)
 
-
 #Create an object representation of the simulation output that uses sqlite3
 networkSim = CachedNetwork(**params.networkSimParams)
-
-#import matplotlib.pyplot as plt
-#networkSim.raster_plots()
-#plt.show()
-#raise Exception
 
 toc = time() - tic
 print('NEST simulation and gdf file processing done in  %.3f seconds' % toc)
