@@ -16,7 +16,7 @@ Synopsis of the main simulation procedure:
 3. network simulation
     a. execute network simulation using NEST (www.nest-initiative.org)
     b. merge network output (spikes, currents, voltages)
-4. Create a object-representation that uses sqlite3 of all the spiking output 
+4. Create a object-representation that uses sqlite3 of all the spiking output
 5. Iterate over post-synaptic populations:
     a. Create Population object with appropriate parameters for
        each specific population
@@ -77,23 +77,26 @@ tic = time()
 ##initiate nest simulation with only the point neuron network parameter class
 networkParams = point_neuron_network_params()
 nest_simulation.sli_run(parameters=networkParams,
-                       fname='microcircuit.sli',
-                       verbosity='M_WARNING')
+                        fname='microcircuit.sli',
+                        verbosity='M_INFO')
 
 #preprocess the gdf files containing spiking output, voltages, weighted and
 #spatial input spikes and currents:
 nest_output_processing.merge_gdf(networkParams,
                             raw_label=networkParams.spike_detector_label,
-                            file_type='gdf',
-                            fileprefix=params.networkSimParams['label'])
+                            file_type='dat',
+                            fileprefix=params.networkSimParams['label'],
+                            skiprows=3)
 nest_output_processing.merge_gdf(networkParams,
                             raw_label=networkParams.voltmeter_label,
                             file_type='dat',
-                            fileprefix='voltages')
+                            fileprefix='voltages',
+                            skiprows=3)
 nest_output_processing.merge_gdf(networkParams,
                             raw_label=networkParams.weighted_input_spikes_label,
                             file_type='dat',
-                            fileprefix='population_input_spikes')
+                            fileprefix='population_input_spikes',
+                            skiprows=3)
 ##spatial input currents
 #nest_output_processing.create_spatial_input_spikes_hdf5(networkParams,
 #                                        fileprefix='depth_res_input_spikes-')
@@ -124,7 +127,7 @@ for i, y in enumerate(params.y):
             savelist = params.savelist,
             savefolder = params.savefolder,
             calculateCSD = params.calculateCSD,
-            dt_output = params.dt_output, 
+            dt_output = params.dt_output,
             POPULATIONSEED = SIMULATIONSEED + i,
             #daughter class kwargs
             X = params.X,

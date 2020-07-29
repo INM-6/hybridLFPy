@@ -31,19 +31,22 @@ def get_raw_gids(model_params):
     get created in between.
     '''
     gidfile = open(os.path.join(model_params.raw_nest_output_path,
-                                model_params.GID_filename), 'r') 
-    gids = [] 
-    for l in gidfile :
+                                model_params.GID_filename), 'r')
+    gids = []
+    for l in gidfile:
         a = l.split()
         gids.append([int(a[0]),int(a[1])])
-    return gids 
-    
+    return gids
 
-def merge_gdf(model_params, raw_label='spikes_', file_type='gdf',
-              fileprefix='spikes'):
+
+def merge_gdf(model_params,
+              raw_label='spikes_',
+              file_type='gdf',
+              fileprefix='spikes',
+              skiprows=0):
     '''
     NEST produces one file per virtual process per recorder
-    (spike detector, voltmeter etc.). 
+    (spike detector, voltmeter etc.).
     This function gathers and combines them into one single file per population.
     '''
     #some preprocessing
@@ -54,28 +57,26 @@ def merge_gdf(model_params, raw_label='spikes_', file_type='gdf',
     converted_first_gids = [int(1 + np.sum(pop_sizes[:i]))
                             for i in np.arange(model_params.Npops)]
 
-    # The network simulation may not have completely finished across RANKS
-    COMM.Barrier()
-
     for pop_idx in np.arange(model_params.Npops):
         if pop_idx % SIZE == RANK:
             files = glob(os.path.join(model_params.raw_nest_output_path,
                                       raw_label + '{}*.{}'.format(pop_idx,
                                                                   file_type)))
-            gdf = [] # init
+            gdf = []  # init
             for f in files:
-                new_gdf = helpers.read_gdf(f)
+                new_gdf = helpers.read_gdf(f, skiprows)
                 for line in new_gdf:
                     line[0] = line[0] - raw_first_gids[pop_idx] + converted_first_gids[pop_idx]
                     gdf.append(line)
-            
+
             print('writing: {}'.format(os.path.join(model_params.spike_output_path,
-                                                    fileprefix + '_{}.gdf'.format(model_params.X[pop_idx]))))
+                                       fileprefix + '_{}.{}'.format(model_params.X[pop_idx],
+                                                                    file_type))))
             helpers.write_gdf(gdf, os.path.join(model_params.spike_output_path,
-                                                fileprefix + '_{}.gdf'.format(model_params.X[pop_idx])))
-    
+                                        fileprefix +
+                                        '_{}.{}'.format(model_params.X[pop_idx],
+                                                        file_type)))
+
     COMM.Barrier()
 
     return
-
-

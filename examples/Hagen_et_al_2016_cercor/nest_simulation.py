@@ -34,7 +34,8 @@ def send_nest_params_to_sli(p):
             value = value.tolist()
         if type(value) == dict:
             value = dict_of_numpyarray_to_dict_of_list(value)
-        if name == 'neuron_model': # special case as neuron_model should is a NEST model and not a string
+        if name == 'neuron_model':  # special case as neuron_model is a
+                                    # NEST model and not a string
             try:
                 nest.ll_api.sli_run('/'+name)
                 nest.ll_api.sli_push(value)
