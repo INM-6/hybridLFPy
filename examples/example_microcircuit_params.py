@@ -207,8 +207,6 @@ class general_params(object):
         # OUTPUT LOCATIONS                 #
         ####################################
 
-        # TODO: try except does not work with hambach
-
         # folder for all simulation output and scripts
         # here, compute clusters have scratch areas for saving
         if os.path.isdir(os.path.join('/', 'scratch', os.environ['USER'])):
@@ -499,17 +497,11 @@ class point_neuron_network_params(general_params):
         # number of recorded neurons for depth resolved input currents
         self.n_rec_depth_resolved_input = 0
 
-        # whether to write any recorded cortical spikes to file
+        # NESTio recording format
         self.record_to = 'ascii'
-
-        # whether to write any recorded membrane potentials to file
-        #self.save_voltages = 'ascii'
 
         # whether to record thalamic spikes
         self.record_thalamic_spikes = True
-
-        # whether to write any recorded thalamic spikes to file
-        #self.save_thalamic_spikes = 'ascii'
 
         # global ID file name
         self.GID_filename = 'population_GIDs.dat'
@@ -550,7 +542,7 @@ class point_neuron_network_params(general_params):
         ####################################
 
         # scaling parameter for population sizes
-        self.area = 1.
+        self.area = 1.0
 
         # preserve indegrees when downscaling
         self.preserve_K = False
@@ -889,7 +881,7 @@ class multicompartment_params(point_neuron_network_params):
             'cm' : 1.0,
             'Ra' : 150,
             'passive' : True,
-            'passive_parameters' : dict(g_pas=1./(self.model_params['tau_m'] * 1E3), #assyme cm=1
+            'passive_parameters' : dict(g_pas=1./(self.model_params['tau_m'] * 1E3), #assume cm=1
                                         e_pas=self.model_params['E_L']),
             'nsegs_method' : 'lambda_f',
             'lambda_f' : 100,
@@ -910,7 +902,7 @@ class multicompartment_params(point_neuron_network_params):
         self.rand_rot_axis = {}
         for y, _, _, _ in self.y_zip_list:
             #identify pyramidal cell populations:
-            if 'p' in y:
+            if y.rfind('p') >= 0:
                 self.rand_rot_axis.update({y : ['z']})
             else:
                 self.rand_rot_axis.update({y : ['x', 'z']})
@@ -938,7 +930,7 @@ class multicompartment_params(point_neuron_network_params):
         # and synapse locations
         self.synParams = {}
         for y in self.y:
-            if 'p' in y:
+            if y.rfind('p') >= 0:
                 #pyramidal types have apical dendrites
                 section = ['apic', 'dend']
             else:

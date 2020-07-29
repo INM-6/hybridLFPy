@@ -88,8 +88,11 @@ params = multicompartment_params()
 # Function declaration(s)
 ################################################################################
 
-def merge_gdf(model_params, raw_label='spikes_', file_type='gdf',
-              fileprefix='spikes', skiprows=0):
+def merge_gdf(model_params,
+              raw_label='spikes_',
+              file_type='gdf',
+              fileprefix='spikes',
+              skiprows=0):
     '''
     NEST produces one file per virtual process containing recorder output.
     This function gathers and combines them into one single file per
@@ -146,9 +149,9 @@ def merge_gdf(model_params, raw_label='spikes_', file_type='gdf',
     for pop_idx in np.arange(model_params.Npops):
         if pop_idx % SIZE == RANK:
             files = glob(os.path.join(model_params.raw_nest_output_path,
-                                      raw_label + str(pop_idx) +
-                                      '*.' + file_type))
-            gdf = [] # init
+                                      raw_label + '{}*.{}'.format(pop_idx,
+                                                                  file_type)))
+            gdf = []  # init
             for f in files:
                 new_gdf = helpers.read_gdf(f, skiprows)
                 for line in new_gdf:
@@ -156,12 +159,13 @@ def merge_gdf(model_params, raw_label='spikes_', file_type='gdf',
                               converted_first_gids[pop_idx]
                     gdf.append(line)
 
-            print('writing: %s' % os.path.join(model_params.spike_output_path,
-                                            fileprefix +
-                                            '_{}.{}'.format(model_params.X[pop_idx], file_type)))
+            print('writing: {}'.format(os.path.join(model_params.spike_output_path,
+                                       fileprefix + '_{}.{}'.format(model_params.X[pop_idx],
+                                                                    file_type))))
             helpers.write_gdf(gdf, os.path.join(model_params.spike_output_path,
                                         fileprefix +
-                                        '_{}.{}'.format(model_params.X[pop_idx], file_type)))
+                                        '_{}.{}'.format(model_params.X[pop_idx],
+                                                        file_type)))
 
     COMM.Barrier()
 
@@ -211,8 +215,8 @@ def send_nest_params_to_sli(p):
             value = value.tolist()
         if type(value) == dict:
             value = dict_of_numpyarray_to_dict_of_list(value)
-        if name == 'neuron_model': # special case as neuron_model is a
-                                   # NEST model and not a string
+        if name == 'neuron_model':  # special case as neuron_model is a
+                                    # NEST model and not a string
             try:
                 nest.ll_api.sli_run('/'+name)
                 nest.ll_api.sli_push(value)
