@@ -163,9 +163,9 @@ def merge_gdf(model_params,
                                        fileprefix + '_{}.{}'.format(model_params.X[pop_idx],
                                                                     file_type))))
             helpers.write_gdf(gdf, os.path.join(model_params.spike_output_path,
-                                        fileprefix +
-                                        '_{}.{}'.format(model_params.X[pop_idx],
-                                                        file_type)))
+                                                fileprefix +
+                                                '_{}.{}'.format(model_params.X[pop_idx],
+                                                                file_type)))
 
     COMM.Barrier()
 
