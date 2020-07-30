@@ -215,9 +215,9 @@ class general_params(object):
         # TODO: try except does not work with hambach
 
         # folder for all simulation output and scripts
-        # HAMBACH and STALLO have scratch areas for saving
-        if os.path.isdir(os.path.join('/', 'scratch', os.environ['USER'])):
-            self.savefolder = os.path.join('/', 'scratch', os.environ['USER'],
+        # using the cluster's dedicated SCRATCH area
+        if os.path.isdir(os.path.join(os.environ['SCRATCH'], os.environ['USER'])):
+            self.savefolder = os.path.join(os.environ['SCRATCH'], os.environ['USER'],
                                            'hybrid_model',
                                            'simulation_output_modified_regular_exc')
         # LOCALLY
