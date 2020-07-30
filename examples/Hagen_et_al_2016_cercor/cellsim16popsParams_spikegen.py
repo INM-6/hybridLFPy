@@ -215,9 +215,9 @@ class general_params(object):
         # TODO: try except does not work with hambach
 
         # folder for all simulation output and scripts
-        # HAMBACH and STALLO have scratch areas for saving
-        if os.path.isdir(os.path.join('/', 'scratch', os.environ['USER'])):
-            self.savefolder = os.path.join('/', 'scratch', os.environ['USER'],
+        # using the cluster's dedicated SCRATCH area
+        if os.path.isdir(os.path.join(os.environ['SCRATCH'], os.environ['USER'])):
+            self.savefolder = os.path.join(os.environ['SCRATCH'], os.environ['USER'],
                                            'hybrid_model',
                                            'simulation_output_spikegen')
         # LOCALLY
@@ -938,7 +938,7 @@ class multicompartment_params(point_neuron_network_params):
         for y, _, depth, N_y in self.y_zip_list:
             self.populationParams.update({
                 y : {
-                    'number' : int(N_y*self.SCALING),
+                    'number' : 384, #int(N_y*self.SCALING),
                     'radius' : np.sqrt(1000**2 / np.pi),
                     'z_min' : depth - 25,
                     'z_max' : depth + 25,

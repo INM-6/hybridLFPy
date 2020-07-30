@@ -936,7 +936,7 @@ class multicompartment_params(point_neuron_network_params):
         for y, _, depth, N_y in self.y_zip_list:
             self.populationParams.update({
                 y : {
-                    'number' : int(N_y*self.SCALING),
+                    'number' : 384, #int(N_y*self.SCALING),
                     'radius' : np.sqrt(1000**2 / np.pi),
                     'z_min' : depth - 25,
                     'z_max' : depth + 25,
