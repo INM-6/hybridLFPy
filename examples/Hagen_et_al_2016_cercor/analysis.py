@@ -88,7 +88,7 @@ def create_downsampled_data(params):
                         try:
                             assert(N <= raw_data.shape[0])
                         except AssertionError:
-                            raise AssetionError('shape mismatch with sample size')
+                            raise AssertionError('shape mismatch with sample size')
 
 
                         for sample in range(samples): # loop over samples
