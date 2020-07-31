@@ -770,6 +770,8 @@ class multicompartment_params(point_neuron_network_params):
         # Switch for current source density computations
         self.calculateCSD = True
 
+        # Switch for calculating current dipole moments
+        self.calculateCurrentDipoleMoment = True
 
     ####################################
     #                                  #
@@ -998,6 +1000,10 @@ class multicompartment_params(point_neuron_network_params):
             'default_rotation',
             'electrodecoeff',
         ]
+        if 'current_dipole_moment' not in self.savelist \
+                and self.calculateCurrentDipoleMoment:
+            self.savelist.append('current_dipole_moment')
+
 
 
         #########################################

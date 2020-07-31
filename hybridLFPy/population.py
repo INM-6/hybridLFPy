@@ -57,7 +57,9 @@ class PopulationSuper(object):
     savefolder : str
         path to where simulation results are stored.
     calculateCSD : bool
-        Exctract laminar CSD from transmembrane currents
+        Extract laminar CSD from transmembrane currents ([True]/False)
+    calculateCurrentDipoleMoment : bool
+        Extract current dipole moment from transmembrane currents (True/[False])
     dt_output : float
         Time resolution of output, e.g., LFP, CSD etc.
     recordSingleContribFrac : float
@@ -121,6 +123,7 @@ class PopulationSuper(object):
                  savelist=['somapos', 'x', 'y', 'z', 'LFP', 'CSD'],
                  savefolder='simulation_output_example_brunel',
                  calculateCSD=True,
+                 calculateCurrentDipoleMoment=False,
                  dt_output=1.,
                  recordSingleContribFrac=0,
                  POPULATIONSEED=123456,
@@ -161,9 +164,9 @@ class PopulationSuper(object):
         savefolder : str
             path to where simulation results are stored.
         calculateCSD : bool
-            Exctract laminar CSD from transmembrane currents
-        dt_output : float
-            Time resolution of output, e.g., LFP, CSD etc.
+            Extract laminar CSD from transmembrane currents ([True]/False)
+        calculateCurrentDipoleMoment : bool
+            Extract current dipole moment from transmembrane currents (True/[False])
         recordSingleContribFrac : float
             fraction  in [0, 1] of individual neurons in population which output
             will be stored
@@ -198,6 +201,7 @@ class PopulationSuper(object):
         self.savelist = savelist
         self.savefolder = savefolder
         self.calculateCSD = calculateCSD
+        self.calculateCurrentDipoleMoment = calculateCurrentDipoleMoment
         self.dt_output = dt_output
         self.recordSingleContribFrac = recordSingleContribFrac
         self.output_file = output_file
@@ -212,10 +216,22 @@ class PopulationSuper(object):
         self.POPULATIONSEED = POPULATIONSEED
         self.verbose = verbose
 
-        #put revision info in savefolder
+        #put git revision info in savefolder
         if self.savefolder is not None:
-            os.system('git rev-parse HEAD -> %s/populationRevision.txt' % \
-                    self.savefolder)
+            os.system('git rev-parse HEAD -> %s/populationRevision.txt' %
+                      self.savefolder)
+
+        # check LFPy.Cell.simulate additional arguments
+        if calculateCurrentDipoleMoment:
+            if 'rec_current_dipole_moment' in list(self.simulationParams.keys()):
+                try:
+                    assert(self.simulationParams['rec_current_dipole_moment'])
+                except AssertionError as ae:
+                    raise ae('simulationParams["rec_current_dipole_moment"]!=True contradicts calculateCurrentDipoleMoment==True')
+            else:
+                self.simulationParams['rec_current_dipole_moment'] = True
+                if 'current_dipole_moment' not in self.savelist:
+                    self.savelist.append('current_dipole_moment')
 
         #set the random seed for reproducible populations, synapse locations,
         #presynaptic spiketrains
@@ -371,6 +387,9 @@ class PopulationSuper(object):
             cell.LFP = helpers.decimate(electrode.LFP,
                                         q=self.decimatefrac)
 
+            if self.calculateCurrentDipoleMoment:
+                cell.current_dipole_moment = helpers.decimate(
+                    cell.current_dipole_moment, q=self.decimatefrac)
 
             cell.x = electrode.x
             cell.y = electrode.y
@@ -644,7 +663,7 @@ class PopulationSuper(object):
         Parameters
         ----------
         measure : str
-            {'LFP', 'CSD'}: Either 'LFP' or 'CSD'.
+            Either 'LFP', 'CSD' or 'current_dipole_moment'
 
 
         Returns
@@ -757,13 +776,17 @@ class PopulationSuper(object):
             if measure in self.savelist:
                 self.collectSingleContribs(measure)
 
-
         #calculate lfp from all cell contribs
         lfp = self.calc_signal_sum(measure='LFP')
 
         #calculate CSD in every lamina
         if self.calculateCSD:
             csd = self.calc_signal_sum(measure='CSD')
+
+        if self.calculateCurrentDipoleMoment:
+            self.collectSingleContribs('current_dipole_moment')
+            current_dipole_moment = self.calc_signal_sum(
+                measure='current_dipole_moment')
 
         if RANK == 0 and self.POPULATION_SIZE > 0:
             #saving LFPs
@@ -792,6 +815,21 @@ class PopulationSuper(object):
                 del csd
                 assert(os.path.isfile(fname))
                 print('save CSD ok')
+
+
+            # saving current dipole moment
+            if 'current_dipole_moment' in self.savelist and self.calculateCurrentDipoleMoment:
+                fname = os.path.join(self.populations_path,
+                                     self.output_file.format(self.y,
+                                     'current_dipole_moment') + '.h5')
+                f = h5py.File(fname, 'w')
+                f['srate'] = 1E3 / self.dt_output
+                f.create_dataset('data', data=current_dipole_moment,
+                                 compression=4)
+                f.close()
+                del current_dipole_moment
+                assert(os.path.isfile(fname))
+                print('save current dipole moment ok')
 
 
             #save the somatic placements:
@@ -888,7 +926,6 @@ class Population(PopulationSuper):
                 synDelayScale = [None, None],
                 J_yX = [0.20680155243678455, -1.2408093146207075],
                 tau_yX = [0.5, 0.5],
-                #calculateCSD = True,
                 **kwargs):
         """
         Class `hybridLFPy.Population`, inherited from class `PopulationSuper`.
@@ -922,8 +959,6 @@ class Population(PopulationSuper):
         tau_yX : list of floats
             Synapse time constants for connections from each presynaptic
             population
-        #calculateCSD : bool
-        #    Flag for computing the ground-source CSD.
 
 
         Returns
@@ -1308,6 +1343,10 @@ class Population(PopulationSuper):
 
             cell.LFP = helpers.decimate(electrode.LFP,
                                         q=self.decimatefrac)
+
+            if self.calculateCurrentDipoleMoment:
+                cell.current_dipole_moment = helpers.decimate(
+                    cell.current_dipole_moment.T, q=self.decimatefrac).T
 
 
             cell.x = electrode.x
