@@ -382,6 +382,7 @@ from example_plotting import *
 plt.close('all')
 
 if RANK == 0:
+
     #create network raster plot
     x, y = networkSim.get_xy((500, 1000), fraction=1)
     fig, ax = plt.subplots(1, figsize=(5,8))
@@ -511,5 +512,81 @@ if RANK == 0:
     ax2.set_xlabel('$t$ (ms)')
 
     fig.savefig(os.path.join(params.figures_path, 'compound_signals.pdf'),
+                dpi=300)
+    plt.close(fig)
+
+
+    # plot some stats for current dipole moments of each population,
+    # temporal traces,
+    # and EEG predictions on scalp using 4-sphere volume conductor model
+    from LFPy import FourSphereVolumeConductor
+
+    T = [500, 1000]
+    P_Y_var = np.zeros((len(params.Y)+1, 3))  # dipole moment variance
+    for i, Y in enumerate(params.Y):
+        f = h5py.File(os.path.join(params.savefolder, 'populations',
+                                   '{}_population_current_dipole_moment.h5'.format(Y)), 'r')
+        srate = f['srate'][()]
+        P_Y_var[i, :] = f['data'][int(T[0]*1000/srate):, :].var(axis=0)
+
+    f_sum = h5py.File(os.path.join(params.savefolder,
+                      'current_dipole_momentsum.h5'), 'r')
+
+    P_Y_var[-1, :] = f_sum['data'][int(T[0]*1000/srate):, :].var(axis=0)
+    tvec = np.arange(f_sum['data'].shape[0]) * 1000. / srate
+
+    fig = plt.figure(figsize=(5, 8))
+    fig.subplots_adjust(left=0.2, right=0.95, bottom=0.075, top=0.95,
+                        hspace=0.4, wspace=0.2)
+
+    ax = fig.add_subplot(3, 2, 1)
+    ax.plot(P_Y_var, '-o')
+    ax.legend(['$P_x$', '$P_y$', '$P_z$'], fontsize=8, frameon=False)
+    ax.set_xticklabels(params.Y + ['SUM'], rotation='vertical')
+    ax.set_ylabel(r'$\sigma^2 (\mathrm{nA}^2 \mu^2\mathrm{m})$', labelpad=0)
+    ax.set_title('signal variance')
+
+    # make some EEG predictions
+    radii = [79000., 80000., 85000., 90000.]
+    sigmas = [0.3, 1.5, 0.015, 0.3]
+    r = np.array([[0., 0., 90000.]])
+    rz = np.array([0., 0., 78000.])
+
+    # draw spherical shells
+    ax = fig.add_subplot(3, 2, 2, aspect='equal')
+    phi = np.linspace(np.pi/4, np.pi*3/4, 61)
+    for R in radii:
+        x = R * np.cos(phi)
+        y = R * np.sin(phi)
+        ax.plot(x, y, lw=0.5)
+    ax.plot(0, rz[-1], 'k.', clip_on=False)
+    ax.plot(0, r[0, -1], 'k*', clip_on=False)
+    ax.axis('off')
+    ax.legend(['brain', 'CSF', 'skull', 'scalp', r'$\mathbf{P}$', 'EEG'],
+              fontsize=8, frameon=False)
+    ax.set_title('4-sphere head model')
+
+
+    sphere_model = FourSphereVolumeConductor(radii, sigmas, r)
+    # current dipole moment
+    p = f_sum['data'][int(T[0]*1000/srate):int(T[1]*1000/srate), :]
+    # compute potential
+    potential = sphere_model.calc_potential(p, rz).T
+
+    # plot dipole moment
+    ax = fig.add_subplot(3, 1, 2)
+    ax.plot(tvec[(tvec >= T[0]) & (tvec < T[1])], p)
+    ax.set_ylabel(r'$\mathbf{P}(t)$ (nA$\mu$m)', labelpad=0)
+    ax.legend(['$P_x$', '$P_y$', '$P_z$'], fontsize=8, frameon=True)
+    ax.set_title('current dipole moment sum')
+
+    # plot surface potential directly on top
+    ax = fig.add_subplot(3, 1, 3, sharex=ax)
+    ax.plot(tvec[(tvec >= T[0]) & (tvec < T[1])], potential*1000)  # mV->uV unit conversion
+    ax.set_ylabel('EEG (uV)', labelpad=0)
+    ax.set_xlabel(r'$t$ (ms)', labelpad=0)
+    ax.set_title('scalp potential')
+
+    fig.savefig(os.path.join(params.figures_path, 'current_dipole_moments.pdf'),
                 dpi=300)
     plt.close(fig)
