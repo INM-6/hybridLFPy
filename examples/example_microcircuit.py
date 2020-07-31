@@ -322,6 +322,7 @@ if properrun:
                 savelist = params.savelist,
                 savefolder = params.savefolder,
                 calculateCSD = params.calculateCSD,
+                calculateCurrentDipoleMoment = params.calculateCurrentDipoleMoment,
                 dt_output = params.dt_output,
                 POPULATIONSEED = SIMULATIONSEED + i,
                 #daughter class kwargs
@@ -343,7 +344,6 @@ if properrun:
         #object no longer needed
         del pop
 
-
 ####### Postprocess the simulation output ######################################
 
 
@@ -357,6 +357,7 @@ if properrun:
                            dt_output = params.dt_output,
                            savefolder = params.savefolder,
                            mapping_Yy = params.mapping_Yy,
+                           savelist = params.savelist
                            )
 
     #run through the procedure

@@ -115,9 +115,9 @@ class PostProcess(object):
         if RANK == 0:
             if 'LFP' in self.savelist:
                 #get the per population LFPs and total LFP from all populations:
-                self.LFPdict, self.LFPsum = self.calc_lfp()
-                self.LFPdictLayer = self.calc_lfp_layer()
-    
+                self.LFPdict, self.LFPsum = self.calc_measure('LFP')
+                self.LFPdictLayer = self.calc_measure_layer('LFP')
+
                 #save global LFP sum, and from L23E, L4I etc.:
                 f = h5py.File(os.path.join(self.savefolder,
                                            self.compound_file.format('LFP')
@@ -137,8 +137,8 @@ class PostProcess(object):
 
             if 'CSD' in self.savelist:
                 #get the per population CSDs and total CSD from all populations:
-                self.CSDdict, self.CSDsum = self.calc_csd()
-                self.CSDdictLayer = self.calc_csd_layer()
+                self.CSDdict, self.CSDsum = self.calc_measure('CSD')
+                self.CSDdictLayer = self.calc_measure_layer('CSD')
 
                 #save global CSD sum, and from L23E, L4I etc.:
                 f = h5py.File(os.path.join(self.savefolder,
@@ -157,6 +157,27 @@ class PostProcess(object):
                     f.create_dataset('data', data=value, compression=4)
                     f.close()
 
+            if 'current_dipole_moment' in self.savelist:
+                #get the per population CSDs and total CSD from all populations:
+                self.Pdict, self.Psum = self.calc_measure('current_dipole_moment')
+                self.PdictLayer = self.calc_measure_layer('P')
+
+                #save global current_dipole_moment sum, and from L23E, L4I etc.:
+                f = h5py.File(os.path.join(self.savefolder,
+                                           self.compound_file.format('current_dipole_moment')),
+                              'w')
+                f['srate'] = 1E3 / self.dt_output
+                f.create_dataset('data', data=self.Psum, compression=4)
+                f.close()
+
+                for key, value in list(self.PdictLayer.items()):
+                    f = h5py.File(os.path.join(self.populations_path,
+                                               self.output_file.format(key,
+                                                                       'current_dipole_moment.h5')
+                                               ), 'w')
+                    f['srate'] = 1E3 / self.dt_output
+                    f.create_dataset('data', data=value, compression=4)
+                    f.close()
         else:
             pass
 
@@ -177,114 +198,80 @@ class PostProcess(object):
             os.mkdir(self.populations_path)
 
 
-    def calc_lfp(self):
-        """ Sum all the LFP contributions from every cell type.
+    def calc_measure(self, measure='LFP'):
+        """Sum all the measure contributions from every cell type.
+
+        Parameters
+        ----------
+        measure: str
+            'LFP', 'CSD' or 'current_dipole_moment'
+
+        Returns
+        -------
+        measure_dict: dict of ndarray
+            Contributions by each cell type y
+        measure_sum: ndarray
+            Summed contributions of all cell types
         """
 
-        LFParray = np.array([])
-        LFPdict = {}
+        measure_array = np.array([])
+        measure_dict = {}
 
-        i = 0
-        for y in self.y:
-            fil = os.path.join(self.populations_path,
-                               self.output_file.format(y, 'LFP.h5'))
-
-            f = h5py.File(fil, 'r')
+        for i, y in enumerate(self.y):
+            fname = os.path.join(self.populations_path,
+                                 self.output_file.format(y,
+                                                         '{}.h5'.format(measure)
+                                                         )
+                                 )
+            f = h5py.File(fname, 'r')
 
             if i == 0:
-                LFParray = np.zeros((len(self.y),
-                                    f['data'].shape[0], f['data'].shape[1]))
+                measure_array = np.zeros((len(self.y),
+                                         f['data'].shape[0], f['data'].shape[1])
+                                         )
 
-            #fill in
-            LFParray[i, ] = f['data'][()]
-
-            LFPdict.update({y : f['data'][()]})
+            # fill in
+            measure_array[i, ] = f['data'][()]
+            measure_dict.update({y : f['data'][()]})
 
             f.close()
 
-            i += 1
-
-        return LFPdict,  LFParray.sum(axis=0)
+        return measure_dict,  measure_array.sum(axis=0)
 
 
-    def calc_csd(self):
-        """ Sum all the CSD contributions from every layer.
+    def calc_measure_layer(self, measure='LFP'):
         """
+        Calculate the measure from concatenated subpopulations residing in a
+        certain layer, e.g all L4E pops are summed, according to the
+        `mapping_Yy` attribute of the `hybridLFPy.Population` objects.
 
-        CSDarray = np.array([])
-        CSDdict = {}
+        Parameters
+        ----------
+        measure: str
+            'LFP', 'CSD' or 'current_dipole_moment'
 
-        i = 0
-        for y in self.y:
-            fil = os.path.join(self.populations_path,
-                               self.output_file.format(y, 'CSD.h5'))
-
-            f = h5py.File(fil, 'r')
-
-            if i == 0:
-                CSDarray = np.zeros((len(self.y),
-                                    f['data'].shape[0], f['data'].shape[1]))
-
-            #fill in
-            CSDarray[i, ] = f['data'][()]
-
-            CSDdict.update({y : f['data'][()]})
-
-            f.close()
-
-            i += 1
-
-        return CSDdict,  CSDarray.sum(axis=0)
-
-
-    def calc_lfp_layer(self):
+        Returns
+        -------
+        measure_dict: dict of ndarray
+            Contributions by each subpopulation Y
         """
-        Calculate the LFP from concatenated subpopulations residing in a
-        certain layer, e.g all L4E pops are summed, according to the `mapping_Yy`
-        attribute of the `hybridLFPy.Population` objects.
-        """
-        LFPdict = {}
+        measure_dict = {}
 
         lastY = None
         for Y, y in self.mapping_Yy:
             if lastY != Y:
                 try:
-                    LFPdict.update({Y : self.LFPdict[y]})
+                    measure_dict.update({Y: getattr(self, '{}dict'.format(measure))[y]})
                 except KeyError:
                     pass
             else:
                 try:
-                    LFPdict[Y] += self.LFPdict[y]
+                    measure_dict[Y] += getattr(self, '{}dict'.format(measure))[y]
                 except KeyError:
                     pass
             lastY = Y
 
-        return LFPdict
-
-
-    def calc_csd_layer(self):
-        """
-        Calculate the CSD from concatenated subpopulations residing in a
-        certain layer, e.g all L4E pops are summed, according to the `mapping_Yy`
-        attribute of the `hybridLFPy.Population` objects.
-        """
-        CSDdict = {}
-
-        lastY = None
-        for Y, y in self.mapping_Yy:
-            if lastY != Y:
-                try:
-                    CSDdict.update({Y : self.CSDdict[y]})
-                except KeyError:
-                    pass
-            else:
-                try:
-                    CSDdict[Y] += self.CSDdict[y]
-                except KeyError:
-                    pass
-            lastY = Y
-
-        return CSDdict
+        return measure_dict
 
 
     def create_tar_archive(self):

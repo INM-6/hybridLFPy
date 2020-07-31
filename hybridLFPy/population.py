@@ -776,7 +776,6 @@ class PopulationSuper(object):
             if measure in self.savelist:
                 self.collectSingleContribs(measure)
 
-
         #calculate lfp from all cell contribs
         lfp = self.calc_signal_sum(measure='LFP')
 
@@ -785,7 +784,9 @@ class PopulationSuper(object):
             csd = self.calc_signal_sum(measure='CSD')
 
         if self.calculateCurrentDipoleMoment:
-            current_dipole_moment = self.calc_signal_sum(measure='current_dipole_moment')
+            self.collectSingleContribs('current_dipole_moment')
+            current_dipole_moment = self.calc_signal_sum(
+                measure='current_dipole_moment')
 
         if RANK == 0 and self.POPULATION_SIZE > 0:
             #saving LFPs
@@ -1345,7 +1346,7 @@ class Population(PopulationSuper):
 
             if self.calculateCurrentDipoleMoment:
                 cell.current_dipole_moment = helpers.decimate(
-                    cell.current_dipole_moment, q=self.decimatefrac)
+                    cell.current_dipole_moment.T, q=self.decimatefrac).T
 
 
             cell.x = electrode.x
