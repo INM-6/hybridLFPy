@@ -453,21 +453,23 @@
     		{
     		    /input_layer Set
 
-    		    % Create multimeter
-    		    /multimeter Create /this_multimeter Set
-    		    this_multimeter
-    		    <<
-        			/record_from [/weighted_spikes_ex /weighted_spikes_in]
-        			/label (depth_res_input_spikes-)
-        			y_in_Y layer_index get population_index get cell_type get
-        			(-)
-        			input_layer cvs join join join
-        			%/record_to [/file /memory]
-                    /record_to /ascii %[/file]
-        			/interval dt
-    		    >> SetStatus
-    		    dric_multimeter_GIDs [layer_index population_index cell_type input_layer] this_multimeter put
-    		    /dric_multimeter_GIDs Set
+    		    % Create multimeter for depth-resolved input currents
+                n_rec_depth_resolved_input 0 gt
+                {
+                    /multimeter Create /this_multimeter Set
+        		    this_multimeter
+        		    <<
+            			/record_from [/weighted_spikes_ex /weighted_spikes_in]
+            			/label (depth_res_input_spikes-)
+            			y_in_Y layer_index get population_index get cell_type get
+            			(-)
+            			input_layer cvs join join join
+            			/record_to /ascii
+            			/interval dt
+        		    >> SetStatus
+        		    dric_multimeter_GIDs [layer_index population_index cell_type input_layer] this_multimeter put
+        		    /dric_multimeter_GIDs Set
+                } if
 
     		    % Create readout neurons
     		    n_rec_depth_resolved_input 0 gt
@@ -1060,11 +1062,13 @@
 		    %%% Multimeters -> Readout neurons %%%
 		    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
-		    dric_multimeter_GIDs target_layer get target_pop get cell_type get input_layer get
-		    target_nodes
-		    /all_to_all
-		    Connect
+            n_rec_depth_resolved_input 0 gt
+            {
+    		    dric_multimeter_GIDs target_layer get target_pop get cell_type get input_layer get
+    		    target_nodes
+    		    /all_to_all
+    		    Connect
+            } if
 
 		}for
 	    }for
