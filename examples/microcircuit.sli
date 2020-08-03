@@ -532,7 +532,7 @@
 	        /target_pop Set
 
             % get neuron IDs
-            neuron_subnet_GIDs target_layer get target_pop get %GetGlobalNodes
+            neuron_subnet_GIDs target_layer get target_pop get
             /target_nodes Set
 
             % determine the number of target neurons that will be used to compute the number of synapses.
@@ -559,7 +559,7 @@
 		        /source_pop Set
 
 		        % get neuron IDs
-                neuron_subnet_GIDs source_layer get source_pop get %GetGlobalNodes
+                neuron_subnet_GIDs source_layer get source_pop get
                 /source_nodes Set
 
 		        % determine the number of source neurons that will be used to compute the number of synapses
@@ -674,7 +674,7 @@
 
         n_thal 0 gt
         {
-            th_neuron_subnet_GID %GetGlobalNodes
+            th_neuron_subnet_GID
             /source_nodes Set
 
             C_th target_layer get target_pop get /this_conn Set
@@ -808,12 +808,11 @@
 
     n_thal 0 gt
     {
-	   % Connect thalamic poisson_generator to thalamic neurons (parrots)
+	    % Connect thalamic poisson_generator to thalamic neurons (parrots)
         th_poisson_GID
         th_neuron_subnet_GID
 	    /all_to_all
         Connect
-
 
 
         % Connect thalamic spike_generator to thalamic neurons (parrots)
@@ -822,9 +821,10 @@
 	    /all_to_all
         Connect
 
+
         % Connect thalamic sinusoidal_poisson_generator to thalamic neurons (parrots)
         th_smp_GID
-        th_neuron_subnet_GID %GetGlobalNodes
+        th_neuron_subnet_GID
 	    /all_to_all
         Connect
 
@@ -847,7 +847,7 @@
     record_thalamic_spikes n_thal 0 gt and
     {
         % Connect thalamic neurons to spike detector
-        th_neuron_subnet_GID %GetGlobalNodes
+        th_neuron_subnet_GID
         th_spike_detector_GID
 	    /all_to_all
 	Connect
@@ -864,7 +864,6 @@
     % for depth resolved input currents
     n_rec_depth_resolved_input 0 gt
     {
-
     0 1 num_layers 1 sub % target layer
     {
         /target_layer Set
@@ -881,14 +880,14 @@
 		{
 		    /input_layer Set
 
-		    readout_neuron_subnet_GIDs target_layer get target_pop get cell_type get input_layer get %GetGlobalNodes
+		    readout_neuron_subnet_GIDs target_layer get target_pop get cell_type get input_layer get
 		    /target_nodes Set
 
 		    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		    %%% Thalamus -> Readout neurons %%%
 		    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-		    th_neuron_subnet_GID %GetGlobalNodes
+		    th_neuron_subnet_GID
 		    /source_nodes Set
 
 
@@ -970,7 +969,7 @@
 			{
 			    /source_pop Set
 
-			    neuron_subnet_GIDs source_layer get source_pop get %GetGlobalNodes
+			    neuron_subnet_GIDs source_layer get source_pop get
 			    /source_nodes Set
 
 
