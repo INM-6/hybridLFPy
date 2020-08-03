@@ -76,11 +76,11 @@
 
     n_rec_depth_resolved_input 0 gt
     {
-	area 1. eq not
-	{
-	    /CheckParameters /area raiseerror
-	    (Depth resolved inputn currents currently only work for area = 1) ==
-	} if
+    	area 1. eq not
+    	{
+    	    /CheckParameters /area raiseerror
+    	    (Depth resolved input currents currently only work for area = 1) ==
+    	} if
     } if
 
 } def
@@ -93,12 +93,12 @@
 
     % set global kernel parameters
     <<
-      /resolution dt
-      /total_num_virtual_procs total_num_virtual_procs
-      /overwrite_files overwrite_existing_files
-      /rng_seeds [total_num_virtual_procs] Range seed_offset add
-      /grng_seed total_num_virtual_procs seed_offset add 1 add
-      /data_path raw_nest_output_path
+        /resolution dt
+        /total_num_virtual_procs total_num_virtual_procs
+        /overwrite_files overwrite_existing_files
+        /rng_seeds [total_num_virtual_procs] Range seed_offset add
+        /grng_seed total_num_virtual_procs seed_offset add 1 add
+        /data_path raw_nest_output_path
     >> SetKernelStatus
 
     % initialize random number generators
@@ -412,16 +412,18 @@
 
 
     	    % Voltmeter
-    	    /voltmeter Create /this_voltmeter Set
-    	    this_voltmeter
-    	    <<
-    	       /label voltmeter_label layer_index 2 mul population_index add 1 add cvs join
-    	       /record_to record_to
-               /interval dt
-    	    >> SetStatus
-            voltmeter_GIDs [layer_index population_index] this_voltmeter put
-    	    /voltmeter_GIDs Set
-
+            num_neurons_rec_voltage layer_index get population_index get 0 gt
+            {
+        	    /voltmeter Create /this_voltmeter Set
+        	    this_voltmeter
+        	    <<
+        	       /label voltmeter_label layer_index 2 mul population_index add 1 add cvs join
+        	       /record_to record_to
+                   /interval dt
+        	    >> SetStatus
+                voltmeter_GIDs [layer_index population_index] this_voltmeter put
+        	    /voltmeter_GIDs Set
+            } if
 
     	    % Multimeter for population resolved input currents
     	    /multimeter Create /this_multimeter Set
@@ -763,15 +765,15 @@
         Connect
 
         % Connect to the voltmeter,
-	% but skip if number of requested neurons is 0 (Take will complain)
-	num_neurons_rec_voltage target_layer get target_pop get 0 gt {
-	    voltmeter_GIDs target_layer get target_pop get
+	    % but skip if number of requested neurons is 0 (Take will complain)
+	    num_neurons_rec_voltage target_layer get target_pop get 0 gt {
+	        voltmeter_GIDs target_layer get target_pop get
             target_nodes
             % record from a continuous range of IDs
-	    num_neurons_rec_voltage target_layer get target_pop get Take
+	        num_neurons_rec_voltage target_layer get target_pop get Take
             /all_to_all
        	    Connect
-	} if
+	    } if
 
 
         % Connect to the Poisson generators
@@ -789,14 +791,14 @@
 
 
         % Connect multimeter,
-	% but skip if number of requested neurons is 0 (Take will complain)
-	target_nodes num_neurons_rec_input_spikes target_layer get target_pop get 0 gt {
-	    multimeter_GIDs target_layer get target_pop get
+	    % but skip if number of requested neurons is 0 (Take will complain)
+	    target_nodes num_neurons_rec_input_spikes target_layer get target_pop get 0 gt {
+	        multimeter_GIDs target_layer get target_pop get
             % record from a continuous range of IDs - appropriate for networks without topology
             target_nodes num_neurons_rec_input_spikes target_layer get target_pop get Take
             /all_to_all
-	    Connect
-	} if 
+	        Connect
+	    } if
 
         } for
     } for
