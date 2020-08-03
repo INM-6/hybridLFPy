@@ -426,18 +426,19 @@
             } if
 
     	    % Multimeter for population resolved input currents
-    	    /multimeter Create /this_multimeter Set
-    	    this_multimeter
-    	    <<
-        		/record_from [/weighted_spikes_ex /weighted_spikes_in]
-        		/label weighted_input_spikes_label layer_index 2 mul population_index add 1 add cvs join
-        		/record_to record_to
-                /interval dt
-    	    >> SetStatus
+            num_neurons_rec_input_spikes layer_index get population_index get 0 gt {
+        	    /multimeter Create /this_multimeter Set
+        	    this_multimeter
+        	    <<
+            		/record_from [/weighted_spikes_ex /weighted_spikes_in]
+            		/label weighted_input_spikes_label layer_index 2 mul population_index add 1 add cvs join
+            		/record_to record_to
+                    /interval dt
+        	    >> SetStatus
 
-    	    multimeter_GIDs [layer_index population_index] this_multimeter put
-    	    /multimeter_GIDs Set
-
+        	    multimeter_GIDs [layer_index population_index] this_multimeter put
+        	    /multimeter_GIDs Set
+            } if
 
     	    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     	    %%% Create multimeters and readout neurons for depth resolved input currents %%%
