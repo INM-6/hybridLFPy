@@ -1,8 +1,11 @@
 name: hybridlfpy
+channels:
+  - conda-forge
+  - defaults
 dependencies:
-  - python=3.7
+  - python=3
   - pip
-  - lfpy
+  - lfpy>=2.1
   - numpydoc
   - sphinx_rtd_theme
   - nest-simulator
