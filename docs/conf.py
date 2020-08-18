@@ -226,6 +226,12 @@ latex_documents = [
 # If false, no module index is generated.
 #latex_domain_indices = True
 
+# Suppress warnings of the type
+# WARNING: toctree contains reference to nonexisting document u'hybridLFPy.xxx.xxx'
+numpydoc_show_class_members = False
+
+def setup(app):
+    app.add_stylesheet('custom.css')  # may also be an URL
 
 # -- Options for manual page output --------------------------------------------
 
