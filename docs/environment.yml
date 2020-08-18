@@ -1,0 +1,9 @@
+name: hybridlfpy
+dependencies:
+  - python=3.7
+  - pip
+  - lfpy
+  - numpydoc
+  - sphinx_rtd_theme
+  - nest-simulator
+  - pip:
