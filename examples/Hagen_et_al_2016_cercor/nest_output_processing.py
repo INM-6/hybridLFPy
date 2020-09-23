@@ -106,13 +106,13 @@ def tar_raw_nest_output(raw_nest_output_path,
         # create tarfile
         fname = raw_nest_output_path + '.tar'
         with tarfile.open(fname, 'a') as t:
-            t.add(raw_nest_output_path)
+            t.add(raw_nest_output_path, 
+                  arcname='raw_nest_output')
 
         # remove files from <raw_nest_output_path>
         if delete_files:
             for pattern in filepatterns:
                 for p in Path(raw_nest_output_path).glob(pattern):
-                    print('deleting {}'.format(p))
                     while p.is_file():
                         try:
                             p.unlink()
