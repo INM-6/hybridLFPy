@@ -11,6 +11,7 @@ import numpy as np
 from glob import glob
 from hybridLFPy import helpers
 import tarfile
+from pathlib import Path
 from mpi4py import MPI
 
 ###################################
@@ -109,11 +110,8 @@ def tar_raw_nest_output(raw_nest_output_path,
 
         # remove files from <raw_nest_output_path>
         for pattern in filepatterns:
-            for f in glob(os.path.join(raw_nest_output_path, pattern)):
-                try:
-                    os.remove(f)
-                except OSError:
-                    print('Error while deleting {}'.format(f))
+            for p in Path(raw_nest_output_path).glob(pattern):
+                p.unlink()
 
     # sync
     COMM.Barrier()
