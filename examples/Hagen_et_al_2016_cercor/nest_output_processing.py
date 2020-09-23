@@ -84,7 +84,10 @@ def merge_gdf(model_params,
 
 def tar_raw_nest_output(raw_nest_output_path,
                         delete_files=True,
-                        filepatterns=['*.dat', '*.gdf']):
+                        filepatterns=['voltages*.dat',
+                                      'spikes*.dat',
+                                      'weighted_input_spikes*.dat'
+                                      '*.gdf']):
     '''
     Create tar file of content in `raw_nest_output_path` and optionally
     delete files matching given pattern.
