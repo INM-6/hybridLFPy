@@ -9,8 +9,8 @@ This file reformats NEST output in a convinient way.
 import os
 import numpy as np
 from glob import glob
-from analysis_params import params
 from hybridLFPy import helpers
+import tarfile
 from mpi4py import MPI
 
 ###################################
@@ -77,6 +77,42 @@ def merge_gdf(model_params,
                                         '_{}.{}'.format(model_params.X[pop_idx],
                                                         file_type)))
 
+    COMM.Barrier()
+
+    return
+
+
+def tar_raw_nest_output(raw_nest_output_path,
+                        delete_files=True,
+                        filepatterns=['*.dat', '*.gdf']):
+    '''
+    Create tar file of content in `raw_nest_output_path` and optionally
+    delete files matching given pattern.
+
+    Parameters
+    ----------
+    raw_nest_output_path: path
+        params.raw_nest_output_path
+    delete_files: bool
+        if True, delete .dat files
+    filepatterns: list of str
+        patterns of files being deleted
+    '''
+    if RANK == 0:
+        # create tarfile
+        fname = raw_nest_output_path + '.tar'
+        with tarfile.open(fname, 'a') as t:
+            t.add(raw_nest_output_path)
+
+        # remove files from <raw_nest_output_path>
+        for pattern in filepatterns:
+            for f in glob(os.path.join(raw_nest_output_path, pattern)):
+                try:
+                    os.remove(f)
+                except OSError:
+                    print('Error while deleting {}'.format(f))
+
+    # sync
     COMM.Barrier()
 
     return
