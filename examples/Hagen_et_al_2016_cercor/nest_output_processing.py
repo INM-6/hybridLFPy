@@ -54,7 +54,7 @@ def merge_gdf(model_params,
     raw_gids = get_raw_gids(model_params)
     pop_sizes = [raw_gids[i][1]-raw_gids[i][0]+1
                  for i in np.arange(model_params.Npops)]
-    raw_first_gids =  [raw_gids[i][0] for i in np.arange(model_params.Npops)]
+    raw_first_gids = [raw_gids[i][0] for i in np.arange(model_params.Npops)]
     converted_first_gids = [int(1 + np.sum(pop_sizes[:i]))
                             for i in np.arange(model_params.Npops)]
 
@@ -109,9 +109,13 @@ def tar_raw_nest_output(raw_nest_output_path,
             t.add(raw_nest_output_path)
 
         # remove files from <raw_nest_output_path>
-        for pattern in filepatterns:
-            for p in Path(raw_nest_output_path).glob(pattern):
-                p.unlink()
+        if delete_files:
+            for pattern in filepatterns:
+                for p in Path(raw_nest_output_path).glob(pattern):
+                    try:
+                        p.unlink()
+                    except OSError as e:
+                        print('Error: {} : {}'.format(p, e.strerror))
 
     # sync
     COMM.Barrier()
