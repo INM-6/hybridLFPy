@@ -87,7 +87,7 @@ def tar_raw_nest_output(raw_nest_output_path,
                         delete_files=True,
                         filepatterns=['voltages*.dat',
                                       'spikes*.dat',
-                                      'weighted*.dat'
+                                      'weighted_input_spikes_*.dat',
                                       '*.gdf']):
     '''
     Create tar file of content in `raw_nest_output_path` and optionally
@@ -113,7 +113,7 @@ def tar_raw_nest_output(raw_nest_output_path,
             for pattern in filepatterns:
                 for p in Path(raw_nest_output_path).glob(pattern):
                     print('deleting {}'.format(p))
-                    while p.isfile():
+                    while p.is_file():
                         try:
                             p.unlink()
                         except OSError as e:
