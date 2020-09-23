@@ -46,6 +46,7 @@ import nest   # Import not used, but done in order to ensure correct execution
 from hybridLFPy import PostProcess, Population, CachedNetwork
 from hybridLFPy import setup_file_dest, helpers
 from glob import glob
+import tarfile
 from mpi4py import MPI
 
 
@@ -261,12 +262,47 @@ def sli_run(parameters=object(),
     # Python -> SLI
     send_nest_params_to_sli(vars(parameters))
 
-    #set SLI verbosity
+    # set SLI verbosity
     nest.ll_api.sli_run("%s setverbosity" % verbosity)
 
     # Run NEST/SLI simulation
     nest.ll_api.sli_run('(%s) run' % fname)
 
+
+def tar_raw_nest_output(raw_nest_output_path,
+                        delete_files=True,
+                        filepatterns=['*.dat', '*.gdf']):
+    '''
+    Create tar file of content in `raw_nest_output_path` and optionally
+    delete files matching given pattern.
+
+    Parameters
+    ----------
+    raw_nest_output_path: path
+        params.raw_nest_output_path
+    delete_files: bool
+        if True, delete .dat files
+    filepatterns: list of str
+        patterns of files being deleted
+    '''
+    if RANK == 0:
+        # create tarfile
+        fname = raw_nest_output_path + '.tar'
+        with tarfile.open(fname, 'a') as t:
+            t.add(raw_nest_output_path)
+
+        # remove files from <raw_nest_output_path>
+        for pattern in filepatterns:
+            for f in glob(os.path.join(raw_nest_output_path, pattern)):
+                try:
+                    os.remove(f)
+                except OSError:
+                    print('Error while deleting {}'.format(f))
+
+    # sync
+    COMM.Barrier()
+
+    return
 
 ###############################################################################
 # MAIN simulation procedure
@@ -295,6 +331,10 @@ if properrun:
               file_type='dat',
               fileprefix=params.networkSimParams['label'],
               skiprows=3)
+
+    # create tar file archive of <raw_nest_output_path> folder as .dat files are
+    # no longer needed. Remove
+    tar_raw_nest_output(params.raw_nest_output_path, delete_files=True)
 
 #Create an object representation of the simulation output that uses sqlite3
 networkSim = CachedNetwork(**params.networkSimParams)
