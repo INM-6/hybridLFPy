@@ -112,10 +112,12 @@ def tar_raw_nest_output(raw_nest_output_path,
         if delete_files:
             for pattern in filepatterns:
                 for p in Path(raw_nest_output_path).glob(pattern):
-                    try:
-                        p.unlink()
-                    except OSError as e:
-                        print('Error: {} : {}'.format(p, e.strerror))
+                    print('deleting {}'.format(p))
+                    while p.isfile():
+                        try:
+                            p.unlink()
+                        except OSError as e:
+                            print('Error: {} : {}'.format(p, e.strerror))
 
     # sync
     COMM.Barrier()
