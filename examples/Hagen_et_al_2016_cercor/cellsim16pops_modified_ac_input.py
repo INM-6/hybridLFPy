@@ -101,7 +101,11 @@ nest_output_processing.merge_gdf(networkParams,
 #nest_output_processing.create_spatial_input_spikes_hdf5(networkParams,
 #                                        fileprefix='depth_res_input_spikes-')
 
-
+# create tar file archive of <raw_nest_output_path> folder as .dat files are
+# no longer needed. Also removes .dat files
+nest_output_processing.tar_raw_nest_output(params.raw_nest_output_path,
+                                           delete_files=True)
+                                           
 #Create an object representation of the simulation output that uses sqlite3
 networkSim = CachedNetwork(**params.networkSimParams)
 
