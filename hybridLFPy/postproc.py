@@ -31,6 +31,10 @@ class PostProcess(object):
         Postsynaptic cell-type or population-names.
     dt_output : float
         Time resolution of output data.
+    savelist : list
+        List of strings, each corresponding to LFPy.Cell attributes
+    probes : list
+        list of LFPykit.models.* like instances
     savefolder : str
         Path to main output folder.
     mapping_Yy : list
@@ -47,14 +51,15 @@ class PostProcess(object):
                  y=['EX', 'IN'],
                  dt_output=1.,
                  mapping_Yy=[('EX', 'EX'),
-                               ('IN', 'IN')],
-                 savelist=['somav', 'somapos', 'x', 'y', 'z', 'LFP', 'CSD'],
+                             ('IN', 'IN')],
+                 savelist=['somapos'],
+                 probes=[],
                  savefolder='simulation_output_example_brunel',
                  cells_subfolder='cells',
                  populations_subfolder='populations',
                  figures_subfolder='figures',
                  output_file='{}_population_{}',
-                 compound_file='{}sum.h5',
+                 compound_file='{}_sum.h5',
                  ):
         """
         class `PostProcess`: Methods to deal with the contributions of every
@@ -72,6 +77,8 @@ class PostProcess(object):
             e.g., [('L4E', 'p4'), ('L4E', 'ss4')].
         savelist : list
             List of strings, each corresponding to LFPy.Cell attributes
+        probes : list
+            list of LFPykit.models.* like instances
         savefolder : str
             Path to main output folder.
         cells_subfolder : str
@@ -85,7 +92,7 @@ class PostProcess(object):
             '{}_population_{}.h5'
         compound_file : str
             formattable file name for population signals, e.g.,
-            '{}sum.h5'
+            '{}_sum.h5'
 
 
         """
@@ -94,6 +101,7 @@ class PostProcess(object):
         self.dt_output = dt_output
         self.mapping_Yy = mapping_Yy
         self.savelist = savelist
+        self.probes = probes
         self.savefolder = savefolder
         self.cells_path = os.path.join(savefolder, cells_subfolder)
         self.populations_path = os.path.join(savefolder, populations_subfolder)
@@ -113,71 +121,30 @@ class PostProcess(object):
         cell-specific output files.
         """
         if RANK == 0:
-            if 'LFP' in self.savelist:
-                #get the per population LFPs and total LFP from all populations:
-                self.LFPdict, self.LFPsum = self.calc_measure('LFP')
-                self.LFPdictLayer = self.calc_measure_layer('LFP')
+            for probe in self.probes:
+                # sum up contributions of different populations
+                measure = probe.__class__.__name__
+                datadict, data = self.calc_measure(measure)
 
-                #save global LFP sum, and from L23E, L4I etc.:
+                # save global sum
                 f = h5py.File(os.path.join(self.savefolder,
-                                           self.compound_file.format('LFP')
+                                           self.compound_file.format(measure)
                                            ), 'w')
                 f['srate'] = 1E3 / self.dt_output
-                f.create_dataset('data', data=self.LFPsum, compression=4)
+                f.create_dataset('data', data=data, compression=4)
                 f.close()
 
-                for key, value in list(self.LFPdictLayer.items()):
-                    f = h5py.File(os.path.join(self.populations_path,
-                                               self.output_file.format(key,
-                                                                       'LFP.h5')
-                                               ), 'w')
+                # save per-population contributions
+                for key, value in list(datadict.items()):
+                    f = h5py.File(os.path.join(
+                            self.populations_path,
+                            self.output_file.format(key,
+                                                    '{}.h5'.format(measure))),
+                                  'w')
                     f['srate'] = 1E3 / self.dt_output
                     f.create_dataset('data', data=value, compression=4)
                     f.close()
 
-            if 'CSD' in self.savelist:
-                #get the per population CSDs and total CSD from all populations:
-                self.CSDdict, self.CSDsum = self.calc_measure('CSD')
-                self.CSDdictLayer = self.calc_measure_layer('CSD')
-
-                #save global CSD sum, and from L23E, L4I etc.:
-                f = h5py.File(os.path.join(self.savefolder,
-                                           self.compound_file.format('CSD')),
-                              'w')
-                f['srate'] = 1E3 / self.dt_output
-                f.create_dataset('data', data=self.CSDsum, compression=4)
-                f.close()
-
-                for key, value in list(self.CSDdictLayer.items()):
-                    f = h5py.File(os.path.join(self.populations_path,
-                                               self.output_file.format(key,
-                                                                       'CSD.h5')
-                                               ), 'w')
-                    f['srate'] = 1E3 / self.dt_output
-                    f.create_dataset('data', data=value, compression=4)
-                    f.close()
-
-            if 'current_dipole_moment' in self.savelist:
-                #get the per population CSDs and total CSD from all populations:
-                self.Pdict, self.Psum = self.calc_measure('current_dipole_moment')
-                self.PdictLayer = self.calc_measure_layer('P')
-
-                #save global current_dipole_moment sum, and from L23E, L4I etc.:
-                f = h5py.File(os.path.join(self.savefolder,
-                                           self.compound_file.format('current_dipole_moment')),
-                              'w')
-                f['srate'] = 1E3 / self.dt_output
-                f.create_dataset('data', data=self.Psum, compression=4)
-                f.close()
-
-                for key, value in list(self.PdictLayer.items()):
-                    f = h5py.File(os.path.join(self.populations_path,
-                                               self.output_file.format(key,
-                                                                       'current_dipole_moment.h5')
-                                               ), 'w')
-                    f['srate'] = 1E3 / self.dt_output
-                    f.create_dataset('data', data=value, compression=4)
-                    f.close()
         else:
             pass
 
@@ -275,7 +242,7 @@ class PostProcess(object):
 
 
     def create_tar_archive(self):
-        """ Create a tar archive of the main simulation outputs.
+        """Create a tar archive of the main simulation outputs.
         """
         #file filter
         EXCLUDE_FILES = glob.glob(os.path.join(self.savefolder, 'cells'))
