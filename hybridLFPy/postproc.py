@@ -145,6 +145,19 @@ class PostProcess(object):
                     f.create_dataset('data', data=value, compression=4)
                     f.close()
 
+                # sum up contributions in for cell type y belonging to
+                # population Y
+                Y_datadict = self.calc_measure_layer(datadict, measure)
+
+                for Y, value in Y_datadict.items():
+                    f = h5py.File(
+                        os.path.join(self.populations_path,
+                                     '{}_population_{}.h5'.format(Y, measure)),
+                                     'w')
+                    f['data'] = value
+                    f['srate'] = 1E3 / self.dt_output
+                    f.close()
+
         else:
             pass
 
@@ -206,7 +219,7 @@ class PostProcess(object):
         return measure_dict,  measure_array.sum(axis=0)
 
 
-    def calc_measure_layer(self, measure='LFP'):
+    def calc_measure_layer(self, datadict, measure='LFP'):
         """
         Calculate the measure from concatenated subpopulations residing in a
         certain layer, e.g all L4E pops are summed, according to the
@@ -214,8 +227,8 @@ class PostProcess(object):
 
         Parameters
         ----------
+        datadict: dict
         measure: str
-            'LFP', 'CSD' or 'current_dipole_moment'
 
         Returns
         -------
@@ -228,12 +241,12 @@ class PostProcess(object):
         for Y, y in self.mapping_Yy:
             if lastY != Y:
                 try:
-                    measure_dict.update({Y: getattr(self, '{}dict'.format(measure))[y]})
+                    measure_dict.update({Y: datadict[y]})
                 except KeyError:
                     pass
             else:
                 try:
-                    measure_dict[Y] += getattr(self, '{}dict'.format(measure))[y]
+                    measure_dict[Y] += datadict[y]
                 except KeyError:
                     pass
             lastY = Y

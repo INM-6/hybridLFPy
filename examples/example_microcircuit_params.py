@@ -766,13 +766,6 @@ class multicompartment_params(point_neuron_network_params):
             'skiprows' : 0,
         }
 
-
-        # Switch for current source density computations
-        self.calculateCSD = True
-
-        # Switch for calculating current dipole moments
-        self.calculateCurrentDipoleMoment = True
-
     ####################################
     #                                  #
     #                                  #
@@ -925,6 +918,7 @@ class multicompartment_params(point_neuron_network_params):
                     'z_min' : depth - 25,
                     'z_max' : depth + 25,
                     'min_cell_interdist' : 1.,
+                    'min_r': [[-1E199, -1600, -1550, 1E99],[0, 0, 10, 10]]
                 }
             })
 
@@ -980,31 +974,17 @@ class multicompartment_params(point_neuron_network_params):
             'n' : 50,
             'seedvalue' : None,
             #dendrite line sources, soma sphere source (Linden2014)
-            'method' : 'soma_as_point',
-            #no somas within the constraints of the "electrode shank":
-            'r_z': np.array([[-1E199, -1600, -1550, 1E99],[0, 0, 10, 10]]),
+            'method' : 'root_as_point',
         }
 
+        # parameters for LFPykit.LaminarCurrentSourceDensity
+        self.CSDParams = dict(
+            z=np.array([[-(i + 1) * 100, -i * 100] for i in range(16)]) + 50.,
+            r=np.ones(16) * np.sqrt(1000**2 / np.pi)  # same as pop radius
+        )
 
-        #these variables will be saved to file for each cell and electrdoe object
-        self.savelist = [
-            'somav',
-            'dt',
-            'somapos',
-            'x',
-            'y',
-            'z',
-            'LFP',
-            'CSD',
-            'morphology',
-            'default_rotation',
-            'electrodecoeff',
-        ]
-        if 'current_dipole_moment' not in self.savelist \
-                and self.calculateCurrentDipoleMoment:
-            self.savelist.append('current_dipole_moment')
-
-
+        # these cell attributes variables will be saved to file
+        self.savelist = []
 
         #########################################
         # MISC                                  #

@@ -47,6 +47,7 @@ from hybridLFPy import PostProcess, Population, CachedNetwork
 from hybridLFPy import setup_file_dest, helpers
 from glob import glob
 import tarfile
+import lfpykit
 from mpi4py import MPI
 
 
@@ -345,6 +346,14 @@ networkSim = CachedNetwork(**params.networkSimParams)
 toc = time() - tic
 print('NEST simulation and gdf file processing done in  %.3f seconds' % toc)
 
+properrun = True
+
+##### Set up LFPykit measurement probes for LFPs and CSDs
+if properrun:
+    probes = []
+    probes.append(lfpykit.RecExtElectrode(cell=None, **params.electrodeParams))
+    probes.append(lfpykit.LaminarCurrentSourceDensity(cell=None, **params.CSDParams))
+    probes.append(lfpykit.CurrentDipoleMoment(cell=None))
 
 ####### Set up populations #####################################################
 
@@ -361,11 +370,9 @@ if properrun:
                 populationParams = params.populationParams[y],
                 y = y,
                 layerBoundaries = params.layerBoundaries,
-                electrodeParams = params.electrodeParams,
+                probes=probes,
                 savelist = params.savelist,
                 savefolder = params.savefolder,
-                calculateCSD = params.calculateCSD,
-                calculateCurrentDipoleMoment = params.calculateCurrentDipoleMoment,
                 dt_output = params.dt_output,
                 POPULATIONSEED = SIMULATIONSEED + i,
                 #daughter class kwargs
@@ -398,6 +405,7 @@ if properrun:
     #of population LFPs, CSDs etc
     postproc = PostProcess(y = params.y,
                            dt_output = params.dt_output,
+                           probes=probes,
                            savefolder = params.savefolder,
                            mapping_Yy = params.mapping_Yy,
                            savelist = params.savelist
@@ -544,13 +552,15 @@ if RANK == 0:
 
 
     plot_signal_sum(ax1, z=params.electrodeParams['z'],
-                    fname=os.path.join(params.savefolder, 'CSDsum.h5'),
-                    unit='$\mu$Amm$^{-3}$', T=T)
+                    fname=os.path.join(params.savefolder,
+                                       'LaminarCurrentSourceDensity_sum.h5'),
+                    unit='nA$\mu$m$^{-3}$', T=T)
     ax1.set_xticklabels([])
     ax1.set_xlabel('')
 
     plot_signal_sum(ax2, z=params.electrodeParams['z'],
-                    fname=os.path.join(params.savefolder, 'LFPsum.h5'),
+                    fname=os.path.join(params.savefolder,
+                                       'RecExtElectrode_sum.h5'),
                     unit='mV', T=T)
     ax2.set_xlabel('$t$ (ms)')
 
@@ -568,15 +578,15 @@ if RANK == 0:
     P_Y_var = np.zeros((len(params.Y)+1, 3))  # dipole moment variance
     for i, Y in enumerate(params.Y):
         f = h5py.File(os.path.join(params.savefolder, 'populations',
-                                   '{}_population_current_dipole_moment.h5'.format(Y)), 'r')
+                                   '{}_population_CurrentDipoleMoment.h5'.format(Y)), 'r')
         srate = f['srate'][()]
-        P_Y_var[i, :] = f['data'][int(T[0]*1000/srate):, :].var(axis=0)
+        P_Y_var[i, :] = f['data'][:, int(T[0]*1000/srate):].var(axis=-1)
 
     f_sum = h5py.File(os.path.join(params.savefolder,
-                      'current_dipole_momentsum.h5'), 'r')
+                      'CurrentDipoleMoment_sum.h5'), 'r')
 
-    P_Y_var[-1, :] = f_sum['data'][int(T[0]*1000/srate):, :].var(axis=0)
-    tvec = np.arange(f_sum['data'].shape[0]) * 1000. / srate
+    P_Y_var[-1, :] = f_sum['data'][:, int(T[0]*1000/srate):].var(axis=-1)
+    tvec = np.arange(f_sum['data'].shape[-1]) * 1000. / srate
 
     fig = plt.figure(figsize=(5, 8))
     fig.subplots_adjust(left=0.2, right=0.95, bottom=0.075, top=0.95,
@@ -610,22 +620,22 @@ if RANK == 0:
     ax.set_title('4-sphere head model')
 
 
-    sphere_model = FourSphereVolumeConductor(radii, sigmas, r)
+    sphere_model = FourSphereVolumeConductor(r, radii, sigmas)
     # current dipole moment
-    p = f_sum['data'][int(T[0]*1000/srate):int(T[1]*1000/srate), :]
+    p = f_sum['data'][:, int(T[0]*1000/srate):int(T[1]*1000/srate)]
     # compute potential
-    potential = sphere_model.calc_potential(p, rz).T
+    potential = sphere_model.get_dipole_potential(p, rz)
 
     # plot dipole moment
     ax = fig.add_subplot(3, 1, 2)
-    ax.plot(tvec[(tvec >= T[0]) & (tvec < T[1])], p)
+    ax.plot(tvec[(tvec >= T[0]) & (tvec < T[1])], p.T)
     ax.set_ylabel(r'$\mathbf{P}(t)$ (nA$\mu$m)', labelpad=0)
     ax.legend(['$P_x$', '$P_y$', '$P_z$'], fontsize=8, frameon=True)
     ax.set_title('current dipole moment sum')
 
     # plot surface potential directly on top
     ax = fig.add_subplot(3, 1, 3, sharex=ax)
-    ax.plot(tvec[(tvec >= T[0]) & (tvec < T[1])], potential*1000)  # mV->uV unit conversion
+    ax.plot(tvec[(tvec >= T[0]) & (tvec < T[1])], potential.T*1000)  # mV->uV unit conversion
     ax.set_ylabel('EEG (uV)', labelpad=0)
     ax.set_xlabel(r'$t$ (ms)', labelpad=0)
     ax.set_title('scalp potential')
