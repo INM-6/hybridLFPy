@@ -713,7 +713,7 @@ class PopulationSuper(object):
                                      '%s_%ss.h5' % (self.y, measure))
                 f = h5py.File(fname, 'w')
                 f.create_dataset('data', data=data, compression=4)
-                f['srate'] = self.output[0]['srate']
+                f['srate'] = 1E3 / self.dt_output
                 f.close()
                 assert(os.path.isfile(fname))
 
