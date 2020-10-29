@@ -1261,6 +1261,8 @@ class Population(PopulationSuper):
         cell.set_rotation(**self.rotations[cellindex])
 
         if return_just_cell:
+            # clean up hoc namespace
+            cell.__del__()
             return cell
         else:
             self.insert_all_synapses(cellindex, cell)
@@ -1295,6 +1297,9 @@ class Population(PopulationSuper):
             for probe in self.probes:
                 self.output[cellindex][probe.__class__.__name__] = \
                     probe.data.copy()
+
+            # clean up hoc namespace
+            cell.__del__()
 
             print('cell %s population %s in %.2f s' % (cellindex, self.y,
                                                               time()-tic))
