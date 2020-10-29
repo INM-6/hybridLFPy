@@ -346,8 +346,6 @@ networkSim = CachedNetwork(**params.networkSimParams)
 toc = time() - tic
 print('NEST simulation and gdf file processing done in  %.3f seconds' % toc)
 
-properrun = True
-
 ##### Set up LFPykit measurement probes for LFPs and CSDs
 if properrun:
     probes = []

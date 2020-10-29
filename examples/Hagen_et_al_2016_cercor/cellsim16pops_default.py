@@ -42,6 +42,7 @@ import nest   # Import not used, but done in order to ensure correct execution
 import nest_simulation
 from hybridLFPy import PostProcess, Population, CachedNetwork, setup_file_dest
 import nest_output_processing
+import lfpykit
 
 
 #set some seed values
@@ -114,6 +115,12 @@ toc = time() - tic
 print('NEST simulation and gdf file processing done in  %.3f seconds' % toc)
 
 
+##### Set up LFPykit measurement probes for LFPs and CSDs
+if properrun:
+    probes = []
+    probes.append(lfpykit.RecExtElectrode(cell=None, **params.electrodeParams))
+    probes.append(lfpykit.LaminarCurrentSourceDensity(cell=None, **params.CSDParams))
+
 ####### Set up populations #####################################################
 
 #iterate over each cell type, and create populationulation object
@@ -127,10 +134,9 @@ for i, y in enumerate(params.y):
             populationParams = params.populationParams[y],
             y = y,
             layerBoundaries = params.layerBoundaries,
-            electrodeParams = params.electrodeParams,
+            probes=probes,
             savelist = params.savelist,
             savefolder = params.savefolder,
-            calculateCSD = params.calculateCSD,
             dt_output = params.dt_output,
             POPULATIONSEED = SIMULATIONSEED + i,
             #daughter class kwargs
@@ -162,6 +168,7 @@ np.random.seed(SIMULATIONSEED)
 #of population LFPs, CSDs etc
 postproc = PostProcess(y = params.y,
                        dt_output = params.dt_output,
+                       probes=probes,
                        savefolder = params.savefolder,
                        mapping_Yy = params.mapping_Yy,
                        )
