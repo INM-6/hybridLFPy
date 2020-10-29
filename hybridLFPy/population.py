@@ -605,6 +605,8 @@ class PopulationSuper(object):
                 dim0 = self.probes[ind].r.size
             elif measure.rfind('CurrentDipoleMoment') >= 0:
                 dim0 = 3
+            else:
+                dim0 = self.probes[ind].x.size
             data = np.zeros((dim0,
                              int(self.cellParams['tstop'] // self.dt_output
                                  ) + 1), dtype=np.float32)
