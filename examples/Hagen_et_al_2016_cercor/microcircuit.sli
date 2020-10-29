@@ -186,7 +186,7 @@
 % the following variables are created here:
 
 % neuron_subnet_GIDs
-% spike_detector_GIDs
+% spike_recorder_GIDs
 % voltmeter_GIDs
 % multimeter_GIDs
 % poisson_GIDs
@@ -203,7 +203,7 @@
 % th_spike_GID
 % th_smp_GID
 % th_pulsepacket_generator_subnet_GID
-% th_spike_detector_GID
+% th_spike_recorder_GID
 
 
 /CreateNetworkNodes
@@ -217,7 +217,7 @@
 
 
     /neuron_subnet_GIDs [num_layers num_pops_per_layer] 0 LayoutArray def  % neuron subnets
-    /spike_detector_GIDs [num_layers num_pops_per_layer] 0 LayoutArray def % spike detectors
+    /spike_recorder_GIDs [num_layers num_pops_per_layer] 0 LayoutArray def % spike detectors
     /voltmeter_GIDs [num_layers num_pops_per_layer] 0 LayoutArray def 	   % voltmeters
     /poisson_GIDs [num_layers num_pops_per_layer] 0 LayoutArray def	   % poisson generators
     /dc_GIDs  [num_layers num_pops_per_layer] 0 LayoutArray def		   % DC generators
@@ -319,12 +319,12 @@
 	    %% Spike detector
         record_thalamic_spikes
         {
-            /spike_detector Create /th_spike_detector_GID Set
-            th_spike_detector_GID
+            /spike_recorder Create /th_spike_recorder_GID Set
+            th_spike_recorder_GID
     	    <<
     	        % set thalamic spike detector label.
                 % The GID of the spike detector and the process number are appended automatically.
-    	        /label th_spike_detector_label
+    	        /label th_spike_recorder_label
     	        /record_to record_to
     	    >> SetStatus
         } if
@@ -393,16 +393,16 @@
     	    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
     	    % Spike detector
-    	    /spike_detector Create /this_spike_detector Set
-    	    this_spike_detector
+    	    /spike_recorder Create /this_spike_recorder Set
+    	    this_spike_recorder
     	    <<
     	        % set spike detector label for filenames. The GID of the spike detector
     	        % and the process number are appended automatically.
-    	        /label spike_detector_label layer_index 2 mul population_index add 1 add cvs join
+    	        /label spike_recorder_label layer_index 2 mul population_index add 1 add cvs join
     	        /record_to record_to
     	    >> SetStatus
-            spike_detector_GIDs [layer_index population_index] this_spike_detector put
-    	    /spike_detector_GIDs Set
+            spike_recorder_GIDs [layer_index population_index] this_spike_recorder put
+    	    /spike_recorder_GIDs Set
 
 
     	    % Voltmeter
@@ -756,7 +756,7 @@
         % record from a continuous range of IDs
         % (appropriate for networks without topology)
         target_nodes num_neurons_rec_spikes target_layer get target_pop get Take
-        spike_detector_GIDs target_layer get target_pop get
+        spike_recorder_GIDs target_layer get target_pop get
         /all_to_all
         Connect
 
@@ -848,7 +848,7 @@
     {
         % Connect thalamic neurons to spike detector
         th_neuron_subnet_GID
-        th_spike_detector_GID
+        th_spike_recorder_GID
 	    /all_to_all
 	Connect
     } if
