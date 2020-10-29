@@ -331,7 +331,7 @@ if properrun:
     #preprocess the gdf files containing spiking output, voltages, weighted and
     #spatial input spikes and currents:
     merge_gdf(networkParams,
-              raw_label=networkParams.spike_detector_label,
+              raw_label=networkParams.spike_recorder_label,
               file_type='dat',
               fileprefix=params.networkSimParams['label'],
               skiprows=3)

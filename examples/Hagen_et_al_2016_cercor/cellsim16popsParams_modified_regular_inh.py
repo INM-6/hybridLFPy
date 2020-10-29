@@ -514,13 +514,13 @@ class point_neuron_network_params(general_params):
         self.readout_GID_filename = 'readout_GIDs.dat'
 
         # stem for spike detector file labels
-        self.spike_detector_label = 'spikes_'
+        self.spike_recorder_label = 'spikes_'
 
         # stem for voltmeter file labels
         self.voltmeter_label = 'voltages_'
 
         # stem for thalamic spike detector file labels
-        self.th_spike_detector_label = 'spikes_0'
+        self.th_spike_recorder_label = 'spikes_0'
 
         # stem for in-degree file labels
         self.in_degree_label = 'in_degrees_'

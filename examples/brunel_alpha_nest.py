@@ -243,8 +243,8 @@ def simulate():
     nodes_ex = nest.Create("iaf_psc_alpha",NE)
     nodes_in = nest.Create("iaf_psc_alpha",NI)
     noise    = nest.Create("poisson_generator")
-    espikes  = nest.Create("spike_detector")
-    ispikes  = nest.Create("spike_detector")
+    espikes  = nest.Create("spike_recorder")
+    ispikes  = nest.Create("spike_recorder")
 
     print("first exc node: {}".format(nodes_ex[0]))
     print("first inh node: {}".format(nodes_in[0]))
