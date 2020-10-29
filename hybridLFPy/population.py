@@ -366,6 +366,9 @@ class PopulationSuper(object):
                 self.output[cellindex][probe.__class__.__name__] = \
                     probe.data.copy()
 
+            # clean up hoc namespace
+            cell.__del__()
+
             print('cell %s population %s in %.2f s' % (cellindex, self.y,
                                                               time()-tic))
 
@@ -1180,6 +1183,8 @@ class Population(PopulationSuper):
             synidx[X] = self.fetchSynIdxCell(cell=cell,
                                              nidx=self.k_yXL[:, i],
                                              synParams=self.synParams.copy())
+        # clean up hoc namespace
+        cell.__del__()
 
         return synidx
 
@@ -1261,8 +1266,6 @@ class Population(PopulationSuper):
         cell.set_rotation(**self.rotations[cellindex])
 
         if return_just_cell:
-            # clean up hoc namespace
-            cell.__del__()
             return cell
         else:
             self.insert_all_synapses(cellindex, cell)
