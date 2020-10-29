@@ -596,10 +596,18 @@ class PopulationSuper(object):
                 else:
                     data += self.output[cellindex][measure]
         else:
-            data = np.zeros((len(self.electrodeParams['x']),
-                             int(self.cellParams['tstop'] //
-                                 self.dt_output) + 1),
-                            dtype=np.float32)
+            probenames = np.array([p.__class__.__name__ for p in self.probes])
+            ind = np.where(probenames==measure)[0][0]
+            # not very elegant:
+            if measure.rfind('RecExtElectrode') >= 0:
+                dim0 = self.probes[ind].x.size
+            elif measure.rfind('LaminarCurrentSourceDensity') >= 0:
+                dim0 = self.probes[ind].r.size
+            elif measure.rfind('CurrentDipoleMoment') >= 0:
+                dim0 = 3
+            data = np.zeros((dim0,
+                             int(self.cellParams['tstop'] // self.dt_output
+                                 ) + 1), dtype=np.float32)
 
         #container for full LFP on RANK 0
         if RANK == 0:
