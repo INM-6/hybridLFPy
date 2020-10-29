@@ -64,7 +64,7 @@ RANK = COMM.Get_rank()
 
 #if True, execute full model. If False, do only the plotting. Simulation results
 #must exist.
-properrun = True
+properrun = False
 
 
 #check if mod file for synapse model specified in expisyn.mod is loaded
@@ -346,6 +346,7 @@ networkSim = CachedNetwork(**params.networkSimParams)
 toc = time() - tic
 print('NEST simulation and gdf file processing done in  %.3f seconds' % toc)
 
+properrun = True
 ##### Set up LFPykit measurement probes for LFPs and CSDs
 if properrun:
     probes = []

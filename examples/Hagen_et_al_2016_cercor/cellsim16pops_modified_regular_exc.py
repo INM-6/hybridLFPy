@@ -115,10 +115,9 @@ toc = time() - tic
 print('NEST simulation and gdf file processing done in  %.3f seconds' % toc)
 
 ##### Set up LFPykit measurement probes for LFPs and CSDs
-if properrun:
-    probes = []
-    probes.append(lfpykit.RecExtElectrode(cell=None, **params.electrodeParams))
-    probes.append(lfpykit.LaminarCurrentSourceDensity(cell=None, **params.CSDParams))
+probes = []
+probes.append(lfpykit.RecExtElectrode(cell=None, **params.electrodeParams))
+probes.append(lfpykit.LaminarCurrentSourceDensity(cell=None, **params.CSDParams))
 
 ####### Set up populations #####################################################
 
