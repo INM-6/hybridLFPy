@@ -1162,7 +1162,8 @@ def getMeanVoltages(params, numunits=100,
 
 def plot_signal_sum_colorplot(ax, params, fname='LFPsum.h5', unit='mV', N=1, ylabels = True,
                               T=[800, 1000], ylim=[-1500, 0], fancy=False, colorbar=True,
-                              cmap='spectral_r', absmax=None, transient=200, rasterized=True):
+                              cmap='spectral_r', absmax=None, transient=200, rasterized=True,
+                              scaling_factor=1.):
     '''
     on colorplot and as background plot the summed CSD contributions
 
@@ -1175,7 +1176,7 @@ def plot_signal_sum_colorplot(ax, params, fname='LFPsum.h5', unit='mV', N=1, yla
         N : integer, set to number of LFP generators in order to get the normalized signal
     '''
     f = h5py.File(fname)
-    data = f['data'][()]
+    data = f['data'][()] * scaling_factor
     tvec = np.arange(data.shape[1]) * 1000. / f['srate'][()]
 
     #for mean subtraction
@@ -1330,7 +1331,9 @@ def plot_signal_power_colorplot(ax, params, fname, transient=200, Df=None,
     return im
 
 
-def plotPowers(ax, params, popkeys, dataset, linestyles, linewidths, transient=200, SCALING_POSTFIX='', markerstyles=None):
+def plotPowers(ax, params, popkeys, dataset, linestyles, linewidths,
+               transient=200, SCALING_POSTFIX='', markerstyles=None,
+               scaling_factor=1.):
     '''plot power (variance) as function of depth for total and separate
     contributors
 
@@ -1346,7 +1349,8 @@ def plotPowers(ax, params, popkeys, dataset, linestyles, linewidths, transient=2
     for i, layer in enumerate(popkeys):
         f = h5py.File(os.path.join(params.populations_path,
                                    '%s_population_%s' % (layer, dataset) + SCALING_POSTFIX + '.h5'), 'r')
-        ax.semilogx(f['data'][()][:, transient:].var(axis=1), depth,
+        data = f['data'][()] * scaling_factor
+        ax.semilogx(data[:, transient:].var(axis=1), depth,
                  color=colors[i],
                  ls=linestyles[i],
                  lw=linewidths[i],
