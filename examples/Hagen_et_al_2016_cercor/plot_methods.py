@@ -460,8 +460,8 @@ def plot_population(ax,
             '.', marker='o', markersize=0.5, color='k', zorder=0)
 
     #outline of electrode
-    x_0 = params.populationParams['min_r'][1, 1:-1]
-    z_0 = params.populationParams['min_r'][0, 1:-1]
+    x_0 = params.populationParams[params.y[0]]['min_r'][1, 1:-1]
+    z_0 = params.populationParams[params.y[0]]['min_r'][0, 1:-1]
     x = np.r_[x_0[-1], x_0[::-1], -x_0[1:], -x_0[-1]]
     z = np.r_[100, z_0[::-1], z_0[1:], 100]
     ax.fill(x, z, fc='w', lw=0.1, ec='k', zorder=-0.1, clip_on=False)
