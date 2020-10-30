@@ -52,7 +52,7 @@ def create_downsampled_data(params):
 
     for data_type, post_fix in zip(['LFP', 'CSD'],
                                    ['RecExtElectrode',
-                                    'LaminarCurrentSourceDensity']:
+                                    'LaminarCurrentSourceDensity']):
 
         if RANK == 0:
             if not os.path.isdir(os.path.join(params.savefolder, 'populations', 'subsamples')):
@@ -121,7 +121,7 @@ def create_downsampled_data(params):
                     COUNTER += 1
 
         COMM.Barrier()
-        f = h5py.File(os.path.join(params.savefolder,'populations', '%s_%ss.h5' % (y,data_type)), 'r')
+        f = h5py.File(os.path.join(params.savefolder,'populations', '%s_%ss.h5' % (y, post_fix)), 'r')
         datashape = f['data'].shape
         f.close()
 
@@ -141,7 +141,7 @@ def create_downsampled_data(params):
                             # Load data
                             fname = os.path.join(params.savefolder, 'populations',
                                                  'subsamples', '%s_population_%s_%i_%i.h5' \
-                                                 % (y, post_fix, ana_params.scaling*100,
+                                                 % (y, data_type, ana_params.scaling*100,
                                                     sample))
                             f = h5py.File(fname, 'r')
                             # Update population sum:
@@ -185,17 +185,19 @@ def calc_signal_power(params):
 
     '''
 
-    for i, data_type in enumerate(['LaminarCurrentSourceDensity',
-                                   'RecExtElectrode',
-                                   'LaminarCurrentSourceDensity_10_0',
-                                   'RecExtElectrode_10_0']):
+    for i, (data_type, post_fix) in enumerate(zip(['CSD',
+                                                   'LFP',
+                                                   'CSD_10_0',
+                                                   'LFP_10_0'], 
+                                                  ['LaminarCurrentSourceDensity', 
+                                                   'RecExtElectrode', 
+                                                   None, 
+                                                   None])):
         if i % SIZE == RANK:
 
             # Load data
-            if data_type, post_fix in zip(['CSD', 'LFP'],
-                                          ['LaminarCurrentSourceDensity',
-                                          'RecExtElectrode']:
-                fname=os.path.join(params.savefolder, post_fix+'sum.h5')
+            if data_type in ['CSD', 'LFP']:
+                fname=os.path.join(params.savefolder, post_fix+'_sum.h5')
             else:
                 fname=os.path.join(params.populations_path, 'subsamples',
                                    str.split(data_type,'_')[0] + 'sum_' +
@@ -264,7 +266,7 @@ def calc_uncorrelated_signal_power(params):
 
             # Determine size of PSD matrix
 
-            f = h5py.File(os.path.join(params.savefolder, post_fix + 'sum.h5'),'r')
+            f = h5py.File(os.path.join(params.savefolder, post_fix + '_sum.h5'),'r')
             data = f['data'][()]
             srate = f['srate'][()]
             if ana_params.mlab:
@@ -356,7 +358,7 @@ def calc_variances(params):
                 f_in.close()
                 f_out[celltype]= var
 
-            f_in = h5py.File(os.path.join(params.savefolder, post_fix + 'sum.h5' ))
+            f_in = h5py.File(os.path.join(params.savefolder, post_fix + '_sum.h5' ))
             var= f_in['data'][()][:, ana_params.transient:].var(axis=1)
             f_in.close()
             f_out['sum']= var
