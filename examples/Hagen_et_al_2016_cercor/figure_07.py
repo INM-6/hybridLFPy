@@ -118,7 +118,7 @@ if __name__ == '__main__':
     plot_signal_sum(ax5, params,
                     fname=os.path.join(params.savefolder, 'LaminarCurrentSourceDensity_sum.h5'),
                     unit='$\mu$A mm$^{-3}$',
-                    scaling_factor=1E6   # unit nA um^-3 -> muA mm-3
+                    scaling_factor=1E6,   # unit nA um^-3 -> muA mm-3
                     T=T,
                     ylim=[-1550, 50],
                     rasterized=False)

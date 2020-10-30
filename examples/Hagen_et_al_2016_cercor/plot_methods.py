@@ -1365,7 +1365,8 @@ def plotPowers(ax, params, popkeys, dataset, linestyles, linewidths,
         f.close()
 
     f = h5py.File(os.path.join(params.savefolder, '%s_sum' % dataset + SCALING_POSTFIX + '.h5'), 'r')
-    ax.plot(f['data'][()][:, transient:].var(axis=1), depth,
+    data = f['data'][()] * scaling_factor
+    ax.plot(data[:, transient:].var(axis=1), depth,
                  'k', label='SUM', lw=1.25, clip_on=False)
 
     f.close()
