@@ -77,7 +77,7 @@ def run_sim(morphology='patdemo/cells/j4a.hoc',
     cell = LFPy.Cell(morphology=morphology, **cell_parameters)
     # Align cell
     cell.set_rotation(**cell_rotation)
-    
+
     # Define synapse parameters
     synapse_parameters = {
         'idx' : cell.get_closest_idx(**closest_idx),
@@ -87,43 +87,43 @@ def run_sim(morphology='patdemo/cells/j4a.hoc',
         'weight' : 0.0878,            # synaptic weight
         'record_current' : True,    # record synapse current
     }
-    
+
     # Create synapse and set time of synaptic input
     synapse = LFPy.Synapse(cell, **synapse_parameters)
     synapse.set_spike_times(np.array([1.]))
 
-    
+
     # Create electrode object
-    
+
     # Run simulation, electrode object argument in cell.simulate
-    print "running simulation..."
-    cell.simulate(rec_imem=True,rec_isyn=True)
-    
-    grid_electrode = LFPy.RecExtElectrode(cell,**grid_electrode_parameters)
-    point_electrode = LFPy.RecExtElectrode(cell,**point_electrode_parameters)
-    
-    grid_electrode.calc_lfp()
-    point_electrode.calc_lfp()
-    
-    print "done"
-    
+    print("running simulation...")
+    cell.simulate(rec_imem=True)
+
+    grid_electrode = LFPy.RecExtElectrode(cell, **grid_electrode_parameters)
+    point_electrode = LFPy.RecExtElectrode(cell, **point_electrode_parameters)
+
+    grid_electrode.LFP = grid_electrode.get_transformation_matrix() @ cell.imem
+    point_electrode.LFP = point_electrode.get_transformation_matrix() @ cell.imem
+
+    print("done")
+
     return cell, synapse, grid_electrode, point_electrode
 
 
 def plot_sim(ax, cell, synapse, grid_electrode, point_electrode, letter='a'):
     '''create a plot'''
-    
+
     fig = plt.figure(figsize = (3.27*2/3, 3.27*2/3))
-    
+
     ax = fig.add_axes([.1,.05,.9,.9], aspect='equal', frameon=False)
-    
+
     phlp.annotate_subplot(ax, ncols=1, nrows=1, letter=letter, fontsize=16)
-    
+
     cax = fig.add_axes([0.8, 0.2, 0.02, 0.2], frameon=False)
-    
-    
+
+
     LFP = np.max(np.abs(grid_electrode.LFP),1).reshape(X.shape)
-    im = ax.contour(X, Z, np.log10(LFP), 
+    im = ax.contour(X, Z, np.log10(LFP),
                50,
                cmap='RdBu',
                linewidths=1.5,
@@ -135,34 +135,34 @@ def plot_sim(ax, cell, synapse, grid_electrode, point_electrode, letter='a'):
     ticks = np.arange(np.ceil(np.log10(LFP.min())), np.ceil(np.log10(LFP.max())))
     cbar.set_ticks(ticks)
     cbar.set_ticklabels(10.**ticks * 1E6) #mv -> nV
-    
+
     zips = []
     for x, z in cell.get_idx_polygons():
-        zips.append(zip(x, z))
+        zips.append(list(zip(x, z)))
     polycol = PolyCollection(zips,
                              edgecolors='k',
                              linewidths=0.5,
                              facecolors='k')
     ax.add_collection(polycol)
-    
+
     ax.plot([100, 200], [-400, -400], 'k', lw=1, clip_on=False)
     ax.text(150, -470, r'100$\mu$m', va='center', ha='center')
-    
+
     ax.axis('off')
-    
-    
-    ax.plot(cell.xmid[cell.synidx],cell.zmid[cell.synidx], 'o', ms=5,
+
+
+    ax.plot(cell.x[cell.synidx].mean(),cell.z[cell.synidx].mean(), 'o', ms=5,
             markeredgecolor='k',
             markerfacecolor='r')
-    
+
     color_vec = ['blue','green']
-    for i in xrange(2):
+    for i in range(2):
         ax.plot(point_electrode_parameters['x'][i],
                         point_electrode_parameters['z'][i],'o',ms=6,
                         markeredgecolor='none',
                         markerfacecolor=color_vec[i])
-    
-    
+
+
     plt.axes([.11, .075, .25, .2])
     plt.plot(cell.tvec,point_electrode.LFP[0]*1e6,color=color_vec[0], clip_on=False)
     plt.plot(cell.tvec,point_electrode.LFP[1]*1e6,color=color_vec[1], clip_on=False)
@@ -170,20 +170,20 @@ def plot_sim(ax, cell, synapse, grid_electrode, point_electrode, letter='a'):
     ax = plt.gca()
     ax.set_ylabel(r'$\phi(\mathbf{r}, t)$ (nV)') #rotation='horizontal')
     ax.set_xlabel('$t$ (ms)', va='center')
-    for loc, spine in ax.spines.iteritems():
+    for loc, spine in ax.spines.items():
         if loc in ['right', 'top']:
-            spine.set_color('none')            
+            spine.set_color('none')
     ax.xaxis.set_ticks_position('bottom')
     ax.yaxis.set_ticks_position('left')
-    
+
     plt.axes([.11, 0.285, .25, .2])
     plt.plot(cell.tvec,synapse.i*1E3, color='red', clip_on=False)
     plt.axis('tight')
     ax = plt.gca()
     ax.set_ylabel(r'$I_{i, j}(t)$ (pA)', ha='center', va='center') #, rotation='horizontal')
-    for loc, spine in ax.spines.iteritems():
+    for loc, spine in ax.spines.items():
         if loc in ['right', 'top']:
-            spine.set_color('none')            
+            spine.set_color('none')
     ax.xaxis.set_ticks_position('bottom')
     ax.yaxis.set_ticks_position('left')
     ax.set_xticklabels([])
@@ -195,12 +195,12 @@ def plot_sim_tstep(fig, ax, cell, synapse, grid_electrode, point_electrode, tste
                    letter='a',title='', cbar=True, show_legend=False):
     '''create a plot'''
     ax.set_title(title)
-    
+
     if letter != None:
         phlp.annotate_subplot(ax, ncols=3, nrows=1, letter=letter, linear_offset=0.05, fontsize=16)
 
-    
-    
+
+
     LFP = grid_electrode.LFP[:, tstep].reshape(X.shape).copy()
     LFP *= 1E6 #mv -> nV
     vlim = 50
@@ -237,7 +237,7 @@ def plot_sim_tstep(fig, ax, cell, synapse, grid_electrode, point_electrode, tste
                    linestyles=linestyles,
                    zorder=-2,
                    rasterized=False)
-        
+
 
         bbox = np.array(ax.get_position()).flatten()
         if cbar:
@@ -246,12 +246,12 @@ def plot_sim_tstep(fig, ax, cell, synapse, grid_electrode, point_electrode, tste
             cbar.set_ticks(cbarticks)
             cbar.set_label('$\phi(\mathbf{r}, t)$ (nV)', labelpad=0)
             cbar.outline.set_visible(False)
-        
+
         if show_legend:
             proxy = [plt.Line2D((0,1),(0,1), color='gray' if analysis_params.bw else plt.get_cmap('RdBu', 3)(2), ls='-', lw=3),
                      plt.Line2D((0,1),(0,1), color='gray' if analysis_params.bw else plt.get_cmap('RdBu', 3)(1), ls=(0, (5, 5)), lw=3),
                      plt.Line2D((0,1),(0,1), color='gray' if analysis_params.bw else plt.get_cmap('RdBu', 3)(0), ls=(0, (1, 1)), lw=3), ]
-            
+
             ax.legend(proxy, [r'$\phi(\mathbf{r}, t) > 0$ nV',
                                r'$\phi(\mathbf{r}, t) = 0$ nV',
                                r'$\phi(\mathbf{r}, t) < 0$ nV'],
@@ -259,34 +259,34 @@ def plot_sim_tstep(fig, ax, cell, synapse, grid_electrode, point_electrode, tste
                       bbox_to_anchor=(1.2, 1),
                       fontsize=10,
                       frameon=False)
-        
+
     zips = []
     for x, z in cell.get_idx_polygons():
-        zips.append(zip(x, z))
+        zips.append(list(zip(x, z)))
     polycol = PolyCollection(zips,
                              edgecolors='k',
                              linewidths=0.5,
                              facecolors='k')
     ax.add_collection(polycol)
-    
+
     ax.plot([100, 200], [-400, -400], 'k', lw=2, clip_on=False)
     ax.text(150, -470, r'100$\mu$m', va='center', ha='center')
-    
+
     ax.axis('off')
-    
-    
-    ax.plot(cell.xmid[cell.synidx],cell.zmid[cell.synidx], 'o', ms=6,
+
+
+    ax.plot(cell.x[cell.synidx].mean(),cell.z[cell.synidx].mean(), 'o', ms=6,
             markeredgecolor='k',
             markerfacecolor='w' if analysis_params.bw else 'r')
-    
+
     color_vec = ['k' if analysis_params.bw else 'b', 'gray' if analysis_params.bw else 'g']
-    for i in xrange(2):
+    for i in range(2):
         ax.plot(point_electrode_parameters['x'][i],
                         point_electrode_parameters['z'][i],'o',ms=6,
                         markeredgecolor='k',
                         markerfacecolor=color_vec[i])
-    
-    
+
+
     bbox = np.array(ax.get_position()).flatten()
     ax1 = fig.add_axes((bbox[0], bbox[1], 0.05, 0.2))
     ax1.plot(cell.tvec,point_electrode.LFP[0]*1e6,color=color_vec[0], clip_on=False)
@@ -296,12 +296,12 @@ def plot_sim_tstep(fig, ax, cell, synapse, grid_electrode, point_electrode, tste
     ax1.vlines(cell.tvec[tstep], axis[2], axis[3], lw=0.2)
     ax1.set_ylabel(r'$\phi(\mathbf{r}, t)$ (nV)', labelpad=0) #rotation='horizontal')
     ax1.set_xlabel('$t$ (ms)', labelpad=0)
-    for loc, spine in ax1.spines.iteritems():
+    for loc, spine in ax1.spines.items():
         if loc in ['right', 'top']:
-            spine.set_color('none')            
+            spine.set_color('none')
     ax1.xaxis.set_ticks_position('bottom')
     ax1.yaxis.set_ticks_position('left')
-    
+
     ax2 = fig.add_axes((bbox[0], bbox[1]+.6, 0.05, 0.2))
     ax2.plot(cell.tvec,synapse.i*1E3, color='k' if analysis_params.bw else 'r',
              clip_on=False)
@@ -309,9 +309,9 @@ def plot_sim_tstep(fig, ax, cell, synapse, grid_electrode, point_electrode, tste
     ax2.yaxis.set_major_locator(MaxNLocator(4))
     ax2.vlines(cell.tvec[tstep], axis[2], axis[3])
     ax2.set_ylabel(r'$I_{i, j}(t)$ (pA)', labelpad=0) #, rotation='horizontal')
-    for loc, spine in ax2.spines.iteritems():
+    for loc, spine in ax2.spines.items():
         if loc in ['right', 'top']:
-            spine.set_color('none')            
+            spine.set_color('none')
     ax2.xaxis.set_ticks_position('bottom')
     ax2.yaxis.set_ticks_position('left')
     ax2.set_xticklabels([])
@@ -319,7 +319,7 @@ def plot_sim_tstep(fig, ax, cell, synapse, grid_electrode, point_electrode, tste
 
 
 if __name__ == '__main__':
-    
+
     tstep = 2 * 16 # 2 ms mark
 
     plotparams.set_PLOS_2column_fig_style(ratio=0.33)
@@ -332,14 +332,14 @@ if __name__ == '__main__':
                                                              cell_rotation=dict(z=np.pi),
                                                              closest_idx=dict(x=-100, y=0., z=650.))
     plot_sim_tstep(fig, axes[0], cell, synapse, grid_electrode, point_electrode, tstep=tstep, letter='A', title='p4, apical input', cbar=False, show_legend=False)
-    
+
 
     cell, synapse, grid_electrode, point_electrode = run_sim(morphology='../morphologies/stretched/L4E_53rpy1.hoc',
                                                              cell_rotation=dict(z=np.pi),
                                                              closest_idx=dict(x=0, y=0., z=-200.))
     plot_sim_tstep(fig, axes[1], cell, synapse, grid_electrode, point_electrode, tstep=tstep, letter='B', title='p4, basal input', cbar=False, show_legend=False)
 
-    
+
     cell, synapse, grid_electrode, point_electrode = run_sim(morphology='../morphologies/stretched/L4E_j7_L4stellate.hoc',
                                                              cell_rotation=dict(z=np.pi/2), #dict(z=np.pi),
                                                              closest_idx=dict(x=0., y=0., z=-200))
