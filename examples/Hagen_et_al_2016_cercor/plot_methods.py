@@ -781,7 +781,7 @@ def plot_signal_sum(ax, params, fname='LFPsum.h5', unit='mV', scaling_factor=1.,
         tvec = np.arange(data.shape[1]) * 1000. / f['srate'][()]
 
         #for mean subtraction
-        datameanaxis1 = f['data'][()][:, tvec >= transient].mean(axis=1)
+        datameanaxis1 = data[:, tvec >= transient].mean(axis=1)
 
         #close dataset
         f.close()
@@ -1180,7 +1180,7 @@ def plot_signal_sum_colorplot(ax, params, fname='LFPsum.h5', unit='mV', N=1, yla
     tvec = np.arange(data.shape[1]) * 1000. / f['srate'][()]
 
     #for mean subtraction
-    datameanaxis1 = f['data'][()][:, tvec >= transient].mean(axis=1)
+    datameanaxis1 = data[:, tvec >= transient].mean(axis=1)
 
     # slice
     slica = (tvec <= T[1]) & (tvec >= T[0])
