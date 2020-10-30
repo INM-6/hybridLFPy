@@ -460,8 +460,8 @@ def plot_population(ax,
             '.', marker='o', markersize=0.5, color='k', zorder=0)
 
     #outline of electrode
-    x_0 = params.populationParams[params.y[0]]['min_r'][1][1:-1]
-    z_0 = params.populationParams[params.y[0]]['min_r'][0][1:-1]
+    x_0 = np.array(params.populationParams[params.y[0]]['min_r'])[1, 1:-1]
+    z_0 = np.array(params.populationParams[params.y[0]]['min_r'])[0, 1:-1]
     x = np.r_[x_0[-1], x_0[::-1], -x_0[1:], -x_0[-1]]
     z = np.r_[100, z_0[::-1], z_0[1:], 100]
     ax.fill(x, z, fc='w', lw=0.1, ec='k', zorder=-0.1, clip_on=False)
@@ -773,8 +773,8 @@ def plot_signal_sum(ax, params, fname='LFPsum.h5', unit='mV', scaling_factor=1.,
 
     '''
 
-    if type(fname) == str and os.path.isfile(fname):
-        f = h5py.File(fname)
+    if type(fname) is str and os.path.isfile(fname):
+        f = h5py.File(fname, 'r')
         #load data
         data = f['data'][()]
 
@@ -785,7 +785,7 @@ def plot_signal_sum(ax, params, fname='LFPsum.h5', unit='mV', scaling_factor=1.,
 
         #close dataset
         f.close()
-    elif type(fname) == np.ndarray and fname.ndim==2:
+    elif type(fname) is np.ndarray and fname.ndim==2:
         data = fname
         tvec = np.arange(data.shape[1]) * params.dt_output
         datameanaxis1 = data[:, tvec >= transient].mean(axis=1)
@@ -1238,7 +1238,7 @@ def calc_signal_power(params, fname, transient=200, Df=None, mlab=True, NFFT=100
 
     if type(fname) is str and os.path.isfile(fname):
         #open file
-        f = h5py.File(fname)
+        f = h5py.File(fname, 'r')
         data = f['data'][()]
         srate = f['srate'][()]
         tvec = np.arange(data.shape[1]) * 1000. / srate
@@ -1345,7 +1345,7 @@ def plotPowers(ax, params, popkeys, dataset, linestyles, linewidths, transient=2
 
     for i, layer in enumerate(popkeys):
         f = h5py.File(os.path.join(params.populations_path,
-                                   '%s_population_%s' % (layer, dataset) + SCALING_POSTFIX + '.h5' ))
+                                   '%s_population_%s' % (layer, dataset) + SCALING_POSTFIX + '.h5'), 'r')
         ax.semilogx(f['data'][()][:, transient:].var(axis=1), depth,
                  color=colors[i],
                  ls=linestyles[i],
@@ -1360,7 +1360,7 @@ def plotPowers(ax, params, popkeys, dataset, linestyles, linewidths, transient=2
 
         f.close()
 
-    f = h5py.File(os.path.join(params.savefolder, '%ssum' % dataset + SCALING_POSTFIX + '.h5' ))
+    f = h5py.File(os.path.join(params.savefolder, '%s_sum' % dataset + SCALING_POSTFIX + '.h5'), 'r')
     ax.plot(f['data'][()][:, transient:].var(axis=1), depth,
                  'k', label='SUM', lw=1.25, clip_on=False)
 
@@ -1383,7 +1383,9 @@ def plotting_correlation(params, x0, x1, ax, lag=20., scaling=None, normalize=Tr
                          color='k', unit=r'$cc=%.3f$' , title='firing_rate vs LFP',
                          scalebar=True, **kwargs):
     ''' mls
-    on axes plot the correlation between x0 and x1
+    on axes plot th
+
+e correlation between x0 and x1
 
     args:
     ::

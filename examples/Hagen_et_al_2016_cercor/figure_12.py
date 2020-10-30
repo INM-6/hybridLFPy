@@ -43,7 +43,7 @@ def fig_lfp_scaling(fig, params, bottom=0.55, top=0.95, channels=[0,3,7,11,13], 
                     lag=20, show_titles=True, show_xlabels=True):
 
    
-    fname_fullscale=os.path.join(params.savefolder, 'LFPsum.h5')
+    fname_fullscale=os.path.join(params.savefolder, 'RecExtElectrode_sum.h5')
     fname_downscaled=os.path.join(params.savefolder, 'populations','subsamples', 'LFPsum_10_0.h5')
 
     # ana_params.set_PLOS_2column_fig_style(ratio=0.5)
@@ -62,7 +62,7 @@ def fig_lfp_scaling(fig, params, bottom=0.55, top=0.95, channels=[0,3,7,11,13], 
     ax = fig.add_subplot(gs[:, :3])
 
     phlp.annotate_subplot(ax, ncols=8/3., nrows=1, letter=letters[0], linear_offset=0.065)
-    plot_signal_sum(ax, params, fname=os.path.join(params.savefolder, 'LFPsum.h5'),
+    plot_signal_sum(ax, params, fname=os.path.join(params.savefolder, 'RecExtElectrode_sum.h5'),
                     unit='mV', scaling_factor= 1., scalebar=True,
                     vlimround=None,
                     T=T, ylim=[-1600, 50] ,color='k',label='$\Phi$',
@@ -96,7 +96,7 @@ def fig_lfp_scaling(fig, params, bottom=0.55, top=0.95, channels=[0,3,7,11,13], 
     phlp.remove_axis_junk(ax)
     
     datas = []
-    files = [os.path.join(params.savefolder, 'LFPsum.h5'),
+    files = [os.path.join(params.savefolder, 'RecExtElectrode_sum.h5'),
              os.path.join(params.savefolder, 'populations',
                                             'subsamples', 'LFPsum_10_0.h5')]
     for fil in files:

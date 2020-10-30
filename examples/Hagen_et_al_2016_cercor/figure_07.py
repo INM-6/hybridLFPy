@@ -116,7 +116,7 @@ if __name__ == '__main__':
     if show_ax_labels:
         phlp.annotate_subplot(ax5, ncols=1, nrows=1, letter='C', linear_offset=0.065)
     plot_signal_sum(ax5, params,
-                    fname=os.path.join(params.savefolder, 'CSDsum.h5'),
+                    fname=os.path.join(params.savefolder, 'LaminarCurrentSourceDensity_sum.h5'),
                     unit='$\mu$A mm$^{-3}$',
                     T=T,
                     ylim=[-1550, 50],
@@ -128,7 +128,7 @@ if __name__ == '__main__':
 
     #show traces superimposed on color image
     if show_images:
-        im = plot_signal_sum_colorplot(ax5, params, os.path.join(params.savefolder, 'CSDsum.h5'),
+        im = plot_signal_sum_colorplot(ax5, params, os.path.join(params.savefolder, 'LaminarCurrentSourceDensity_sum.h5'),
                                   unit=r'$\mu$Amm$^{-3}$', T=T,
                                   ylim=[-1550, 50],
                                   fancy=False, colorbar=False,
@@ -151,7 +151,7 @@ if __name__ == '__main__':
         phlp.annotate_subplot(ax7, ncols=1, nrows=1, letter='D', linear_offset=0.065)
     phlp.remove_axis_junk(ax7)
     plot_signal_sum(ax7, params,
-                    fname=os.path.join(params.savefolder, 'LFPsum.h5'),
+                    fname=os.path.join(params.savefolder, 'RecExtElectrode_sum.h5'),
                     unit='mV', T=T, ylim=[-1550, 50],
                     rasterized=False)
     ax7.set_title('LFP ')
@@ -161,7 +161,7 @@ if __name__ == '__main__':
 
     #show traces superimposed on color image
     if show_images:
-        im = plot_signal_sum_colorplot(ax7, params, os.path.join(params.savefolder, 'LFPsum.h5'),
+        im = plot_signal_sum_colorplot(ax7, params, os.path.join(params.savefolder, 'RecExtElectrode_sum.h5'),
                                   unit='mV', T=T,
                                   ylim=[-1550, 50],
                                   fancy=False, colorbar=False,

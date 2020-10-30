@@ -37,7 +37,7 @@ def fig_exc_inh_contrib(fig, axes, params, savefolders, T=[800, 1000], transient
 
     
     #file name types
-    file_names = ['CSDsum.h5', 'LFPsum.h5']
+    file_names = ['LaminarCurrentSourceDensity_sum.h5', 'RecExtElectrode_sum.h5']
     
     #panel titles
     panel_titles = [
@@ -145,7 +145,7 @@ def fig_exc_inh_contrib(fig, axes, params, savefolders, T=[800, 1000], transient
     ax = axes[3]
     datas = []    
     for j, savefolder in enumerate(savefolders):
-        f = h5py.File(os.path.join(os.path.split(params.savefolder)[0], savefolder, 'CSDsum.h5'))
+        f = h5py.File(os.path.join(os.path.split(params.savefolder)[0], savefolder, 'LaminarCurrentSourceDensity_sum.h5'))
         var = f['data'][()][:, transient:].var(axis=1)
         ax.semilogx(var, depth,
                     color=colors[j], label=labels[j], lw=lws[j], clip_on=False)
@@ -169,7 +169,7 @@ def fig_exc_inh_contrib(fig, axes, params, savefolders, T=[800, 1000], transient
 
     datas = []
     for j, savefolder in enumerate(savefolders):
-        f = h5py.File(os.path.join(os.path.split(params.savefolder)[0], savefolder, 'LFPsum.h5'))
+        f = h5py.File(os.path.join(os.path.split(params.savefolder)[0], savefolder, 'RecExtElectrode_sum.h5'))
         var = f['data'][()][:, transient:].var(axis=1)
         ax.semilogx(var, depth,
                     color=colors[j], label=labels[j], lw=lws[j], clip_on=False)

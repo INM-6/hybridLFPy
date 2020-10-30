@@ -188,13 +188,13 @@ def fig_network_input_structure(fig, params, bottom=0.1, top=0.9, transient=200,
 
     phlp.remove_axis_junk(ax2)
     plot_signal_sum(ax2, params,
-                    fname=os.path.join(params.savefolder, 'LFPsum.h5'),
+                    fname=os.path.join(params.savefolder, 'RecExtElectrode_sum.h5'),
                     unit='mV', T=T, ylim=[-1600, 40],
                     rasterized=False)
     
     # CSD background colorplot
     if show_CSD:
-        im = plot_signal_sum_colorplot(ax2, params, os.path.join(params.savefolder, 'CSDsum.h5'),
+        im = plot_signal_sum_colorplot(ax2, params, os.path.join(params.savefolder, 'LaminarCurrentSourceDensity_sum.h5'),
                                   unit=r'($\mu$Amm$^{-3}$)', T=[800, 1000],
                                   colorbar=False,
                                   ylim=[-1600, 40], fancy=False, cmap=plt.cm.get_cmap('bwr_r', 21),
@@ -223,7 +223,7 @@ def fig_network_input_structure(fig, params, bottom=0.1, top=0.9, transient=200,
     ############################################################################
 
     freqs, PSD = calc_signal_power(params, fname=os.path.join(params.savefolder,
-                                                           'LFPsum.h5'),
+                                                           'RecExtElectrode_sum.h5'),
                                         transient=transient, Df=Df, mlab=mlab,
                                         NFFT=NFFT, noverlap=noverlap,
                                         window=window)
@@ -280,7 +280,7 @@ def fig_network_input_structure(fig, params, bottom=0.1, top=0.9, transient=200,
     phlp.annotate_subplot(ax4, ncols=5, nrows=1, letter=letters[4],
                      linear_offset=0.065)
   
-    fname=os.path.join(params.savefolder, 'LFPsum.h5')
+    fname=os.path.join(params.savefolder, 'RecExtElectrode_sum.h5')
     im = plot_signal_power_colorplot(ax4, params, fname=fname, transient=transient, Df=Df,
                                 mlab=mlab, NFFT=NFFT, window=window,
                                 cmap=plt.cm.get_cmap('gray_r', 12),

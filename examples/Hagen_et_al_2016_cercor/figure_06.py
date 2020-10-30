@@ -338,7 +338,7 @@ def plot_multi_scale_output_b(fig, X='L5E'):
     phlp.remove_axis_junk(ax5)
     if show_ax_labels:
         phlp.annotate_subplot(ax5, ncols=4, nrows=1, letter='F')
-    plot_signal_sum(ax5, params, fname=os.path.join(params.savefolder, 'CSDsum.h5'),
+    plot_signal_sum(ax5, params, fname=os.path.join(params.savefolder, 'LaminarCurrentSourceDensity_sum.h5'),
                         unit='$\mu$A mm$^{-3}$',
                         T=T,
                         ylim=[ax4.axis()[2], ax4.axis()[3]],
@@ -350,7 +350,7 @@ def plot_multi_scale_output_b(fig, X='L5E'):
         ax6 = fig.add_axes([lefts[1]+axwidth-insetwidth, top-insetheight, insetwidth, insetheight])
         plt.locator_params(nbins=4)
         phlp.remove_axis_junk(ax6)
-        plot_signal_sum_colorplot(ax6, params, os.path.join(params.savefolder, 'CSDsum.h5'),
+        plot_signal_sum_colorplot(ax6, params, os.path.join(params.savefolder, 'LaminarCurrentSourceDensity_sum.h5'),
                                   unit=r'$\mu$Amm$^{-3}$', T=T_inset,
                                   ylim=[ax4.axis()[2], ax4.axis()[3]],
                                   fancy=False,colorbar=False,cmap='bwr_r')
@@ -359,7 +359,7 @@ def plot_multi_scale_output_b(fig, X='L5E'):
 
     #show traces superimposed on color image
     if show_images:
-        plot_signal_sum_colorplot(ax5, params, os.path.join(params.savefolder, 'CSDsum.h5'),
+        plot_signal_sum_colorplot(ax5, params, os.path.join(params.savefolder, 'LaminarCurrentSourceDensity_sum.h5'),
                                   unit=r'$\mu$Amm$^{-3}$', T=T,
                                   ylim=[ax4.axis()[2], ax4.axis()[3]],
                                   fancy=False,colorbar=False,cmap='jet_r')
@@ -375,7 +375,7 @@ def plot_multi_scale_output_b(fig, X='L5E'):
     if show_ax_labels:
         phlp.annotate_subplot(ax7, ncols=4, nrows=1, letter='G')
     phlp.remove_axis_junk(ax7)
-    plot_signal_sum(ax7, params, fname=os.path.join(params.savefolder, 'LFPsum.h5'),
+    plot_signal_sum(ax7, params, fname=os.path.join(params.savefolder, 'RecExtElectrode_sum.h5'),
                     unit='mV', T=T, ylim=[ax4.axis()[2], ax4.axis()[3]],
                     rasterized=False)
     ax7.set_title('LFP',va='center')
@@ -385,7 +385,7 @@ def plot_multi_scale_output_b(fig, X='L5E'):
         ax8 = fig.add_axes([lefts[2]+axwidth-insetwidth, top-insetheight, insetwidth, insetheight])
         plt.locator_params(nbins=4)
         phlp.remove_axis_junk(ax8)
-        plot_signal_sum_colorplot(ax8, params, os.path.join(params.savefolder, 'LFPsum.h5'),
+        plot_signal_sum_colorplot(ax8, params, os.path.join(params.savefolder, 'RecExtElectrode_sum.h5'),
                                   unit='mV', T=T_inset,
                                   ylim=[ax4.axis()[2], ax4.axis()[3]],
                                   fancy=False,colorbar=False,cmap='bwr_r')   
@@ -394,7 +394,7 @@ def plot_multi_scale_output_b(fig, X='L5E'):
 
     #show traces superimposed on color image
     if show_images:
-        plot_signal_sum_colorplot(ax7, params, os.path.join(params.savefolder, 'LFPsum.h5'),
+        plot_signal_sum_colorplot(ax7, params, os.path.join(params.savefolder, 'RecExtElectrode_sum.h5'),
                                   unit='mV', T=T,
                                   ylim=[ax4.axis()[2], ax4.axis()[3]],
                                   fancy=False,colorbar=False,cmap='bwr_r')

@@ -32,7 +32,7 @@ from figure_10 import fig_exc_inh_contrib
 
 
     
-'''Plot signal (total power) decomposition as function of depth and show single population LFPs'''
+'''Plot signal (total power) decomposition as function of depth and show single population LFP'''
 def fig_lfp_decomposition(fig, axes, params, transient=200, X=['L23E', 'L6E'], show_xlabels=True):
     # ana_params.set_PLOS_2column_fig_style(ratio=0.5)
     # fig, axes = plt.subplots(1,5)
@@ -73,12 +73,12 @@ def fig_lfp_decomposition(fig, axes, params, transient=200, X=['L23E', 'L6E'], s
     
     phlp.remove_axis_junk(axes[1])
     plot_signal_sum(axes[1], params,
-                    fname=os.path.join(params.populations_path, X[0] + '_population_LFP.h5'),
+                    fname=os.path.join(params.populations_path, X[0] + '_population_RecExtElectrode.h5'),
                     unit='mV', T=[800,1000], ylim=[axis[2], axis[3]],
                     rasterized=False)
     
     # CSD background colorplot
-    im = plot_signal_sum_colorplot(axes[1], params, os.path.join(params.populations_path,  X[0] + '_population_CSD.h5'),
+    im = plot_signal_sum_colorplot(axes[1], params, os.path.join(params.populations_path,  X[0] + '_population_LaminarCurrentSourceDensity.h5'),
                               unit=r'$\mu$Amm$^{-3}$', T=[800,1000],
                               colorbar=False,
                               ylim=[axis[2], axis[3]], fancy=False,
@@ -105,12 +105,12 @@ def fig_lfp_decomposition(fig, axes, params, transient=200, X=['L23E', 'L6E'], s
 
     phlp.remove_axis_junk(axes[2])
     plot_signal_sum(axes[2], params,
-                    fname=os.path.join(params.populations_path, X[1] + '_population_LFP.h5'), ylabels=False,
+                    fname=os.path.join(params.populations_path, X[1] + '_population_RecExtElectrode.h5'), ylabels=False,
                     unit='mV', T=[800,1000], ylim=[axis[2], axis[3]],
                     rasterized=False)
     
     # CSD background colorplot
-    im = plot_signal_sum_colorplot(axes[2], params, os.path.join(params.populations_path, X[1] + '_population_CSD.h5'),
+    im = plot_signal_sum_colorplot(axes[2], params, os.path.join(params.populations_path, X[1] + '_population_LaminarCurrentSourceDensity.h5'),
                               unit=r'$\mu$Amm$^{-3}$', T=[800,1000], ylabels=False,
                               colorbar=False,
                               ylim=[axis[2], axis[3]], fancy=False, 
@@ -131,7 +131,7 @@ def fig_lfp_decomposition(fig, axes, params, transient=200, X=['L23E', 'L6E'], s
         axes[2].set_xlabel('')
     
 
-    plotPowers(axes[3], params, params.Y, 'CSD', linestyles=linestyles, transient=transient, markerstyles=markerstyles, linewidths=linewidths)
+    plotPowers(axes[3], params, params.Y, 'LaminarCurrentSourceDensity', linestyles=linestyles, transient=transient, markerstyles=markerstyles, linewidths=linewidths)
     axes[3].axis(axes[3].axis('tight'))
     axes[3].set_ylim(-1550, 50)
     axes[3].set_yticks(-np.arange(16)*100)
@@ -143,7 +143,7 @@ def fig_lfp_decomposition(fig, axes, params, transient=200, X=['L23E', 'L6E'], s
     phlp.annotate_subplot(axes[3], ncols=1, nrows=1, letter='D')
     
     
-    plotPowers(axes[4], params, params.Y, 'LFP', linestyles=linestyles, transient=transient, markerstyles=markerstyles, linewidths=linewidths)
+    plotPowers(axes[4], params, params.Y, 'RecExtElectrode', linestyles=linestyles, transient=transient, markerstyles=markerstyles, linewidths=linewidths)
     axes[4].axis(axes[4].axis('tight'))
     axes[4].set_ylim(-1550, 50)
     axes[4].set_yticks(-np.arange(16)*100)
