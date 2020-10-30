@@ -167,6 +167,7 @@ np.random.seed(SIMULATIONSEED)
 #of population LFPs, CSDs etc
 postproc = PostProcess(y = params.y,
                        dt_output = params.dt_output,
+                       probes=probes,
                        savefolder = params.savefolder,
                        mapping_Yy = params.mapping_Yy,
                        )
