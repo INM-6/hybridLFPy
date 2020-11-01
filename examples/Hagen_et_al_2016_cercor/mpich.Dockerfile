@@ -60,9 +60,9 @@ RUN pip3 install git+https://github.com/NeuralEnsemble/parameters@b95bac2bd17f03
 
 
 # ------ Install NEST3 ----
-ARG WITH_MPI=ON
-ARG WITH_OMP=ON
-ARG WITH_GSL=ON
+ENV WITH_MPI=ON
+ENV WITH_OMP=ON
+ENV WITH_GSL=ON
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     cmake \
