@@ -5,13 +5,13 @@ Description
 This is the README for the code archived for reproducing all data and
 figures for the study:
 
-Espen Hagen, David Dahmen, Maria L. Stavrinou, Henrik LindŽn, Tom Tetzlaff,
-Sacha J van Albada, Sonja GrŸn, Markus Diesmann, Gaute T. Einevoll.
+Espen Hagen, David Dahmen, Maria L. Stavrinou, Henrik Lindï¿½n, Tom Tetzlaff,
+Sacha J van Albada, Sonja Grï¿½n, Markus Diesmann, Gaute T. Einevoll.
 "Hybrid scheme for modeling local field potentials from point-neuron networks".
 Cereb. Cortex (2016)
 DOI: 10.1093/cercor/bhw237
 First published online: October 20, 2016
-Contact: espen.hagen@fys.uio.no
+Contact: https://github.com/INM-6/hybridLFPy/issues
 
 Here, only the main simulation scripts, data preprocessing and plotting scripts
 are provided. Additional software and dependencies has to be obtained elsewhere,
@@ -26,7 +26,7 @@ The present application of hybridLFPy (v0.1.2) and corresponding simulations
 were made possible using:
 - Open MPI (v.1.6.2),
 - HDF5 (v.1.8.14),
-- Python (v.2.7.3) with modules: 
+- Python (v.2.7.3) with modules:
     - Cython (v.0.23dev),
     - NeuroTools (v.0.2.0dev),
     - SpikeSort (v.0.13),
@@ -34,16 +34,16 @@ were made possible using:
     - matplotlib (v.1.5.x),
     - mpi4py (v.1.3),
     - numpy (v.1.10.0.dev-c63e1f4),
-    - pysqlite (v.2.6.3) and 
+    - pysqlite (v.2.6.3) and
     - scipy (v.0.17.0.dev0-357a1a0).
-    
+
 Point-neuron network simulations were performed using NEST (v.2.8.0 ff71a29).
 This particular revision can be checked out from
 https://github.com/espenhgn/nest-simulator/tree/neg_logn_w,
 as one minor change from the official NEST v2.8.0 is the support for  lognormal
 distribution of weights with a negative sign.
 Simulations of multicompartment model neurons uses NEURON
-(v.7.4 1186:541994f8f27f) through LFPy (dev. v.aa134c911). 
+(v.7.4 1186:541994f8f27f) through LFPy (dev. v.aa134c911).
 All software was compiled using GCC (v.4.4.6).
 Simulations were performed in parallel (256 threads) on the Stallo
 high-performance computing facilities (NOTUR, the Norwegian Metacenter for
@@ -68,7 +68,7 @@ These are the main files included:
     (modified network states, different types of thalamic activation,
     recording of LFPs from either excitatory and or inhibitory currents,
     prediction of spike-LFP relationships)
-    
+
     The simulation files has to be executed in parallel on a cluster. A typical
     PBS job script would look like:
 
@@ -77,13 +77,13 @@ These are the main files included:
         #PBS -lwalltime=08:00:00
         cd $PBS_O_WORKDIR
         mpirun -np 256 python cellsim16pops_default.py --quiet
-    
+
     Submit the job by issuing:
-        
+
         qsub jobscript.job
-    
+
     The equivalent Slurm (see http://slurm.schedmd.com) jobscript may look like
-    
+
         #!/bin/bash
         ################################################################################
         #SBATCH --job-name cellsim16pops_default
@@ -94,12 +94,12 @@ These are the main files included:
         ################################################################################
         unset DISPLAY # slurm appear to create a problem with too many displays
         mpirun python cellsim16pops_default.py
-    
+
     Submit the job by issuing:
-        
+
         sbatch jobscript.job
-    
-    
+
+
     All simulations has to be done for all figure scripts below to run.
     Simulated output will be saved in under e.g., 'simulation_output_default'.
     If the compute cluster has a '/scratch' area, output will be saved in
@@ -109,13 +109,13 @@ These are the main files included:
     will be created alongside for easy file transfer, named e.g.,
     'simulation_output_default.tar'. Compression is switched off by default
     because of speed and little gain in terms of reduced file sizes.
-    
+
     Before LFP simulations can be executed, the NEURON NMODL language file
     expsyni.mod specifying the exponential synapse current has to be compiled
     by running the script "nrnivmodl" inside this folder. This script should
     be located along the other NEURON executables, e.g., inside
     $HOME/NEURON-7.4/nrn/x86_64/bin/
-    
+
     Simulation cases:
     - default: Network parameters similar to Potjans & Diesmann (2014), Cereb
         Cortex, with spontantaneous activity. (Fig. 6, 8K-O,)
@@ -132,7 +132,7 @@ These are the main files included:
         ignored in LFP. (Fig. 10)
     - modified_regular_inh: Similar to modified_regular_input, excitation
         ignored in LFP. (Fig. 10)
-    - modified_ac_input: Similar to modified_spontan, but with sinusoidal 
+    - modified_ac_input: Similar to modified_spontan, but with sinusoidal
         modulation of Poisson spiketrains from the thalamic population.
         (Fig. 8F-J, 10, 11, 12, 13)
     - modified_ac_exc: Similar to modified_ac_input, inhibition
@@ -143,13 +143,13 @@ These are the main files included:
         not generated, and replaced with synchronous spike events for each
         network population, used to compute the average single-spike LFP
         response. (Fig. 13)
-      
+
 - cellsim16popsParams_*.py:
     Parameter class definitions for each main simulation file.
 
 - microcircuit.sli:
     NEST SLI implementation of the network by Potjans and Diesmann (2014),
-    Cerebral Cortex March 2014;24:785Ð806 doi:10.1093/cercor/bhs358. Used by
+    Cerebral Cortex March 2014;24:785ï¿½806 doi:10.1093/cercor/bhs358. Used by
     the main Python simulation scripts
 
 - nest_simulation.py:
@@ -159,15 +159,15 @@ These are the main files included:
 - nest_output_processing.py:
     NEST's gdf file output is typically one file per MPI thread, some
     routines for merging such output is defined here and used after running
-    each network simulation. 
+    each network simulation.
 
 - morphologies/*/*.hoc:
     NEURON-language morphology files used for predictions of local-field
     potentials. By default the 'stretched' geometries will be used. It is
     possible to use simplified 'ballnstick' ones to reduce overall simulation
     times, but this will affect the  numerical result of the simulated output
-    as the laminar distribution of in and outgoing currents are not conserved. 
-    
+    as the laminar distribution of in and outgoing currents are not conserved.
+
 - expsyni.mod:
     NMODL language specification of the current-based synapse. In order to run
     simulations, run the NEURON-provided bash script nrnivmodl in the root
@@ -176,12 +176,12 @@ These are the main files included:
 - binzegger_connectivity_table.json:
     JSON format data with the connectivity data from Binzegger et al., 2004 and
     Izhikevich and Edelmann 2008.
-    
+
 - analysis.py:
     Applied to the modified_spontan and modified_ac_input simulation cases
     in order to investigate the effect of single-cell LFP spectra on the
     compound LFP signal. Execution in parallel:
-        
+
         mpirun -np 4 python analysis.py
 
 - analysis_params.py:
@@ -203,12 +203,12 @@ These are the main files included:
 - run_all_jobs.py:
     Create jobscripts and submit jobs for clusters running the Slurm Workload
     Manager (http://slurm.schedmd.com)
-    
+
 - produce_all_figures.py:
     run all figure-generating scripts at once (for your convenience)
 
 - LICENSE:
-    General Public License version 3. 
-    
-- README.txt:
+    General Public License version 3.
+
+- README.md:
     This file

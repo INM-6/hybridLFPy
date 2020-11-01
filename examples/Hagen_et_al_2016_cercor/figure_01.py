@@ -88,7 +88,7 @@ def fig_intro(params, ana_params, T=[800, 1000], fraction=0.05, rasterized=False
     #LFP traces in all channels
     ax3 = fig.add_subplot(gs[:, 3], frameon=True)
     phlp.remove_axis_junk(ax3)
-    plot_signal_sum(ax3, params, fname=os.path.join(params.savefolder, 'LFPsum.h5'),
+    plot_signal_sum(ax3, params, fname=os.path.join(params.savefolder, 'RecExtElectrode_sum.h5'),
                 unit='mV', vlimround=0.8,
                 T=T, ylim=[ax2.axis()[2], ax2.axis()[3]],
                 rasterized=False)

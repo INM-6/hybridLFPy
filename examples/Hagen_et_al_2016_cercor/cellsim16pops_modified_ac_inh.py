@@ -42,7 +42,7 @@ import nest   # Import not used, but done in order to ensure correct execution
 import nest_simulation
 from hybridLFPy import PostProcess, Population, CachedNetwork, setup_file_dest
 import nest_output_processing
-
+import lfpykit
 
 #set some seed values
 SEED = 12345678
@@ -83,7 +83,7 @@ nest_simulation.sli_run(parameters=networkParams,
 #preprocess the gdf files containing spiking output, voltages, weighted and
 #spatial input spikes and currents:
 nest_output_processing.merge_gdf(networkParams,
-                            raw_label=networkParams.spike_detector_label,
+                            raw_label=networkParams.spike_recorder_label,
                             file_type='dat',
                             fileprefix=params.networkSimParams['label'],
                             skiprows=3)
@@ -113,6 +113,10 @@ networkSim = CachedNetwork(**params.networkSimParams)
 toc = time() - tic
 print('NEST simulation and gdf file processing done in  %.3f seconds' % toc)
 
+##### Set up LFPykit measurement probes for LFPs and CSDs
+probes = []
+probes.append(lfpykit.RecExtElectrode(cell=None, **params.electrodeParams))
+probes.append(lfpykit.LaminarCurrentSourceDensity(cell=None, **params.CSDParams))
 
 ####### Set up populations #####################################################
 
@@ -127,10 +131,9 @@ for i, y in enumerate(params.y):
             populationParams = params.populationParams[y],
             y = y,
             layerBoundaries = params.layerBoundaries,
-            electrodeParams = params.electrodeParams,
+            probes=probes,
             savelist = params.savelist,
             savefolder = params.savefolder,
-            calculateCSD = params.calculateCSD,
             dt_output = params.dt_output,
             POPULATIONSEED = SIMULATIONSEED + i,
             #daughter class kwargs
@@ -162,6 +165,7 @@ np.random.seed(SIMULATIONSEED)
 #of population LFPs, CSDs etc
 postproc = PostProcess(y = params.y,
                        dt_output = params.dt_output,
+                       probes=probes,
                        savefolder = params.savefolder,
                        mapping_Yy = params.mapping_Yy,
                        )

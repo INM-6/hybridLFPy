@@ -132,7 +132,7 @@ def fig_kernel_lfp(savefolders, params, transient=200, T=[800., 1000.], X='L5E',
     
     
     # Get the spikegen LFP:
-    f = h5py.File(os.path.join(params.savefolder, 'LFPsum.h5'))
+    f = h5py.File(os.path.join(params.savefolder, 'RecExtElectrode_sum.h5'), 'r')
     srate = f['srate'][()]
     tvec = np.arange(f['data'].shape[1]) * 1000. / srate
     
@@ -235,7 +235,7 @@ def fig_kernel_lfp(savefolders, params, transient=200, T=[800., 1000.], X='L5E',
     
     
         # Get the Compound LFP: LFPsum : data[nchannels, timepoints ]
-        f = h5py.File(os.path.join(params.savefolder, 'LFPsum.h5'))
+        f = h5py.File(os.path.join(params.savefolder, 'RecExtElectrode_sum.h5'), 'r')
         data_raw = f['data'][()]
         srate = f['srate'][()]
         tvec = np.arange(data_raw.shape[1]) * 1000. / srate
@@ -248,7 +248,7 @@ def fig_kernel_lfp(savefolders, params, transient=200, T=[800., 1000.], X='L5E',
         f.close()
     
         # Get the spikegen LFP:
-        f = h5py.File(os.path.join(os.path.split(params.savefolder)[0], 'simulation_output_spikegen', 'LFPsum.h5'))
+        f = h5py.File(os.path.join(os.path.split(params.savefolder)[0], 'simulation_output_spikegen', 'RecExtElectrode_sum.h5'), 'r')
         data_sg_raw = f['data'][()]
         
         f.close()
@@ -339,7 +339,7 @@ def fig_kernel_lfp(savefolders, params, transient=200, T=[800., 1000.], X='L5E',
         LFP_reconst = LFP_reconstT.T
         vlimround = plot_signal_sum(ax, params,
                                     fname=os.path.join(params.savefolder,
-                                                           'LFPsum.h5'),
+                                                       'RecExtElectrode_sum.h5'),
                                     unit='mV', scalebar=True,
                                     T=T, ylim=[-1550, 50],
                                     color='k', label='$real$',

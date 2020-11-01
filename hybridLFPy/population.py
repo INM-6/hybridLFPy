@@ -4,16 +4,15 @@
 Class methods defining multicompartment neuron populations in the hybrid scheme
 """
 import os
-import glob
+# import glob
 import numpy as np
 import h5py
 import matplotlib.pyplot as plt
 from mpi4py import MPI
-from .gdf import GDF
-from . import csd
+# from .gdf import GDF
 from . import helpers
 import LFPy
-import neuron
+# import neuron
 from time import time
 
 
@@ -50,16 +49,13 @@ class PopulationSuper(object):
         Population identifier string.
     layerBoundaries : list of lists
         Each element is a list setting upper and lower layer boundary (floats)
-    electrodeParams : dict
-        parameters for class `LFPy.RecExtElectrode`
+    probes: list
+        list of `LFPykit.models.*` like instances for misc. forward-model
+        predictions
     savelist : list
         `LFPy.Cell` arguments to save for each single-cell simulation.
     savefolder : str
         path to where simulation results are stored.
-    calculateCSD : bool
-        Extract laminar CSD from transmembrane currents ([True]/False)
-    calculateCurrentDipoleMoment : bool
-        Extract current dipole moment from transmembrane currents (True/[False])
     dt_output : float
         Time resolution of output, e.g., LFP, CSD etc.
     recordSingleContribFrac : float
@@ -105,25 +101,13 @@ class PopulationSuper(object):
                     'number': 400,
                     'radius': 100,
                     'z_max': -350,
-                    'z_min': -450},
+                    'z_min': -450,
+                    'r_z': [[-1E199, 1E99], [10, 10]]},
                  y = 'EX',
                  layerBoundaries = [[0.0, -300], [-300, -500]],
-                 electrodeParams={
-                    'N': [[1, 0, 0], [1, 0, 0], [1, 0, 0],
-                          [1, 0, 0], [1, 0, 0], [1, 0, 0]],
-                    'method': 'som_as_point',
-                    'n': 20,
-                    'r': 5,
-                    'r_z': [[-1e+199, -600, -550, 1e+99], [0, 0, 10, 10]],
-                    'seedvalue': None,
-                    'sigma': 0.3,
-                    'x': [0, 0, 0, 0, 0, 0],
-                    'y': [0, 0, 0, 0, 0, 0],
-                    'z': [-0.0, -100.0, -200.0, -300.0, -400.0, -500.0]},
-                 savelist=['somapos', 'x', 'y', 'z', 'LFP', 'CSD'],
+                 probes=[],
+                 savelist=['somapos'],
                  savefolder='simulation_output_example_brunel',
-                 calculateCSD=True,
-                 calculateCurrentDipoleMoment=False,
                  dt_output=1.,
                  recordSingleContribFrac=0,
                  POPULATIONSEED=123456,
@@ -157,16 +141,13 @@ class PopulationSuper(object):
         layerBoundaries : list of lists
             Each element is a list setting upper and lower layer boundary as
             floats
-        electrodeParams : dict
-            parameters for class `LFPy.RecExtElectrode`
+        probes: list
+            list of `LFPykit.models.*` like instances for misc. forward-model
+            predictions
         savelist : list
-            `LFPy.Cell` arguments to save for each single-cell simulation.
+            `LFPy.Cell` attributes to save for each single-cell simulation.
         savefolder : str
             path to where simulation results are stored.
-        calculateCSD : bool
-            Extract laminar CSD from transmembrane currents ([True]/False)
-        calculateCurrentDipoleMoment : bool
-            Extract current dipole moment from transmembrane currents (True/[False])
         recordSingleContribFrac : float
             fraction  in [0, 1] of individual neurons in population which output
             will be stored
@@ -197,11 +178,9 @@ class PopulationSuper(object):
         self.POPULATION_SIZE = populationParams['number']
         self.y = y
         self.layerBoundaries = np.array(layerBoundaries)
-        self.electrodeParams = electrodeParams
+        self.probes = probes
         self.savelist = savelist
         self.savefolder = savefolder
-        self.calculateCSD = calculateCSD
-        self.calculateCurrentDipoleMoment = calculateCurrentDipoleMoment
         self.dt_output = dt_output
         self.recordSingleContribFrac = recordSingleContribFrac
         self.output_file = output_file
@@ -221,17 +200,6 @@ class PopulationSuper(object):
             os.system('git rev-parse HEAD -> %s/populationRevision.txt' %
                       self.savefolder)
 
-        # check LFPy.Cell.simulate additional arguments
-        if calculateCurrentDipoleMoment:
-            if 'rec_current_dipole_moment' in list(self.simulationParams.keys()):
-                try:
-                    assert(self.simulationParams['rec_current_dipole_moment'])
-                except AssertionError as ae:
-                    raise ae('simulationParams["rec_current_dipole_moment"]!=True contradicts calculateCurrentDipoleMoment==True')
-            else:
-                self.simulationParams['rec_current_dipole_moment'] = True
-                if 'current_dipole_moment' not in self.savelist:
-                    self.savelist.append('current_dipole_moment')
 
         #set the random seed for reproducible populations, synapse locations,
         #presynaptic spiketrains
@@ -359,7 +327,7 @@ class PopulationSuper(object):
         """
         tic = time()
 
-        electrode = LFPy.RecExtElectrode(**self.electrodeParams)
+        # electrode = LFPy.RecExtElectrode(**self.electrodeParams)
 
         cellParams = self.cellParams.copy()
         cell = LFPy.Cell(**cellParams)
@@ -369,35 +337,19 @@ class PopulationSuper(object):
         if return_just_cell:
             return cell
         else:
-            if self.calculateCSD:
-                cell.tvec = np.arange(cell.totnsegs)
-                cell.imem = np.eye(cell.totnsegs)
-                csdcoeff = csd.true_lam_csd(cell,
-                                self.populationParams['radius'], electrode.z)
-                csdcoeff *= 1E6 #nA mum^-3 -> muA mm^-3 conversion
-                del cell.tvec, cell.imem
-                cell.simulate(electrode, dotprodcoeffs=[csdcoeff],
-                              **self.simulationParams)
-                cell.CSD = helpers.decimate(cell.dotprodresults[0],
-                                            q=self.decimatefrac)
-            else:
-                cell.simulate(electrode,
-                              **self.simulationParams)
+            # set LFPykit.models instance cell attribute
+            for probe in self.probes:
+                probe.cell = cell
 
-            cell.LFP = helpers.decimate(electrode.LFP,
-                                        q=self.decimatefrac)
+            # make predictions
+            cell.simulate(probes=self.probes, **self.simulationParams)
 
-            if self.calculateCurrentDipoleMoment:
-                cell.current_dipole_moment = helpers.decimate(
-                    cell.current_dipole_moment, q=self.decimatefrac)
+            # downsample probe.data attribute and unset cell
+            for probe in self.probes:
+                probe.data = helpers.decimate(probe.data, q=self.decimatefrac)
+                probe.cell = None
 
-            cell.x = electrode.x
-            cell.y = electrode.y
-            cell.z = electrode.z
-            cell.electrodecoeff = electrode.electrodecoeff
-
-
-            #put all necessary cell output in output dict
+            # put all necessary cell output in output dict
             for attrbt in self.savelist:
                 attr = getattr(cell, attrbt)
                 if type(attr) == np.ndarray:
@@ -408,6 +360,14 @@ class PopulationSuper(object):
                     except:
                         self.output[cellindex][attrbt] = str(attr)
                 self.output[cellindex]['srate'] = 1E3 / self.dt_output
+
+            # collect probe output
+            for probe in self.probes:
+                self.output[cellindex][probe.__class__.__name__] = \
+                    probe.data.copy()
+
+            # clean up hoc namespace
+            cell.__del__()
 
             print('cell %s population %s in %.2f s' % (cellindex, self.y,
                                                               time()-tic))
@@ -439,7 +399,7 @@ class PopulationSuper(object):
         tic = time()
         if RANK == 0:
             pop_soma_pos = self.draw_rand_pos(
-                min_r = self.electrodeParams['r_z'],
+                #min_r = self.electrodeParams['r_z'],
                 **self.populationParams)
         else:
             pop_soma_pos = None
@@ -519,7 +479,8 @@ class PopulationSuper(object):
 
 
     def draw_rand_pos(self, radius, z_min, z_max,
-                      min_r=np.array([0]), min_cell_interdist=10., **args):
+                      min_r=np.array([0]), min_cell_interdist=10.,
+                      **args):
         """
         Draw some random location within radius, z_min, z_max,
         and constrained by min_r and the minimum cell interdistance.
@@ -611,17 +572,15 @@ class PopulationSuper(object):
         return soma_pos
 
 
-    def calc_signal_sum(self, measure='LFP'):
+    def calc_signal_sum(self, measure='LFP'
+                        ):
         """
         Superimpose each cell's contribution to the compound population signal,
         i.e., the population CSD or LFP
 
-
         Parameters
         ----------
         measure : str
-            {'LFP', 'CSD'}: Either 'LFP' or 'CSD'.
-
 
         Returns
         -------
@@ -637,10 +596,20 @@ class PopulationSuper(object):
                 else:
                     data += self.output[cellindex][measure]
         else:
-            data = np.zeros((len(self.electrodeParams['x']),
-                             int(self.cellParams['tstop'] //
-                                 self.dt_output) + 1),
-                            dtype=np.float32)
+            probenames = np.array([p.__class__.__name__ for p in self.probes])
+            ind = np.where(probenames==measure)[0][0]
+            # not very elegant:
+            if measure.rfind('RecExtElectrode') >= 0:
+                dim0 = self.probes[ind].x.size
+            elif measure.rfind('LaminarCurrentSourceDensity') >= 0:
+                dim0 = self.probes[ind].r.size
+            elif measure.rfind('CurrentDipoleMoment') >= 0:
+                dim0 = 3
+            else:
+                dim0 = self.probes[ind].x.size
+            data = np.zeros((dim0,
+                             int(self.cellParams['tstop'] // self.dt_output
+                                 ) + 1), dtype=np.float32)
 
         #container for full LFP on RANK 0
         if RANK == 0:
@@ -744,7 +713,7 @@ class PopulationSuper(object):
                                      '%s_%ss.h5' % (self.y, measure))
                 f = h5py.File(fname, 'w')
                 f.create_dataset('data', data=data, compression=4)
-                f['srate'] = self.output[0]['srate']
+                f['srate'] = 1E3 / self.dt_output
                 f.close()
                 assert(os.path.isfile(fname))
 
@@ -754,6 +723,34 @@ class PopulationSuper(object):
 
             return data
 
+    def collect_savelist(self):
+        '''collect cell attribute data to RANK 0 before dumping data to file'''
+        if RANK == 0:
+            f = h5py.File(os.path.join(self.populations_path,
+                                       '{}_savelist.h5'.format(self.y)), 'w')
+        for measure in self.savelist:
+            if self.RANK_CELLINDICES.size > 0:
+                shape = (self.POPULATION_SIZE,
+                         ) + np.shape(
+                            self.output[self.RANK_CELLINDICES[0]][measure])
+                data = np.zeros(shape)
+                for ind in self.RANK_CELLINDICES:
+                    data[ind] = self.output[ind][measure]
+            else:
+                data = None
+
+            # sum data arrays to RANK 0
+            if RANK == 0:
+                DATA = np.zeros_like(data)
+            else:
+                DATA = None
+            COMM.Reduce(data, DATA, op=MPI.SUM, root=0)
+
+            if RANK == 0:
+                f[measure] = DATA
+
+        if RANK == 0:
+            f.close()
 
     def collect_data(self):
         """
@@ -771,68 +768,31 @@ class PopulationSuper(object):
         None
 
         """
-        #collect some measurements resolved per file and save to file
-        for measure in ['LFP', 'CSD']:
-            if measure in self.savelist:
-                self.collectSingleContribs(measure)
+        # collect single-cell attributes as defined in `savelist` and write
+        # to files
+        self.collect_savelist()
 
-        #calculate lfp from all cell contribs
-        lfp = self.calc_signal_sum(measure='LFP')
+        # collect probe measurements
+        for probe in self.probes:
+            self.collectSingleContribs(probe.__class__.__name__)
 
-        #calculate CSD in every lamina
-        if self.calculateCSD:
-            csd = self.calc_signal_sum(measure='CSD')
+        # sum up single-cell predictions per probe and save
+        for probe in self.probes:
+            measure = probe.__class__.__name__
+            data = self.calc_signal_sum(measure=measure)
 
-        if self.calculateCurrentDipoleMoment:
-            self.collectSingleContribs('current_dipole_moment')
-            current_dipole_moment = self.calc_signal_sum(
-                measure='current_dipole_moment')
-
-        if RANK == 0 and self.POPULATION_SIZE > 0:
-            #saving LFPs
-            if 'LFP' in self.savelist:
+            if RANK == 0:
                 fname = os.path.join(self.populations_path,
                                      self.output_file.format(self.y,
-                                                             'LFP')+'.h5')
+                                                             measure)+'.h5')
                 f = h5py.File(fname, 'w')
                 f['srate'] = 1E3 / self.dt_output
-                f.create_dataset('data', data=lfp, compression=4)
+                f.create_dataset('data', data=data, compression=4)
                 f.close()
-                del lfp
-                assert(os.path.isfile(fname))
-                print('save lfp ok')
+                print('save {} ok'.format(measure))
 
-
-            #saving CSDs
-            if 'CSD' in self.savelist and self.calculateCSD:
-                fname = os.path.join(self.populations_path,
-                                     self.output_file.format(self.y,
-                                                             'CSD')+'.h5')
-                f = h5py.File(fname, 'w')
-                f['srate'] = 1E3 / self.dt_output
-                f.create_dataset('data', data=csd, compression=4)
-                f.close()
-                del csd
-                assert(os.path.isfile(fname))
-                print('save CSD ok')
-
-
-            # saving current dipole moment
-            if 'current_dipole_moment' in self.savelist and self.calculateCurrentDipoleMoment:
-                fname = os.path.join(self.populations_path,
-                                     self.output_file.format(self.y,
-                                     'current_dipole_moment') + '.h5')
-                f = h5py.File(fname, 'w')
-                f['srate'] = 1E3 / self.dt_output
-                f.create_dataset('data', data=current_dipole_moment,
-                                 compression=4)
-                f.close()
-                del current_dipole_moment
-                assert(os.path.isfile(fname))
-                print('save current dipole moment ok')
-
-
-            #save the somatic placements:
+        if RANK == 0:
+            # save the somatic placements:
             pop_soma_pos = np.zeros((self.POPULATION_SIZE, 3))
             keys = ['x', 'y', 'z']
             for i in range(self.POPULATION_SIZE):
@@ -844,6 +804,7 @@ class PopulationSuper(object):
             assert(os.path.isfile(fname))
             print('save somapos ok')
 
+        if RANK == 0:
             #save rotations using hdf5
             fname = os.path.join(self.populations_path,
                                     self.output_file.format(self.y, 'rotations.h5'))
@@ -859,6 +820,9 @@ class PopulationSuper(object):
             assert(os.path.isfile(fname))
             print('save rotations ok')
 
+        # collect cell attributes in self.savelist
+        for attr in self.savelist:
+            self.collectSingleContribs(attr)
 
         #resync threads
         COMM.Barrier()
@@ -1229,6 +1193,8 @@ class Population(PopulationSuper):
             synidx[X] = self.fetchSynIdxCell(cell=cell,
                                              nidx=self.k_yXL[:, i],
                                              synParams=self.synParams.copy())
+        # clean up hoc namespace
+        cell.__del__()
 
         return synidx
 
@@ -1310,52 +1276,25 @@ class Population(PopulationSuper):
         cell.set_rotation(**self.rotations[cellindex])
 
         if return_just_cell:
-            #with several cells, NEURON can only hold one cell at the time
-            allsecnames = []
-            allsec = []
-            for sec in cell.allseclist:
-                allsecnames.append(sec.name())
-                for seg in sec:
-                    allsec.append(sec.name())
-            cell.allsecnames = allsecnames
-            cell.allsec = allsec
             return cell
         else:
             self.insert_all_synapses(cellindex, cell)
 
-            #electrode object where LFPs are calculated
-            electrode = LFPy.RecExtElectrode(**self.electrodeParams)
+            # set LFPykit.models instance cell attribute
+            for probe in self.probes:
+                probe.cell = cell
 
-            if self.calculateCSD:
-                cell.tvec = np.arange(cell.totnsegs)
-                cell.imem = np.eye(cell.totnsegs)
-                csdcoeff = csd.true_lam_csd(cell,
-                                self.populationParams['radius'], electrode.z)
-                csdcoeff *= 1E6 #nA mum^-3 -> muA mm^-3 conversion
-                del cell.tvec, cell.imem
-                cell.simulate(electrode, dotprodcoeffs=[csdcoeff],
-                              **self.simulationParams)
-                cell.CSD = helpers.decimate(cell.dotprodresults[0],
-                                            q=self.decimatefrac)
-            else:
-                cell.simulate(electrode,
-                              **self.simulationParams)
+            # make predictions
+            cell.simulate(probes=self.probes, **self.simulationParams)
 
-            cell.LFP = helpers.decimate(electrode.LFP,
-                                        q=self.decimatefrac)
+            # downsample probe.data attribute and unset cell
+            for probe in self.probes:
+                probe.data = helpers.decimate(probe.data,
+                                              q=self.decimatefrac
+                                              ).astype(np.float32)
+                probe.cell = None
 
-            if self.calculateCurrentDipoleMoment:
-                cell.current_dipole_moment = helpers.decimate(
-                    cell.current_dipole_moment.T, q=self.decimatefrac).T
-
-
-            cell.x = electrode.x
-            cell.y = electrode.y
-            cell.z = electrode.z
-
-            cell.electrodecoeff = electrode.electrodecoeff
-
-            #put all necessary cell output in output dict
+            # put all necessary cell output in output dict
             for attrbt in self.savelist:
                 attr = getattr(cell, attrbt)
                 if type(attr) == np.ndarray:
@@ -1366,6 +1305,14 @@ class Population(PopulationSuper):
                     except:
                         self.output[cellindex][attrbt] = str(attr)
                 self.output[cellindex]['srate'] = 1E3 / self.dt_output
+
+            # collect probe output
+            for probe in self.probes:
+                self.output[cellindex][probe.__class__.__name__] = \
+                    probe.data.copy()
+
+            # clean up hoc namespace
+            cell.__del__()
 
             print('cell %s population %s in %.2f s' % (cellindex, self.y,
                                                               time()-tic))
