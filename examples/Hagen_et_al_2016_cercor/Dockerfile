@@ -91,11 +91,11 @@ RUN rm -r nest*
 
 FROM nest AS hybridLFPy
 
-RUN pip3 install git+https://github.com/INM-6/hybridLFPy.git@lfpy22#egg=hybridLFPy
+RUN pip3 install git+https://github.com/INM-6/hybridLFPy.git@nest3#egg=hybridLFPy
 
 
 # ---- hybridLFPy + examples ----
 
-FROM hybridLFPy AS latest
+FROM hybridLFPy AS examples
 
 RUN pip3 install git+https://github.com/NeuralEnsemble/parameters@b95bac2bd17f03ce600541e435e270a1e1c5a478
