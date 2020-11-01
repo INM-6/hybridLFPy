@@ -74,6 +74,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libboost-dev \
     doxygen
 
+# get number of cores
+ENV NPROCS=$(getconf _NPROCESSORS_ONLN)
+
 # Compile NEST3 (master branch @24de43d)
 RUN wget https://github.com/nest/nest-simulator/archive/24de43dc21c568e017839eeb335253c2bc2d487d.tar.gz && \
   mkdir nest-build && \
@@ -89,7 +92,7 @@ RUN wget https://github.com/nest/nest-simulator/archive/24de43dc21c568e017839eeb
         -Dwith-mpi=$WITH_MPI \
         -Dwith-openmp=$WITH_OMP \
         ../nest-simulator && \
-  make -j4 && \
+  make -j $NPROCS && \
   make install && \
   cd -
 
