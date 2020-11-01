@@ -2,12 +2,6 @@
 # -*- coding: utf-8 -*-
 import sys
 import os
-if os.environ['USER'] == 'dahmen':
-    # nest path
-    sys.path.append('/users/dahmen/nest/10kcollaps_gsd.install/lib64/python2.6/site-packages')
-else:
-    #the rest of us don't need such special precautions
-    pass
 import numpy
 import nest
 
