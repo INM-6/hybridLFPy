@@ -642,3 +642,9 @@ if RANK == 0:
     fig.savefig(os.path.join(params.figures_path, 'current_dipole_moments.pdf'),
                 dpi=300)
     plt.close(fig)
+
+    # add figures to output .tar archive
+    with tarfile.open(params.savefolder + '.tar', 'a:') as f:
+        for pdf in glob(os.path.join(params.figures_path, '*.pdf')):
+            arcname = os.path.join(os.path.split(pdf)[-3:])
+            f.add(name=pdf, arcname=arcname)
