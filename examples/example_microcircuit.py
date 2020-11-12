@@ -646,5 +646,5 @@ if RANK == 0:
     # add figures to output .tar archive
     with tarfile.open(params.savefolder + '.tar', 'a:') as f:
         for pdf in glob(os.path.join(params.figures_path, '*.pdf')):
-            arcname = os.path.join(os.path.split(pdf)[-3:])
+            arcname = os.path.join(os.path.split(params.savefolder)[-1], 'figures', os.path.split(pdf)[-1])
             f.add(name=pdf, arcname=arcname)
