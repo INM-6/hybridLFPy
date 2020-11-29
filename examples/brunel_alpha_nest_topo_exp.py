@@ -1,6 +1,6 @@
 #!/usr/env/bin python
 '''
-# brunel_alpha_nest_topo.py
+# brunel_alpha_nest_topo_exp.py
 #
 # This file is not part of NEST.
 #
@@ -25,7 +25,7 @@
 # local field potentials with point-neuron networks
 #
 # Further modified to set up populations as layers and connections between
-# neurons using the topology library using exponential connectivity within a
+# neurons using exponential connectivity within a
 # mask and distance-dependent delays.
 '''
 
@@ -35,6 +35,7 @@ import nest.raster_plot
 
 from time import time
 import numpy as np
+from mpi4py import MPI
 
 
 def ComputePSPnorm(tauMem, CMem, tauSyn):
@@ -57,12 +58,17 @@ def ComputePSPnorm(tauMem, CMem, tauSyn):
                                                 )
 
 
+# Initialization of MPI stuff
+COMM = MPI.COMM_WORLD
+SIZE = COMM.Get_size()
+RANK = COMM.Get_rank()
+
 # tic
 startbuild = time()
 
 dt = 0.1    # the resolution in ms
 simtime = 300.0  # Simulation time in ms
-delay = 1.5    # synaptic delay in ms
+delay = 1.5    # minimum synaptic delay in ms
 # NOTE: delays set explicitly in conn_dict_* below with distance dependency
 
 # Parameters for asynchronous irregular firing
@@ -131,38 +137,37 @@ tau = 300.
 area_extent = extent_length**2
 area_mask = mask_radius**2 * np.pi
 
-# connection and synapse dictionaries for distance-dependent connections.
 
 # excitatory connections
+conn_kernel_EX = {'exponential': {
+    'a': 1., 'c': 0.0, 'tau': 150.}}  # 'a' and 'c' used for LFP predictions
 conn_dict_EX = {
     'rule': 'fixed_indegree',
     'indegree': CE,
     'mask': {'circular': {'radius': 2000.0}},
-    'p': nest.spatial_distributions.exponential(
-        nest.spatial.distance, beta=tau),
     'allow_autapses': False,
     'allow_multapses': True,
 }
+conn_delay_EX = {'linear': {'c': delay, 'a': 0.0001}}
 syn_dict_EX = {
     'synapse_model': 'excitatory',
     'weight': J_ex,
-    'delay': delay,  # {'linear': {'c': 1.5, 'a': 0.0001}}
 }
 
 # inhibitory connections
+conn_kernel_IN = {'exponential': {
+    'a': 1., 'c': 0.0, 'tau': 300.}}
 conn_dict_IN = {
     'rule': 'fixed_indegree',
     'indegree': CI,
     'mask': {'circular': {'radius': 2000.0}},
-    'p': nest.spatial_distributions.exponential(
-        nest.spatial.distance, beta=tau),
     'allow_autapses': False,
     'allow_multapses': True,
 }
+conn_delay_IN = {'linear': {'c': delay, 'a': 0.0001}}
 syn_dict_IN = {
     'synapse_model': 'inhibitory',
     'weight': J_in,
-    'delay': delay,  # {'linear': {'c': 1.5, 'a': 0.0001}}
 }
 
 
@@ -186,24 +191,27 @@ layerdict_IN = {
 # integrate and fire with alpha-shaped synapse currents
 neuron_model = 'iaf_psc_alpha'
 
+# shared output folder
+output_folder = 'simulation_output_example_brunel_topo_exp'
+
 # destination of file output
-spike_output_path = os.path.join('simulation_output_example_brunel_topo_exp',
-                                 'spiking_output_path')
+spike_output_path = os.path.join(output_folder, 'spiking_output_path')
 
 # file prefix for spike detectors
-label = 'brunel-py'
+label = 'spikes'
 
 # file prefix for neuron positions
-label_positions = 'brunel-py-pos'
+label_positions = 'positions'
 
 
 def run_model():
-    # separate model execution from parameters for safer import from other
-    # files
-
-    # create file output destination folder if they do not exist
-    if not os.path.isdir(os.path.split(spike_output_path)[0]):
-        os.mkdir(os.path.split(spike_output_path)[0])
+    '''
+    separate model execution from parameters for safer import from other
+    files
+    '''
+    # create file output destination folders if they do not exist
+    if not os.path.isdir(output_folder):
+        os.mkdir(output_folder)
         if not os.path.isdir(spike_output_path):
             os.mkdir(spike_output_path)
 
@@ -215,30 +223,32 @@ def run_model():
 
     print("Building network")
 
-    nest.SetDefaults("iaf_psc_alpha", neuron_params)
+    nest.SetDefaults(neuron_model, neuron_params)
 
     # create excitatory and inhibitory layers
-    layer_ex = nest.Create(model=neuron_model,
+    nodes_ex = nest.Create(model=neuron_model,
                            positions=nest.spatial.free(**layerdict_EX))
-    layer_in = nest.Create(model=neuron_model,
+    nodes_in = nest.Create(model=neuron_model,
                            positions=nest.spatial.free(**layerdict_IN))
 
     # write GID and positions of neurons in layers
-    nest.DumpLayerNodes(layer_ex, os.path.join(spike_output_path,
+    nest.DumpLayerNodes(nodes_ex, os.path.join(spike_output_path,
                                                label_positions + '-EX.txt'))
-    nest.DumpLayerNodes(layer_in, os.path.join(spike_output_path,
+    nest.DumpLayerNodes(nodes_in, os.path.join(spike_output_path,
                                                label_positions + '-IN.txt'))
 
-    # distribute membrane potentials
-    nest.SetStatus(layer_ex, "V_m",
+    # distribute membrane potentials between V=0 and threshold V_th
+    nest.SetStatus(nodes_ex, "V_m",
                    np.random.rand(NE) * neuron_params["V_th"])
-    nest.SetStatus(layer_in, "V_m",
+    nest.SetStatus(nodes_in, "V_m",
                    np.random.rand(NI) * neuron_params["V_th"])
 
+    # create Poisson generators
     if Poisson:
         nest.SetDefaults("poisson_generator", {"rate": p_rate})
         noise = nest.Create("poisson_generator")
 
+    # create spiker recorders
     espikes = nest.Create("spike_recorder")
     ispikes = nest.Create("spike_recorder")
 
@@ -260,11 +270,11 @@ def run_model():
     nest.CopyModel("static_synapse", "inhibitory", {"weight": J_in})
 
     if Poisson:
-        nest.Connect(noise, layer_ex, 'all_to_all', "excitatory")
-        nest.Connect(noise, layer_in, 'all_to_all', "excitatory")
+        nest.Connect(noise, nodes_ex, 'all_to_all', "excitatory")
+        nest.Connect(noise, nodes_in, 'all_to_all', "excitatory")
 
-    nest.Connect(layer_ex, espikes, 'all_to_all', "excitatory")
-    nest.Connect(layer_in, ispikes, 'all_to_all', "excitatory")
+    nest.Connect(nodes_ex, espikes, 'all_to_all', "excitatory")
+    nest.Connect(nodes_in, ispikes, 'all_to_all', "excitatory")
 
     print("Connecting network")
 
@@ -272,14 +282,46 @@ def run_model():
     # connectivity, in the order of E-E, E-I, I-E and I-I, with fixed indegrees
 
     print("Excitatory connections")
+    if 'exponential' in conn_kernel_EX.keys():
+        beta = conn_kernel_EX['exponential']['tau']
+        p_dict_EX = {'p': nest.spatial_distributions.exponential(
+                              nest.spatial.distance, beta=beta)}
+    else:
+        raise NotImplementedError
 
-    nest.Connect(layer_ex, layer_ex, conn_dict_EX, syn_dict_EX)
-    nest.Connect(layer_ex, layer_in, conn_dict_EX, syn_dict_EX)
+    if 'linear' in conn_delay_EX.keys():
+        delay_param_EX = \
+            conn_delay_EX['linear']['c'] + \
+            nest.spatial.distance * conn_delay_EX['linear']['a']
+    else:
+        raise NotImplementedError
+
+    nest.Connect(nodes_ex, nodes_ex,
+                 {**conn_dict_EX, **p_dict_EX},
+                 {**syn_dict_EX, **{'delay': delay_param_EX}})
+    nest.Connect(nodes_ex, nodes_in,
+                 {**conn_dict_EX, **p_dict_EX},
+                 {**syn_dict_EX, **{'delay': delay_param_EX}})
 
     print("Inhibitory connections")
-
-    nest.Connect(layer_in, layer_ex, conn_dict_IN, syn_dict_IN)
-    nest.Connect(layer_in, layer_in, conn_dict_IN, syn_dict_IN)
+    if 'exponential' in conn_kernel_IN.keys():
+        beta = conn_kernel_IN['exponential']['tau']
+        p_dict_IN = {'p': nest.spatial_distributions.exponential(
+                              nest.spatial.distance, beta=beta)}
+    else:
+        raise NotImplementedError
+    if 'linear' in conn_delay_IN.keys():
+        delay_param_IN = \
+            conn_delay_IN['linear']['c'] + \
+            nest.spatial.distance * conn_delay_IN['linear']['a']
+    else:
+        raise NotImplementedError
+    nest.Connect(nodes_in, nodes_ex,
+                 {**conn_dict_IN, **p_dict_IN},
+                 {**syn_dict_IN, **{'delay': delay_param_IN}})
+    nest.Connect(nodes_in, nodes_in,
+                 {**conn_dict_IN, **p_dict_IN},
+                 {**syn_dict_IN, **{'delay': delay_param_IN}})
 
     endbuild = time()
 
@@ -287,12 +329,14 @@ def run_model():
 
     nest.Simulate(simtime)
 
+    # tic-toc
     endsimulate = time()
 
+    # compute and print some statistics of spikes recorded on this RANK
     events_ex = nest.GetStatus(espikes, "n_events")[0]
-    rate_ex = events_ex / simtime * 1000.0 / NE
+    rate_ex = events_ex / simtime * 1000.0 / len(nest.GetLocalNodeCollection(nodes_ex).tolist())
     events_in = nest.GetStatus(ispikes, "n_events")[0]
-    rate_in = events_in / simtime * 1000.0 / NI
+    rate_in = events_in / simtime * 1000.0 / len(nest.GetLocalNodeCollection(nodes_in).tolist())
 
     num_synapses = nest.GetDefaults("excitatory")["num_connections"] +\
         nest.GetDefaults("inhibitory")["num_connections"]
@@ -316,7 +360,7 @@ def run_model():
         nest.raster_plot.from_device(ispikes, hist=True)
 
     # sorted raster plot:
-    if False:
+    if True:
         import matplotlib.pyplot as plt
 
         fig, ax = plt.subplots(1, figsize=(12, 8))
@@ -329,7 +373,7 @@ def run_model():
                              dtype=[('senders', np.int), ('times', np.float)])
         X = []
         T = []
-        for i, j in enumerate(layer_ex):
+        for i, j in enumerate(nodes_ex):
             # extract spikes
             t = eevents['times'][eevents['senders'] == j]
             x, y = layerdict_EX['pos'][i]
@@ -340,7 +384,7 @@ def run_model():
 
         X = []
         T = []
-        for i, j in enumerate(layer_in):
+        for i, j in enumerate(nodes_in):
             # extract spikes
             t = ievents['times'][ievents['senders'] == j]
             x, y = layerdict_IN['pos'][i]

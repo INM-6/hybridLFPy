@@ -61,10 +61,12 @@ Available utilities
     Run a series of unit tests
 '''
 from .version import version as __version__
-from .cachednetworks import CachedNetwork, CachedNoiseNetwork, CachedFixedSpikesNetwork
+from .cachednetworks import CachedNetwork, CachedNoiseNetwork, \
+    CachedFixedSpikesNetwork, CachedTopoNetwork
 from .gdf import GDF
-from .population import PopulationSuper, Population
+from .population import PopulationSuper, Population, TopoPopulation
 from .postproc import PostProcess
 from . import helpers
 from .helpers import setup_file_dest
+from . import helperfun
 from .testing import _test as test

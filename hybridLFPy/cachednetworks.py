@@ -6,21 +6,22 @@ variables being used is "nodes_ex" and "nodes_in" VERSION THAT WORKS.
 """
 import numpy as np
 import os
-import glob
+from glob import glob
 if 'DISPLAY' not in os.environ:
     import matplotlib
     matplotlib.use('Agg')
 from .gdf import GDF
 import matplotlib.pyplot as plt
+import h5py
 from mpi4py import MPI
 
-################# Initialization of MPI stuff ##################################
+################# Initialization of MPI stuff ############################
 COMM = MPI.COMM_WORLD
 SIZE = COMM.Get_size()
 RANK = COMM.Get_rank()
 
 
-############## Functions #######################################################
+############## Functions #################################################
 
 def remove_axis_junk(ax, which=['right', 'top']):
     """
@@ -46,7 +47,7 @@ def remove_axis_junk(ax, which=['right', 'top']):
     ax.yaxis.set_ticks_position('left')
 
 
-################ Classes #######################################################
+################ Classes #################################################
 
 class CachedNetwork(object):
     """
@@ -88,12 +89,12 @@ class CachedNetwork(object):
     """
 
     def __init__(self,
-                 simtime = 1000.,
-                 dt = 0.1,
+                 simtime=1000.,
+                 dt=0.1,
                  spike_output_path='spike_output_path',
-                 label = 'spikes',
-                 ext = 'gdf',
-                 GIDs={'EX' : [1, 400], 'IN' : [401, 100]},
+                 label='spikes',
+                 ext='gdf',
+                 GIDs={'EX': [1, 400], 'IN': [401, 100]},
                  X=['EX', 'IN'],
                  autocollect=True,
                  skiprows=0,
@@ -156,16 +157,16 @@ class CachedNetwork(object):
         for X in self.X:
             self.nodes[X] = np.arange(self.GIDs[X][1]) + self.GIDs[X][0]
 
-        #list population sizes
+        # list population sizes
         self.N_X = np.array([self.GIDs[X][1] for X in self.X])
 
         if self.autocollect:
-            #collect the gdf files
+            # collect the gdf files
             self.collect_gdf()
 
         # Specify some plot colors used for each population:
         if 'TC' in self.X:
-            numcolors = len(self.X)-1
+            numcolors = len(self.X) - 1
         else:
             numcolors = len(self.X)
 
@@ -175,7 +176,6 @@ class CachedNetwork(object):
 
         if 'TC' in self.X:
             self.colors = ['k'] + self.colors
-
 
     def collect_gdf(self):
         """
@@ -197,28 +197,28 @@ class CachedNetwork(object):
         COMM.Barrier()
 
         # Raise Exception if there are no gdf files to be read
-        if len(glob.glob(os.path.join(self.spike_output_path,
-                                      self.label + '*.'+ self.ext))) == 0:
-            raise Exception('path to files contain no gdf-files!')
+        if len(glob(os.path.join(self.spike_output_path,
+                                 self.label + '*.' + self.ext))) == 0:
+            raise Exception(
+                'path to files contain no {}-files!'.format(self.ext))
 
-        #create in-memory databases of spikes
+        # create in-memory databases of spikes
         if not hasattr(self, 'dbs'):
             self.dbs = {}
 
         for X in self.X:
             db = GDF(os.path.join(self.dbname),
-                    debug=True, new_db=True)
+                     debug=True, new_db=True)
             db.create(re=os.path.join(self.spike_output_path,
                                       '{0}*{1}*{2}'.format(self.label, X,
                                                            self.ext)),
                       index=True,
                       skiprows=self.skiprows)
             self.dbs.update({
-                    X : db
-                })
+                X: db
+            })
 
         COMM.Barrier()
-
 
     def get_xy(self, xlim, fraction=1.):
         """
@@ -249,8 +249,11 @@ class CachedNetwork(object):
             y[X] = np.array([])
 
             if fraction != 1:
-                nodes = np.random.permutation(nodes)[:int(nodes.size*fraction)]
-                nodes.sort()
+                nodes = sorted(
+                    np.random.permutation(nodes)[
+                        :int(
+                            nodes.size *
+                            fraction)])
 
             spiketimes = self.dbs[X].select_neurons_interval(nodes, T=xlim)
             i = 0
@@ -260,7 +263,6 @@ class CachedNetwork(object):
                 i += 1
 
         return x, y
-
 
     def plot_raster(self, ax, xlim, x, y, pop_names=False,
                     markersize=20., alpha=1., legend=True,
@@ -299,25 +301,29 @@ class CachedNetwork(object):
         None
 
         """
-        yoffset = [sum(self.N_X) if X=='TC' else 0 for X in self.X]
+        yoffset = [sum(self.N_X) if X == 'TC' else 0 for X in self.X]
         for i, X in enumerate(self.X):
             if y[X].size > 0:
-                ax.plot(x[X], y[X]+yoffset[i], marker,
+                ax.plot(
+                    x[X],
+                    y[X] + yoffset[i],
+                    marker,
                     markersize=markersize,
                     mfc=self.colors[i],
                     mec='none' if marker in '.ov><v^1234sp*hHDd' else self.colors[i],
                     alpha=alpha,
-                    label=X, rasterized=rasterized,
+                    label=X,
+                    rasterized=rasterized,
                     clip_on=True)
 
-        #don't draw anything for the may-be-quiet TC population
+        # don't draw anything for the may-be-quiet TC population
         N_X_sum = 0
         for i, X in enumerate(self.X):
             if y[X].size > 0:
                 N_X_sum += self.N_X[i]
 
         ax.axis([xlim[0], xlim[1],
-                 self.GIDs[self.X[0]][0], self.GIDs[self.X[0]][0]+N_X_sum])
+                 self.GIDs[self.X[0]][0], self.GIDs[self.X[0]][0] + N_X_sum])
         ax.set_ylim(ax.get_ylim()[::-1])
         ax.set_ylabel('cell id', labelpad=0)
         ax.set_xlabel('$t$ (ms)', labelpad=0)
@@ -328,7 +334,7 @@ class CachedNetwork(object):
             yticklabels = []
             for i, X in enumerate(self.X):
                 if y[X] != []:
-                    yticks.append(y[X].mean()+yoffset[i])
+                    yticks.append(y[X].mean() + yoffset[i])
                     yticklabels.append(self.X[i])
             ax.set_yticks(yticks)
             ax.set_yticklabels(yticklabels)
@@ -337,12 +343,22 @@ class CachedNetwork(object):
         for i, X in enumerate(self.X):
             if y[X].size > 0:
                 ax.plot([xlim[0], xlim[1]],
-                        [y[X].max()+yoffset[i], y[X].max()+yoffset[i]],
+                        [y[X].max() + yoffset[i], y[X].max() + yoffset[i]],
                         'k', lw=0.25)
 
-
-    def plot_f_rate(self, ax, X, i, xlim, x, y, binsize=1, yscale='linear',
-                    plottype='fill_between', show_label=False, rasterized=False):
+    def plot_f_rate(
+            self,
+            ax,
+            X,
+            i,
+            xlim,
+            x,
+            y,
+            binsize=1,
+            yscale='linear',
+            plottype='fill_between',
+            show_label=False,
+            rasterized=False):
         """
         Plot network firing rate plot in subplot object.
 
@@ -374,22 +390,27 @@ class CachedNetwork(object):
 
         """
 
-        bins = np.arange(xlim[0], xlim[1]+binsize, binsize)
+        bins = np.arange(xlim[0], xlim[1] + binsize, binsize)
         (hist, bins) = np.histogram(x[X], bins=bins)
 
         if plottype == 'fill_between':
-            ax.fill_between(bins[:-1], hist * 1000. / self.N_X[i],
-                    color=self.colors[i], lw=0.5, label=X, rasterized=rasterized,
-                    clip_on=False)
+            ax.fill_between(bins[:-1],
+                            hist * 1000. / self.N_X[i],
+                            color=self.colors[i],
+                            lw=0.5,
+                            label=X,
+                            rasterized=rasterized,
+                            clip_on=False)
             ax.plot(bins[:-1], hist * 1000. / self.N_X[i],
                     color='k', lw=0.5, label=X, rasterized=rasterized,
                     clip_on=False)
         elif plottype == 'bar':
             ax.bar(bins[:-1], hist * 1000. / self.N_X[i],
-                    color=self.colors[i], label=X, rasterized=rasterized ,
-                    linewidth=0.25, width=0.9, clip_on=False)
+                   color=self.colors[i], label=X, rasterized=rasterized,
+                   linewidth=0.25, width=0.9, clip_on=False)
         else:
-            mssg = "plottype={} not in ['fill_between', 'bar']".format(plottype)
+            mssg = "plottype={} not in ['fill_between', 'bar']".format(
+                plottype)
             raise Exception(mssg)
 
         remove_axis_junk(ax)
@@ -400,13 +421,13 @@ class CachedNetwork(object):
 
         ax.set_xlim(xlim[0], xlim[1])
         if show_label:
-            ax.text(xlim[0] + .05*(xlim[1]-xlim[0]), ax.axis()[3]*1.5, X,
+            ax.text(xlim[0] + .05 * (xlim[1] - xlim[0]), ax.axis()[3] * 1.5, X,
                     va='center', ha='left')
-
 
     def raster_plots(self, xlim=[0, 1000], markersize=1, alpha=1., marker='o'):
         """
-        Pretty plot of the spiking output of each population as raster and rate.
+        Pretty plot of the spiking output of each population as raster and
+        rate.
 
 
         Parameters
@@ -439,16 +460,15 @@ class CachedNetwork(object):
         ax0.set_xlabel("")
 
         nrows = len(self.X)
-        bottom = np.linspace(0.1, 0.45, nrows+1)[::-1][1:]
-        thickn = np.abs(np.diff(bottom))[0]*0.9
-
+        bottom = np.linspace(0.1, 0.45, nrows + 1)[::-1][1:]
+        thickn = np.abs(np.diff(bottom))[0] * 0.9
 
         for i, layer in enumerate(self.X):
             ax1 = fig.add_axes([0.12, bottom[i], 0.78, thickn])
 
             self.plot_f_rate(ax1, layer, i, xlim, x, y, )
 
-            if i == nrows-1:
+            if i == nrows - 1:
                 ax1.set_xlabel('time (ms)')
             else:
                 ax1.set_xticklabels([])
@@ -490,10 +510,21 @@ class CachedFixedSpikesNetwork(CachedNetwork):
     CachedNetwork, CachedNoiseNetwork,
 
     """
-    def __init__(self,
-                 activationtimes=[200, 300, 400, 500, 600, 700, 800, 900, 1000],
-                 autocollect=False,
-                 **kwargs):
+
+    def __init__(
+            self,
+            activationtimes=[
+                200,
+                300,
+                400,
+                500,
+                600,
+                700,
+                800,
+                900,
+                1000],
+            autocollect=False,
+            **kwargs):
         """
         Subclass of CachedNetwork
 
@@ -537,19 +568,26 @@ class CachedFixedSpikesNetwork(CachedNetwork):
             for i, N in enumerate(self.N_X):
                 nodes = self.nodes[self.X[i]]
                 cell_spt = list(zip(nodes, [self.activationtimes[i]
-                                  for x in range(nodes.size)]))
+                                            for x in range(nodes.size)]))
                 cell_spt = np.array(cell_spt, dtype=[('a', int), ('b', float)])
-                
-                np.savetxt(os.path.join(self.spike_output_path,
-                                        self.label + '_{}.{}'.format(self.X[i], self.ext)),
-                           cell_spt, fmt=['%i', '%.1f'])
+
+                np.savetxt(
+                    os.path.join(
+                        self.spike_output_path,
+                        self.label +
+                        '_{}.{}'.format(
+                            self.X[i],
+                            self.ext)),
+                    cell_spt,
+                    fmt=[
+                        '%i',
+                        '%.1f'])
 
         # Resync
         COMM.barrier()
 
         # Collect the gdf files
         self.collect_gdf()
-
 
 
 class CachedNoiseNetwork(CachedNetwork):
@@ -579,6 +617,7 @@ class CachedNoiseNetwork(CachedNetwork):
 
 
     """
+
     def __init__(self,
                  frate=dict(EX=5., IN=10.),
                  autocollect=False,
@@ -614,8 +653,7 @@ class CachedNoiseNetwork(CachedNetwork):
         """
         import nest
 
-
-        #set some attributes:
+        # set some attributes:
         self.frate = frate
         if len(self.frate.keys()) != self.N_X.size:
             raise Exception('self.frate.keys().size != self.N_X.size')
@@ -626,28 +664,28 @@ class CachedNoiseNetwork(CachedNetwork):
         # nodes etc in the process
         nest.ResetKernel()
 
-        #if dt is in powers of two, dt must be multiple of ms_per_tic
+        # if dt is in powers of two, dt must be multiple of ms_per_tic
         if self.dt in 2**np.arange(-32., 0):
             nest.SetKernelStatus({
-                "tics_per_ms" : 2**2 / self.dt,
+                "tics_per_ms": 2**2 / self.dt,
                 "resolution": self.dt,
                 "print_time": True,
-                "overwrite_files" : True,
-                "total_num_virtual_procs" : self.total_num_virtual_procs,
-                })
+                "overwrite_files": True,
+                "total_num_virtual_procs": self.total_num_virtual_procs,
+            })
         else:
             nest.SetKernelStatus({
                 "resolution": self.dt,
                 "print_time": True,
-                "overwrite_files" : True,
-                "total_num_virtual_procs" : self.total_num_virtual_procs,
-                })
+                "overwrite_files": True,
+                "total_num_virtual_procs": self.total_num_virtual_procs,
+            })
 
         nest.SetDefaults("spike_detector", {
-            'withtime' : True,
-            'withgid' : True,
-            'to_file' : True,
-            'to_memory' : False,
+            'withtime': True,
+            'withgid': True,
+            'to_file': True,
+            'to_memory': False,
         })
 
         # Create some populations of parrot neurons that echo the input Poisson
@@ -668,7 +706,6 @@ class CachedNoiseNetwork(CachedNetwork):
                                dict(label=os.path.join(self.spike_output_path,
                                                        self.label + '_' + X)))
 
-
             """ Create independent poisson spike trains with the some rate,
              but each layer population should really have different rates.
              """
@@ -676,24 +713,24 @@ class CachedNoiseNetwork(CachedNetwork):
             # for X, rate in self.frate.items():
             for X in self.X:
                 rate = self.frate[X]
-                if type(rate) == tuple:
+                if isinstance(rate, tuple):
                     self.noise.append(nest.Create("poisson_generator", 1,
-                                                  { "start" : rate[0],
-                                                    "rate" :  rate[1],
-                                                    "stop" :  rate[2]}))
+                                                  {"start": rate[0],
+                                                   "rate": rate[1],
+                                                   "stop": rate[2]}))
                 else:
                     self.noise.append(nest.Create("poisson_generator", 1,
-                                                  {"rate" : rate}))
+                                                  {"rate": rate}))
 
-            ## Connect parrots and spike detector
+            # Connect parrots and spike detector
             for X, spt in zip(self.X, self.spikes):
                 nest.Connect(self.nodes[X], [spt],
-                                       syn_spec='static_synapse')
+                             syn_spec='static_synapse')
 
             # Connect noise generators and nodes
             for i, X in enumerate(self.X):
                 nest.Connect(self.noise[i], self.nodes[X],
-                                       syn_spec='static_synapse')
+                             syn_spec='static_synapse')
 
             # Run simulation
             nest.Simulate(self.simtime)
@@ -707,6 +744,118 @@ class CachedNoiseNetwork(CachedNetwork):
             # Nodes need to be collected in np.ndarrays:
             for key in list(self.nodes.keys()):
                 self.nodes[key] = np.array(self.nodes[key])
+
+
+class CachedTopoNetwork(CachedNetwork):
+    def __init__(self,
+                 autocollect=True,
+                 label_positions='brunel-py-pos',
+                 **kwargs):
+        '''
+        Parameters
+        ----------
+        autocollect : bool
+            whether or not to automatically gather gdf file output
+        label_positions : str
+            file prefix of position txt files
+        **kwargs :
+            parameters for parent class hybridLFPy.CachedNetwork
+        '''
+        # initialize parent class
+        CachedNetwork.__init__(self, autocollect=autocollect, **kwargs)
+
+        # set class attributes
+        self.label_positions = label_positions
+
+        # load positions and set them as attributes
+        self.positions = {}
+        for X in self.X:
+            fname = os.path.join(self.spike_output_path, 'all_positions.h5')
+            if os.path.isfile(fname):
+                f = h5py.File(fname, 'r')
+                # set positions, units from mm to mum !!!!!!!!!!!!!!!!!!!!!!!!!
+                self.positions[X] = f[X][()][:, 1:] * 1E3
+                f.close()
+            else:
+                fnames = glob(
+                    os.path.join(
+                        self.spike_output_path,
+                        label_positions +
+                        '*{0}*txt'.format(X)))
+                for i, fname in enumerate(fnames):
+                    if i == 0:
+                        tmp_pos = np.loadtxt(fname, dtype=object)
+                    else:
+                        tmp_pos = np.vstack((tmp_pos,
+                                             np.loadtxt(fname, dtype=object)))
+                # sorting array
+                argsort = np.argsort(tmp_pos[:, 0].astype(int))
+
+                # set positions
+                self.positions[X] = tmp_pos[argsort, 1:].astype(float)
+
+    def plot_raster(self, ax, xlim, x, y, pop_names=False,
+                    markersize=20., alpha=1., legend=True,
+                    marker='o'):
+        """
+        Plot network raster plot in subplot object.
+
+
+        Parameters
+        ----------
+        ax : `matplotlib.axes.AxesSubplot` object
+            plot axes
+        xlim : list
+            List of floats. Spike time interval, e.g., [0., 1000.].
+        x : dict
+            Key-value entries are population name and neuron spike times.
+        y : dict
+            Key-value entries are population name and neuron gid number.
+        pop_names: bool
+            If True, show population names on yaxis instead of gid number.
+        markersize : float
+            raster plot marker size
+        alpha : float in [0, 1]
+            transparency of marker
+        legend : bool
+            Switch on axes legends.
+
+
+        Returns
+        -------
+        None
+
+        """
+        for i, X in enumerate(self.X):
+            ax.plot(x[X], y[X], marker,
+                    markersize=markersize,
+                    markerfacecolor=self.colors[i],
+                    markeredgecolor=self.colors[i],
+                    alpha=alpha,
+                    label=X, rasterized=True,
+                    clip_on=True)
+
+        ax.axis([xlim[0], xlim[1], 0, self.N_X.sum()])
+        ax.set_ylim(ax.get_ylim()[::-1])
+        ax.set_ylabel('cell id', labelpad=0)
+        ax.set_xlabel('$t$ (ms)', labelpad=0)
+        if legend:
+            ax.legend()
+        if pop_names:
+            yticks = []
+            yticklabels = []
+            for i, X in enumerate(self.X):
+                if y[X] != []:
+                    yticks.append(y[X].mean())
+                    yticklabels.append(self.X[i])
+            ax.set_yticks(yticks)
+            ax.set_yticklabels(yticklabels)
+
+        # Add some horizontal lines separating the populations
+        for X in self.X:
+            if y[X].size > 0:
+                ax.plot([xlim[0], xlim[1]], [y[X].max(), y[X].max()],
+                        'k', lw=0.25)
 
 
 if __name__ == '__main__':
