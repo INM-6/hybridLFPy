@@ -6,11 +6,11 @@ predict LFPs from point-neuron networks.
 
 ## Files
 
-* `example_brunel.py`: Main simulation script for predicting LFP from Brunel style point-neuron network
+* `example_brunel.py`: Main simulation script for predicting LFP across depth from Brunel style point-neuron network
 
     * `brunel_alpha_nest.py`: Brunel (2000) style point-neuron network implementation, alpha-shaped PSCs
 
-* `example_brunel_alpha_topo_exp.py`: Compute LFP from point-neuron network with neurons positioned on a square 2D domain with exponentially decaying distance-dependent connectivity and periodic boundary conditions, alpha-shaped PSCs.
+* `example_brunel_alpha_topo_exp.py`: Compute LFP from point-neuron network with neurons positioned on a square 2D domain with exponentially decaying distance-dependent connectivity and periodic boundary conditions, alpha-shaped PSCs. The LFP is computed across lateral space using 10x10 contact sites with 400µm electrode separation (similar to Utah multi-electrode array).  
 
     * `brunel_alpha_topo_exp.py`: Network implementation for `example_brunel_alpha_topo_exp.py`
 
