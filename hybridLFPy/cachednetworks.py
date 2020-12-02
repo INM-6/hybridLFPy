@@ -68,8 +68,8 @@ class CachedNetwork(object):
     ext : str
         File extension of gdf/dat-files.
     GIDs : dict
-        dictionary keys are population names and item a list with first
-        GID in population and population size
+        dictionary keys are population names and value a list of length 2
+        with first GID in population and population size
     X : list
         names of each network population
     autocollect : bool
@@ -236,9 +236,11 @@ class CachedNetwork(object):
         Returns
         -------
         x : dict
-            In `x` key-value entries are population name and neuron spike times.
+            In `x` key-value entries are population name and neuron spike
+            times.
         y : dict
-            Where in `y` key-value entries are population name and neuron gid number.
+            Where in `y` key-value entries are population name and neuron
+            gid number.
 
         """
         x = {}
@@ -310,7 +312,8 @@ class CachedNetwork(object):
                     marker,
                     markersize=markersize,
                     mfc=self.colors[i],
-                    mec='none' if marker in '.ov><v^1234sp*hHDd' else self.colors[i],
+                    mec='none' if marker in '.ov><v^1234sp*hHDd'
+                        else self.colors[i],
                     alpha=alpha,
                     label=X,
                     rasterized=rasterized,
@@ -774,14 +777,16 @@ class CachedTopoNetwork(CachedNetwork):
             if os.path.isfile(fname):
                 f = h5py.File(fname, 'r')
                 # set positions, units from mm to mum !!!!!!!!!!!!!!!!!!!!!!!!!
-                self.positions[X] = f[X][()][:, 1:] * 1E3
+                # self.positions[X] = f[X][()][:, 1:] * 1E3
+                self.positions[X] = np.c_[f[X]['x-position_mm'][()],
+                                          f[X]['y-position_mm'][()]] * 1E3
                 f.close()
             else:
                 fnames = glob(
                     os.path.join(
                         self.spike_output_path,
                         label_positions +
-                        '*{0}*txt'.format(X)))
+                        '*{0}*.dat'.format(X)))
                 for i, fname in enumerate(fnames):
                     if i == 0:
                         tmp_pos = np.loadtxt(fname, dtype=object)

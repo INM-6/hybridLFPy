@@ -195,11 +195,6 @@ class PopulationSuper(object):
         self.POPULATIONSEED = POPULATIONSEED
         self.verbose = verbose
 
-        # put git revision info in savefolder
-        if self.savefolder is not None:
-            os.system('git rev-parse HEAD -> %s/populationRevision.txt' %
-                      self.savefolder)
-
         # set the random seed for reproducible populations, synapse locations,
         # presynaptic spiketrains
         np.random.seed(self.POPULATIONSEED)
