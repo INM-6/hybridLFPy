@@ -233,9 +233,9 @@ def run_model():
 
     # write GID and positions of neurons in layers
     nest.DumpLayerNodes(nodes_ex, os.path.join(spike_output_path,
-                                               label_positions + '-EX.txt'))
+                                               label_positions + '-EX.dat'))
     nest.DumpLayerNodes(nodes_in, os.path.join(spike_output_path,
-                                               label_positions + '-IN.txt'))
+                                               label_positions + '-IN.dat'))
 
     # distribute membrane potentials between V=0 and threshold V_th
     nest.SetStatus(nodes_ex, "V_m",
