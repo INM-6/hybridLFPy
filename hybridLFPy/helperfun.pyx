@@ -41,16 +41,16 @@ cpdef list _getSpCell(np.ndarray[LTYPE_t, ndim=1, negative_indices=False] nodes,
         list presynaptic neuron indices
 
     '''
-    #C-declare local variables
+    # C-declare local variables
     cdef np.ndarray[LTYPE_t, ndim=1, negative_indices=False] spc
     cdef int n
     cdef list SpCell
 
-    #fill in container with distance-dependent connections
+    # fill in container with distance-dependent connections
     SpCell = []
     for n in range(numSyn.size):
-        #numSyn[n]-size array with units picked according to distance-dependent
-        #probability
+        # numSyn[n]-size array with units picked according to distance-dependent
+        # probability
         spc = alias_method(nodes, Pr, numSyn[n])
         SpCell.append(spc)
 
@@ -93,14 +93,14 @@ cpdef np.ndarray[DTYPE_t, ndim=1, negative_indices=False] _calc_radial_dist_to_c
         lateral distance to all presynaptic cells in population X
 
     '''
-    #c-declare variables
+    # c-declare variables
     cdef np.ndarray[DTYPE_t, ndim=1, negative_indices=False] xdist, ydist, r
     cdef int i
 
     r = np.zeros(Xpos.shape[0])
 
-    #account for periodic boundary conditions when computing
-    #distance between sources and target
+    # account for periodic boundary conditions when computing
+    # distance between sources and target
     if edge_wrap == 1:
         xdist = np.abs(Xpos[:, 0] - x)
         ydist = np.abs(Xpos[:, 1] - y)
@@ -112,7 +112,7 @@ cpdef np.ndarray[DTYPE_t, ndim=1, negative_indices=False] _calc_radial_dist_to_c
 
             r[i] = sqrt(xdist[i]*xdist[i] + ydist[i]*ydist[i])
     else:
-        #radial distance without periodic boundaries
+        # radial distance without periodic boundaries
         for i in range(r.size):
             r[i] = sqrt((Xpos[i, 0]-x)**2 + (Xpos[i, 1]-y)**2)
     return r
@@ -138,37 +138,39 @@ cpdef list _fetchSpCells(int cellindex,
     Parameters
     ----------
     cellindex : int
-        index of postsynaptic cells
-    X : str,
-        name of presynaptic population
+        index of postsynaptic cell
+    x: double
+        x-position
+    y: double
+        y-position
+    positions:
+        shape (N_Y, 2) array of (x,y) locations of presynaptic neurons
     nodes : np.ndarray, dtype=int
-        Node # of valid presynaptic neurons.
+        Size N_Y array of node # of valid presynaptic neurons.
     numSyn : np.ndarray, dtype=int
         # of synapses per connection.
-
 
     Returns
     -------
     list
         list of arrays of presynaptic network-neuron indices
 
-
     See also
     --------
     Population.fetch_all_SpCells
     """
 
-    #c-declare some variables
+    # c-declare some variables
     cdef np.ndarray[DTYPE_t, ndim=1, negative_indices=False] r, Pr
     cdef DTYPE_t a, tau, p_center, mean, sigma, c, Prsum, mask_radius, ri
     cdef int n, i
     cdef list SpCell
 
-    #connection probability as function of radius
+    # connection probability as function of radius
     kernel = topology_connections['kernel']
     mask = topology_connections['mask']
     if list(kernel.keys())[0] == 'exponential':
-        #distance to other cells
+        # distance to other cells
         r = _calc_radial_dist_to_cell(x,
                                       y,
                                       positions,
@@ -176,13 +178,13 @@ cpdef list _fetchSpCells(int cellindex,
                                       topology_connections['extent'][1],
                                       topology_connections['edge_wrap'])
 
-        #set up connection probability with distance
+        # set up connection probability with distance
         a = kernel['exponential']['a']
         tau = kernel['exponential']['tau']
         c = kernel['exponential']['c']
         mask_radius = mask['circular']['radius']
 
-        #compute distance dependent connectivity, apply mask, check for autapses
+        # compute distance dependent connectivity, apply mask, check for autapses
         Pr = a * np.exp(-r/tau) + c
         Pr[np.where(r > mask_radius)] = 0.
         if not topology_connections['allow_autapses']:
@@ -190,17 +192,17 @@ cpdef list _fetchSpCells(int cellindex,
 
 
         Prsum = Pr.sum()
-        if Prsum > 0: #at least a single presynaptic cell must exists
-            #normalize connection probabilities (sum of probs is 1.)
+        if Prsum > 0:  # at least a single presynaptic cell must exists
+            # normalize connection probabilities (sum of probs is 1.)
             Pr /= Prsum
 
-            ##container for distance-dependent connections
+            # container for distance-dependent connections
             SpCell = _getSpCell(nodes, numSyn, Pr)
         else: #zero presynaptic neurons exist
             SpCell = [[] for n in numSyn]
 
     elif list(kernel.keys())[0] == 'gaussian':
-        #distance to other cells
+        # distance to other cells
         r = _calc_radial_dist_to_cell(x,
                                       y,
                                       positions,
@@ -208,14 +210,14 @@ cpdef list _fetchSpCells(int cellindex,
                                       topology_connections['extent'][1],
                                       topology_connections['edge_wrap'])
 
-        #set up connection probability with distance
+        # set up connection probability with distance
         p_center = kernel['gaussian']['p_center']
         sigma = kernel['gaussian']['sigma']
         mean = kernel['gaussian']['mean']
         c = kernel['gaussian']['c']
         mask_radius = mask['circular']['radius']
 
-        #compute distance dependent connectivity, apply mask, check for autapses
+        # compute distance dependent connectivity, apply mask, check for autapses
         Pr = p_center * np.exp(-((r-mean)*(r-mean))/(2*sigma*sigma)) + c
         Pr[np.where(r > mask_radius)] = 0.
         if not topology_connections['allow_autapses']:
@@ -223,17 +225,17 @@ cpdef list _fetchSpCells(int cellindex,
 
 
         Prsum = Pr.sum()
-        if Prsum > 0: #at least a single presynaptic cell must exists
-            #normalize connection probabilities (sum of probs is 1.)
+        if Prsum > 0:  # at least a single presynaptic cell must exists
+            # normalize connection probabilities (sum of probs is 1.)
             Pr /= Prsum
 
-            ##container for distance-dependent connections
+            # container for distance-dependent connections
             SpCell = _getSpCell(nodes, numSyn, Pr)
-        else: #zero presynaptic neurons exist
+        else:  # zero presynaptic neurons exist
             SpCell = [[] for n in numSyn]
 
     elif list(kernel.keys())[0] == 'random':
-        #container for random connections
+        # container for random connections
         SpCell = []
         for n in numSyn:
             SpCell.append(np.random.randint(nodes.min(), nodes.max(),
@@ -254,12 +256,32 @@ cpdef dict _get_all_SpCells(np.ndarray[LTYPE_t, ndim=1, negative_indices=False] 
                      dict topology_connections,
                      dict nodes,
                      np.ndarray[LTYPE_t, ndim=2, negative_indices=False] k_yXL):
+    '''
+    Parameters
+    ----------
+    RANK_CELLINDICES: ndarray, dtype=int
+    X: list of strings
+        list of presynaptic population names
+    y: str
+        name of postsynaptic population/cell type
+    pop_soma_pos: list of dicts
+        soma locations of postsynapic neurons on this RANK
+    positions: dict
+        locations of all presynaptic neurons per population
+    topology_connections: dict
+        parameters for distance-dependent connections
+    nodes: dict of ndarrays
+        presynaptic node GIDs
+    k_yXL: ndarray, dtype=int
+        layer specificity of synaptic indegree onto cell type y per presynaptic
+        population X.
 
-    #c-declare variables
+    '''
+    # c-declare variables
     cdef dict SpCells
     cdef int i, cellindex
 
-    #container
+    # container
     SpCells = {}
 
     for cellindex in RANK_CELLINDICES:
