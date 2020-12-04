@@ -403,7 +403,7 @@ class PeriodicLFP(lfpykit.RecExtElectrode):
                 x = self.cell.x.copy()
                 y = self.cell.y.copy()
                 self.cell.x = self.cell.x + i * self.side_length
-                self.cell.y = self.cell.y + i * self.side_length
+                self.cell.y = self.cell.y + j * self.side_length
                 M += self._get_transformation_matrix()
                 self.cell.x = x
                 self.cell.y = y
