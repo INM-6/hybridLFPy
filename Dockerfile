@@ -34,6 +34,7 @@ RUN git clone https://github.com/nest/nest-simulator.git && \
         -Dwith-python=ON \
         -Dwith-mpi=ON \
         -Dwith-openmp=ON \
+        -Dwith-boost=ON \
         ../nest-simulator && \
     make && \
     make install && \
