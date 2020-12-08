@@ -330,8 +330,21 @@ class PopulationSuper(object):
             for probe in self.probes:
                 probe.cell = cell
 
+            if 'rec_imem' in self.simulationParams.keys():
+                try:
+                    assert self.simulationParams['rec_imem']
+                    cell.simulate(**self.simulationParams)
+                    for probe in self.probes:
+                        M = probe.get_transformation_matrix()
+                        probe.data = M @ cell.imem
+                    del cell.imem
+                except AssertionError:
+                    cell.simulate(probes=self.probes, **self.simulationParams)
+            else:
+                cell.simulate(probes=self.probes, **self.simulationParams)
+
             # make predictions
-            cell.simulate(probes=self.probes, **self.simulationParams)
+            # cell.simulate(probes=self.probes, **self.simulationParams)
 
             # downsample probe.data attribute and unset cell
             for probe in self.probes:
@@ -1273,8 +1286,21 @@ class Population(PopulationSuper):
             for probe in self.probes:
                 probe.cell = cell
 
+            if 'rec_imem' in self.simulationParams.keys():
+                try:
+                    assert self.simulationParams['rec_imem']
+                    cell.simulate(**self.simulationParams)
+                    for probe in self.probes:
+                        M = probe.get_transformation_matrix()
+                        probe.data = M @ cell.imem
+                    del cell.imem
+                except AssertionError:
+                    cell.simulate(probes=self.probes, **self.simulationParams)
+            else:
+                cell.simulate(probes=self.probes, **self.simulationParams)
+
             # make predictions
-            cell.simulate(probes=self.probes, **self.simulationParams)
+            # cell.simulate(probes=self.probes, **self.simulationParams)
 
             # downsample probe.data attribute and unset cell
             for probe in self.probes:
