@@ -63,7 +63,7 @@ RUN pip install neuron
 
 
 # ---- install LFPy@2.2.dev0 -----
-RUN pip install git+https://github.com/LFPy/LFPy.git@2.2.dev0#egg=LFPy
+RUN pip install git+https://github.com/LFPy/LFPy.git@master#egg=LFPy
 
 
 # --- Install hybridLFPy ----
