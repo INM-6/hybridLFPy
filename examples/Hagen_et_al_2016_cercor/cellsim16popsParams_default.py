@@ -923,7 +923,7 @@ class multicompartment_params(point_neuron_network_params):
 
 
         # additional simulation kwargs, see LFPy.Cell.simulate() docstring
-        self.simulationParams = {}
+        self.simulationParams = {'rec_imem': True}
 
 
         # a dict setting the number of cells N_y and geometry
