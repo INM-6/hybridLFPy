@@ -14,6 +14,7 @@ from . import helpers
 from .helperfun import _calc_radial_dist_to_cell, _get_all_SpCells
 import LFPy
 # import neuron
+import scipy.signal as ss
 from time import time
 
 
@@ -348,7 +349,7 @@ class PopulationSuper(object):
 
             # downsample probe.data attribute and unset cell
             for probe in self.probes:
-                probe.data = helpers.decimate(probe.data, q=self.decimatefrac)
+                probe.data = ss.decimate(probe.data, q=self.decimatefrac)
                 probe.cell = None
 
             # put all necessary cell output in output dict
@@ -1304,7 +1305,7 @@ class Population(PopulationSuper):
 
             # downsample probe.data attribute and unset cell
             for probe in self.probes:
-                probe.data = helpers.decimate(probe.data,
+                probe.data = ss.decimate(probe.data,
                                               q=self.decimatefrac
                                               ).astype(np.float32)
                 probe.cell = None

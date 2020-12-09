@@ -168,8 +168,10 @@ PS.update(dict(
     ),
 
 
-    #kwargs passed to LFPy.Cell.simulate()
-    simulationParams = dict(),
+    # kwargs passed to LFPy.Cell.simulate().
+    # It can be empty, but if `rec_imem=True`, the signal predictions will be
+    # performed using recorded transmembrane currents.
+    simulationParams = dict(rec_imem=True),
 
     #set up parameters corresponding to cylindrical model populations
     populationParams = dict(
