@@ -206,9 +206,7 @@ class PostProcess(object):
             f = h5py.File(fname, 'r')
 
             if i == 0:
-                measure_array = np.zeros((len(self.y),
-                                         f['data'].shape[0], f['data'].shape[1])
-                                         )
+                measure_array = np.zeros((len(self.y),) + f['data'].shape)
 
             # fill in
             measure_array[i, ] = f['data'][()]

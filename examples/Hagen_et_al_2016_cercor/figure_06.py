@@ -12,6 +12,7 @@ from cellsim16popsParams_modified_spontan import multicompartment_params
 import analysis_params
 from hybridLFPy import CachedNetwork, helpers
 import pickle as pickle
+import scipy.signal as ss
 
 
 def plot_multi_scale_output_a(fig):
@@ -181,25 +182,25 @@ def plot_multi_scale_output_a(fig):
 
         if i == 0:
             ax3.plot(tvec[inds][::10],
-                     helpers.decimate(value['E'][inds], 10),
+                     ss.decimate(value['E'][inds], 10),
                      'k' if analysis_params.bw else analysis_params.colorE, #lw=0.75, #'r',
                      rasterized=False,label='exc.')
             ax3.plot(tvec[inds][::10],
-                     helpers.decimate(value['I'][inds], 10),
+                     ss.decimate(value['I'][inds], 10),
                      'gray' if analysis_params.bw else analysis_params.colorI, #lw=0.75, #'b',
                      rasterized=False,label='inh.')
             ax3.plot(tvec[inds][::10],
-                     helpers.decimate(value['E'][inds] + value['I'][inds], 10),
+                     ss.decimate(value['E'][inds] + value['I'][inds], 10),
                      'k', lw=1, rasterized=False, label='sum')
         else:
-            ax3.plot(tvec[inds][::10], helpers.decimate(value['E'][inds], 10),
+            ax3.plot(tvec[inds][::10], ss.decimate(value['E'][inds], 10),
                      'k' if analysis_params.bw else analysis_params.colorE, #lw=0.75, #'r',
                      rasterized=False)
-            ax3.plot(tvec[inds][::10], helpers.decimate(value['I'][inds], 10),
+            ax3.plot(tvec[inds][::10], ss.decimate(value['I'][inds], 10),
                      'gray' if analysis_params.bw else analysis_params.colorI, #lw=0.75, #'b',
                      rasterized=False)
             ax3.plot(tvec[inds][::10],
-                     helpers.decimate(value['E'][inds] + value['I'][inds], 10),
+                     ss.decimate(value['E'][inds] + value['I'][inds], 10),
                      'k', lw=1, rasterized=False)
         phlp.remove_axis_junk(ax3)
 
@@ -256,7 +257,8 @@ def plot_multi_scale_output_a(fig):
         inds = (tvec <= T[1]) & (tvec >= T[0])
 
         ax4 = fig.add_axes([lefts[3], bottoms[i], axwidth, thickn])
-        ax4.plot(tvec[inds][::10], helpers.decimate(value['data'][inds], 10), color=colors[i],
+        ax4.plot(tvec[inds][::10], ss.decimate(value['data'][inds], 10),
+                 color=colors[i],
                  zorder=0, rasterized=False)
 
 
