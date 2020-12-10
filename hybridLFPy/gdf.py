@@ -25,18 +25,6 @@ import matplotlib.pyplot as plt
 import sys
 
 
-plt.rcdefaults()
-plt.rcParams.update({
-    'font.size' : 16,
-    'axes.labelsize' : 16,
-    'axes.titlesize' : 16,
-    'legend.fontsize' : 14,
-    'xtick.labelsize' : 16,
-    'ytick.labelsize' : 16,
-    'figure.subplot.wspace' : 0.3,
-    'figure.subplot.hspace' : 0.3,
-})
-
 class GDF(object):
     """
     1. Read from gdf files.
