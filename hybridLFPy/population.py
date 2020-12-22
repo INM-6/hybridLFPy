@@ -584,6 +584,13 @@ class PopulationSuper(object):
             The populations-specific compound signal.
 
         """
+        # broadcast output shape from RANK 0 data which is guarantied to exist
+        if RANK == 0:
+            shape = self.output[self.RANK_CELLINDICES[0]][measure].shape
+        else:
+            shape = None
+        shape = COMM.bcast(shape, root=0)
+
         # compute the total LFP of cells on this RANK
         if self.RANK_CELLINDICES.size > 0:
             for i, cellindex in enumerate(self.RANK_CELLINDICES):
@@ -592,20 +599,7 @@ class PopulationSuper(object):
                 else:
                     data += self.output[cellindex][measure]
         else:
-            probenames = np.array([p.__class__.__name__ for p in self.probes])
-            ind = np.where(probenames == measure)[0][0]
-            # not very elegant:
-            if measure.rfind('RecExtElectrode') >= 0:
-                dim0 = self.probes[ind].x.size
-            elif measure.rfind('LaminarCurrentSourceDensity') >= 0:
-                dim0 = self.probes[ind].r.size
-            elif measure.rfind('CurrentDipoleMoment') >= 0:
-                dim0 = 3
-            else:
-                dim0 = self.probes[ind].x.size
-            data = np.zeros((dim0,
-                             int(self.cellParams['tstop'] // self.dt_output
-                                 ) + 1), dtype=np.float32)
+            data = np.zeros(shape, dtype=np.float32)
 
         # container for full LFP on RANK 0
         if RANK == 0:
