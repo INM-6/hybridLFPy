@@ -568,11 +568,10 @@ class PopulationSuper(object):
 
         return soma_pos
 
-    def calc_signal_sum(self, measure='LFP'
-                        ):
+    def calc_signal_sum(self, measure='LFP'):
         """
         Superimpose each cell's contribution to the compound population signal,
-        i.e., the population CSD or LFP
+        i.e., the population CSD or LFP or some other lfpykit.<instance>
 
         Parameters
         ----------
@@ -1414,23 +1413,28 @@ class Population(PopulationSuper):
             raise AssertionError(
                 'could not open CachedNetwork database objects')
 
+        # convert to object array for slicing
+        spikes = np.array(spikes, dtype=object)
+
         # apply synaptic delays
         if synDelays is not None and idx.size > 0:
             for i, delay in enumerate(synDelays):
                 if spikes[i].size > 0:
                     spikes[i] += delay
 
-        # create synapse events:
-        for i in range(idx.size):
-            if len(spikes[i]) == 0:
-                pass
-                # print 'no spike times, skipping network cell #%i' % SpCell[i]
-            else:
-                synParams.update({'idx': idx[i]})
+        # unique postsynaptic compartments
+        uidx = np.unique(idx)
+        for i in uidx:
+            st = np.concatenate(spikes[idx == i])
+            st.sort()
+            st += cell.tstart  # needed?
+            if st.size > 0:
+                synParams.update({'idx': i})
                 # Create synapse(s) and setting times using class LFPy.Synapse
                 synapse = LFPy.Synapse(cell, **synParams)
-                # SpCell is a vector, or do not exist
-                synapse.set_spike_times(spikes[i] + cell.tstart)
+                synapse.set_spike_times(st)
+            else:
+                pass
 
     def fetchSpCells(self, nodes, numSyn):
         """
