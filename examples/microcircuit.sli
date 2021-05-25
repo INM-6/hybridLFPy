@@ -101,14 +101,6 @@
         /data_path raw_nest_output_path
     >> SetKernelStatus
 
-    % initialize random number generators
-    % rngdict /gsl_knuthran get 6508015 CreateRNG /script_rng Set
-    % normal distribution
-    % script_rng rdevdict /normal get CreateRDV /normal_dv Set
-    % uniform distribution
-    % script_rng rdevdict /uniform_int get CreateRDV /uniformint_dv Set
-    % uniformint_dv << /high 100 /low -100 >> SetStatus
-
 } def
 
 
@@ -361,9 +353,6 @@
                   /V_m << /normal << /mean Vm0_mean /std Vm0_std >> >> CreateParameter
                   /V_th << /normal << /mean V_th_mean /std V_th_std >> >> CreateParameter
                 >> SetStatus
-                % << /V_m  normal_dv Random Vm0_std mul Vm0_mean add
-                %    /V_th uniformint_dv Random 100. div V_th_std mul V_th_mean add
-                % >> SetStatus
     	    } forall
 
 
@@ -593,7 +582,6 @@
     			    /weight_mean PSC_array target_layer get target_pop get source_layer get source_pop get def
                     /weight_sd weight_mean PSC_rel_sd mul abs def
 
-
                     % define mu (mean) and sigma (std) of lognormal distribution
                     weight_mean 0 lt
     			    {
@@ -621,17 +609,10 @@
                     /syn_dict <<
                         /synapse_model /static_synapse
                         /weight logn sign mul
-                      /delay
-                        << /normal << /mean delays source_pop get /std delays_sd source_pop get abs >> >> CreateParameter
-                        dt (inf) cvd redraw
-                        % put
-                    	% /delay <<
-                    	%     /distribution (normal_clipped)
-                    	%     /low dt
-                    	%     /mu delays source_pop get
-                    	%     /sigma delays_sd source_pop get
-                    	% >>
-       		        >> def
+                        /delay
+                          << /normal << /mean delays source_pop get /std delays_sd source_pop get abs >> >> CreateParameter
+                          dt (inf) cvd redraw
+       		          >> def
      		    }
 		            {
 			        /dist_type (normal_clipped) def
@@ -641,25 +622,9 @@
         		    % default synapse dictionary
         		    /syn_dict <<
             			/synapse_model /static_synapse
-                  % /weight
-                  % << /normal << /mean mu /std sigma abs >> >> CreateParameter
-                  % (0) (inf) cvd redraw
-                  % put
-            			% /weight <<
-            			%     /distribution dist_type
-            			%     /mu mu
-            			%    /sigma sigma
-            			% >>
                   /delay
                     << /normal << /mean delays source_pop get /std delays_sd source_pop get abs >> >> CreateParameter
                     dt (inf) cvd redraw
-                    % put
-            			% /delay <<
-            			%     /distribution (normal_clipped)
-            			%     /low dt
-            			%     /mu delays source_pop get
-            			%     /sigma delays_sd source_pop get
-            			% >>
         		    >> def
 
                 % Capped weight distributions dependent on sign
@@ -742,22 +707,9 @@
             /weight
             << /normal << /mean mu /std sigma abs >> >> CreateParameter
             0.0 (inf) cvd redraw
-            % put
-    		    % /weight <<
-        		% 	/distribution dist_type
-        		% 	/mu mu
-        		% 	/sigma sigma
-    		    % >>
             /delay
               << /normal << /mean delay_th /std delay_th delay_th_rel_sd mul abs >> >> CreateParameter
               dt (inf) cvd redraw
-              % put
-    		    % /delay <<
-        		% 	/distribution (normal_clipped)
-        		% 	/low dt
-        		% 	/mu delay_th
-        		% 	/sigma delay_th delay_th_rel_sd mul
-    		    % >>
     		>> def
 
         % connection pattern used in connection calls connecting populations
@@ -779,7 +731,6 @@
 	    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	    %%% Connect devices to cortical neurons           %%%
 	    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 
         % Connect devices
 
@@ -831,7 +782,6 @@
     } for
 
 
-
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %%% Connect stimuli to thalamic parrots           %%%
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -845,13 +795,11 @@
 	    /all_to_all
         Connect
 
-
         % Connect thalamic spike_generator to thalamic neurons (parrots)
         th_spike_GID
         th_neuron_subnet_GID
 	    /all_to_all
         Connect
-
 
         % Connect thalamic sinusoidal_poisson_generator to thalamic neurons (parrots)
         th_smp_GID
@@ -859,15 +807,12 @@
 	    /all_to_all
         Connect
 
-
         % Connect the population of n_thal spike_generators providing unique spike
         % sequences to each parrot neuron
         th_spike_generators_subnet_GID th_neuron_subnet_GID /one_to_one Connect
 
-
         % Connect thalamic pulsepacket_generators to thalamic neurons (parrots)
         th_pulsepacket_generator_subnet_GID th_neuron_subnet_GID /one_to_one Connect
-
     } if
 
 
@@ -960,22 +905,9 @@
           /weight
           << /normal << /mean mu /std sigma abs >> >> CreateParameter
           0.0 (inf) cvd redraw
-          % put
-    			% /weight <<
-    			%     /distribution dist_type
-    			%     /mu mu
-    			%     /sigma sigma
-    			% >>
           /delay
             << /normal << /mean delay_th /std delay_th delay_th_rel_sd mul abs >> >> CreateParameter
             dt (inf) cvd redraw
-          %   put
-          % /delay <<
-    			%     /distribution (normal_clipped)
-    			%    /low dt
-    			%     /mu delay_th
-    			%     /sigma delay_th delay_th_rel_sd mul
-    			% >>
 		    >> def
 
 
@@ -1051,22 +983,10 @@
             /weight
             << /normal << /mean mu /std sigma abs >> >> CreateParameter
             0.0 (inf) cvd redraw
-            % put
-    				% /weight <<
-    				%     /distribution dist_type
-    				%     /mu mu
-    				%     /sigma sigma
-				    % >>
             /delay
               << /normal << /mean delays source_pop get /std delays_sd source_pop get abs >> >> CreateParameter
               dt (inf) cvd redraw
-              put
-    				% /delay <<
-    				%     /distribution (normal_clipped)
-    				%     /low dt
-    				%     /mu delays source_pop get
-    				%    /sigma delays_sd source_pop get
-    				% >>
+              % put
 			    >> def
 
 
