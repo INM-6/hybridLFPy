@@ -14,7 +14,9 @@ doi: 10.1093/cercor/bhs358
 import numpy as np
 import os
 import json
-from mpi4py import MPI #this is needed to initialize other classes correctly
+from mpi4py import MPI  # this is needed to initialize other classes correctly
+import multiprocessing as mp  # to facilitate OpenMP parallelization w. NEST
+                              # if MPI.SIZE == 1
 
 
 ###################################
@@ -207,11 +209,9 @@ class general_params(object):
         # OUTPUT LOCATIONS                 #
         ####################################
 
-        # TODO: try except does not work with hambach
-
         # folder for all simulation output and scripts
         # using the cluster's dedicated SCRATCH area
-        if 'SCRATCH' in os.environ os.path.isdir(os.path.join(os.environ['SCRATCH'], os.environ['USER'])):
+        if 'SCRATCH' in os.environ and os.path.isdir(os.path.join(os.environ['SCRATCH'], os.environ['USER'])):
             self.savefolder = os.path.join(os.environ['SCRATCH'], os.environ['USER'],
                                            'hybrid_model',
                                            'simulation_output_example_microcircuit_lognormalsweights')
@@ -453,8 +453,12 @@ class point_neuron_network_params(general_params):
     #                                  #
     ####################################
 
-        # use same number of threads as MPI COMM.size()
-        self.total_num_virtual_procs = SIZE
+        # use same number of threads as MPI COMM.size() for parallel jobs
+        # else the number of processors for serial jobs
+        if SIZE > 1:
+            self.total_num_virtual_procs = SIZE
+        else:
+            self.total_num_virtual_procs = mp.cpu_count()
 
         ####################################
         # RNG PROPERTIES                   #
@@ -567,7 +571,7 @@ class point_neuron_network_params(general_params):
         self.V_th_mean = -50.
 
         # std of threshold potential (mV)
-        self.V_th_std = 0.
+        self.V_th_std = 1E-8  # nest::NormalParameter: std > 0 required.
 
         self.model_params = { 'tau_m': 10.,        # membrane time constant (ms)
                               'tau_syn_ex': 0.5,   # excitatory synaptic time constant (ms)
@@ -769,9 +773,6 @@ class multicompartment_params(point_neuron_network_params):
         }
 
 
-        # Switch for current source density computations
-        self.calculateCSD = True
-
 
     ####################################
     #                                  #
@@ -925,6 +926,7 @@ class multicompartment_params(point_neuron_network_params):
                     'z_min' : depth - 25,
                     'z_max' : depth + 25,
                     'min_cell_interdist' : 1.,
+                    'min_r': [[-1E199, -1600, -1550, 1E99],[0, 0, 10, 10]]
                 }
             })
 
@@ -980,27 +982,17 @@ class multicompartment_params(point_neuron_network_params):
             'n' : 50,
             'seedvalue' : None,
             #dendrite line sources, soma sphere source (Linden2014)
-            'method' : 'soma_as_point',
-            #no somas within the constraints of the "electrode shank":
-            'r_z': np.array([[-1E199, -1600, -1550, 1E99],[0, 0, 10, 10]]),
+            'method' : 'root_as_point',
         }
 
+        # parameters for LFPykit.LaminarCurrentSourceDensity
+        self.CSDParams = dict(
+            z=np.array([[-(i + 1) * 100, -i * 100] for i in range(16)]) + 50.,
+            r=np.ones(16) * np.sqrt(1000**2 / np.pi)  # same as pop radius
+        )
 
-        #these variables will be saved to file for each cell and electrdoe object
-        self.savelist = [
-            'somav',
-            'dt',
-            'somapos',
-            'x',
-            'y',
-            'z',
-            'LFP',
-            'CSD',
-            'morphology',
-            'default_rotation',
-            'electrodecoeff',
-        ]
-
+        # these cell attributes variables will be saved to file
+        self.savelist = []
 
         #########################################
         # MISC                                  #

@@ -46,6 +46,8 @@ import nest   # Import not used, but done in order to ensure correct execution
 from hybridLFPy import PostProcess, Population, CachedNetwork
 from hybridLFPy import setup_file_dest, helpers
 from glob import glob
+import tarfile
+import lfpykit
 from mpi4py import MPI
 
 
@@ -151,7 +153,7 @@ def merge_gdf(model_params,
             files = glob(os.path.join(model_params.raw_nest_output_path,
                                       raw_label + '{}*.{}'.format(pop_idx,
                                                                   file_type)))
-            gdf = [] # init
+            gdf = []  # init
             for f in files:
                 new_gdf = helpers.read_gdf(f, skiprows)
                 for line in new_gdf:
@@ -160,9 +162,8 @@ def merge_gdf(model_params,
                     gdf.append(line)
 
             print('writing: {}'.format(os.path.join(model_params.spike_output_path,
-                                                    fileprefix +
-                                                    '_{}.{}'.format(model_params.X[pop_idx],
-                                                               file_type))))
+                                       fileprefix + '_{}.{}'.format(model_params.X[pop_idx],
+                                                                    file_type))))
             helpers.write_gdf(gdf, os.path.join(model_params.spike_output_path,
                                                 fileprefix +
                                                 '_{}.{}'.format(model_params.X[pop_idx],
@@ -216,8 +217,8 @@ def send_nest_params_to_sli(p):
             value = value.tolist()
         if type(value) == dict:
             value = dict_of_numpyarray_to_dict_of_list(value)
-        if name == 'neuron_model': # special case as neuron_model is a
-                                   # NEST model and not a string
+        if name == 'neuron_model':  # special case as neuron_model is a
+                                    # NEST model and not a string
             try:
                 nest.ll_api.sli_run('/'+name)
                 nest.ll_api.sli_push(value)
@@ -262,12 +263,50 @@ def sli_run(parameters=object(),
     # Python -> SLI
     send_nest_params_to_sli(vars(parameters))
 
-    #set SLI verbosity
+    # set SLI verbosity
     nest.ll_api.sli_run("%s setverbosity" % verbosity)
 
     # Run NEST/SLI simulation
     nest.ll_api.sli_run('(%s) run' % fname)
 
+
+def tar_raw_nest_output(raw_nest_output_path,
+                        delete_files=True,
+                        filepatterns=['voltages*.dat',
+                                      'spikes*.dat',
+                                      'weighted_input_spikes*.dat'
+                                      '*.gdf']):
+    '''
+    Create tar file of content in `raw_nest_output_path` and optionally
+    delete files matching given pattern.
+
+    Parameters
+    ----------
+    raw_nest_output_path: path
+        params.raw_nest_output_path
+    delete_files: bool
+        if True, delete .dat files
+    filepatterns: list of str
+        patterns of files being deleted
+    '''
+    if RANK == 0:
+        # create tarfile
+        fname = raw_nest_output_path + '.tar'
+        with tarfile.open(fname, 'a') as t:
+            t.add(raw_nest_output_path)
+
+        # remove files from <raw_nest_output_path>
+        for pattern in filepatterns:
+            for f in glob(os.path.join(raw_nest_output_path, pattern)):
+                try:
+                    os.remove(f)
+                except OSError:
+                    print('Error while deleting {}'.format(f))
+
+    # sync
+    COMM.Barrier()
+
+    return
 
 ###############################################################################
 # MAIN simulation procedure
@@ -297,11 +336,23 @@ if properrun:
               fileprefix=params.networkSimParams['label'],
               skiprows=3)
 
+    # create tar file archive of <raw_nest_output_path> folder as .dat files are
+    # no longer needed. Remove
+    tar_raw_nest_output(params.raw_nest_output_path, delete_files=True)
+
 #Create an object representation of the simulation output that uses sqlite3
 networkSim = CachedNetwork(**params.networkSimParams)
 
 toc = time() - tic
 print('NEST simulation and gdf file processing done in  %.3f seconds' % toc)
+
+
+##### Set up LFPykit measurement probes for LFPs and CSDs
+if properrun:
+    probes = []
+    probes.append(lfpykit.RecExtElectrode(cell=None, **params.electrodeParams))
+    probes.append(lfpykit.LaminarCurrentSourceDensity(cell=None, **params.CSDParams))
+    probes.append(lfpykit.CurrentDipoleMoment(cell=None))
 
 ####### Set up populations #####################################################
 
@@ -318,10 +369,9 @@ if properrun:
                 populationParams = params.populationParams[y],
                 y = y,
                 layerBoundaries = params.layerBoundaries,
-                electrodeParams = params.electrodeParams,
+                probes=probes,
                 savelist = params.savelist,
                 savefolder = params.savefolder,
-                calculateCSD = params.calculateCSD,
                 dt_output = params.dt_output,
                 POPULATIONSEED = SIMULATIONSEED + i,
                 #daughter class kwargs
@@ -355,8 +405,10 @@ if properrun:
     #of population LFPs, CSDs etc
     postproc = PostProcess(y = params.y,
                            dt_output = params.dt_output,
+                           probes=probes,
                            savefolder = params.savefolder,
                            mapping_Yy = params.mapping_Yy,
+                           savelist = params.savelist
                            )
 
     #run through the procedure
@@ -381,6 +433,7 @@ from example_plotting import *
 plt.close('all')
 
 if RANK == 0:
+
     #create network raster plot
     x, y = networkSim.get_xy((500, 1000), fraction=1)
     fig, ax = plt.subplots(1, figsize=(5,8))
@@ -499,16 +552,100 @@ if RANK == 0:
 
 
     plot_signal_sum(ax1, z=params.electrodeParams['z'],
-                    fname=os.path.join(params.savefolder, 'CSDsum.h5'),
-                    unit='$\mu$Amm$^{-3}$', T=T)
+                    fname=os.path.join(params.savefolder,
+                                       'LaminarCurrentSourceDensity_sum.h5'),
+                    unit='nA$\mu$m$^{-3}$', T=T)
     ax1.set_xticklabels([])
     ax1.set_xlabel('')
 
     plot_signal_sum(ax2, z=params.electrodeParams['z'],
-                    fname=os.path.join(params.savefolder, 'LFPsum.h5'),
+                    fname=os.path.join(params.savefolder,
+                                       'RecExtElectrode_sum.h5'),
                     unit='mV', T=T)
     ax2.set_xlabel('$t$ (ms)')
 
     fig.savefig(os.path.join(params.figures_path, 'compound_signals.pdf'),
                 dpi=300)
     plt.close(fig)
+
+
+    # plot some stats for current dipole moments of each population,
+    # temporal traces,
+    # and EEG predictions on scalp using 4-sphere volume conductor model
+    from LFPy import FourSphereVolumeConductor
+
+    T = [500, 1000]
+    P_Y_var = np.zeros((len(params.Y)+1, 3))  # dipole moment variance
+    for i, Y in enumerate(params.Y):
+        f = h5py.File(os.path.join(params.savefolder, 'populations',
+                                   '{}_population_CurrentDipoleMoment.h5'.format(Y)), 'r')
+        srate = f['srate'][()]
+        P_Y_var[i, :] = f['data'][:, int(T[0]*1000/srate):].var(axis=-1)
+
+    f_sum = h5py.File(os.path.join(params.savefolder,
+                      'CurrentDipoleMoment_sum.h5'), 'r')
+
+    P_Y_var[-1, :] = f_sum['data'][:, int(T[0]*1000/srate):].var(axis=-1)
+    tvec = np.arange(f_sum['data'].shape[-1]) * 1000. / srate
+
+    fig = plt.figure(figsize=(5, 8))
+    fig.subplots_adjust(left=0.2, right=0.95, bottom=0.075, top=0.95,
+                        hspace=0.4, wspace=0.2)
+
+    ax = fig.add_subplot(3, 2, 1)
+    ax.plot(P_Y_var, '-o')
+    ax.legend(['$P_x$', '$P_y$', '$P_z$'], fontsize=8, frameon=False)
+    ax.set_xticklabels(params.Y + ['SUM'], rotation='vertical')
+    ax.set_ylabel(r'$\sigma^2 (\mathrm{nA}^2 \mu^2\mathrm{m})$', labelpad=0)
+    ax.set_title('signal variance')
+
+    # make some EEG predictions
+    radii = [79000., 80000., 85000., 90000.]
+    sigmas = [0.3, 1.5, 0.015, 0.3]
+    r = np.array([[0., 0., 90000.]])
+    rz = np.array([0., 0., 78000.])
+
+    # draw spherical shells
+    ax = fig.add_subplot(3, 2, 2, aspect='equal')
+    phi = np.linspace(np.pi/4, np.pi*3/4, 61)
+    for R in radii:
+        x = R * np.cos(phi)
+        y = R * np.sin(phi)
+        ax.plot(x, y, lw=0.5)
+    ax.plot(0, rz[-1], 'k.', clip_on=False)
+    ax.plot(0, r[0, -1], 'k*', clip_on=False)
+    ax.axis('off')
+    ax.legend(['brain', 'CSF', 'skull', 'scalp', r'$\mathbf{P}$', 'EEG'],
+              fontsize=8, frameon=False)
+    ax.set_title('4-sphere head model')
+
+
+    sphere_model = FourSphereVolumeConductor(r, radii, sigmas)
+    # current dipole moment
+    p = f_sum['data'][:, int(T[0]*1000/srate):int(T[1]*1000/srate)]
+    # compute potential
+    potential = sphere_model.get_dipole_potential(p, rz)
+
+    # plot dipole moment
+    ax = fig.add_subplot(3, 1, 2)
+    ax.plot(tvec[(tvec >= T[0]) & (tvec < T[1])], p.T)
+    ax.set_ylabel(r'$\mathbf{P}(t)$ (nA$\mu$m)', labelpad=0)
+    ax.legend(['$P_x$', '$P_y$', '$P_z$'], fontsize=8, frameon=True)
+    ax.set_title('current dipole moment sum')
+
+    # plot surface potential directly on top
+    ax = fig.add_subplot(3, 1, 3, sharex=ax)
+    ax.plot(tvec[(tvec >= T[0]) & (tvec < T[1])], potential.T*1000)  # mV->uV unit conversion
+    ax.set_ylabel('EEG (uV)', labelpad=0)
+    ax.set_xlabel(r'$t$ (ms)', labelpad=0)
+    ax.set_title('scalp potential')
+
+    fig.savefig(os.path.join(params.figures_path, 'current_dipole_moments.pdf'),
+                dpi=300)
+    plt.close(fig)
+
+    # add figures to output .tar archive
+    with tarfile.open(params.savefolder + '.tar', 'a:') as f:
+        for pdf in glob(os.path.join(params.figures_path, '*.pdf')):
+            arcname = os.path.join(os.path.split(params.savefolder)[-1], 'figures', os.path.split(pdf)[-1])
+            f.add(name=pdf, arcname=arcname)

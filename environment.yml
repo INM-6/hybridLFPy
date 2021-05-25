@@ -3,23 +3,24 @@ channels:
   - conda-forge
   - defaults
 dependencies:
-  - python>=3.7,<3.9
+  - python>=3.7
   # - lfpy>=2.1
   # - nest-simulator=*=mpi*
   #- openmpi-mpicc
   - c-compiler
   - cxx-compiler
   - openmpi
-  - mpi4py
   - h5py
   - scipy
   - numpy
   - pytest
-  - Cython
+  - cython
   - meautility
   - matplotlib
   - ipython
   - jupyter
+  - ffmpeg
+  - neuron
   - pip
   - pip:
       - git+https://github.com/LFPy/LFPy

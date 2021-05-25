@@ -159,7 +159,7 @@ def plot_population(ax,
     #contact points
     ax.plot(electrodeParams['x'],
             electrodeParams['z'],
-            '.', marker='o', markersize=5, color='k', zorder=0)
+            marker='o', markersize=5, color='k', zorder=0)
 
     #outline of electrode
     x_0 = np.array(populationParams[X[0]]['min_r'])[1, 1:-1]
