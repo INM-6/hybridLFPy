@@ -96,18 +96,18 @@
         /resolution dt
         /total_num_virtual_procs total_num_virtual_procs
         /overwrite_files overwrite_existing_files
-        /rng_seeds [total_num_virtual_procs] Range seed_offset add
-        /grng_seed total_num_virtual_procs seed_offset add 1 add
+        % /rng_seeds [total_num_virtual_procs] Range seed_offset add
+        /rng_seed total_num_virtual_procs seed_offset add 1 add
         /data_path raw_nest_output_path
     >> SetKernelStatus
 
     % initialize random number generators
-    rngdict /gsl_knuthran get 6508015 CreateRNG /script_rng Set
+    % rngdict /gsl_knuthran get 6508015 CreateRNG /script_rng Set
     % normal distribution
-    script_rng rdevdict /normal get CreateRDV /normal_dv Set
+    % script_rng rdevdict /normal get CreateRDV /normal_dv Set
     % uniform distribution
-    script_rng rdevdict /uniform_int get CreateRDV /uniformint_dv Set
-    uniformint_dv << /high 100 /low -100 >> SetStatus
+    % script_rng rdevdict /uniform_int get CreateRDV /uniformint_dv Set
+    % uniformint_dv << /high 100 /low -100 >> SetStatus
 
 } def
 
@@ -330,7 +330,6 @@
         } if
     } if
 
-
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %%% 			CREATE	CORTEX					     %%%
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -358,11 +357,14 @@
             % initialize membrane potentials
             population
             {
-                << /V_m  normal_dv Random Vm0_std mul Vm0_mean add
-                   /V_th uniformint_dv Random 100. div V_th_std mul V_th_mean add
+                <<
+                  /V_m << /normal << /mean Vm0_mean /std Vm0_std >> >> CreateParameter
+                  /V_th << /normal << /mean V_th_mean /std V_th_std >> >> CreateParameter
                 >> SetStatus
+                % << /V_m  normal_dv Random Vm0_std mul Vm0_mean add
+                %    /V_th uniformint_dv Random 100. div V_th_std mul V_th_mean add
+                % >> SetStatus
     	    } forall
-
 
 
     	    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -413,7 +415,7 @@
         	    <<
         	        /label voltmeter_label layer_index 2 mul population_index add 1 add cvs join
         	        /record_to record_to
-                    /interval dt
+                  /interval dt
         	    >> SetStatus
                 voltmeter_GIDs [layer_index population_index] this_voltmeter put
         	    /voltmeter_GIDs Set
@@ -427,7 +429,7 @@
             		/record_from [/weighted_spikes_ex /weighted_spikes_in]
             		/label weighted_input_spikes_label layer_index 2 mul population_index add 1 add cvs join
             		/record_to record_to
-                    /interval dt
+                /interval dt
         	    >> SetStatus
 
         	    multimeter_GIDs [layer_index population_index] this_multimeter put
@@ -510,7 +512,6 @@
 
     } if
 } def
-
 
 
 /ConnectNetworkNodes
@@ -620,12 +621,16 @@
                     /syn_dict <<
                         /synapse_model /static_synapse
                         /weight logn sign mul
-                    	/delay <<
-                    	    /distribution (normal_clipped)
-                    	    /low dt
-                    	    /mu delays source_pop get
-                    	    /sigma delays_sd source_pop get
-                    	>>
+                      /delay
+                        << /normal << /mean delays source_pop get /std delays_sd source_pop get abs >> >> CreateParameter
+                        dt (inf) cvd redraw
+                        % put
+                    	% /delay <<
+                    	%     /distribution (normal_clipped)
+                    	%     /low dt
+                    	%     /mu delays source_pop get
+                    	%     /sigma delays_sd source_pop get
+                    	% >>
        		        >> def
      		    }
 		            {
@@ -636,20 +641,41 @@
         		    % default synapse dictionary
         		    /syn_dict <<
             			/synapse_model /static_synapse
-            			/weight <<
-            			    /distribution dist_type
-            			    /mu mu
-            			    /sigma sigma
-            			>>
-            			/delay <<
-            			    /distribution (normal_clipped)
-            			    /low dt
-            			    /mu delays source_pop get
-            			    /sigma delays_sd source_pop get
-            			>>
+                  % /weight
+                  % << /normal << /mean mu /std sigma abs >> >> CreateParameter
+                  % (0) (inf) cvd redraw
+                  % put
+            			% /weight <<
+            			%     /distribution dist_type
+            			%     /mu mu
+            			%    /sigma sigma
+            			% >>
+                  /delay
+                    << /normal << /mean delays source_pop get /std delays_sd source_pop get abs >> >> CreateParameter
+                    dt (inf) cvd redraw
+                    % put
+            			% /delay <<
+            			%     /distribution (normal_clipped)
+            			%     /low dt
+            			%     /mu delays source_pop get
+            			%     /sigma delays_sd source_pop get
+            			% >>
         		    >> def
+
+                % Capped weight distributions dependent on sign
+                mu 0.0 gt {
+                  syn_dict /weight
+                  << /normal << /mean mu /std sigma abs >> >> CreateParameter
+                  0.0 (inf) cvd redraw
+                  put
+                }{
+                  syn_dict /weight
+                  << /normal << /mean mu /std sigma abs >> >> CreateParameter
+                  (-inf) cvd 0.0 redraw
+                  put
                 } ifelse
 
+              } ifelse
 
                 % connection pattern used in connection calls connecting populations
                 % fill the connectivity dictionary with the number of synapses to be used
@@ -713,27 +739,33 @@
     		% default synapse dictionary
     		/syn_dict <<
     		    /synapse_model /static_synapse
-    		    /weight <<
-        			/distribution dist_type
-        			/mu mu
-        			/sigma sigma
-    		    >>
-    		    /delay <<
-        			/distribution (normal_clipped)
-        			/low dt
-        			/mu delay_th
-        			/sigma delay_th delay_th_rel_sd mul
-    		    >>
+            /weight
+            << /normal << /mean mu /std sigma abs >> >> CreateParameter
+            0.0 (inf) cvd redraw
+            % put
+    		    % /weight <<
+        		% 	/distribution dist_type
+        		% 	/mu mu
+        		% 	/sigma sigma
+    		    % >>
+            /delay
+              << /normal << /mean delay_th /std delay_th delay_th_rel_sd mul abs >> >> CreateParameter
+              dt (inf) cvd redraw
+              % put
+    		    % /delay <<
+        		% 	/distribution (normal_clipped)
+        		% 	/low dt
+        		% 	/mu delay_th
+        		% 	/sigma delay_th delay_th_rel_sd mul
+    		    % >>
     		>> def
 
-
-            % connection pattern used in connection calls connecting populations
-            % fill the connectivity dictionary with the number of synapses to be used
-            /conn_dict <<
-                /rule /fixed_total_number
-                /N this_num_synapses
-            >> def
-
+        % connection pattern used in connection calls connecting populations
+        % fill the connectivity dictionary with the number of synapses to be used
+        /conn_dict <<
+            /rule /fixed_total_number
+            /N this_num_synapses
+        >> def
 
     		% Connect the thalamus
     		source_nodes
@@ -743,7 +775,6 @@
     		Connect
 
         } if
-
 
 	    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	    %%% Connect devices to cortical neurons           %%%
@@ -926,17 +957,25 @@
 		    % default synapse dictionary
 		    /syn_dict <<
     			/synapse_model /static_synapse
-    			/weight <<
-    			    /distribution dist_type
-    			    /mu mu
-    			    /sigma sigma
-    			>>
-    			/delay <<
-    			    /distribution (normal_clipped)
-    			    /low dt
-    			    /mu delay_th
-    			    /sigma delay_th delay_th_rel_sd mul
-    			>>
+          /weight
+          << /normal << /mean mu /std sigma abs >> >> CreateParameter
+          0.0 (inf) cvd redraw
+          % put
+    			% /weight <<
+    			%     /distribution dist_type
+    			%     /mu mu
+    			%     /sigma sigma
+    			% >>
+          /delay
+            << /normal << /mean delay_th /std delay_th delay_th_rel_sd mul abs >> >> CreateParameter
+            dt (inf) cvd redraw
+          %   put
+          % /delay <<
+    			%     /distribution (normal_clipped)
+    			%    /low dt
+    			%     /mu delay_th
+    			%     /sigma delay_th delay_th_rel_sd mul
+    			% >>
 		    >> def
 
 
@@ -954,7 +993,6 @@
 		    conn_dict
 		    syn_dict
 		    Connect
-
 
 
 		    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1010,17 +1048,25 @@
 			    % default synapse dictionary
 			    /syn_dict <<
     				/synapse_model /static_synapse
-    				/weight <<
-    				    /distribution dist_type
-    				    /mu mu
-    				    /sigma sigma
-				    >>
-    				/delay <<
-    				    /distribution (normal_clipped)
-    				    /low dt
-    				    /mu delays source_pop get
-    				    /sigma delays_sd source_pop get
-    				>>
+            /weight
+            << /normal << /mean mu /std sigma abs >> >> CreateParameter
+            0.0 (inf) cvd redraw
+            % put
+    				% /weight <<
+    				%     /distribution dist_type
+    				%     /mu mu
+    				%     /sigma sigma
+				    % >>
+            /delay
+              << /normal << /mean delays source_pop get /std delays_sd source_pop get abs >> >> CreateParameter
+              dt (inf) cvd redraw
+              put
+    				% /delay <<
+    				%     /distribution (normal_clipped)
+    				%     /low dt
+    				%     /mu delays source_pop get
+    				%    /sigma delays_sd source_pop get
+    				% >>
 			    >> def
 
 
