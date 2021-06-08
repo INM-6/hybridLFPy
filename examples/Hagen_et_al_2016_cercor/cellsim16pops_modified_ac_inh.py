@@ -77,8 +77,8 @@ tic = time()
 ##initiate nest simulation with only the point neuron network parameter class
 networkParams = point_neuron_network_params()
 nest_simulation.sli_run(parameters=networkParams,
-                       fname='microcircuit.sli',
-                       verbosity='M_INFO')
+                        fname='microcircuit.sli',
+                        verbosity='M_INFO')
 
 #preprocess the gdf files containing spiking output, voltages, weighted and
 #spatial input spikes and currents:
