@@ -15,7 +15,8 @@ import numpy as np
 import os
 import json
 from mpi4py import MPI #this is needed to initialize other classes correctly
-
+import multiprocessing as mp  # to facilitate OpenMP parallelization w. NEST
+                              # if MPI.SIZE == 1
 
 ###################################
 # Initialization of MPI stuff     #
@@ -454,8 +455,12 @@ class point_neuron_network_params(general_params):
     #                                  #
     ####################################
 
-        # use same number of threads as MPI COMM.size()
-        self.total_num_virtual_procs = SIZE
+        # use same number of threads as MPI COMM.size() for parallel jobs
+        # else the number of processors for serial jobs
+        if SIZE > 1:
+            self.total_num_virtual_procs = SIZE
+        else:
+            self.total_num_virtual_procs = mp.cpu_count()
 
         ####################################
         # RNG PROPERTIES                   #
@@ -568,7 +573,7 @@ class point_neuron_network_params(general_params):
         self.V_th_mean = -50.
 
         # std of threshold potential (mV)
-        self.V_th_std = 0.
+        self.V_th_std = 1E-8  # nest::NormalParameter: std > 0 required.
 
         self.model_params = { 'tau_m': 10.,        # membrane time constant (ms)
                               'tau_syn_ex': 0.5,   # excitatory synaptic time constant (ms)

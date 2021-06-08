@@ -48,7 +48,7 @@ ENV MANPATH=$MPICH_DIR/share/man:$MANPATH
 RUN pip3 install --upgrade pip
 RUN pip3 install mpi4py
 RUN pip3 install neuron
-RUN pip3 install git+https://github.com/LFPy/LFPy.git@2.2.dev0#egg=LFPy
+RUN pip3 install git+https://github.com/LFPy/LFPy.git@2.2.1#egg=LFPy
 
 
 # --- Install hybridLFPy ----
@@ -78,16 +78,16 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 ENV NPROCS=$(getconf _NPROCESSORS_ONLN)
 
 # Compile NEST3 (master branch @24de43d)
-RUN wget https://github.com/nest/nest-simulator/archive/24de43dc21c568e017839eeb335253c2bc2d487d.tar.gz && \
+RUN wget https://github.com/nest/nest-simulator/archive/7a2dd86f843f16e4aeee50c382ca5b0e94e2911e.tar.gz && \
   mkdir nest-build && \
-  tar zxf 24de43dc21c568e017839eeb335253c2bc2d487d.tar.gz && \
-  mv nest-simulator-24de43dc21c568e017839eeb335253c2bc2d487d nest-simulator && \
+  tar zxf 7a2dd86f843f16e4aeee50c382ca5b0e94e2911e.tar.gz && \
+  mv nest-simulator-7a2dd86f843f16e4aeee50c382ca5b0e94e2911e nest-simulator && \
   cd  nest-build && \
   cmake -DCMAKE_INSTALL_PREFIX:PATH=/opt/nest/ \
         -Dwith-boost=ON \
-		-Dwith-ltdl=ON \
-	    -Dwith-gsl=$WITH_GSL \
-	    -Dwith-readline=ON \
+		    -Dwith-ltdl=ON \
+	      -Dwith-gsl=$WITH_GSL \
+	      -Dwith-readline=ON \
         -Dwith-python=ON \
         -Dwith-mpi=$WITH_MPI \
         -Dwith-openmp=$WITH_OMP \
@@ -99,5 +99,5 @@ RUN wget https://github.com/nest/nest-simulator/archive/24de43dc21c568e017839eeb
 RUN echo "source /opt/nest/bin/nest_vars.sh" >> root/.bashrc
 
 # clean up install/build files
-RUN rm 24de43dc21c568e017839eeb335253c2bc2d487d.tar.gz
+RUN rm 7a2dd86f843f16e4aeee50c382ca5b0e94e2911e.tar.gz
 RUN rm -r nest*
