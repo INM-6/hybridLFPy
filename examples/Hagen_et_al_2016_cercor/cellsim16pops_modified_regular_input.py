@@ -169,6 +169,7 @@ postproc = PostProcess(y = params.y,
                        probes=probes,
                        savefolder = params.savefolder,
                        mapping_Yy = params.mapping_Yy,
+                       savelist = params.savelist
                        )
 
 #run through the procedure

@@ -63,7 +63,7 @@ RUN pip install h5py
 RUN pip install neuron
 
 
-# ---- install LFPy@2.2.dev0 -----
+# ---- install LFPy@master -----
 RUN pip install git+https://github.com/LFPy/LFPy.git@master#egg=LFPy
 
 
