@@ -1316,8 +1316,8 @@ def plot_signal_power_colorplot(ax, params, fname, transient=200, Df=None,
     #plot only above 1 Hz
     inds = freqs >= 1  # frequencies greater than 4 Hz
     im = ax.pcolormesh(freqs[inds], zvec+50, PSD[:, inds],
-                       rasterized=True, norm=LogNorm(),
-                       vmin=vmin,vmax=vmax,
+                       rasterized=True,
+                       norm=LogNorm(vmin=vmin,vmax=vmax),
                        cmap=cmap, shading='auto')
 
     ax.yaxis.set_ticks(yticks)
