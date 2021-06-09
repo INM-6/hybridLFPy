@@ -188,10 +188,10 @@ def calc_signal_power(params):
     for i, (data_type, post_fix) in enumerate(zip(['CSD',
                                                    'LFP',
                                                    'CSD_10_0',
-                                                   'LFP_10_0'], 
-                                                  ['LaminarCurrentSourceDensity', 
-                                                   'RecExtElectrode', 
-                                                   None, 
+                                                   'LFP_10_0'],
+                                                  ['LaminarCurrentSourceDensity',
+                                                   'RecExtElectrode',
+                                                   None,
                                                    None])):
         if i % SIZE == RANK:
 
@@ -239,7 +239,7 @@ def calc_signal_power(params):
 
             # Save data
             f = h5py.File(os.path.join(params.savefolder, ana_params.analysis_folder,
-                                       data_type + ana_params.fname_psd),'w')
+                                       data_type + ana_params.fname_psd), 'w')
             f['freqs']=freqs
             f['psd']=PSD
             f['transient']=ana_params.transient
@@ -353,12 +353,14 @@ def calc_variances(params):
 
             for celltype in params.y:
                 f_in = h5py.File(os.path.join(params.populations_path,
-                                              '%s_population_%s' % (celltype, post_fix) + '.h5' ))
+                                              '%s_population_%s'
+                                              % (celltype, post_fix) + '.h5' ),
+                                              'r')
                 var = f_in['data'][()][:, ana_params.transient:].var(axis=1)
                 f_in.close()
                 f_out[celltype]= var
 
-            f_in = h5py.File(os.path.join(params.savefolder, post_fix + '_sum.h5' ))
+            f_in = h5py.File(os.path.join(params.savefolder, post_fix + '_sum.h5' ), 'r')
             var= f_in['data'][()][:, ana_params.transient:].var(axis=1)
             f_in.close()
             f_out['sum']= var
