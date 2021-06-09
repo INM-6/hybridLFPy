@@ -492,7 +492,7 @@ class point_neuron_network_params(general_params):
         if self.record_fraction_neurons_voltage:
             self.frac_rec_voltage = 0.1
         else:
-            self.n_rec_voltage = 20  # 100
+            self.n_rec_voltage = 50  # 100
 
         # whether to record weighted input spikes from a fixed fraction of neurons in each population
         self.record_fraction_neurons_input_spikes = False
