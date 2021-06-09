@@ -180,7 +180,7 @@ if __name__ == '__main__':
 
 
     fig.savefig('figure_07.pdf',
-                dpi=450, compression=9,
+                dpi=450,
                 )
     fig.savefig('figure_07.eps')
     plt.show()

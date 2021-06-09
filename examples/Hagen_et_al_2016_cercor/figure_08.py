@@ -17,7 +17,7 @@ import analysis_params
 ### OUTSIDE SCOPE DEFINITIONS      ###
 ######################################
 
-from cellsim16popsParams_default import multicompartment_params 
+from cellsim16popsParams_default import multicompartment_params
 
 #
 ana_params = analysis_params.params()
@@ -40,7 +40,7 @@ def fig_network_input_structure(fig, params, bottom=0.1, top=0.9, transient=200,
     '''
     This figure is the top part for plotting a comparison between the PD-model
     and the modified-PD model
-    
+
     '''
     #load spike as database
     networkSim = CachedNetwork(**params.networkSimParams)
@@ -51,20 +51,20 @@ def fig_network_input_structure(fig, params, bottom=0.1, top=0.9, transient=200,
     # ana_params.set_PLOS_2column_fig_style(ratio=ratio)
     # fig = plt.figure()
     # fig.subplots_adjust(left=0.06, right=0.94, bottom=0.09, top=0.92, wspace=0.5, hspace=0.2)
-    
+
     #use gridspec to get nicely aligned subplots througout panel
     gs1 = gridspec.GridSpec(5, 5, bottom=bottom, top=top)
-    
-    
-    ############################################################################ 
+
+
+    ############################################################################
     # A part, full dot display
     ############################################################################
-    
+
     ax0 = fig.add_subplot(gs1[:, 0])
     phlp.remove_axis_junk(ax0)
     phlp.annotate_subplot(ax0, ncols=5, nrows=1, letter=letters[0],
                      linear_offset=0.065)
-   
+
     x, y = networkSim.get_xy(T, fraction=1)
     networkSim.plot_raster(ax0, T, x, y,
                            markersize=0.2, marker='_',
@@ -73,24 +73,24 @@ def fig_network_input_structure(fig, params, bottom=0.1, top=0.9, transient=200,
                            rasterized=False)
     ax0.set_ylabel('population', labelpad=0.)
     ax0.set_xticks([800,900,1000])
-   
+
     if show_titles:
         ax0.set_title('spiking activity',va='center')
     if show_xlabels:
         ax0.set_xlabel(r'$t$ (ms)', labelpad=0.)
     else:
         ax0.set_xlabel('')
-      
+
     ############################################################################
     # B part, firing rate spectra
     ############################################################################
 
-  
+
     # Get the firing rate from Potjan Diesmann et al network activity
     #collect the spikes x is the times, y is the id of the cell.
     T_all=[transient, networkSim.simtime]
     bins = np.arange(transient, networkSim.simtime+1)
-        
+
     x, y = networkSim.get_xy(T_all, fraction=1)
 
     # create invisible axes to position labels correctly
@@ -99,14 +99,14 @@ def fig_network_input_structure(fig, params, bottom=0.1, top=0.9, transient=200,
                                  linear_offset=0.065)
     if show_titles:
         ax_.set_title('firing rate PSD', va='center')
-    
+
     ax_.axis('off')
 
     colors = phlp.get_colors(len(params.Y))+['k']
-    
+
     COUNTER = 0
     label_set = False
-    
+
     tits = ['L23E/I', 'L4E/I', 'L5E/I', 'L6E/I', 'TC']
 
     if x['TC'].size > 0:
@@ -132,7 +132,7 @@ def fig_network_input_structure(fig, params, bottom=0.1, top=0.9, transient=200,
         #firing rate histogram
         hist = np.histogram(x[X], bins=bins)[0].astype(float)
         hist -= hist.mean()
-        
+
         if mlab:
             Pxx, freqs=plt.mlab.psd(hist, NFFT=NFFT,
                                     Fs=srate, noverlap=noverlap, window=window)
@@ -144,7 +144,7 @@ def fig_network_input_structure(fig, params, bottom=0.1, top=0.9, transient=200,
             Pxx = Pxx.flatten()
             Pxx = Pxx[mask]
             Pxx = Pxx/(T_all[1]-T_all[0])**2
-        
+
         if x[X].size > 0:
             ax1.loglog(freqs[1:], Pxx[1:],
                        label=X, color=colors[i],
@@ -160,28 +160,28 @@ def fig_network_input_structure(fig, params, bottom=0.1, top=0.9, transient=200,
             if i >= 6 and not TC and show_xlabels or X == 'TC' and TC and show_xlabels:
                 ax1.set_xlabel('$f$ (Hz)', labelpad=0.)
             if TC and i < 8 or not TC and i < 6:
-                ax1.set_xticklabels([])    
+                ax1.set_xticklabels([])
 
         else:
             ax1.axis('off')
-                       
+
         ax1.set_xlim(flim)
-           
-        
+
+
         if i % 2 == 0:
             COUNTER += 1
-        
+
         ax1.yaxis.set_minor_locator(plt.NullLocator())
-        
+
 
 
 
     ############################################################################
     # c part, LFP traces and CSD color plots
     ############################################################################
-   
+
     ax2 = fig.add_subplot(gs1[:, 2])
-    
+
     phlp.annotate_subplot(ax2, ncols=5, nrows=1, letter=letters[2],
                      linear_offset=0.065)
 
@@ -191,7 +191,7 @@ def fig_network_input_structure(fig, params, bottom=0.1, top=0.9, transient=200,
                     fname=os.path.join(params.savefolder, 'RecExtElectrode_sum.h5'),
                     unit='mV', T=T, ylim=[-1600, 40],
                     rasterized=False)
-    
+
     # CSD background colorplot
     if show_CSD:
         im = plot_signal_sum_colorplot(ax2, params, os.path.join(params.savefolder, 'LaminarCurrentSourceDensity_sum.h5'),
@@ -206,7 +206,7 @@ def fig_network_input_structure(fig, params, bottom=0.1, top=0.9, transient=200,
 
     ax2.set_xticks([800,900,1000])
     ax2.axis(ax2.axis('tight'))
-     
+
     if show_titles:
         if show_CSD:
             ax2.set_title('LFP & CSD', va='center')
@@ -216,8 +216,8 @@ def fig_network_input_structure(fig, params, bottom=0.1, top=0.9, transient=200,
         ax2.set_xlabel(r'$t$ (ms)', labelpad=0.)
     else:
         ax2.set_xlabel('')
-  
- 
+
+
     ############################################################################
     # d part, LFP power trace for each layer
     ############################################################################
@@ -229,7 +229,7 @@ def fig_network_input_structure(fig, params, bottom=0.1, top=0.9, transient=200,
                                         window=window)
 
     channels = [0, 3, 7, 11, 13]
-  
+
     # create invisible axes to position labels correctly
     ax_ = fig.add_subplot(gs1[:, 3])
     phlp.annotate_subplot(ax_, ncols=5, nrows=1, letter=letters[3],
@@ -237,7 +237,7 @@ def fig_network_input_structure(fig, params, bottom=0.1, top=0.9, transient=200,
 
     if show_titles:
         ax_.set_title('LFP PSD',va='center')
-    
+
     ax_.axis('off')
 
     for i, ch in enumerate(channels):
@@ -270,16 +270,16 @@ def fig_network_input_structure(fig, params, bottom=0.1, top=0.9, transient=200,
 
     if show_xlabels:
         ax.set_xlabel('$f$ (Hz)', labelpad=0.)
-    
+
     ############################################################################
     # e part signal power
     ############################################################################
-    
+
     ax4 = fig.add_subplot(gs1[:, 4])
 
     phlp.annotate_subplot(ax4, ncols=5, nrows=1, letter=letters[4],
                      linear_offset=0.065)
-  
+
     fname=os.path.join(params.savefolder, 'RecExtElectrode_sum.h5')
     im = plot_signal_power_colorplot(ax4, params, fname=fname, transient=transient, Df=Df,
                                 mlab=mlab, NFFT=NFFT, window=window,
@@ -301,14 +301,14 @@ def fig_network_input_structure(fig, params, bottom=0.1, top=0.9, transient=200,
         ax4.set_xlabel(r'$f$ (Hz)', labelpad=0.)
     else:
         ax4.set_xlabel('')
-       
-    return fig 
+
+    return fig
 
 
 if __name__ == '__main__':
-    
+
     params = multicompartment_params()
-    
+
     savefolders = [
         'simulation_output_default',
         'simulation_output_modified_ac_input',
@@ -319,7 +319,7 @@ if __name__ == '__main__':
         'FGHIJ',
         'ABCDE',
     ]
-    
+
     show_titles = [False, False, True]
     show_xlabels = [True, False, False]
 
@@ -330,7 +330,7 @@ if __name__ == '__main__':
     ana_params.set_PLOS_2column_fig_style(ratio=1.25)
     fig = plt.figure()
     fig.subplots_adjust(left=0.06, right=0.94, bottom=0.09, top=0.92, wspace=0.5, hspace=0.2)
-    
+
     for savefolder, letters, ttl, xlbl, bottom, top in zip(savefolders, letterslist, show_titles, show_xlabels, bottoms, tops):
         # path to simulation files
         params.savefolder = os.path.join(os.path.split(params.savefolder)[0],
@@ -339,17 +339,17 @@ if __name__ == '__main__':
         params.spike_output_path = os.path.join(params.savefolder,
                                                            'processed_nest_output')
         params.networkSimParams['spike_output_path'] = params.spike_output_path
-        
-        
+
+
         fig_network_input_structure(fig, params, bottom=bottom, top=top,
                                     transient=200, T=[800, 1000], Df=0., mlab= True, NFFT=256, srate=1000,
                                     window=plt.mlab.window_hanning, noverlap=128, letters=letters,
                                     show_titles=ttl, show_xlabels=xlbl)
-        
+
     fig.savefig('figure_08.pdf',
-                dpi=450, 
-                compression=9, bbox_inches='tight', pad_inches=0)
+                dpi=450,
+                bbox_inches='tight', pad_inches=0)
     fig.savefig('figure_08.eps', bbox_inches='tight', pad_inches=0.01)
-        
-    
+
+
     plt.show()

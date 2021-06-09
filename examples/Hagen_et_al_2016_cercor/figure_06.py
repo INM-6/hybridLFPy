@@ -434,7 +434,7 @@ if __name__ == '__main__':
         plot_multi_scale_output_a(fig)
         plot_multi_scale_output_b(fig)
         fig.savefig('figure_06.pdf', dpi=300,
-                    bbox_inches='tight', pad_inches=0, compression=9)
+                    bbox_inches='tight', pad_inches=0)
         fig.savefig('figure_06.eps',
                     bbox_inches='tight', pad_inches=0.01)
 
