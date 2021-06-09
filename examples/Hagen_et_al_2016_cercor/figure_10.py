@@ -153,7 +153,10 @@ def fig_exc_inh_contrib(fig, axes, params, savefolders, T=[800, 1000], transient
     ax = axes[3]
     datas = []
     for j, savefolder in enumerate(savefolders):
-        f = h5py.File(os.path.join(os.path.split(params.savefolder)[0], savefolder, 'LaminarCurrentSourceDensity_sum.h5'))
+        f = h5py.File(os.path.join(os.path.split(params.savefolder)[0],
+                                                 savefolder,
+                                                 'LaminarCurrentSourceDensity_sum.h5'),
+                      'r')
         data = f['data'][()] * 1E6  # unit nA um^-3 -> muA mm-3
         var = data[:, transient:].var(axis=1)
         ax.semilogx(var, depth,
@@ -178,7 +181,10 @@ def fig_exc_inh_contrib(fig, axes, params, savefolders, T=[800, 1000], transient
 
     datas = []
     for j, savefolder in enumerate(savefolders):
-        f = h5py.File(os.path.join(os.path.split(params.savefolder)[0], savefolder, 'RecExtElectrode_sum.h5'))
+        f = h5py.File(os.path.join(os.path.split(params.savefolder)[0],
+                                                 savefolder,
+                                                 'RecExtElectrode_sum.h5'),
+                      'r')
         var = f['data'][()][:, transient:].var(axis=1)
         ax.semilogx(var, depth,
                     color=colors[j], label=labels[j], lw=lws[j], clip_on=False)
