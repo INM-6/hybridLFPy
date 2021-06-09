@@ -678,7 +678,7 @@
 
     		% define type of connection
     		lognormal_weights {
-    		    /dist_type (lognormal) def
+            /dist_type (lognormal) def
     		    /weight_mean PSC_ext def
     		    /weight_sd PSC_ext PSC_rel_sd mul abs def
 
@@ -693,24 +693,47 @@
                     (sqrt(ln((weight_sd / weight_mean )^2 +1))) ExecMath /sigma Set
                     ( ln(weight_mean) - sigma^2/2.) ExecMath /mu Set
                 } ifelse
+
+            % sign of connection multiplied with lognormal weights
+            << /constant << /value weight_mean Sign 1. mul >> >> CreateParameter /sign Set
+
+            % create parameter for lognormal weights
+            << /lognormal
+                << /mean mu
+                   /std sigma
+                >>
+            >>
+            CreateParameter /logn Set
+
+            % default synapse dictionary
+            /syn_dict <<
+                /synapse_model /static_synapse
+                /weight logn sign mul
+                /delay
+                  << /normal << /mean delay_th /std delay_th delay_th_rel_sd mul abs >> >> CreateParameter
+                  dt (inf) cvd redraw
+            >> def
 		    }
     		{
     		    /dist_type (normal_clipped) def
     		    /mu PSC_ext def
     		    /sigma PSC_ext PSC_rel_sd mul abs def
+
+            % synapse dictionary
+            /syn_dict <<
+                /synapse_model /static_synapse
+                /weight
+                << /normal << /mean mu /std sigma abs >> >> CreateParameter
+                0.0 (inf) cvd redraw
+                /delay
+                  << /normal << /mean delay_th /std delay_th delay_th_rel_sd mul abs >> >> CreateParameter
+                  dt (inf) cvd redraw
+            >> def
+
+
     		} ifelse
 
 
-    		% default synapse dictionary
-    		/syn_dict <<
-    		    /synapse_model /static_synapse
-            /weight
-            << /normal << /mean mu /std sigma abs >> >> CreateParameter
-            0.0 (inf) cvd redraw
-            /delay
-              << /normal << /mean delay_th /std delay_th delay_th_rel_sd mul abs >> >> CreateParameter
-              dt (inf) cvd redraw
-    		>> def
 
         % connection pattern used in connection calls connecting populations
         % fill the connectivity dictionary with the number of synapses to be used
