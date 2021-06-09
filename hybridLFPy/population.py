@@ -661,16 +661,16 @@ class PopulationSuper(object):
             if RANK_CELLINDICES[RANK].size > 0:
                 for i, cellindex in enumerate(RANK_CELLINDICES[RANK]):
                     if i == 0:
-                        data_temp = np.zeros([RANK_CELLINDICES[RANK].size] +
-                                             [self.output[cellindex
-                                                          ][measure].shape],
+                        data_temp = np.zeros((RANK_CELLINDICES[RANK].size, ) +
+                                             self.output[cellindex
+                                                         ][measure].shape,
                                              dtype=np.float32)
                     data_temp[i, ] = self.output[cellindex][measure]
 
             if RANK == 0:
                 # container of all output
-                data = np.zeros([SAMPLESIZE] +
-                                list(self.output[cellindex][measure].shape),
+                data = np.zeros((SAMPLESIZE, ) +
+                                self.output[cellindex][measure].shape,
                                 dtype=np.float32)
 
                 # fill in values from this RANK
@@ -682,9 +682,9 @@ class PopulationSuper(object):
                 for i in range(1, len(RANK_CELLINDICES)):
                     if RANK_CELLINDICES[i].size > 0:
                         # receive on RANK 0 from all other RANK
-                        data_temp = np.zeros([RANK_CELLINDICES[i].size] +
-                                             [self.output[cellindex
-                                                          ][measure].shape],
+                        data_temp = np.zeros((RANK_CELLINDICES[i].size, ) +
+                                             self.output[cellindex
+                                                         ][measure].shape,
                                              dtype=np.float32)
                         COMM.Recv([data_temp, MPI.FLOAT], source=i, tag=13)
 
