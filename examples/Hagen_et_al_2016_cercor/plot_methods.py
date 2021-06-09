@@ -1175,7 +1175,7 @@ def plot_signal_sum_colorplot(ax, params, fname='LFPsum.h5', unit='mV', N=1, yla
         fancy : bool,
         N : integer, set to number of LFP generators in order to get the normalized signal
     '''
-    f = h5py.File(fname)
+    f = h5py.File(fname, 'r')
     data = f['data'][()] * scaling_factor
     tvec = np.arange(data.shape[1]) * 1000. / f['srate'][()]
 
@@ -1203,7 +1203,8 @@ def plot_signal_sum_colorplot(ax, params, fname='LFPsum.h5', unit='mV', N=1, yla
     if absmax == None:
         absmax=abs(np.array([data.max(), data.min()])).max()
     im = ax.pcolormesh(tvec[slica], np.r_[zvec, zvec[-1] + np.diff(zvec)[-1]] + 50, data,
-                           rasterized=rasterized, vmax=absmax, vmin=-absmax, cmap=cmap)
+                       rasterized=rasterized, vmax=absmax, vmin=-absmax,
+                       cmap=cmap, shading='auto')
     ax.set_yticks(params.electrodeParams['z'])
     if ylabels:
         yticklabels = ['ch. %i' %(i+1) for i in np.arange(len(params.electrodeParams['z']))]
@@ -1317,7 +1318,7 @@ def plot_signal_power_colorplot(ax, params, fname, transient=200, Df=None,
     im = ax.pcolormesh(freqs[inds], zvec+50, PSD[:, inds],
                        rasterized=True, norm=LogNorm(),
                        vmin=vmin,vmax=vmax,
-                       cmap=cmap, )
+                       cmap=cmap, shading='auto')
 
     ax.yaxis.set_ticks(yticks)
     ax.yaxis.set_ticklabels(yticklabels)
