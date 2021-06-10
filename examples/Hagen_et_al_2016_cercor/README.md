@@ -212,3 +212,16 @@ These are the main files included:
 
 - README.md:
     This file
+
+- Dockerfile:
+    Docker container recipe for `x86_64` hosts with all dependencies required
+    to run above simulation files. To build and run the container locally,
+    get Docker from https://www.docker.com, and issue the following:
+
+        $ docker build -t hybridlfpy -< Dockerfile`.
+        $ docker run -it -p 5000:5000 hybridlfpy:latest
+
+
+    The `--mount` option can be used to mount a folder on the host to a target folder as:
+
+        $ docker run --mount type=bind,source="$(pwd)",target=/opt -it -p 5000:5000 <image-name>
