@@ -1,5 +1,5 @@
 # -------- base ---------
-FROM debian:latest AS base
+FROM debian:bullseye-slim AS base
 
 RUN apt-get update && \
     apt-get install -y \
@@ -40,7 +40,7 @@ RUN apt-get update && \
     apt-get install -y \
     python3-mpi4py
 
-RUN pip3 install git+https://github.com/LFPy/LFPy.git@2.2.1#egg=LFPy
+RUN pip3 install git+https://github.com/LFPy/LFPy.git@v2.2.1#egg=LFPy
 
 
 # --- NEST ----
@@ -56,9 +56,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libgsl-dev \
     libltdl7 \
     libltdl-dev \
-    libreadline7 \
+    libreadline8 \
     libreadline-dev \
     libboost-dev \
+    libopenmpi-dev \
     doxygen
 
 # Install NEST3 (master branch @7a2dd86f843f16e4aeee50c382ca5b0e94e2911e)
