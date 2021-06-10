@@ -126,11 +126,11 @@ def plot_multi_scale_output_a(fig):
     if show_ax_labels:
         phlp.annotate_subplot(ax_, ncols=4, nrows=1, letter='B')
 
-    for i, X in enumerate(networkSim.X[:-1]):
+    for i, X in enumerate(params.X[1:]):
         ax3 = fig.add_axes([lefts[1], bottoms[i], axwidth, thickn])
         plt.locator_params(nbins=4)
         phlp.remove_axis_junk(ax3)
-        networkSim.plot_f_rate(ax3, X, i, T, x, y, yscale='linear',
+        networkSim.plot_f_rate(ax3, X, i+1, T, x, y, yscale='linear',
                                plottype='fill_between', show_label=False,
                                rasterized=False)
         ax3.yaxis.set_major_locator(plt.MaxNLocator(3))

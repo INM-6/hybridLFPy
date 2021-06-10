@@ -102,7 +102,7 @@ def fig_network_input_structure(fig, params, bottom=0.1, top=0.9, transient=200,
 
     ax_.axis('off')
 
-    colors = phlp.get_colors(len(params.Y))+['k']
+    colors = phlp.get_colors(len(params.Y)) + ['k']
 
     COUNTER = 0
     label_set = False
@@ -115,7 +115,7 @@ def fig_network_input_structure(fig, params, bottom=0.1, top=0.9, transient=200,
         TC = False
 
     BAxes = []
-    for i, X in enumerate(networkSim.X):
+    for i, X in enumerate(params.Y + ['TC']):
 
         if i % 2 == 0:
             ax1 = fig.add_subplot(gs1[COUNTER, 1])
@@ -172,8 +172,6 @@ def fig_network_input_structure(fig, params, bottom=0.1, top=0.9, transient=200,
             COUNTER += 1
 
         ax1.yaxis.set_minor_locator(plt.NullLocator())
-
-
 
 
     ############################################################################

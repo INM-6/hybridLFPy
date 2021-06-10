@@ -453,11 +453,11 @@ def plot_population(ax,
     if big:
         ax.plot(params.electrodeParams['x'],
             params.electrodeParams['z'],
-            '.', marker='o', markersize=2, color='k', zorder=0)
+            marker='o', markersize=2, color='k', zorder=0)
     else:
         ax.plot(params.electrodeParams['x'],
             params.electrodeParams['z'],
-            '.', marker='o', markersize=0.5, color='k', zorder=0)
+            marker='o', markersize=0.5, color='k', zorder=0)
 
     #outline of electrode
     x_0 = np.array(params.populationParams[params.y[0]]['min_r'])[1, 1:-1]
@@ -1445,7 +1445,7 @@ e correlation between x0 and x1
 
 
     for i, z in enumerate(params.electrodeParams['z']):
-        ax.plot(lagvector, xcorr_all[i,inds[::-1]] * 100. / vlimround + z, 'k',
+        ax.plot(lagvector, xcorr_all[i,inds[::-1]] * 100. / vlimround + z,
                 clip_on=True, rasterized=False, color=color, **kwargs)
         yticklabels.append('ch. %i' %(i+1))
         yticks.append(z)
