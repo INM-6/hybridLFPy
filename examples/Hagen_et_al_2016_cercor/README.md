@@ -1,12 +1,11 @@
------------------------------
-Description
------------------------------
+
+# Description
 
 This is the README for the code archived for reproducing all data and
 figures for the study:
 
-Espen Hagen, David Dahmen, Maria L. Stavrinou, Henrik Lind�n, Tom Tetzlaff,
-Sacha J van Albada, Sonja Gr�n, Markus Diesmann, Gaute T. Einevoll.
+Espen Hagen, David Dahmen, Maria L. Stavrinou, Henrik Lindén, Tom Tetzlaff,
+Sacha J van Albada, Sonja Grün, Markus Diesmann, Gaute T. Einevoll.
 "Hybrid scheme for modeling local field potentials from point-neuron networks".
 Cereb. Cortex (2016)
 DOI: 10.1093/cercor/bhw237
@@ -16,6 +15,8 @@ Contact: https://github.com/INM-6/hybridLFPy/issues
 Here, only the main simulation scripts, data preprocessing and plotting scripts
 are provided. Additional software and dependencies has to be obtained elsewhere,
 as described below.
+
+## Dependencies (original publication) 
 
 In short, the main simulations are run using Python 2.7.x, rely on NEST's
 (www.nest-simulator.org) and NEURON's (www.neuron.yale.edu) python extensions,
@@ -53,17 +54,35 @@ Rocks Cluster Distribution (Linux) operating system (v.6.0).
 All above software releases are publically available, and is hereby not
 included, and will have to be installed separately.
 
+## Dependencies (current)
+
+The current version has been developed around:
+- cython                    0.29.23
+- h5py                      3.2.1
+- hdf5                      1.10.6
+- hybridlfpy                0.1.4
+- lfpy                      2.2.1
+- lfpykit                   0.3 
+- matplotlib                3.4.2 
+- meautility                1.4.8
+- mpi4py                    3.0.3
+- numpy                     1.20.3
+- openmpi                   4.1.1
+- pynest                    master@7a2dd86f8
+- python                    3.9.4
+- scipy                     1.6.3
+
+# License
+
 These codes are provided without any warranty whatsoever, and released under
 the GPL, see LICENSE file.
 
 
------------------------------
-Included files
------------------------------
+# Included files
 
 These are the main files included:
 
-- cellsim16pops_*.py:
+- `cellsim16pops_*.py`:
     Main simulation scripts, corresponding to 11 different configurations
     (modified network states, different types of thalamic activation,
     recording of LFPs from either excitatory and or inhibitory currents,
@@ -101,119 +120,119 @@ These are the main files included:
 
 
     All simulations has to be done for all figure scripts below to run.
-    Simulated output will be saved in under e.g., 'simulation_output_default'.
-    If the compute cluster has a '/scratch' area, output will be saved in
-    under '/scratch/hybrid_model/simulation_output_default'. Please revise
+    Simulated output will be saved in under e.g., `simulation_output_default`.
+    If the compute cluster has a `/scratch` area, output will be saved in
+    under `/scratch/hybrid_model/simulation_output_default`. Please revise
     for the folder hierarchy on your cluster accordingly (inside each
-    corresponding cellsim16popsParams_*.py file). Tar archive files
+    corresponding `cellsim16popsParams_*.py` file). Tar archive files
     will be created alongside for easy file transfer, named e.g.,
     'simulation_output_default.tar'. Compression is switched off by default
     because of speed and little gain in terms of reduced file sizes.
 
     Before LFP simulations can be executed, the NEURON NMODL language file
     expsyni.mod specifying the exponential synapse current has to be compiled
-    by running the script "nrnivmodl" inside this folder. This script should
+    by running the script `nrnivmodl` inside this folder. This script should
     be located along the other NEURON executables, e.g., inside
-    $HOME/NEURON-7.4/nrn/x86_64/bin/
+    `$HOME/NEURON-7.4/nrn/x86_64/bin/`
 
     Simulation cases:
-    - default: Network parameters similar to Potjans & Diesmann (2014), Cereb
+    - `default`: Network parameters similar to Potjans & Diesmann (2014), Cereb
         Cortex, with spontantaneous activity. (Fig. 6, 8K-O,)
-    - modified_spontan: Modififed network parameters (increased relative
+    - `modified_spontan`: Modififed network parameters (increased relative
         inhibition onto population L4E from L4I, lognormal weight distribution,
         see Hagen et al.), spontantaneous activity. (Fig. 8A-E,9,11, 12, 13)
-    - modified_spontan_ex: Similar to modified_spontan, but inhibitiory currents
+    - `modified_spontan_ex`: Similar to modified_spontan, but inhibitiory currents
         are ignored for LFP predictions. (Fig. 9,)
-    - modified_spontan_inh: Similar to modified_spontan, but excitatory currents
+    - `modified_spontan_inh`: Similar to modified_spontan, but excitatory currents
         are ignored for LFP predictions. (Fig. 9,)
-    - modified_regular_input: Similar to modified_spontan, but with transient
+    - `modified_regular_input`: Similar to modified_spontan, but with transient
         thalamic activation every 1 s. (Fig 1, 7, 10)
-    - modified_regular_exc: Similar to modified_regular_input, inhibition
+    - `modified_regular_exc`: Similar to modified_regular_input, inhibition
         ignored in LFP. (Fig. 10)
-    - modified_regular_inh: Similar to modified_regular_input, excitation
+    - `modified_regular_inh`: Similar to modified_regular_input, excitation
         ignored in LFP. (Fig. 10)
-    - modified_ac_input: Similar to modified_spontan, but with sinusoidal
+    - `modified_ac_input`: Similar to modified_spontan, but with sinusoidal
         modulation of Poisson spiketrains from the thalamic population.
         (Fig. 8F-J, 10, 11, 12, 13)
-    - modified_ac_exc: Similar to modified_ac_input, inhibition
+    - `modified_ac_exc`: Similar to modified_ac_input, inhibition
         ignored in LFP. (Fig. 10)
-    - modified_ac_inh: Similar to modified_ac_input, excitation
+    - `modified_ac_inh`: Similar to modified_ac_input, excitation
         ignored in LFP. (Fig. 10)
-    - spikegen: Similar to modified_spontan, except that network spikes are
-        not generated, and replaced with synchronous spike events for each
+    - `spikegen`: Similar to modified_spontan, except that network spikes are
+        replaced with synchronous spike events for each
         network population, used to compute the average single-spike LFP
         response. (Fig. 13)
 
-- cellsim16popsParams_*.py:
+- `cellsim16popsParams_*.py`:
     Parameter class definitions for each main simulation file.
 
-- microcircuit.sli:
+- `microcircuit.sli`:
     NEST SLI implementation of the network by Potjans and Diesmann (2014),
     Cerebral Cortex March 2014;24:785�806 doi:10.1093/cercor/bhs358. Used by
     the main Python simulation scripts
 
-- nest_simulation.py:
+- `nest_simulation.py`:
     Some python routines used to parse parameters to NEST's sli namespace
     before invoking the microcircuit.sli script
 
-- nest_output_processing.py:
+- `nest_output_processing.py`:
     NEST's gdf file output is typically one file per MPI thread, some
     routines for merging such output is defined here and used after running
     each network simulation.
 
-- morphologies/*/*.hoc:
+- `morphologies/*/*.hoc`:
     NEURON-language morphology files used for predictions of local-field
     potentials. By default the 'stretched' geometries will be used. It is
     possible to use simplified 'ballnstick' ones to reduce overall simulation
     times, but this will affect the  numerical result of the simulated output
     as the laminar distribution of in and outgoing currents are not conserved.
 
-- expsyni.mod:
+- `expsyni.mod`:
     NMODL language specification of the current-based synapse. In order to run
     simulations, run the NEURON-provided bash script nrnivmodl in the root
     of this folder before running simulations.
 
-- binzegger_connectivity_table.json:
+- `binzegger_connectivity_table.json`:
     JSON format data with the connectivity data from Binzegger et al., 2004 and
     Izhikevich and Edelmann 2008.
 
-- analysis.py:
+- `analysis.py`:
     Applied to the modified_spontan and modified_ac_input simulation cases
     in order to investigate the effect of single-cell LFP spectra on the
     compound LFP signal. Execution in parallel:
 
         mpirun -np 4 python analysis.py
 
-- analysis_params.py:
+- `analysis_params.py`:
     global parameters used for some analysis and plotting
 
-- plotting_helpers.py and plotting_helpers.py:
+- `plotting_helpers.py` and `plot_methods.py`:
     Various common methods and helper functions facilitating generation of
     figure panels
 
-- figure_*.py:
+- `figure_*.py`:
     generates the various figures (or parts thereof) as shown in the manuscript
     based on simulated output. Figure files will be saved on the pdf format in
     the folder corresponding to the data it was generated from, e.g., as
     simulation_output_default/figures/figure_08.pdf
 
-- Fig3/*:
+- `Fig3/*`:
     Files for generating Fig 3 in the manuscript.
 
-- run_all_jobs.py:
+- `run_all_jobs.py`:
     Create jobscripts and submit jobs for clusters running the Slurm Workload
     Manager (http://slurm.schedmd.com)
 
-- produce_all_figures.py:
+- `produce_all_figures.py`:
     run all figure-generating scripts at once (for your convenience)
 
-- LICENSE:
+- `LICENSE`:
     General Public License version 3.
 
-- README.md:
+- `README.md`:
     This file
 
-- Dockerfile:
+- `Dockerfile`:
     Docker container recipe for `x86_64` hosts with all dependencies required
     to run above simulation files. To build and run the container locally,
     get Docker from https://www.docker.com, and issue the following:
@@ -225,3 +244,6 @@ These are the main files included:
     The `--mount` option can be used to mount a folder on the host to a target folder as:
 
         $ docker run --mount type=bind,source="$(pwd)",target=/opt -it -p 5000:5000 <image-name>
+
+- `mpich.Dockerfile`:
+    Similar to `Dockerfile` but uses a specific `mpich` version suitable for use with Singularity containers on certain HPC facilities  
