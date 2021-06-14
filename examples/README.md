@@ -24,7 +24,7 @@ predict LFPs from point-neuron networks.
 
 * `example_microcircuit*lognormal_weights.py`: Same as `example_microcircuit.py` but using connection weights drawn from lognormal distributions
 
-* `example_plotting.py`: auxilliary codes
+* `example_plotting.py`: auxiliary codes
 
 * `alphaisyn.mod`: NEURON NMODL file for alpha-shaped current based synapses
 

@@ -595,7 +595,7 @@ if RANK == 0:
     ax.plot(P_Y_var, '-o')
     ax.legend(['$P_x$', '$P_y$', '$P_z$'], fontsize=8, frameon=False)
     ax.set_xticklabels(params.Y + ['SUM'], rotation='vertical')
-    ax.set_ylabel(r'$\sigma^2 (\mathrm{nA}^2 \mu^2\mathrm{m})$', labelpad=0)
+    ax.set_ylabel(r'$\sigma^2 (\mathrm{nA}^2 \mu\mathrm{m}^2)$', labelpad=0)
     ax.set_title('signal variance')
 
     # make some EEG predictions
@@ -635,7 +635,7 @@ if RANK == 0:
     # plot surface potential directly on top
     ax = fig.add_subplot(3, 1, 3, sharex=ax)
     ax.plot(tvec[(tvec >= T[0]) & (tvec < T[1])], potential.T*1000)  # mV->uV unit conversion
-    ax.set_ylabel('EEG (uV)', labelpad=0)
+    ax.set_ylabel(r'EEG ($\mu$V)', labelpad=0)
     ax.set_xlabel(r'$t$ (ms)', labelpad=0)
     ax.set_title('scalp potential')
 

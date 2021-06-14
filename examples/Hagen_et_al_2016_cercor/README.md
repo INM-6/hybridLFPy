@@ -16,7 +16,7 @@ Here, only the main simulation scripts, data preprocessing and plotting scripts
 are provided. Additional software and dependencies has to be obtained elsewhere,
 as described below.
 
-## Dependencies (original publication) 
+## Dependencies (original publication)
 
 In short, the main simulations are run using Python 2.7.x, rely on NEST's
 (www.nest-simulator.org) and NEURON's (www.neuron.yale.edu) python extensions,
@@ -62,8 +62,8 @@ The current version has been developed around:
 - hdf5                      1.10.6
 - hybridlfpy                0.1.4
 - lfpy                      2.2.1
-- lfpykit                   0.3 
-- matplotlib                3.4.2 
+- lfpykit                   0.3
+- matplotlib                3.4.2
 - meautility                1.4.8
 - mpi4py                    3.0.3
 - numpy                     1.20.3
@@ -237,7 +237,7 @@ These are the main files included:
     to run above simulation files. To build and run the container locally,
     get Docker from https://www.docker.com, and issue the following:
 
-        $ docker build -t hybridlfpy -< Dockerfile`.
+        $ docker build -t hybridlfpy -< Dockerfile
         $ docker run -it -p 5000:5000 hybridlfpy:latest
 
 
