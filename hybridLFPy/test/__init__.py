@@ -9,7 +9,7 @@ Tests for hybridLFPy classes and methods
 
 def _test(verbosity=2):
     '''
-    Run unittests for the CSD toolbox
+    Run unittests for hybridLFPy
 
 
     Arguments

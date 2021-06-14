@@ -19,8 +19,8 @@ class TestHybridLFPy(unittest.TestCase):
     hybridLFPy test class
 
     To run tests, simply issue
-    >>>import hybridLFPy
-    >>>hybridLFPy.test()
+    >>> import hybridLFPy
+    >>> hybridLFPy.test()
 
     '''
 
