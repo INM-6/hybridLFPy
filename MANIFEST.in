@@ -1,0 +1,6 @@
+include README.md
+include LICENSE
+
+recursive-include hybridLFPy *.pyx
+recursive-include hybridLFPy/test *.py
+recursive-include hybridLFPy/test testing-X-0.gdf

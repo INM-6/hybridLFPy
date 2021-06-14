@@ -2,9 +2,9 @@
 # -*- coding: utf-8 -*-
 '''setup file for the hybridLFPy python module'''
 import os
-from setuptools import setup
+from setuptools import setup, Extension
 import numpy
-from Cython.Build import cythonize
+from Cython.Distutils import build_ext
 
 with open('README.md') as file:
     long_description = file.read()
@@ -13,6 +13,12 @@ with open('README.md') as file:
 d = {}
 exec(open(os.path.join('hybridLFPy', 'version.py')).read(), None, d)
 version = d['version']
+
+# Cython extension
+cmdclass = {'build_ext': build_ext}
+ext_modules = [Extension('hybridLFPy.helperfun',
+                         [os.path.join('hybridLFPy', 'helperfun.pyx')],
+                         include_dirs=[numpy.get_include()])]
 
 setup(
     name='hybridLFPy',
@@ -24,14 +30,15 @@ setup(
         version),
     packages=['hybridLFPy'],
     provides=['hybridLFPy'],
-    package_data={'hybridLFPy': [os.path.join('testing', 'testing-X-0.gdf')]},
-    # cmdclass=cmdclass,
-    # ext_modules=ext_modules,
-    ext_modules=cythonize(os.path.join('hybridLFPy', 'helperfun.pyx'),
-                          language_level='3',
-                          ),
-    include_dirs=[numpy.get_include()],
-    description='methods to calculate LFPs with spike events from network sim',
+    package_data={'hybridLFPy': ['*.pyx',
+                                 os.path.join('test', '*.py'),
+                                 os.path.join('test', 'testing-X-0.gdf')]
+                  },
+    include_package_data=True,
+    cmdclass=cmdclass,
+    ext_modules=ext_modules,
+    description=('methods to calculate extracellular signals of neural '
+                 'activity from spike events from spiking neuron networks'),
     long_description=long_description,
     license='LICENSE',
     classifiers=[
@@ -48,7 +55,15 @@ setup(
         'Intended Audience :: Science/Research',
         'Development Status :: 4 - Beta',
     ],
-    install_requires=['numpy', 'scipy', 'matplotlib', 'LFPy',
-                      'mpi4py', 'Cython'],
-    extras_require = {'tests': ['pytest']}
+    install_requires=[
+        'numpy>=1.8',
+        'scipy>=0.14',
+        'Cython>=0.20',
+        'h5py>=2.5',
+        'mpi4py>=1.2',
+        'LFPy>=2.2'],
+    extras_require = {'tests': ['pytest'],
+                      'docs': ['sphinx', 'numpydoc', 'sphinx_rtd_theme'],
+                      },
+    dependency_links=[],
 )

@@ -1,4 +1,5 @@
 # essential
+setuptools>=23.1.0
 numpy
 scipy
 matplotlib

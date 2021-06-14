@@ -69,4 +69,4 @@ from .postproc import PostProcess
 from . import helpers
 from .helpers import setup_file_dest
 from . import helperfun
-from .testing import _test as test
+from .test import _test as test
