@@ -2,6 +2,6 @@
 numpy
 scipy
 matplotlib
-LFPy>=2.1
+LFPy>=2.2
 mpi4py
 pytest
