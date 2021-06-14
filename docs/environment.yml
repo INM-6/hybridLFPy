@@ -1,0 +1,11 @@
+name: hybridlfpy
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3
+  - pip
+  - lfpy>=2.1
+  - sphinx_rtd_theme
+  - numpydoc
+  - pip:

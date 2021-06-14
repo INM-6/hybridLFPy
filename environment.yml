@@ -21,6 +21,7 @@ dependencies:
   - jupyter
   - ffmpeg
   - neuron
+  - pytest
   - pip
   - pip:
       - git+https://github.com/LFPy/LFPy

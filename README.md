@@ -1,9 +1,12 @@
 Module **hybridLFPy**
 =====================
 
+[![Build Status](https://travis-ci.org/INM-6/hybridLFPy.svg?branch=master)](https://travis-ci.org/INM-6/hybridLFPy)
+
+
 Python module implementating a hybrid model scheme for predictions of
 extracellular potentials (local field potentials, LFPs) of spiking
-neuron network simulations. 
+neuron network simulations.
 
 
 Development
@@ -26,7 +29,7 @@ Hybrid Scheme for Modeling Local Field Potentials from Point-Neuron Networks, Ce
 
 Bibtex source:
 ::
-    
+
     @article{doi:10.1093/cercor/bhw237,
     author = {Hagen, Espen and Dahmen, David and Stavrinou, Maria L. and Lindén, Henrik and Tetzlaff, Tom and van Albada, Sacha J. and Grün, Sonja and Diesmann, Markus and Einevoll, Gaute T.},
     title = {Hybrid Scheme for Modeling Local Field Potentials from Point-Neuron Networks},
@@ -56,7 +59,7 @@ This software is released under the General Public License (see LICENSE file).
 Warranty
 --------
 
-This software comes without any form of warranty. 
+This software comes without any form of warranty.
 
 
 Installation
@@ -65,20 +68,20 @@ Installation
 First download all the ``hybridLFPy`` source files using ``git``
 (http://git-scm.com). Open a terminal window and type:
 ::
-    
+
     cd $HOME/where/to/put/hybridLFPy
     git clone https://github.com/INM-6/hybridLFPy.git
-    
 
-To use ``hybridLFPy`` from any working folder without copying files, run: 
+
+To use ``hybridLFPy`` from any working folder without copying files, run:
 ::    
-    
+
     (sudo) python setup.py develop (--user)
-    
+
 Installing it is also possible, but not recommended as things might change with
 pulls from the repository:
 ::    
-    
+
     (sudo) python setup.py install (--user)
 
 
@@ -99,7 +102,7 @@ To compile documentation source files in this directory using sphinx, use:
 ::
 
     sphinx-build -b html docs documentation
-    
+
 
 Online documentation
 --------------------
