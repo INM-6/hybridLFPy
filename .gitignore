@@ -4,6 +4,7 @@ __pycache__/
 
 # C extensions
 *.so
+*.c
 
 # Distribution / packaging
 .Python
@@ -54,3 +55,11 @@ docs/_build/
 
 # MacOS crap
 .DS_Store
+
+# Simulation output
+simulation_output_*/
+*.tar
+
+# compiled NMODL files and folders
+x86_64/
+arm64/

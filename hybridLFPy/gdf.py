@@ -22,19 +22,8 @@ import sqlite3 as sqlite
 import os, glob
 from time import time as now
 import matplotlib.pyplot as plt
+import sys
 
-
-plt.rcdefaults()
-plt.rcParams.update({
-    'font.size' : 16,
-    'axes.labelsize' : 16,
-    'axes.titlesize' : 16,
-    'legend.fontsize' : 14,
-    'xtick.labelsize' : 16,
-    'ytick.labelsize' : 16,
-    'figure.subplot.wspace' : 0.3,
-    'figure.subplot.hspace' : 0.3,
-})
 
 class GDF(object):
     """
@@ -104,7 +93,7 @@ class GDF(object):
         self.debug = debug
 
 
-    def _blockread(self, fname):
+    def _blockread(self, fname, skiprows):
         """
         Generator yields bsize lines from gdf file.
         Hidden method.
@@ -114,6 +103,8 @@ class GDF(object):
         ----------
         fname : str
             Name of gdf-file.
+        skiprows : int
+            Number of skipped first lines
 
 
         Yields
@@ -125,15 +116,19 @@ class GDF(object):
         with open(fname, 'r') as f:
             while True:
                 a = []
+                for i in range(skiprows):
+                    next(f)
                 for i in range(self.bsize):
                     line = f.readline()
-                    if not line: break
+                    if not line:
+                        break
                     a.append(line.split())
                 if a == []:
                     raise StopIteration
                 yield a
 
-    def create(self, re='brunel-py-ex-*.gdf', index=True):
+
+    def create(self, re='brunel-py-ex-*.gdf', index=True, skiprows=0):
         """
         Create db from list of gdf file glob
 
@@ -144,6 +139,8 @@ class GDF(object):
             File glob to load.
         index : bool
             Create index on neurons for speed.
+        skiprows : int
+            Number of skipped first lines
 
 
         Returns
@@ -160,13 +157,21 @@ class GDF(object):
         tic = now()
         for f in glob.glob(re):
             print(f)
-            while True:
+            if sys.version < "3.7":
                 try:
-                    for data in self._blockread(f):
+                    for data in self._blockread(f, skiprows):
                         self.cursor.executemany('INSERT INTO spikes VALUES (?, ?)', data)
                         self.conn.commit()
-                except:
+                except RuntimeError:
                     break
+            else:
+                while True:
+                    try:
+                        for data in self._blockread(f, skiprows):
+                            self.cursor.executemany('INSERT INTO spikes VALUES (?, ?)', data)
+                            self.conn.commit()
+                    except RuntimeError:
+                        break
 
         toc = now()
         if self.debug: print('Inserts took %g seconds.' % (toc-tic))

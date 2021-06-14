@@ -51,6 +51,8 @@ from hybridLFPy import PostProcess, Population, CachedNetwork, setup_file_dest
 from parameters import ParameterSet
 import h5py
 from mpi4py import MPI
+import lfpykit
+
 
 ########## matplotlib settings #################################################
 plt.close('all')
@@ -133,7 +135,7 @@ PS.update(dict(
             cm = 1.0,
             Ra = 150,
             passive = True,
-            passive_parameters = dict(g_pas=1./(BN.neuron_params['tau_m'] * 1E3), #assyme cm=1
+            passive_parameters = dict(g_pas=1./(BN.neuron_params['tau_m'] * 1E3), #assume cm=1
                                       e_pas=BN.neuron_params['E_L']),
             nsegs_method = 'lambda_f',
             lambda_f = 100,
@@ -149,7 +151,7 @@ PS.update(dict(
             cm = 1.0,
             Ra = 150,
             passive = True,
-            passive_parameters = dict(g_pas=1./(BN.neuron_params['tau_m'] * 1E3), #assyme cm=1
+            passive_parameters = dict(g_pas=1./(BN.neuron_params['tau_m'] * 1E3), #assume cm=1
                                       e_pas=BN.neuron_params['E_L']),
             nsegs_method = 'lambda_f',
             lambda_f = 100,
@@ -166,8 +168,10 @@ PS.update(dict(
     ),
 
 
-    #kwargs passed to LFPy.Cell.simulate()
-    simulationParams = dict(),
+    # kwargs passed to LFPy.Cell.simulate().
+    # It can be empty, but if `rec_imem=True`, the signal predictions will be
+    # performed using recorded transmembrane currents.
+    simulationParams = dict(rec_imem=True),
 
     #set up parameters corresponding to cylindrical model populations
     populationParams = dict(
@@ -177,6 +181,7 @@ PS.update(dict(
             z_min = -450,
             z_max = -350,
             min_cell_interdist = 1.,
+            min_r = [[-1E199, -600, -550, 1E99],[0, 0, 10, 10]],
             ),
         IN = dict(
             number = BN.NI,
@@ -184,6 +189,7 @@ PS.update(dict(
             z_min = -450,
             z_max = -350,
             min_cell_interdist = 1.,
+            min_r = [[-1E199, -600, -550, 1E99],[0, 0, 10, 10]],
             ),
     ),
 
@@ -205,24 +211,17 @@ PS.update(dict(
             n = 20,
             seedvalue = None,
             #dendrite line sources, soma as sphere source (Linden2014)
-            method = 'soma_as_point',
-            #no somas within the constraints of the "electrode shank":
-            r_z = [[-1E199, -600, -550, 1E99],[0, 0, 10, 10]],
+            method = 'root_as_point',
+    ),
+
+    # parameters for LFPykit.LaminarCurrentSourceDensity
+    CSDParams = dict(
+        z=np.array([[-(i + 1) * 100, -i * 100] for i in range(6)]) + 50.,
+        r=np.ones(6) * 100  # same as population radius
     ),
 
     #runtime, cell-specific attributes and output that will be stored
-    savelist = [
-        'somav',
-        'somapos',
-        'x',
-        'y',
-        'z',
-        'LFP',
-        'CSD',
-    ],
-
-    #flag for switching on calculation of CSD
-    calculateCSD = True,
+    savelist = [],
 
     #time resolution of saved signals
     dt_output = 1.
@@ -313,10 +312,11 @@ networkSim = CachedNetwork(
     dt = BN.dt,
     spike_output_path = BN.spike_output_path,
     label = BN.label,
-    ext = 'gdf',
+    ext = 'dat',
     GIDs = {'EX' : [1, BN.NE], 'IN' : [BN.NE+1, BN.NI]},
     X = ['EX', 'IN'],
     cmap='rainbow_r',
+    skiprows=3,
 )
 
 
@@ -325,8 +325,14 @@ if RANK == 0:
     print('NEST simulation and gdf file processing done in  %.3f seconds' % toc)
 
 
-####### Set up populations #####################################################
+##### Set up LFPykit measurement probes for LFPs and CSDs
+if properrun:
+    probes = []
+    probes.append(lfpykit.RecExtElectrode(cell=None, **PS.electrodeParams))
+    probes.append(lfpykit.LaminarCurrentSourceDensity(cell=None, **PS.CSDParams))
 
+
+####### Set up populations #####################################################
 if properrun:
     #iterate over each cell type, and create populationulation object
     for i, Y in enumerate(PS.X):
@@ -338,10 +344,9 @@ if properrun:
                 populationParams = PS.populationParams[Y],
                 y = Y,
                 layerBoundaries = PS.layerBoundaries,
-                electrodeParams = PS.electrodeParams,
                 savelist = PS.savelist,
                 savefolder = PS.savefolder,
-                calculateCSD = PS.calculateCSD,
+                probes=probes,
                 dt_output = PS.dt_output,
                 POPULATIONSEED = SIMULATIONSEED + i,
                 X = PS.X,
@@ -376,6 +381,7 @@ if properrun:
                            savefolder = PS.savefolder,
                            mapping_Yy = PS.mapping_Yy,
                            savelist = PS.savelist,
+                           probes=probes,
                            cells_subfolder = os.path.split(PS.cells_path)[-1],
                            populations_subfolder = os.path.split(PS.populations_path)[-1],
                            figures_subfolder = os.path.split(PS.figures_path)[-1]
@@ -517,12 +523,12 @@ if RANK == 0:
                     cellParams=PS.cellParams)
 
     plot_signal_sum(ax1, z=PS.electrodeParams['z'],
-                    fname=os.path.join(PS.savefolder, 'CSDsum.h5'),
-                    unit='$\mu$Amm$^{-3}$', T=(500, 1000))
+                    fname=os.path.join(PS.savefolder, 'LaminarCurrentSourceDensity_sum.h5'),
+                    unit='nA$\mu$m$^{-3}$', T=(500, 1000))
     ax1.set_xlabel('')
 
     plot_signal_sum(ax2, z=PS.electrodeParams['z'],
-                    fname=os.path.join(PS.savefolder, 'LFPsum.h5'),
+                    fname=os.path.join(PS.savefolder, 'RecExtElectrode_sum.h5'),
                     unit='mV', T=(500, 1000))
 
     fig.savefig(os.path.join(PS.figures_path, 'compound_signals.pdf'), dpi=300)
@@ -551,13 +557,13 @@ if RANK == 0:
 
     plot_signal_sum(ax1, z=PS.electrodeParams['z'],
                     fname=os.path.join(PS.populations_path,
-                                       'EX_population_CSD.h5'),
-                    unit='$\mu$Amm$^{-3}$', T=(500, 1000),color='r')
+                                       'EX_population_LaminarCurrentSourceDensity.h5'),
+                    unit='nA$\mu$m$^{-3}$', T=(500, 1000),color='r')
     ax1.set_xlabel('')
 
     plot_signal_sum(ax2, z=PS.electrodeParams['z'],
                     fname=os.path.join(PS.populations_path,
-                                       'EX_population_LFP.h5'),
+                                       'EX_population_RecExtElectrode.h5'),
                     unit='mV', T=(500, 1000), color='r')
     fig.savefig(os.path.join(PS.figures_path, 'population_EX_signals.pdf'),
                 dpi=300)
@@ -586,13 +592,13 @@ if RANK == 0:
 
     plot_signal_sum(ax1, z=PS.electrodeParams['z'],
                     fname=os.path.join(PS.populations_path,
-                                       'IN_population_CSD.h5'),
-                    unit='$\mu$Amm$^{-3}$', T=(500, 1000),color='b')
+                                       'IN_population_LaminarCurrentSourceDensity.h5'),
+                    unit='nA$\mu$m$^{-3}$', T=(500, 1000),color='b')
     ax1.set_xlabel('')
 
     plot_signal_sum(ax2, z=PS.electrodeParams['z'],
                     fname=os.path.join(PS.populations_path,
-                                       'IN_population_LFP.h5'),
+                                       'IN_population_RecExtElectrode.h5'),
                     unit='mV', T=(500, 1000), color='b')
     fig.savefig(os.path.join(PS.figures_path, 'population_IN_signals.pdf'),
                 dpi=300)
@@ -620,11 +626,11 @@ if RANK == 0:
     ax0.set_title('spike rate (s$^{-1}$)')
 
     plot_signal_sum(ax1, z=PS.electrodeParams['z'],
-                    fname=os.path.join(PS.savefolder, 'LFPsum.h5'),
+                    fname=os.path.join(PS.savefolder, 'RecExtElectrode_sum.h5'),
                     unit='mV', T=(500, 1000))
     ax1.set_title('LFP')
 
-    fname=os.path.join(PS.savefolder, 'LFPsum.h5')
+    fname=os.path.join(PS.savefolder, 'RecExtElectrode_sum.h5')
     f = h5py.File(fname, 'r')
     data = f['data'][()]
 

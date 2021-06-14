@@ -243,8 +243,8 @@ def simulate():
     nodes_ex = nest.Create("iaf_psc_alpha",NE)
     nodes_in = nest.Create("iaf_psc_alpha",NI)
     noise    = nest.Create("poisson_generator")
-    espikes  = nest.Create("spike_detector")
-    ispikes  = nest.Create("spike_detector")
+    espikes  = nest.Create("spike_recorder")
+    ispikes  = nest.Create("spike_recorder")
 
     print("first exc node: {}".format(nodes_ex[0]))
     print("first inh node: {}".format(nodes_in[0]))
@@ -269,16 +269,12 @@ def simulate():
 
     nest.SetStatus(espikes,[{
                        "label": os.path.join(spike_output_path, label + "-EX"),
-                       "withtime": True,
-                       "withgid": True,
-                       "to_file": True,
+                       "record_to": 'ascii',
                        }])
 
     nest.SetStatus(ispikes,[{
                        "label": os.path.join(spike_output_path, label + "-IN"),
-                       "withtime": True,
-                       "withgid": True,
-                       "to_file": True,}])
+                       "record_to": 'ascii',}])
 
     print("Connecting devices")
 

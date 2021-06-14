@@ -79,7 +79,7 @@ if not hasattr(neuron.h, 'ExpSynI'):
 ## PARAMETERS
 ################################################################################
 
-from example_microcircuit_params import multicompartment_params, \
+from example_microcircuit_params_lognormalweights import multicompartment_params, \
                                 point_neuron_network_params
 
 #Full set of parameters including network parameters
@@ -392,6 +392,7 @@ if properrun:
 
         #object no longer needed
         del pop
+
 
 ####### Postprocess the simulation output ######################################
 

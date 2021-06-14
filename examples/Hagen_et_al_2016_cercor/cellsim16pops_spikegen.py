@@ -16,7 +16,7 @@ Synopsis of the main simulation procedure:
 3. network simulation
     a. execute network simulation using NEST (www.nest-initiative.org)
     b. merge network output (spikes, currents, voltages)
-4. Create a object-representation that uses sqlite3 of all the spiking output 
+4. Create a object-representation that uses sqlite3 of all the spiking output
 5. Iterate over post-synaptic populations:
     a. Create Population object with appropriate parameters for
        each specific population
@@ -41,6 +41,7 @@ import neuron # NEURON compiled with MPI must be imported before NEST and mpi4py
 import nest   # Import not used, but done in order to ensure correct execution
 import nest_simulation
 from hybridLFPy import PostProcess, Population, CachedFixedSpikesNetwork, setup_file_dest
+import lfpykit
 
 
 #set some seed values
@@ -98,6 +99,10 @@ networkSim = CachedFixedSpikesNetwork(activationtimes=activationtimes,
 toc = time() - tic
 print('NEST simulation and gdf file processing done in  %.3f seconds' % toc)
 
+##### Set up LFPykit measurement probes for LFPs and CSDs
+probes = []
+probes.append(lfpykit.RecExtElectrode(cell=None, **params.electrodeParams))
+probes.append(lfpykit.LaminarCurrentSourceDensity(cell=None, **params.CSDParams))
 
 ####### Set up populations #####################################################
 
@@ -112,11 +117,10 @@ for i, y in enumerate(params.y):
             populationParams = params.populationParams[y],
             y = y,
             layerBoundaries = params.layerBoundaries,
-            electrodeParams = params.electrodeParams,
+            probes=probes,
             savelist = params.savelist,
             savefolder = params.savefolder,
-            calculateCSD = params.calculateCSD,
-            dt_output = params.dt_output, 
+            dt_output = params.dt_output,
             POPULATIONSEED = SIMULATIONSEED + i,
             #daughter class kwargs
             X = params.X,
@@ -147,8 +151,10 @@ np.random.seed(SIMULATIONSEED)
 #of population LFPs, CSDs etc
 postproc = PostProcess(y = params.y,
                        dt_output = params.dt_output,
+                       probes=probes,
                        savefolder = params.savefolder,
                        mapping_Yy = params.mapping_Yy,
+                       savelist = params.savelist
                        )
 
 #run through the procedure

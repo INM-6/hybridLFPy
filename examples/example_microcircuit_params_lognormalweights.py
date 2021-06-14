@@ -14,9 +14,10 @@ doi: 10.1093/cercor/bhs358
 import numpy as np
 import os
 import json
-from mpi4py import MPI #this is needed to initialize other classes correctly
+from mpi4py import MPI  # this is needed to initialize other classes correctly
 import multiprocessing as mp  # to facilitate OpenMP parallelization w. NEST
                               # if MPI.SIZE == 1
+
 
 ###################################
 # Initialization of MPI stuff     #
@@ -25,17 +26,12 @@ COMM = MPI.COMM_WORLD
 SIZE = COMM.Get_size()
 RANK = COMM.Get_rank()
 
-'''
-TODO: rename to simulation_and_model_params.py
-'''
-
 
 ####################################
 # HELPER FUNCTIONS                 #
 ####################################
 
 flattenlist = lambda lst: sum(sum(lst, []),[])
-
 
 
 ####################################
@@ -135,7 +131,6 @@ def get_T_yX(fname, y, y_in_Y, x_in_X, F_y):
         T_yX = K_yX / K_YX
             = F_y * k_yX / sum_y(F_y*k_yX)
 
-
     '''
     def _get_k_yX_mul_F_y(y, y_index, X_index):
         # Load data from json dictionary
@@ -177,14 +172,15 @@ def get_T_yX(fname, y, y_in_Y, x_in_X, F_y):
 
 
 class general_params(object):
+    '''class defining general model parameters'''
     def __init__(self):
-        '''class collecting general model parameters'''
+        '''class defining general model parameters'''
 
         ####################################
         # REASON FOR THIS SIMULATION       #
         ####################################
 
-        self.reason = 'Modified Potjans model with AC modulated TC activity'
+        self.reason = 'Default Potjans model with spontaneous activity'
 
     ####################################
     #                                  #
@@ -206,24 +202,22 @@ class general_params(object):
         self.tstart = 0
 
         # simulation stop
-        self.tstop = 5200
+        self.tstop = 1200
 
 
         ####################################
         # OUTPUT LOCATIONS                 #
         ####################################
 
-        # TODO: try except does not work with hambach
-
         # folder for all simulation output and scripts
         # using the cluster's dedicated SCRATCH area
         if 'SCRATCH' in os.environ and os.path.isdir(os.path.join(os.environ['SCRATCH'], os.environ['USER'])):
             self.savefolder = os.path.join(os.environ['SCRATCH'], os.environ['USER'],
                                            'hybrid_model',
-                                           'simulation_output_modified_ac_input')
+                                           'simulation_output_example_microcircuit_lognormalsweights')
         # LOCALLY
         else:
-            self.savefolder = 'simulation_output_modified_ac_input'
+            self.savefolder = 'simulation_output_example_microcircuit_lognormweights'
 
         # folder for simulation scripts
         self.sim_scripts_path = os.path.join(self.savefolder, 'sim_scripts')
@@ -243,7 +237,7 @@ class general_params(object):
 
         # folder for processed nest output files
         self.spike_output_path = os.path.join(self.savefolder,
-                                                       'processed_nest_output')
+                                              'processed_nest_output')
 
 
     ####################################
@@ -298,6 +292,8 @@ class general_params(object):
                                     [0.0548,0.0269, 0.0257, 0.0022, 0.06,   0.3158, 0.0086,  0.    ],  # 5i
                                     [0.0156,0.0066, 0.0211, 0.0166, 0.0572, 0.0197, 0.0396,  0.2252],  # 6e
                                     [0.0364,0.001,  0.0034, 0.0005, 0.0277, 0.008,  0.0658,  0.1443]]) # 6i
+        self.conn_probs *= 1.0
+
 
         # connection probabilities for thalamic input
         self.C_th = [[0.0,       # layer 23 e
@@ -335,8 +331,8 @@ class general_params(object):
         # IPSP amplitude relative to EPSP amplitude
         self.g = -4.
 
-        # L4i ->L4e stronger in order to get rid of 84 Hz peak
-        self.g_4e_4i = self.g * 1.125
+        # set L4i ->L4e stronger in order to get rid of 84 Hz peak
+        self.g_4e_4i = self.g * 1.15
 
         # Whether to use lognormal weights or not
         self.lognormal_weights = True
@@ -344,7 +340,7 @@ class general_params(object):
         # mean dendritic delays for excitatory and inhibitory transmission (ms)
         self.delays = [1.5, 0.75]
 
-        # standard deviation relative to mean delays; former delay_rel
+        # standard deviation relative to mean delays
         self.delay_rel_sd = 0.5
 
 
@@ -441,6 +437,7 @@ class general_params(object):
 
 
 class point_neuron_network_params(general_params):
+    '''class point-neuron network parameters'''
     def __init__(self):
         '''class point-neuron network parameters'''
 
@@ -493,7 +490,7 @@ class point_neuron_network_params(general_params):
         if self.record_fraction_neurons_voltage:
             self.frac_rec_voltage = 0.1
         else:
-            self.n_rec_voltage = 50  # 100
+            self.n_rec_voltage = 0
 
         # whether to record weighted input spikes from a fixed fraction of neurons in each population
         self.record_fraction_neurons_input_spikes = False
@@ -501,7 +498,7 @@ class point_neuron_network_params(general_params):
         if self.record_fraction_neurons_input_spikes:
             self.frac_rec_input_spikes = 0.1
         else:
-            self.n_rec_input_spikes = 20  # 100
+            self.n_rec_input_spikes = 0
 
         # number of recorded neurons for depth resolved input currents
         self.n_rec_depth_resolved_input = 0
@@ -551,7 +548,7 @@ class point_neuron_network_params(general_params):
         ####################################
 
         # scaling parameter for population sizes
-        self.area = 1.
+        self.area = 1.0
 
         # preserve indegrees when downscaling
         self.preserve_K = False
@@ -643,16 +640,14 @@ class point_neuron_network_params(general_params):
         #       Gaussian pulse packet which is different for each thalamic neuron
         self.th_spike_times = [self.off]	# time of the thalamic pulses (ms)
 
-
         # create n_thal spikegenerator nodes connected to each respective
         # postsynaptic parrot_neuron. Expected format is a len(self.n_thal) list
         # of lists of activation times.
         # Turn activation off by setting it as [[] for i in range(self.n_thal)]
         self.th_spike_generator_times = [[] for i in range (self.n_thal)]
 
-
         ## sinusoidal_poisson_generator (oscillatory Poisson input)
-        self.th_sin_start = 0.      	# onset (ms)
+        self.th_sin_start = self.off      	# onset (ms)
         self.th_sin_duration = 5000.  	        # duration (ms)
         self.th_sin_mean_rate = 30. 	        # mean rate (spikess)
         self.th_sin_fluc_rate = 30.  	        # rate modulation amplitude (spikess)
@@ -711,17 +706,6 @@ class point_neuron_network_params(general_params):
             Cm*Vmax*(-tm + ts)/(tm*ts*(exp(tm*log(ts/tm)/(tm - ts))
                                      - exp(ts*log(ts/tm)/(tm - ts))))
 
-
-        Latex source:
-        ::
-            J&=-\frac{C_\text{m} V_\text{PSP} (\tau_\text{m} - \tau_\text{syn})}{\tau_\text{m} \tau_\text{syn}(
-            \exp\frac{\tau_\text{m} \ln(\tau_\text{syn}/\tau_\text{m})}{\tau_\text{m} - \tau_\text{syn}}
-            -\exp\frac{\tau_\text{syn} \ln(\tau_\text{syn}/\tau_\text{m})}{\tau_\text{m} - \tau_\text{syn}})} \\
-            I^\text{ext} &= \tau_\text{syn} \nu^\text{ext} J \\
-            &=-\frac{\nu^\text{ext}C_\text{m} V_\text{PSP} (\tau_\text{m} - \tau_\text{syn})}{\tau_\text{m}(
-            \exp\frac{\tau_\text{m} \ln(\tau_\text{syn}/\tau_\text{m})}{\tau_\text{m} - \tau_\text{syn}}
-            -\exp\frac{\tau_\text{syn} \ln(\tau_\text{syn}/\tau_\text{m})}{\tau_\text{m} - \tau_\text{syn}})}
-
         '''
         #LIF params
         tm = self.model_params['tau_m']
@@ -744,8 +728,7 @@ class point_neuron_network_params(general_params):
 class multicompartment_params(point_neuron_network_params):
     '''
     Inherited class defining additional attributes needed by e.g., the
-    classes population.Population and
-    population.DummyNetwork
+    classes population.Population and population.DummyNetwork
 
     This class do not take any kwargs
 
@@ -753,8 +736,7 @@ class multicompartment_params(point_neuron_network_params):
     def __init__(self):
         '''
         Inherited class defining additional attributes needed by e.g., the
-        classes population.Population and
-        population.DummyNetwork
+        classes population.Population and population.DummyNetwork
 
         This class do not take any kwargs
 
@@ -791,6 +773,7 @@ class multicompartment_params(point_neuron_network_params):
         }
 
 
+
     ####################################
     #                                  #
     #                                  #
@@ -813,7 +796,7 @@ class multicompartment_params(point_neuron_network_params):
 
         # list of morphology files with default location, testing = True
         # will point to simplified morphologies
-        testing = False
+        testing = True
         if testing:
             self.PATH_m_y = os.path.join('morphologies', 'ballnsticks')
             self.m_y = [Y + '_' + y + '.hoc' for Y, y in self.mapping_Yy]
@@ -911,7 +894,6 @@ class multicompartment_params(point_neuron_network_params):
             'verbose' : False,
         }
 
-
         # layer specific LFPy.Cell-parameters as nested dictionary
         self.yCellParams = self._yCellParams()
 
@@ -967,6 +949,7 @@ class multicompartment_params(point_neuron_network_params):
                 },
             })
 
+
         # set up dictionary of synapse time constants specific to each
         # postsynaptic cell type and presynaptic population
         self.tau_yX = {}
@@ -1008,9 +991,8 @@ class multicompartment_params(point_neuron_network_params):
             r=np.ones(16) * np.sqrt(1000**2 / np.pi)  # same as pop radius
         )
 
-        #these variables will be saved to file for each cell and electrdoe object
+        # these cell attributes variables will be saved to file
         self.savelist = []
-
 
         #########################################
         # MISC                                  #
@@ -1020,7 +1002,7 @@ class multicompartment_params(point_neuron_network_params):
         self.dt_output = 1.
 
         #set fraction of neurons from population which LFP output is stored
-        self.recordSingleContribFrac = 0.1
+        self.recordSingleContribFrac = 0.
 
 
     def get_GIDs(self):

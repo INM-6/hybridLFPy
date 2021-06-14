@@ -50,7 +50,9 @@ def create_downsampled_data(params):
     '''
     maxsamples = 1
 
-    for data_type in ['LFP','CSD']:
+    for data_type, post_fix in zip(['LFP', 'CSD'],
+                                   ['RecExtElectrode',
+                                    'LaminarCurrentSourceDensity']):
 
         if RANK == 0:
             if not os.path.isdir(os.path.join(params.savefolder, 'populations', 'subsamples')):
@@ -61,11 +63,11 @@ def create_downsampled_data(params):
             assert(ana_params.scaling <= params.recordSingleContribFrac)
         except AssertionError:
             raise AssertionError('scaling parameter must be less than simulation recordSingleContribFrac')
-        
+
         samples = int(1. / ana_params.scaling)
         if samples > maxsamples:
             samples = maxsamples
-        
+
         COUNTER = 0
         for j, layer in enumerate(params.y_in_Y): # loop over layers
             for k, pop in enumerate(layer): # loop over populations
@@ -73,8 +75,8 @@ def create_downsampled_data(params):
                     if COUNTER % SIZE == RANK:
                         # Load data
                         fname = os.path.join(params.savefolder, 'populations', '%s_%ss.h5' \
-                                             % (y, data_type))
-                        f = h5py.File(fname)
+                                             % (y, post_fix))
+                        f = h5py.File(fname, 'r')
                         print(('Load %s' % str(f.filename)))
                         raw_data = f['data'][()]
                         srate = f['srate'][()]
@@ -88,7 +90,7 @@ def create_downsampled_data(params):
                         try:
                             assert(N <= raw_data.shape[0])
                         except AssertionError:
-                            raise AssetionError('shape mismatch with sample size')
+                            raise AssertionError('shape mismatch with sample size')
 
 
                         for sample in range(samples): # loop over samples
@@ -119,7 +121,7 @@ def create_downsampled_data(params):
                     COUNTER += 1
 
         COMM.Barrier()
-        f = h5py.File(os.path.join(params.savefolder,'populations', '%s_%ss.h5' % (y,data_type)), 'r')
+        f = h5py.File(os.path.join(params.savefolder,'populations', '%s_%ss.h5' % (y, post_fix)), 'r')
         datashape = f['data'].shape
         f.close()
 
@@ -141,7 +143,7 @@ def create_downsampled_data(params):
                                                  'subsamples', '%s_population_%s_%i_%i.h5' \
                                                  % (y, data_type, ana_params.scaling*100,
                                                     sample))
-                            f = h5py.File(fname, 'r')    
+                            f = h5py.File(fname, 'r')
                             # Update population sum:
                             data_Y += f['data'][()]
                             srate = f['srate'][()]
@@ -156,7 +158,7 @@ def create_downsampled_data(params):
                         print(('Write %s' % str(f.filename)))
                         f['data'] = data_Y
                         f['srate'] = srate
-                        f.close() 
+                        f.close()
 
                         # update full sum
                         data_full += data_Y
@@ -173,7 +175,7 @@ def create_downsampled_data(params):
             COUNTER += 1
 
         COMM.Barrier()
-        
+
 
 
 def calc_signal_power(params):
@@ -183,32 +185,39 @@ def calc_signal_power(params):
 
     '''
 
-    for i, data_type in enumerate(['CSD','LFP','CSD_10_0', 'LFP_10_0']):
+    for i, (data_type, post_fix) in enumerate(zip(['CSD',
+                                                   'LFP',
+                                                   'CSD_10_0',
+                                                   'LFP_10_0'],
+                                                  ['LaminarCurrentSourceDensity',
+                                                   'RecExtElectrode',
+                                                   None,
+                                                   None])):
         if i % SIZE == RANK:
 
             # Load data
-            if data_type in ['CSD','LFP']:
-                fname=os.path.join(params.savefolder, data_type+'sum.h5')
+            if data_type in ['CSD', 'LFP']:
+                fname=os.path.join(params.savefolder, post_fix+'_sum.h5')
             else:
                 fname=os.path.join(params.populations_path, 'subsamples',
                                    str.split(data_type,'_')[0] + 'sum_' +
                                    str.split(data_type,'_')[1] + '_' +
                                    str.split(data_type,'_')[2] + '.h5')
             #open file
-            f = h5py.File(fname)
+            f = h5py.File(fname, 'r')
             data = f['data'][()]
-            srate = f['srate'][()] 
+            srate = f['srate'][()]
             tvec = np.arange(data.shape[1]) * 1000. / srate
-        
+
             # slice
             slica = (tvec >= ana_params.transient)
             data = data[:,slica]
-    
+
             # subtract mean
             dataT = data.T - data.mean(axis=1)
             data = dataT.T
             f.close()
-    
+
             #extract PSD
             PSD=[]
             for i in np.arange(len(params.electrodeParams['z'])):
@@ -225,12 +234,12 @@ def calc_signal_power(params):
                     Pxx = Pxx[mask]
                     Pxx = Pxx/tvec[tvec >= ana_params.transient].size**2
                 PSD +=[Pxx.flatten()]
-                
+
             PSD=np.array(PSD)
-    
+
             # Save data
             f = h5py.File(os.path.join(params.savefolder, ana_params.analysis_folder,
-                                       data_type + ana_params.fname_psd),'w')
+                                       data_type + ana_params.fname_psd), 'w')
             f['freqs']=freqs
             f['psd']=PSD
             f['transient']=ana_params.transient
@@ -241,21 +250,23 @@ def calc_signal_power(params):
             f['Df']=str(ana_params.Df)
             f.close()
 
-    return 
+    return
 
 
 def calc_uncorrelated_signal_power(params):
-    
+
     '''This function calculates the depth-resolved power spectrum of signals
     without taking into account any cross-correlation.'''
 
 
-    for i, data_type in enumerate(['LFP','CSD']):
+    for i, (data_type, post_fix) in enumerate(zip(['LFP', 'CSD'],
+                                                ['RecExtElectrode',
+                                                 'LaminarCurrentSourceDensity'])):
         if i % SIZE == RANK:
-    
+
             # Determine size of PSD matrix
-    
-            f = h5py.File(os.path.join(params.savefolder, data_type + 'sum.h5'),'r')
+
+            f = h5py.File(os.path.join(params.savefolder, post_fix + '_sum.h5'),'r')
             data = f['data'][()]
             srate = f['srate'][()]
             if ana_params.mlab:
@@ -266,13 +277,13 @@ def calc_uncorrelated_signal_power(params):
                                        Df=ana_params.Df, pointProcess=False)
             f.close()
             P = np.zeros((data.shape[0],Psum.shape[0]))
-               
+
             for y in params.y:
-    
+
                 print(('processing ', y))
                 # Load data
                 f = h5py.File(os.path.join(params.populations_path, '%s_%ss' %
-                                           (y,data_type) + '.h5'),'r')
+                                           (y, post_fix) + '.h5'),'r')
                 data_y = f['data'][()][:,:, ana_params.transient:]
                 # subtract mean
                 for j in range(len(data_y)):
@@ -281,16 +292,17 @@ def calc_uncorrelated_signal_power(params):
                 srate = f['srate'][()]
                 tvec = np.arange(data_y.shape[2]) * 1000. / srate
                 f.close()
-    
-            
+
+
                 for j in range(len(data_y)): # loop over cells
                     if ana_params.mlab:
                         for ch in range(len(params.electrodeParams['z'])): # loop over channels
                             P_j_ch, freqs = plt.mlab.psd(data_y[j,ch],
-                                                         NFFT=ana_params.NFFT, Fs=srate,
+                                                         NFFT=ana_params.NFFT,
+                                                         Fs=srate,
                                                          noverlap=ana_params.noverlap,
                                                          window=ana_params.window)
-                                       
+
                             P[ch] += P_j_ch
                     else:
                         [freqs, P_j] = hlp.powerspec(data_y[j], tbin= 1./srate*1000.,
@@ -299,15 +311,15 @@ def calc_uncorrelated_signal_power(params):
                         freqs = freqs[mask]
                         P_j = P_j[:,mask][:,0,:]
                         P_j = P_j/tvec[tvec >= ana_params.transient].size**2
-                        
+
                         P += P_j
-    
+
             #rescale PSD as they may be computed from a fraction of single cell LFPs
             P /= params.recordSingleContribFrac
-            
+
             # Save data
             f = h5py.File(os.path.join(params.savefolder, ana_params.analysis_folder,
-                                       data_type +  ana_params.fname_psd_uncorr),'w')
+                                       data_type +  ana_params.fname_psd_uncorr), 'w')
             f['freqs']=freqs
             f['psd']=P
             f['transient']=ana_params.transient
@@ -315,11 +327,11 @@ def calc_uncorrelated_signal_power(params):
             f['NFFT']=ana_params.NFFT
             f['noverlap']=ana_params.noverlap
             f['window']=str(ana_params.window)
-            f['Df']=str(ana_params.Df)        
+            f['Df']=str(ana_params.Df)
             f.close()
 
     return
- 
+
 
 def calc_variances(params):
     '''
@@ -331,26 +343,28 @@ def calc_variances(params):
     ############################
     ### CSD                  ###
     ############################
- 
-    for i, data_type in enumerate(['CSD','LFP']):
+
+    for i, (data_type, post_fix) in enumerate(zip(['CSD', 'LFP'], ['LaminarCurrentSourceDensity','RecExtElectrode'])):
         if i % SIZE == RANK:
-    
+
             f_out = h5py.File(os.path.join(params.savefolder, ana_params.analysis_folder,
                                            data_type + ana_params.fname_variances), 'w')
             f_out['depths']=depth
-      
+
             for celltype in params.y:
                 f_in = h5py.File(os.path.join(params.populations_path,
-                                              '%s_population_%s' % (celltype,data_type) + '.h5' ))
+                                              '%s_population_%s'
+                                              % (celltype, post_fix) + '.h5' ),
+                                              'r')
                 var = f_in['data'][()][:, ana_params.transient:].var(axis=1)
                 f_in.close()
                 f_out[celltype]= var
-            
-            f_in = h5py.File(os.path.join(params.savefolder, data_type + 'sum.h5' ))
+
+            f_in = h5py.File(os.path.join(params.savefolder, post_fix + '_sum.h5' ), 'r')
             var= f_in['data'][()][:, ana_params.transient:].var(axis=1)
             f_in.close()
             f_out['sum']= var
-        
+
             f_out.close()
 
     return
@@ -370,4 +384,3 @@ if __name__ == '__main__':
     calc_signal_power(params)
     calc_uncorrelated_signal_power(params)
     calc_variances(params)
-

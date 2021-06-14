@@ -51,9 +51,6 @@ Available classes
 
 Available utilities
 -------------------
-``csd``
-    Ground truth current-source density estimation from multicompartment models
-
 ``helpers``
     Various methods used throughout simulations
 
@@ -64,11 +61,12 @@ Available utilities
     Run a series of unit tests
 '''
 from .version import version as __version__
-from .cachednetworks import CachedNetwork, CachedNoiseNetwork, CachedFixedSpikesNetwork
+from .cachednetworks import CachedNetwork, CachedNoiseNetwork, \
+    CachedFixedSpikesNetwork, CachedTopoNetwork
 from .gdf import GDF
-from .population import PopulationSuper, Population
+from .population import PopulationSuper, Population, TopoPopulation
 from .postproc import PostProcess
-from . import csd
 from . import helpers
 from .helpers import setup_file_dest
-from .testing import _test as test
+from . import helperfun
+from .test import _test as test

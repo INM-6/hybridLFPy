@@ -77,7 +77,7 @@ def plot_signal_sum(ax, z, fname='LFPsum.h5', unit='mV',
                 [-0, -100], lw=2, color='k', clip_on=False)
         ax.text(tvec[slica][-1]+np.diff(T)*0.02, -50,
                 r'%g %s' % (vlimround, unit),
-                color='k', rotation='vertical')
+                color='k', rotation='vertical', va='center')
 
     ax.axis(ax.axis('tight'))
     ax.yaxis.set_ticks(yticks)
@@ -159,11 +159,11 @@ def plot_population(ax,
     #contact points
     ax.plot(electrodeParams['x'],
             electrodeParams['z'],
-            '.', marker='o', markersize=5, color='k', zorder=0)
+            marker='o', markersize=5, color='k', zorder=0)
 
     #outline of electrode
-    x_0 = np.array(electrodeParams['r_z'])[1, 1:-1]
-    z_0 = np.array(electrodeParams['r_z'])[0, 1:-1]
+    x_0 = np.array(populationParams[X[0]]['min_r'])[1, 1:-1]
+    z_0 = np.array(populationParams[X[0]]['min_r'])[0, 1:-1]
     x = np.r_[x_0[-1], x_0[::-1], -x_0[1:], -x_0[-1]]
     z = np.r_[100, z_0[::-1], z_0[1:], 100]
     ax.fill(x, z, color=(0.5, 0.5, 0.5), lw=None, zorder=-0.1)

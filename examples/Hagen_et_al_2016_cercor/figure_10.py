@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 import h5py
 import plotting_helpers as phlp
 from plot_methods import plot_signal_sum, plot_signal_sum_colorplot
-from cellsim16popsParams_modified_spontan import multicompartment_params 
+from cellsim16popsParams_modified_spontan import multicompartment_params
 import analysis_params
 
 def fig_exc_inh_contrib(fig, axes, params, savefolders, T=[800, 1000], transient=200,
@@ -17,28 +17,31 @@ def fig_exc_inh_contrib(fig, axes, params, savefolders, T=[800, 1000], transient
     plot time series LFPs and CSDs with signal variances as function of depth
     for the cases with all synapses intact, or knocking out excitatory
     input or inhibitory input to the postsynaptic target region
-    
+
     args:
     ::
-        fig : 
-        axes :  
+        fig :
+        axes :
         savefolders : list of simulation output folders
         T : list of ints, first and last time sample
         transient : int, duration of transient period
-        
+
     returns:
     ::
-        
+
         matplotlib.figure.Figure object
-    
+
     '''
     # params = multicompartment_params()
     # ana_params = analysis_params.params()
 
-    
+
     #file name types
-    file_names = ['CSDsum.h5', 'LFPsum.h5']
-    
+    file_names = ['LaminarCurrentSourceDensity_sum.h5', 'RecExtElectrode_sum.h5']
+
+    # CSD # unit nA um^-3 -> muA mm-3
+    scaling_factors = [1E6, 1.]
+
     #panel titles
     panel_titles = [
         'LFP&CSD\nexc. syn.',
@@ -46,13 +49,13 @@ def fig_exc_inh_contrib(fig, axes, params, savefolders, T=[800, 1000], transient
         'LFP&CSD\ncompound',
         'CSD variance',
         'LFP variance',]
-    
+
     #labels
     labels = [
         'exc. syn.',
         'inh. syn.',
         'SUM']
-    
+
     #some colors for traces
     if analysis_params.bw:
         colors = ['k', 'gray', 'k']
@@ -64,10 +67,10 @@ def fig_exc_inh_contrib(fig, axes, params, savefolders, T=[800, 1000], transient
         # lws = [0.75, 0.75, 1.5]
         lws = [1.25, 1.25, 1.25]
 
-    
+
     #scalebar labels
     units = ['$\mu$A mm$^{-3}$', 'mV']
-    
+
     #depth of each contact site
     depth = params.electrodeParams['z']
 
@@ -77,13 +80,13 @@ def fig_exc_inh_contrib(fig, axes, params, savefolders, T=[800, 1000], transient
     # ana_params.set_PLOS_2column_fig_style(ratio=0.5)
     # fig, axes = plt.subplots(1,5)
     # fig.subplots_adjust(left=0.06, right=0.96, wspace=0.4, hspace=0.2)
-    
+
     #clean up
     for ax in axes.flatten():
         phlp.remove_axis_junk(ax)
 
 
-    for i, file_name in enumerate(file_names):
+    for i, (scaling_factor, file_name) in enumerate(zip(scaling_factors, file_names)):
         #get the global data scaling bar range for use in latter plots
         #TODO: find nicer solution without creating figure
         dum_fig, dum_ax = plt.subplots(1)
@@ -92,15 +95,17 @@ def fig_exc_inh_contrib(fig, axes, params, savefolders, T=[800, 1000], transient
         for savefolder in savefolders:
             vlimround0 = plot_signal_sum(dum_ax, params,
                                          os.path.join(os.path.split(params.savefolder)[0], savefolder, file_name),
-                                         rasterized=False)
+                                         rasterized=False,
+                                         scaling_factor=scaling_factor)
             if vlimround0 > vlim_LFP:
                 vlim_LFP = vlimround0
             im = plot_signal_sum_colorplot(dum_ax, params, os.path.join(os.path.split(params.savefolder)[0], savefolder, file_name),
                                            cmap=plt.get_cmap('gray', 21) if analysis_params.bw else plt.get_cmap('bwr_r', 21),
-                                           rasterized=False)
+                                           rasterized=False,
+                                           scaling_factor=scaling_factor)
             if abs(im.get_array()).max() > vlim_CSD:
                 vlim_CSD = abs(im.get_array()).max()
-                                                  
+
         plt.close(dum_fig)
 
 
@@ -108,7 +113,9 @@ def fig_exc_inh_contrib(fig, axes, params, savefolders, T=[800, 1000], transient
             ax = axes[j]
             if i == 1:
                 plot_signal_sum(ax, params, os.path.join(os.path.split(params.savefolder)[0], savefolder, file_name),
-                            unit=units[i], T=T,
+                            unit=units[i],
+                            scaling_factor=scaling_factor,
+                            T=T,
                             color='k',
                             # color='k' if analysis_params.bw else colors[j],
                             vlimround=vlim_LFP, rasterized=False)
@@ -118,17 +125,18 @@ def fig_exc_inh_contrib(fig, axes, params, savefolders, T=[800, 1000], transient
                               colorbar=False,
                               fancy=False, cmap=plt.get_cmap('gray', 21) if analysis_params.bw else plt.get_cmap('bwr_r', 21),
                               absmax=vlim_CSD,
-                              rasterized=False)
-            
-            
+                              rasterized=False,
+                              scaling_factor=scaling_factor)
+
+
             ax.axis((T[0], T[1], -1550, 50))
             ax.set_title(panel_titles[j], va='baseline')
-            
+
             if i == 0:
                 phlp.annotate_subplot(ax, ncols=1, nrows=1, letter=panel_labels[j])
             if j != 0:
                 ax.set_yticklabels([])
-            
+
             if i == 0:#and j == 2:
                 cb = phlp.colorbar(fig, ax, im,
                                    width=0.05, height=0.5,
@@ -140,13 +148,17 @@ def fig_exc_inh_contrib(fig, axes, params, savefolders, T=[800, 1000], transient
             else:
                 ax.set_xlabel('')
 
-            
+
     #power in CSD
     ax = axes[3]
-    datas = []    
+    datas = []
     for j, savefolder in enumerate(savefolders):
-        f = h5py.File(os.path.join(os.path.split(params.savefolder)[0], savefolder, 'CSDsum.h5'))
-        var = f['data'][()][:, transient:].var(axis=1)
+        f = h5py.File(os.path.join(os.path.split(params.savefolder)[0],
+                                                 savefolder,
+                                                 'LaminarCurrentSourceDensity_sum.h5'),
+                      'r')
+        data = f['data'][()] * 1E6  # unit nA um^-3 -> muA mm-3
+        var = data[:, transient:].var(axis=1)
         ax.semilogx(var, depth,
                     color=colors[j], label=labels[j], lw=lws[j], clip_on=False)
         datas.append(f['data'][()][:, transient:])
@@ -169,7 +181,10 @@ def fig_exc_inh_contrib(fig, axes, params, savefolders, T=[800, 1000], transient
 
     datas = []
     for j, savefolder in enumerate(savefolders):
-        f = h5py.File(os.path.join(os.path.split(params.savefolder)[0], savefolder, 'LFPsum.h5'))
+        f = h5py.File(os.path.join(os.path.split(params.savefolder)[0],
+                                                 savefolder,
+                                                 'RecExtElectrode_sum.h5'),
+                      'r')
         var = f['data'][()][:, transient:].var(axis=1)
         ax.semilogx(var, depth,
                     color=colors[j], label=labels[j], lw=lws[j], clip_on=False)
@@ -187,7 +202,7 @@ def fig_exc_inh_contrib(fig, axes, params, savefolders, T=[800, 1000], transient
 
     ax.legend(bbox_to_anchor=(1.3, 1.0), frameon=False)
     ax.set_yticklabels([])
-        
+
     #return fig
 
 
