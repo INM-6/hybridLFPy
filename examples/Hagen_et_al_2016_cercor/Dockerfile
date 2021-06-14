@@ -62,17 +62,17 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libopenmpi-dev \
     doxygen
 
-# Install NEST3 (master branch @7a2dd86f843f16e4aeee50c382ca5b0e94e2911e)
-RUN wget https://github.com/nest/nest-simulator/archive/7a2dd86f843f16e4aeee50c382ca5b0e94e2911e.tar.gz && \
+# Install NEST 3 (master branch @v3.0)
+RUN wget https://github.com/nest/nest-simulator/archive/v3.0.tar.gz && \
   mkdir nest-build && \
-  tar zxf 7a2dd86f843f16e4aeee50c382ca5b0e94e2911e.tar.gz && \
-  mv nest-simulator-7a2dd86f843f16e4aeee50c382ca5b0e94e2911e nest-simulator && \
+  tar zxf v3.0.tar.gz && \
+  mv nest-simulator-3.0 nest-simulator && \
   cd  nest-build && \
   cmake -DCMAKE_INSTALL_PREFIX:PATH=/opt/nest/ \
         -Dwith-boost=ON \
-		-Dwith-ltdl=ON \
-	    -Dwith-gsl=$WITH_GSL \
-	    -Dwith-readline=ON \
+		    -Dwith-ltdl=ON \
+	      -Dwith-gsl=$WITH_GSL \
+	      -Dwith-readline=ON \
         -Dwith-python=ON \
         -Dwith-mpi=$WITH_MPI \
         -Dwith-openmp=$WITH_OMP \
@@ -84,8 +84,8 @@ RUN wget https://github.com/nest/nest-simulator/archive/7a2dd86f843f16e4aeee50c3
 RUN echo "source /opt/nest/bin/nest_vars.sh" >> root/.bashrc
 
 # clean up install/build files
-RUN rm 7a2dd86f843f16e4aeee50c382ca5b0e94e2911e.tar.gz
-RUN rm -r nest*
+RUN rm v3.0.tar.gz
+RUN rm -r nest-simulator-3.0
 
 
 # --- hybridLFPy ----
