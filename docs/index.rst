@@ -7,23 +7,23 @@ Welcome to the documentation of **hybridLFPy**!
 ===============================================
 
 
-.. include:: ../README.md
+.. include:: readme.md
 
 
 Notes on performance
 --------------------
 
 The present version of ``hybridLFPy`` may facilitate on a trivial parallelism
-as the contribution of each single-cell LFP can be computed independently. 
+as the contribution of each single-cell LFP can be computed independently.
 However, this does not imply that the present implementation code is highly
 optimized for speed. In particular, initializing the multicompartment neuron
 populations do not as much benefit from increasing the MPI pool size, as
 exemplified by a benchmark based on the Brunel-network example scaled up to
-50,000 neurons and with simplified neuron morphologies. 
+50,000 neurons and with simplified neuron morphologies.
 
 .. figure:: benchmark_example_brunel.png
-    :scale: 25 %    
-    
+    :scale: 25 %
+
     Scaling example with ``hybridLFPy`` based on a Brunel-like network with 50,000 neurons, running on the JURECA cluster at the Juelich Supercomputing Centre (JSC), Juelich Research Centre, Germany.
 
 
@@ -36,15 +36,15 @@ Module :mod:`hybridLFPy`
     :members:
     :show-inheritance:
     :undoc-members:
-    
-    
+
+
     class :class:`CachedNetwork`
     ============================
     .. autoclass:: hybridLFPy.CachedNetwork
         :members:
         :show-inheritance:
         :undoc-members:
-    
+
 
     class :class:`CachedNoiseNetwork`
     =================================
@@ -61,31 +61,31 @@ Module :mod:`hybridLFPy`
         :show-inheritance:
         :undoc-members:
 
-    
+
     class :class:`PopulationSuper`
     ==============================
     .. autoclass:: hybridLFPy.PopulationSuper
         :members:
         :show-inheritance:
         :undoc-members:
-    
-    
+
+
     class :class:`Population`
     =========================
     .. autoclass:: hybridLFPy.Population
         :members:
         :show-inheritance:
         :undoc-members:
-    
-    
+
+
     class :class:`PostProcess`
     ==========================
     .. autoclass:: hybridLFPy.PostProcess
         :members:
         :show-inheritance:
         :undoc-members:
-    
-    
+
+
     class :class:`GDF`
     ==================
     .. autoclass:: hybridLFPy.GDF
@@ -93,23 +93,16 @@ Module :mod:`hybridLFPy`
         :show-inheritance:
         :undoc-members:
 
-    
+
     submodule :mod:`helpers`
     ========================
     .. automodule:: hybridLFPy.helpers
         :members:
         :undoc-members:
-    
-    
-    submodule :mod:`csd`
-    ====================
-    .. automodule:: hybridLFPy.csd
-        :members:
-        :undoc-members:
 
 
-    submodulue :mod:`testing`
-    =========================
+    submodulue :mod:`test`
+    ======================
     .. autofunction:: hybridLFPy.test
 
 
@@ -119,4 +112,3 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
-

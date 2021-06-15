@@ -41,7 +41,8 @@ extensions = ['sphinx.ext.autodoc',
               'sphinx.ext.autosummary',
               'sphinx.ext.viewcode',
               'sphinx.ext.mathjax',
-              'numpydoc']
+              'numpydoc',
+              'm2r2']
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -230,8 +231,8 @@ latex_documents = [
 # WARNING: toctree contains reference to nonexisting document u'hybridLFPy.xxx.xxx'
 numpydoc_show_class_members = False
 
-def setup(app):
-    app.add_stylesheet('custom.css')  # may also be an URL
+# def setup(app):
+#    app.add_stylesheet('custom.css')  # may also be an URL
 
 # -- Options for manual page output --------------------------------------------
 
