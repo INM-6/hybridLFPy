@@ -1299,8 +1299,8 @@ class Population(PopulationSuper):
             # downsample probe.data attribute and unset cell
             for probe in self.probes:
                 probe.data = ss.decimate(probe.data,
-                                              q=self.decimatefrac
-                                              ).astype(np.float32)
+                                         q=self.decimatefrac
+                                         ).astype(np.float32)
                 probe.cell = None
 
             # put all necessary cell output in output dict
@@ -1425,8 +1425,7 @@ class Population(PopulationSuper):
         # unique postsynaptic compartments
         uidx = np.unique(idx)
         for i in uidx:
-            st = np.concatenate(spikes[idx == i])
-            st.sort()
+            st = np.sort(np.concatenate(spikes[idx == i]))
             st += cell.tstart  # needed?
             if st.size > 0:
                 synParams.update({'idx': i})

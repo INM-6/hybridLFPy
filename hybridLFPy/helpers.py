@@ -23,7 +23,6 @@ SIZE = COMM.Get_size()
 RANK = COMM.Get_rank()
 
 
-
 #######################################
 ### DATA I/O                        ###
 #######################################
@@ -127,14 +126,14 @@ def load_h5_data(path='', data_type='LFP', y=None, electrode=None,
     assert y is not None or electrode is not None
 
     if y is not None:
-        f = h5py.File(os.path.join(path, '%s_%ss.h5' %(y,data_type)))
-        data = f['data'][()][:,:, warmup:]
+        f = h5py.File(os.path.join(path, '%s_%ss.h5' % (y, data_type)))
+        data = f['data'][()][:, :, warmup:]
         if scaling != 1.:
             np.random.shuffle(data)
-            num_cells = int(len(data)*scaling)
-            data = data[:num_cells,:, warmup:]
+            num_cells = int(len(data) * scaling)
+            data = data[:num_cells, :, warmup:]
     else:
-        f = h5py.File(os.path.join(path, '%ssum.h5' %data_type))
+        f = h5py.File(os.path.join(path, '%ssum.h5' % data_type))
         data = f['data'][()][:, warmup:]
 
     return data
@@ -256,7 +255,7 @@ def setup_file_dest(params, clearDestination=True):
                 while os.path.isdir(params.savefolder):
                     try:
                         os.system('find %s -delete' % params.savefolder)
-                    except:
+                    except BaseException:
                         shutil.rmtree(params.savefolder)
                 os.mkdir(params.savefolder)
                 assert(os.path.isdir(params.savefolder))
@@ -281,7 +280,7 @@ def setup_file_dest(params, clearDestination=True):
             if not os.path.isdir(params.raw_nest_output_path):
                 print('creating %s' % params.raw_nest_output_path)
                 os.mkdir(params.raw_nest_output_path)
-        except:
+        except BaseException:
             pass
 
         if not os.path.isdir(params.spike_output_path):
@@ -298,8 +297,14 @@ def setup_file_dest(params, clearDestination=True):
                   'nest_simulation.py',
                   'microcircuit.sli']:
             if os.path.isfile(f):
-                if not os.path.exists(os.path.join(params.sim_scripts_path, f)):
-                    print('copying {} as {}'.format(f, os.path.join(params.sim_scripts_path, f)))
+                if not os.path.exists(
+                    os.path.join(
+                        params.sim_scripts_path,
+                        f)):
+                    print(
+                        'copying {} as {}'.format(
+                            f, os.path.join(
+                                params.sim_scripts_path, f)))
                     shutil.copy(f, os.path.join(params.sim_scripts_path, f))
                     os.chmod(os.path.join(params.sim_scripts_path, f),
                              stat.S_IREAD)
@@ -610,8 +615,8 @@ def powerspec(data, tbin, Df=None, units=False, pointProcess=False):
     If units=True, power spectra are averaged across units.
     Note that averaging is done on power spectra rather than data.
 
-    If pointProcess is True, power spectra are normalized by the length T of the
-    time series.
+    If pointProcess is True, power spectra are normalized by the length T
+    of the time series.
 
 
     Parameters
@@ -714,7 +719,7 @@ def compound_powerspec(data, tbin, Df=None, pointProcess=False):
     """
 
     return powerspec([np.sum(data, axis=0)], tbin, Df=Df, units=True,
-        pointProcess=pointProcess)
+                     pointProcess=pointProcess)
 
 
 def crossspec(data, tbin, Df=None, units=False, pointProcess=False):
@@ -950,8 +955,8 @@ def corrcoef(time, crossf, integration_window=0.):
     Calculate the correlation coefficient for given auto- and crosscorrelation
     functions. Standard settings yield the zero lag correlation coefficient.
     Setting integration_window > 0 yields the correlation coefficient of
-    integrated auto- and crosscorrelation functions. The correlation coefficient
-    between a zero signal with any other signal is defined as 0.
+    integrated auto- and crosscorrelation functions. The correlation
+    coefficient between a zero signal with any other signal is defined as 0.
 
 
     Parameters
@@ -977,22 +982,22 @@ def corrcoef(time, crossf, integration_window=0.):
     tbin = abs(time[1] - time[0])
     lim = int(integration_window / tbin)
 
-    if len(time)%2 == 0:
-        mid = len(time)/2-1
+    if len(time) % 2 == 0:
+        mid = len(time) / 2 - 1
     else:
-        mid = np.floor(len(time)/2.)
+        mid = np.floor(len(time) / 2.)
 
     for i in range(N):
         ai = np.sum(crossf[i, i][mid - lim:mid + lim + 1])
-        offset_autoi = np.mean(crossf[i,i][:mid-1])
+        offset_autoi = np.mean(crossf[i, i][:mid - 1])
         for j in range(N):
             cij = np.sum(crossf[i, j][mid - lim:mid + lim + 1])
-            offset_cross = np.mean(crossf[i,j][:mid-1])
+            offset_cross = np.mean(crossf[i, j][:mid - 1])
             aj = np.sum(crossf[j, j][mid - lim:mid + lim + 1])
-            offset_autoj = np.mean(crossf[j,j][:mid-1])
+            offset_autoj = np.mean(crossf[j, j][:mid - 1])
             if ai > 0. and aj > 0.:
-                cc[i, j] = (cij-offset_cross) / np.sqrt((ai-offset_autoi) * \
-                    (aj-offset_autoj))
+                cc[i, j] = (cij - offset_cross) / np.sqrt((ai - offset_autoi) *
+                                                          (aj - offset_autoj))
             else:
                 cc[i, j] = 0.
 
@@ -1038,8 +1043,8 @@ def coherence(freq, power, cross):
 
 def cv(data, units=False):
     """
-    Calculate coefficient of variation (cv) of data. Mean and standard deviation
-    are computed across time.
+    Calculate coefficient of variation (cv) of data. Mean and standard
+    deviation are computed across time.
 
 
     Parameters

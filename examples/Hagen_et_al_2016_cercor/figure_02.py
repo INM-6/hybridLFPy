@@ -12,6 +12,5 @@ if __name__ == '__main__':
     fig = plotMorphologyTable(fig, params, rasterized=False)
     fig.savefig('figure_02.pdf', dpi=300, bbox_inches='tight', pad_inches=0)
     fig.savefig('figure_02.eps', bbox_inches='tight', pad_inches=0)
-  
+
     plt.show()
-    

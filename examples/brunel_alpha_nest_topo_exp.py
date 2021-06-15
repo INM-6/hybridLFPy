@@ -285,7 +285,7 @@ def run_model():
     if 'exponential' in conn_kernel_EX.keys():
         beta = conn_kernel_EX['exponential']['tau']
         p_dict_EX = {'p': nest.spatial_distributions.exponential(
-                              nest.spatial.distance, beta=beta)}
+            nest.spatial.distance, beta=beta)}
     else:
         raise NotImplementedError
 
@@ -307,7 +307,7 @@ def run_model():
     if 'exponential' in conn_kernel_IN.keys():
         beta = conn_kernel_IN['exponential']['tau']
         p_dict_IN = {'p': nest.spatial_distributions.exponential(
-                              nest.spatial.distance, beta=beta)}
+            nest.spatial.distance, beta=beta)}
     else:
         raise NotImplementedError
     if 'linear' in conn_delay_IN.keys():
@@ -334,9 +334,11 @@ def run_model():
 
     # compute and print some statistics of spikes recorded on this RANK
     events_ex = nest.GetStatus(espikes, "n_events")[0]
-    rate_ex = events_ex / simtime * 1000.0 / len(nest.GetLocalNodeCollection(nodes_ex).tolist())
+    rate_ex = events_ex / simtime * 1000.0 / \
+        len(nest.GetLocalNodeCollection(nodes_ex).tolist())
     events_in = nest.GetStatus(ispikes, "n_events")[0]
-    rate_in = events_in / simtime * 1000.0 / len(nest.GetLocalNodeCollection(nodes_in).tolist())
+    rate_in = events_in / simtime * 1000.0 / \
+        len(nest.GetLocalNodeCollection(nodes_in).tolist())
 
     num_synapses = nest.GetDefaults("excitatory")["num_connections"] +\
         nest.GetDefaults("inhibitory")["num_connections"]

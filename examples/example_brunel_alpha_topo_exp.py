@@ -372,6 +372,7 @@ class PeriodicLFP(lfpykit.RecExtElectrode):
     **kwargs:
         lfpykit.RecExtElectrode parameters
     '''
+
     def __init__(self, side_length=4000., order=1, **kwargs):
         """Initialize RecExtElectrode class"""
         super().__init__(**kwargs)

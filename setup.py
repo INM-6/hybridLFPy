@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-'''setup file for the hybridLFPy python module'''
+'''setup file for the hybridLFPy Python module'''
 import os
 from setuptools import setup, Extension
 import numpy
@@ -62,8 +62,8 @@ setup(
         'h5py>=2.5',
         'mpi4py>=1.2',
         'LFPy>=2.2'],
-    extras_require = {'tests': ['pytest'],
-                      'docs': ['sphinx', 'numpydoc', 'sphinx_rtd_theme'],
-                      },
+    extras_require={'tests': ['pytest'],
+                    'docs': ['sphinx', 'numpydoc', 'sphinx_rtd_theme'],
+                    },
     dependency_links=[],
 )

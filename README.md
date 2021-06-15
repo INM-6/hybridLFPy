@@ -9,8 +9,9 @@ neuron network simulations.
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.45185.svg)](https://doi.org/10.5281/zenodo.45185)
 [![Documentation Status](https://readthedocs.org/projects/hybridlfpy/badge/?version=latest)](https://hybridLFPy.readthedocs.io/en/latest/?badge=latest)
-[![Python pytest](https://github.com/INM-6/hybridLFPy/workflows/Python%20pytest/badge.svg)](https://github.com/INM-6/hybridLFPy/actions/workflows/python-pytest.yml)
 [![Upload Python Package](https://github.com/INM-6/hybridLFPy/workflows/Upload%20Python%20Package/badge.svg)](https://pypi.org/project/hybridLFPy)
+[![Python pytest](https://github.com/INM-6/hybridLFPy/workflows/Python%20pytest/badge.svg)](https://github.com/INM-6/hybridLFPy/actions/workflows/python-pytest.yml)
+[![Lintly](https://github.com/INM-6/hybridLFPy/workflows/Lintly/badge.svg)](https://github.com/INM-6/hybridLFPy/actions/workflows/lintly.yml)
 [![License](http://img.shields.io/:license-GPLv3+-green.svg)](http://www.gnu.org/licenses/gpl-3.0.html)
 
 

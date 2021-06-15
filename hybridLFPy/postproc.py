@@ -14,10 +14,11 @@ import tarfile
 from warnings import warn
 from mpi4py import MPI
 
-################# Initialization of MPI stuff ##################################
+################# Initialization of MPI stuff ############################
 COMM = MPI.COMM_WORLD
 SIZE = COMM.Get_size()
 RANK = COMM.Get_rank()
+
 
 class PostProcess(object):
     """
@@ -38,7 +39,8 @@ class PostProcess(object):
     savefolder : str
         Path to main output folder.
     mapping_Yy : list
-        List of tuples, each tuple pairing population with cell type, e.g., [('L4E', 'p4'), ('L4E', 'ss4')].
+        List of tuples, each tuple pairing population with cell type, e.g.,
+        [('L4E', 'p4'), ('L4E', 'ss4')].
     cells_subfolder : str
         Folder under `savefolder` containing cell output.
     populations_subfolder : str
@@ -47,6 +49,7 @@ class PostProcess(object):
         Folder under `savefolder` containing figs.
 
     """
+
     def __init__(self,
                  y=['EX', 'IN'],
                  dt_output=1.,
@@ -96,7 +99,7 @@ class PostProcess(object):
 
 
         """
-        #set some attributes
+        # set some attributes
         self.y = y
         self.dt_output = dt_output
         self.mapping_Yy = mapping_Yy
@@ -109,12 +112,11 @@ class PostProcess(object):
         self.output_file = output_file
         self.compound_file = compound_file
 
-        #set up subfolders
+        # set up subfolders
         if RANK == 0:
             self._set_up_savefolder()
         else:
             pass
-
 
     def run(self):
         """ Perform the postprocessing steps, computing compound signals from
@@ -137,9 +139,9 @@ class PostProcess(object):
                 # save per-population contributions
                 for key, value in list(datadict.items()):
                     f = h5py.File(os.path.join(
-                            self.populations_path,
-                            self.output_file.format(key,
-                                                    '{}.h5'.format(measure))),
+                        self.populations_path,
+                        self.output_file.format(key,
+                                                '{}.h5'.format(measure))),
                                   'w')
                     f['srate'] = 1E3 / self.dt_output
                     f.create_dataset('data', data=value, compression=4)
@@ -153,7 +155,7 @@ class PostProcess(object):
                     f = h5py.File(
                         os.path.join(self.populations_path,
                                      '{}_population_{}.h5'.format(Y, measure)),
-                                     'w')
+                        'w')
                     f['data'] = value
                     f['srate'] = 1E3 / self.dt_output
                     f.close()
@@ -161,9 +163,8 @@ class PostProcess(object):
         else:
             pass
 
-        ##collect matrices with the single cell contributions in parallel
-        #self.collectSingleContribs()
-
+        # collect matrices with the single cell contributions in parallel
+        # self.collectSingleContribs()
 
     def _set_up_savefolder(self):
         """ Create catalogs for different file output to clean up savefolder.
@@ -176,7 +177,6 @@ class PostProcess(object):
 
         if not os.path.isdir(self.populations_path):
             os.mkdir(self.populations_path)
-
 
     def calc_measure(self, measure='LFP'):
         """Sum all the measure contributions from every cell type.
@@ -198,11 +198,9 @@ class PostProcess(object):
         measure_dict = {}
 
         for i, y in enumerate(self.y):
-            fname = os.path.join(self.populations_path,
-                                 self.output_file.format(y,
-                                                         '{}.h5'.format(measure)
-                                                         )
-                                 )
+            fname = os.path.join(
+                self.populations_path,
+                self.output_file.format(y, '{}.h5'.format(measure)))
             f = h5py.File(fname, 'r')
 
             if i == 0:
@@ -210,12 +208,11 @@ class PostProcess(object):
 
             # fill in
             measure_array[i, ] = f['data'][()]
-            measure_dict.update({y : f['data'][()]})
+            measure_dict.update({y: f['data'][()]})
 
             f.close()
 
-        return measure_dict,  measure_array.sum(axis=0)
-
+        return measure_dict, measure_array.sum(axis=0)
 
     def calc_measure_layer(self, datadict, measure='LFP'):
         """
@@ -251,11 +248,10 @@ class PostProcess(object):
 
         return measure_dict
 
-
     def create_tar_archive(self):
         """Create a tar archive of the main simulation outputs.
         """
-        #file filter
+        # file filter
         EXCLUDE_FILES = glob.glob(os.path.join(self.savefolder, 'cells'))
         EXCLUDE_FILES += glob.glob(os.path.join(self.savefolder,
                                                 'populations', 'subsamples'))
@@ -276,9 +272,9 @@ class PostProcess(object):
 
         if RANK == 0:
             print('creating archive %s' % (self.savefolder + '.tar'))
-            #open file
+            # open file
             f = tarfile.open(self.savefolder + '.tar', 'w')
-            #avoid adding files to repo as /scratch/$USER/hybrid_model/...
+            # avoid adding files to repo as /scratch/$USER/hybrid_model/...
             arcname = os.path.split(self.savefolder)[-1]
 
             f.add(name=self.savefolder,
@@ -286,5 +282,5 @@ class PostProcess(object):
                   filter=filter_function)
             f.close()
 
-        #resync
+        # resync
         COMM.Barrier()
