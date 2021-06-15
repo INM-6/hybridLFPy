@@ -237,10 +237,9 @@ def fig_lfp_corr(params, savefolders, transient=200,
         PSD_ratio = LFP_PSD_corr / LFP_PSD_uncorr
 
         zvec = np.r_[params.electrodeParams['z']]
-        zvec = np.r_[zvec, zvec[-1] + np.diff(zvec)[-1]]
         inds = freqs >= 1  # frequencies greater than 4 Hz
         im = ax.pcolormesh(freqs[inds],
-                           zvec + 40,
+                           zvec,
                            PSD_ratio[:,
                                      inds],
                            rasterized=False,

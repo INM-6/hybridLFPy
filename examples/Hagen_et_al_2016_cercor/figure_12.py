@@ -299,13 +299,11 @@ def fig_lfp_scaling(fig,
 
     PSD_ratio = PSD_fullscale / (PSD_downscaled * scaling_factor**2)
     zvec = np.r_[params.electrodeParams['z']]
-    zvec = np.r_[zvec, zvec[-1] + np.diff(zvec)[-1]]
     inds = freqs >= 1  # frequencies greater than 4 Hz
 
     im = ax.pcolormesh(freqs[inds],
-                       zvec + 40,
-                       PSD_ratio[:,
-                                 inds],
+                       zvec,
+                       PSD_ratio[:, inds],
                        rasterized=False,
                        cmap=plt.get_cmap('gray_r',
                                          18) if analysis_params.bw else plt.cm.get_cmap('Reds',

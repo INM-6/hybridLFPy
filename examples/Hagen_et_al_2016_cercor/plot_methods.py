@@ -1686,8 +1686,7 @@ def plot_signal_sum_colorplot(ax,
     if absmax is None:
         absmax = abs(np.array([data.max(), data.min()])).max()
     im = ax.pcolormesh(tvec[slica],
-                       np.r_[zvec,
-                             zvec[-1] + np.diff(zvec)[-1]] + 50,
+                       zvec,
                        data,
                        rasterized=rasterized,
                        vmax=absmax,
@@ -1793,8 +1792,7 @@ def plot_signal_power_colorplot(ax, params, fname, transient=200, Df=None,
     '''
 
     zvec = np.r_[params.electrodeParams['z']]
-    zvec = np.r_[zvec, zvec[-1] + np.diff(zvec)[-1]]
-
+    
     # labels
     yticklabels = []
     yticks = []
@@ -1809,7 +1807,7 @@ def plot_signal_power_colorplot(ax, params, fname, transient=200, Df=None,
 
     # plot only above 1 Hz
     inds = freqs >= 1  # frequencies greater than 4 Hz
-    im = ax.pcolormesh(freqs[inds], zvec + 50, PSD[:, inds],
+    im = ax.pcolormesh(freqs[inds], zvec, PSD[:, inds],
                        rasterized=True,
                        norm=LogNorm(vmin=vmin, vmax=vmax),
                        cmap=cmap, shading='auto')
