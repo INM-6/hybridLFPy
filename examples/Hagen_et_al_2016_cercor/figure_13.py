@@ -410,7 +410,8 @@ def fig_kernel_lfp(
                 X00 = np.fft.fft(x0)
             for n in range(N):
                 if method == 'permute':
-                    x0 = np.random.permutation(datas[ch])
+                    # x0 = np.random.permutation(datas[ch])
+                    raise NotImplementedError
                 elif method == 'randphase':
                     X0 = np.copy(X00)
                     # random phase information such that spectra is preserved

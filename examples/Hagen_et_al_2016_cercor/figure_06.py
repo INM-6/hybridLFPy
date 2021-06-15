@@ -5,7 +5,8 @@ import pickle as pickle
 from hybridLFPy import CachedNetwork, helpers
 import analysis_params
 from cellsim16popsParams_modified_spontan import multicompartment_params
-from plot_methods import getMeanInpCurrents, getMeanVoltages, plot_population, plot_signal_sum
+from plot_methods import (getMeanInpCurrents, getMeanVoltages, plot_population,
+                          plot_signal_sum, plot_signal_sum_colorplot)
 import plotting_helpers as phlp
 import matplotlib.pyplot as plt
 from builtins import open, zip
