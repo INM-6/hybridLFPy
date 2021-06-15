@@ -11,6 +11,7 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
+from unittest.mock import MagicMock
 import sys, os
 
 #import mock
@@ -19,15 +20,34 @@ import sys, os
 #for mod_name in MOCK_MODULES:
 #    sys.modules[mod_name] = mock.Mock()
 
-# -- Release information
-_d = {}
-exec(open(os.path.join('..', 'hybridLFPy', 'version.py')).read(), None, _d)
-_release = _d['version']
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 sys.path.insert(0, os.path.abspath('.'))
+
+
+# -- Mocking Modules ---------------------------------------------------------
+
+# http://docs.readthedocs.io/en/latest/faq.html#i-get-import-errors-on-libra\
+# ries-that-depend-on-c-modules
+
+
+class Mock(MagicMock):
+    @classmethod
+    def __getattr__(cls, name):
+        return MagicMock()
+
+
+MOCK_MODULES = ['mpi4py']
+sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
+
+
+# -- Release information
+_d = {}
+exec(open(os.path.join('..', 'hybridLFPy', 'version.py')).read(), None, _d)
+_release = _d['version']
+
 
 # -- General configuration -----------------------------------------------------
 
