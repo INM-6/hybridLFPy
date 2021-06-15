@@ -22,7 +22,7 @@ SIZE = COMM.Get_size()
 RANK = COMM.Get_rank()
 
 
-flattenlist = lambda lst: sum(sum(lst, []),[])
+def flattenlist(lst): return sum(sum(lst, []), [])
 
 
 def get_raw_gids(model_params):
@@ -36,7 +36,7 @@ def get_raw_gids(model_params):
     gids = []
     for l in gidfile:
         a = l.split()
-        gids.append([int(a[0]),int(a[1])])
+        gids.append([int(a[0]), int(a[1])])
     return gids
 
 
@@ -50,9 +50,9 @@ def merge_gdf(model_params,
     (spike detector, voltmeter etc.).
     This function gathers and combines them into one single file per population.
     '''
-    #some preprocessing
+    # some preprocessing
     raw_gids = get_raw_gids(model_params)
-    pop_sizes = [raw_gids[i][1]-raw_gids[i][0]+1
+    pop_sizes = [raw_gids[i][1] - raw_gids[i][0] + 1
                  for i in np.arange(model_params.Npops)]
     raw_first_gids = [raw_gids[i][0] for i in np.arange(model_params.Npops)]
     converted_first_gids = [int(1 + np.sum(pop_sizes[:i]))
@@ -67,16 +67,26 @@ def merge_gdf(model_params,
             for f in files:
                 new_gdf = helpers.read_gdf(f, skiprows)
                 for line in new_gdf:
-                    line[0] = line[0] - raw_first_gids[pop_idx] + converted_first_gids[pop_idx]
+                    line[0] = line[0] - raw_first_gids[pop_idx] + \
+                        converted_first_gids[pop_idx]
                     gdf.append(line)
 
-            print('writing: {}'.format(os.path.join(model_params.spike_output_path,
-                                       fileprefix + '_{}.{}'.format(model_params.X[pop_idx],
-                                                                    file_type))))
-            helpers.write_gdf(gdf, os.path.join(model_params.spike_output_path,
-                                        fileprefix +
-                                        '_{}.{}'.format(model_params.X[pop_idx],
-                                                        file_type)))
+            print(
+                'writing: {}'.format(
+                    os.path.join(
+                        model_params.spike_output_path,
+                        fileprefix +
+                        '_{}.{}'.format(
+                            model_params.X[pop_idx],
+                            file_type))))
+            helpers.write_gdf(
+                gdf,
+                os.path.join(
+                    model_params.spike_output_path,
+                    fileprefix +
+                    '_{}.{}'.format(
+                        model_params.X[pop_idx],
+                        file_type)))
 
     COMM.Barrier()
 
@@ -106,7 +116,7 @@ def tar_raw_nest_output(raw_nest_output_path,
         # create tarfile
         fname = raw_nest_output_path + '.tar'
         with tarfile.open(fname, 'a') as t:
-            t.add(raw_nest_output_path, 
+            t.add(raw_nest_output_path,
                   arcname='raw_nest_output')
 
         # remove files from <raw_nest_output_path>
