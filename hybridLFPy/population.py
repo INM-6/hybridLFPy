@@ -1425,7 +1425,7 @@ class Population(PopulationSuper):
         # unique postsynaptic compartments
         uidx = np.unique(idx)
         for i in uidx:
-            st = sorted(np.concatenate(spikes[idx == i]))
+            st = np.sort(np.concatenate(spikes[idx == i]))
             st += cell.tstart  # needed?
             if st.size > 0:
                 synParams.update({'idx': i})
