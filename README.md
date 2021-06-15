@@ -83,7 +83,7 @@ future pulls from the repository:
 (sudo) pip install . (--user)
 ```
 
-### `examples` folder
+### examples folder
 
 Some example script(s) on how to use this module
 
