@@ -19,15 +19,18 @@ import sys, os
 #for mod_name in MOCK_MODULES:
 #    sys.modules[mod_name] = mock.Mock()
 
-# -- Release information
-_d = {}
-exec(open(os.path.join('..', 'hybridLFPy', 'version.py')).read(), None, _d)
-_release = _d['version']
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 sys.path.insert(0, os.path.abspath('.'))
+
+
+# -- Release information
+_d = {}
+exec(open(os.path.join('..', 'hybridLFPy', 'version.py')).read(), None, _d)
+_release = _d['version']
+
 
 # -- General configuration -----------------------------------------------------
 
@@ -41,7 +44,8 @@ extensions = ['sphinx.ext.autodoc',
               'sphinx.ext.autosummary',
               'sphinx.ext.viewcode',
               'sphinx.ext.mathjax',
-              'numpydoc']
+              'numpydoc',
+              'm2r2']
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -230,8 +234,8 @@ latex_documents = [
 # WARNING: toctree contains reference to nonexisting document u'hybridLFPy.xxx.xxx'
 numpydoc_show_class_members = False
 
-def setup(app):
-    app.add_stylesheet('custom.css')  # may also be an URL
+# def setup(app):
+#    app.add_stylesheet('custom.css')  # may also be an URL
 
 # -- Options for manual page output --------------------------------------------
 
@@ -253,7 +257,8 @@ man_pages = [
 #  dir menu entry, description, category)
 texinfo_documents = [
   ('index', 'hybridLFPy', u'hybridLFPy Documentation',
-   u'Espen Hagen', 'hybridLFPy', 'One line description of project.',
+   u'Espen Hagen', 'hybridLFPy',
+   'Methods for predictions of extracellular potentials',
    'Miscellaneous'),
 ]
 
