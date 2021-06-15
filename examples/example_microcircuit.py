@@ -594,6 +594,7 @@ if RANK == 0:
     ax = fig.add_subplot(3, 2, 1)
     ax.plot(P_Y_var, '-o')
     ax.legend(['$P_x$', '$P_y$', '$P_z$'], fontsize=8, frameon=False)
+    ax.set_xticks(np.arange(len(params.Y) + 1))
     ax.set_xticklabels(params.Y + ['SUM'], rotation='vertical')
     ax.set_ylabel(r'$\sigma^2 (\mathrm{nA}^2 \mu\mathrm{m}^2)$', labelpad=0)
     ax.set_title('signal variance')
