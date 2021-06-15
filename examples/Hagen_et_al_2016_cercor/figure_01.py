@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from cellsim16popsParams_modified_regular_input import multicompartment_params
-from plot_methods import network_sketch, plotConnectivity, plot_population, plot_signal_sum
+from plot_methods import network_sketch, plot_population, plot_signal_sum
 import analysis_params
 from hybridLFPy import CachedNetwork
 import plotting_helpers as phlp
