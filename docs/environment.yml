@@ -3,7 +3,11 @@ channels:
   - conda-forge
   - defaults
 dependencies:
-  - python=3
+  - python=3.8
+  - mpich
+  - gcc_linux-64
+  - pthread-stubs
+  - mpi4py
   - sphinx_rtd_theme
   - numpydoc
   - m2r2
