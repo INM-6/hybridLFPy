@@ -33,7 +33,7 @@ class TestHybridLFPy(unittest.TestCase):
             spike_output_path=os.path.join(hybridLFPy.__path__[0], 'test'),
             label='testing',
             ext='gdf',
-            GIDs={'X' : [1, 100]},
+            GIDs={'X': [1, 100]},
             X=['X'],
         )
 
@@ -47,24 +47,39 @@ class TestHybridLFPy(unittest.TestCase):
 
     def test_CachedNetwork_03(self):
         '''test CachedNetwork 01'''
-        nt.assert_array_equal(self.networkSim.nodes['X'], np.arange(100)+1)
+        nt.assert_array_equal(self.networkSim.nodes['X'], np.arange(100) + 1)
 
     def test_CachedNetwork_04(self):
         '''test CachedNetwork 04'''
-        nt.assert_array_equal(self.networkSim.dbs['X'].neurons(), np.array([1, 50]))
+        nt.assert_array_equal(
+            self.networkSim.dbs['X'].neurons(), np.array([1, 50]))
 
     def test_CachedNetwork_05(self):
         '''test CachedNetwork 05'''
-        nt.assert_array_equal(self.networkSim.dbs['X'].interval((0, 1000)), [(50, 100.0), (1, 200.0)])
+        nt.assert_array_equal(
+            self.networkSim.dbs['X'].interval(
+                (0, 1000)), [
+                (50, 100.0), (1, 200.0)])
 
     def test_CachedNetwork_06(self):
         '''test CachedNetwork 06'''
-        nt.assert_array_equal(self.networkSim.dbs['X'].interval((0, 100)), [(50, 100.0)])
+        nt.assert_array_equal(
+            self.networkSim.dbs['X'].interval(
+                (0, 100)), [
+                (50, 100.0)])
 
     def test_CachedNetwork_07(self):
         '''test CachedNetwork 07'''
-        nt.assert_array_equal(self.networkSim.dbs['X'].interval((200, 1000)), [(1, 200.0)])
+        nt.assert_array_equal(
+            self.networkSim.dbs['X'].interval(
+                (200, 1000)), [
+                (1, 200.0)])
 
     def test_CachedNetwork_08(self):
         '''test CachedNetwork 08'''
-        nt.assert_array_equal(self.networkSim.dbs['X'].select_neurons_interval(self.networkSim.dbs['X'].neurons(), (0,1000)), [np.array([ 200.]), np.array([ 100.])])
+        nt.assert_array_equal(
+            self.networkSim.dbs['X'].select_neurons_interval(
+                self.networkSim.dbs['X'].neurons(), (0, 1000)), [
+                np.array(
+                    [200.]), np.array(
+                    [100.])])

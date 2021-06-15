@@ -19,7 +19,8 @@ Creating index for db will dominate insertions for larger set of spike times.
 """
 import numpy as np
 import sqlite3 as sqlite
-import os, glob
+import os
+import glob
 from time import time as now
 import matplotlib.pyplot as plt
 import sys
@@ -84,14 +85,13 @@ class GDF(object):
         if new_db:
             try:
                 os.unlink(dbname)
-            except:
+            except BaseException:
                 print('creating new database file %s' % dbname)
 
         self.conn = sqlite.connect(dbname)
         self.cursor = self.conn.cursor()
         self.bsize = bsize
         self.debug = debug
-
 
     def _blockread(self, fname, skiprows):
         """
@@ -127,7 +127,6 @@ class GDF(object):
                     raise StopIteration
                 yield a
 
-
     def create(self, re='brunel-py-ex-*.gdf', index=True, skiprows=0):
         """
         Create db from list of gdf file glob
@@ -153,14 +152,16 @@ class GDF(object):
         sqlite3.connect.cursor, sqlite3.connect
 
         """
-        self.cursor.execute('CREATE TABLE IF NOT EXISTS spikes (neuron INT UNSIGNED, time REAL)')
+        self.cursor.execute(
+            'CREATE TABLE IF NOT EXISTS spikes (neuron INT UNSIGNED, time REAL)')
         tic = now()
         for f in glob.glob(re):
             print(f)
             if sys.version < "3.7":
                 try:
                     for data in self._blockread(f, skiprows):
-                        self.cursor.executemany('INSERT INTO spikes VALUES (?, ?)', data)
+                        self.cursor.executemany(
+                            'INSERT INTO spikes VALUES (?, ?)', data)
                         self.conn.commit()
                 except RuntimeError:
                     break
@@ -168,21 +169,23 @@ class GDF(object):
                 while True:
                     try:
                         for data in self._blockread(f, skiprows):
-                            self.cursor.executemany('INSERT INTO spikes VALUES (?, ?)', data)
+                            self.cursor.executemany(
+                                'INSERT INTO spikes VALUES (?, ?)', data)
                             self.conn.commit()
                     except RuntimeError:
                         break
 
         toc = now()
-        if self.debug: print('Inserts took %g seconds.' % (toc-tic))
+        if self.debug:
+            print('Inserts took %g seconds.' % (toc - tic))
 
         # Optionally, create index for speed
         if index:
             tic = now()
             self.cursor.execute('CREATE INDEX neuron_index on spikes (neuron)')
             toc = now()
-            if self.debug: print('Indexed db in %g seconds.' % (toc-tic))
-
+            if self.debug:
+                print('Indexed db in %g seconds.' % (toc - tic))
 
     def create_from_list(self, re=[], index=True):
         """
@@ -207,7 +210,8 @@ class GDF(object):
         sqlite3.connect.cursor, sqlite3.connect
 
         """
-        self.cursor.execute('CREATE TABLE IF NOT EXISTS spikes (neuron INT UNSIGNED, time REAL)')
+        self.cursor.execute(
+            'CREATE TABLE IF NOT EXISTS spikes (neuron INT UNSIGNED, time REAL)')
 
         tic = now()
         i = 0
@@ -217,15 +221,16 @@ class GDF(object):
             i += 1
         self.conn.commit()
         toc = now()
-        if self.debug: print('Inserts took %g seconds.' % (toc-tic))
+        if self.debug:
+            print('Inserts took %g seconds.' % (toc - tic))
 
         # Optionally, create index for speed
         if index:
             tic = now()
             self.cursor.execute('CREATE INDEX neuron_index on spikes (neuron)')
             toc = now()
-            if self.debug: print('Indexed db in %g seconds.' % (toc-tic))
-
+            if self.debug:
+                print('Indexed db in %g seconds.' % (toc - tic))
 
     def select(self, neurons):
         """
@@ -251,12 +256,13 @@ class GDF(object):
         """
         s = []
         for neuron in neurons:
-            self.cursor.execute('SELECT time FROM spikes where neuron = %d' % neuron)
+            self.cursor.execute(
+                'SELECT time FROM spikes where neuron = %d' %
+                neuron)
             sel = self.cursor.fetchall()
             spikes = np.array(sel).flatten()
             s.append(spikes)
         return s
-
 
     def interval(self, T=[0, 1000]):
         """
@@ -281,10 +287,11 @@ class GDF(object):
         sqlite3.connect.cursor
 
         """
-        self.cursor.execute('SELECT * FROM spikes WHERE time BETWEEN %f AND %f' % tuple(T))
+        self.cursor.execute(
+            'SELECT * FROM spikes WHERE time BETWEEN %f AND %f' %
+            tuple(T))
         sel = self.cursor.fetchall()
         return sel
-
 
     def select_neurons_interval(self, neurons, T=[0, 1000]):
         """
@@ -312,14 +319,15 @@ class GDF(object):
         """
         s = []
         for neuron in neurons:
-            self.cursor.execute('SELECT time FROM spikes WHERE time BETWEEN %f AND %f and neuron = %d'  % (T[0], T[1], neuron))
+            self.cursor.execute(
+                'SELECT time FROM spikes WHERE time BETWEEN ' +
+                '%f AND %f and neuron = %d' % (T[0], T[1], neuron))
             sel = self.cursor.fetchall()
             spikes = np.array(sel).flatten()
 
             s.append(spikes)
 
         return s
-
 
     def neurons(self):
         """
@@ -342,10 +350,10 @@ class GDF(object):
         sqlite3.connect.cursor
 
         """
-        self.cursor.execute('SELECT DISTINCT neuron FROM spikes ORDER BY neuron')
+        self.cursor.execute(
+            'SELECT DISTINCT neuron FROM spikes ORDER BY neuron')
         sel = self.cursor.fetchall()
         return np.array(sel).flatten()
-
 
     def num_spikes(self):
         """
@@ -365,9 +373,9 @@ class GDF(object):
         self.cursor.execute('SELECT Count(*) from spikes')
         rows = self.cursor.fetchall()[0]
         # Check against 'wc -l *ex*.gdf'
-        if self.debug: print('DB has %d spikes' % rows)
+        if self.debug:
+            print('DB has %d spikes' % rows)
         return rows
-
 
     def close(self):
         """
@@ -392,7 +400,6 @@ class GDF(object):
         self.cursor.close()
         self.conn.close()
 
-
     def plotstuff(self, T=[0, 1000]):
         """
         Create a scatter plot of the contents of the database,
@@ -415,7 +422,7 @@ class GDF(object):
         GDF.select_neurons_interval
         """
 
-        fig = plt.figure(figsize=(10,10))
+        fig = plt.figure(figsize=(10, 10))
 
         ax = fig.add_subplot(111)
 
@@ -446,18 +453,19 @@ def test1():
     print(gdb.neurons())
 
     # Get spikes for neurons 1,2,3
-    spikes = gdb.select([1,50])
+    spikes = gdb.select([1, 50])
 
     """ Wont get any spikes for these neurons
     cause they dont exist"""
-    bad = gdb.select([100000,100001])
+    bad = gdb.select([100000, 100001])
 
     gdb.close()
 
     print(spikes)
     print(bad)
 
+
 if __name__ == '__main__':
-    #test1()
+    # test1()
     import doctest
     doctest.testmod()
