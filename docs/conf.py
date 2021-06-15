@@ -254,7 +254,8 @@ man_pages = [
 #  dir menu entry, description, category)
 texinfo_documents = [
   ('index', 'hybridLFPy', u'hybridLFPy Documentation',
-   u'Espen Hagen', 'hybridLFPy', 'One line description of project.',
+   u'Espen Hagen', 'hybridLFPy',
+   'Methods for predictions of extracellular potentials',
    'Miscellaneous'),
 ]
 

@@ -4,9 +4,9 @@ channels:
   - defaults
 dependencies:
   - python=3
-  - pip
-  - lfpy>=2.2
   - sphinx_rtd_theme
   - numpydoc
   - m2r2
+  - pip
   - pip:
+    - LFPy>=2.2
