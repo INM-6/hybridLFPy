@@ -97,6 +97,22 @@ To compile documentation source files in this directory using sphinx, use:
 sphinx-build -b html docs documentation
 ```
 
+### Dockerfile
+
+The provided `Dockerfile` provides a Docker container recipe for `x86_64` hosts
+with all dependencies required to run simulation files provided in `examples`.
+To build and run the container locally, get Docker from https://www.docker.com
+and issue the following (replace `<image-name>` with a name of your choosing):
+
+    $ docker build -t <image-name> -< Dockerfile
+    $ docker run -it -p 5000:5000 <image-name>:latest
+
+
+The `--mount` option can be used to mount a folder on the host to a target folder as:
+
+    $ docker run --mount type=bind,source="$(pwd)",target=/opt -it -p 5000:5000 <image-name>
+
+
 ## Online documentation
 
 The sphinx-generated html documentation can be accessed at
