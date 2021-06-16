@@ -1,87 +1,102 @@
-FROM buildpack-deps:focal
+# -------- base ---------
+FROM debian:bullseye-slim AS base
 
 RUN apt-get update && \
     apt-get install -y \
+        wget \
+        bash \
+        build-essential \
+        make \
+        gcc \
+        g++ \
+        git \
+        libncurses-dev \
+        python3 \
+        python3-numpy \
+        python3-scipy \
+        python3-matplotlib \
+        python3-h5py \
+        python3-yaml \
+        python3-pytest \
+        python3-pip \
+        cython3 \
+        jupyter \
+        ipython3
+
+RUN pip3 install --upgrade pip
+
+# ------ NEURON -----------
+
+FROM base AS neuron
+
+RUN pip3 install neuron
+
+
+# ----- LFPy ---------
+
+FROM neuron AS lfpy
+
+RUN apt-get update && \
+    apt-get install -y \
+    python3-mpi4py
+
+RUN pip3 install git+https://github.com/LFPy/LFPy.git@v2.2.1#egg=LFPy
+
+
+# --- NEST ----
+
+FROM lfpy AS nest
+
+ARG WITH_MPI=ON
+ARG WITH_OMP=ON
+ARG WITH_GSL=ON
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
     cmake \
-    libmpich-dev \
-    mpich \
-    doxygen \
-    libboost-dev \
     libgsl-dev \
-    cython3 \
-    python3-dev \
-    python3-pip
+    libltdl7 \
+    libltdl-dev \
+    libreadline8 \
+    libreadline-dev \
+    libboost-dev \
+    libopenmpi-dev \
+    doxygen
 
-RUN update-alternatives --install /usr/bin/python python /usr/bin/python3 10 && \
-    update-alternatives --install /usr/bin/pip pip /usr/bin/pip3 10
-
-RUN pip install mpi4py
-
-
-# ----- Install NEST -----
-RUN git clone https://github.com/nest/nest-simulator.git && \
-    cd nest-simulator && \
-    # git checkout master && \
-    # git checkout 24de43dc21c568e017839eeb335253c2bc2d487d && \
-    cd .. && \
-    mkdir nest-build && \
-    ls -l && \
-    cd  nest-build && \
-    cmake -DCMAKE_INSTALL_PREFIX:PATH=/opt/nest/ \
-        -Dwith-ltdl=ON \
-        -Dwith-gsl=ON \
-        -Dwith-readline=ON \
-        -Dwith-python=ON \
-        -Dwith-mpi=ON \
-        -Dwith-openmp=ON \
+# Install NEST 3 (master branch @v3.0)
+RUN wget https://github.com/nest/nest-simulator/archive/v3.0.tar.gz && \
+  mkdir nest-build && \
+  tar zxf v3.0.tar.gz && \
+  mv nest-simulator-3.0 nest-simulator && \
+  cd  nest-build && \
+  cmake -DCMAKE_INSTALL_PREFIX:PATH=/opt/nest/ \
         -Dwith-boost=ON \
+		    -Dwith-ltdl=ON \
+	      -Dwith-gsl=$WITH_GSL \
+	      -Dwith-readline=ON \
+        -Dwith-python=ON \
+        -Dwith-mpi=$WITH_MPI \
+        -Dwith-openmp=$WITH_OMP \
         ../nest-simulator && \
-    make && \
-    make install && \
-    cd /
+  make -j4 && \
+  make install && \
+  cd -
 
-RUN rm -r nest-simulator
-RUN rm -r nest-build
+RUN echo "source /opt/nest/bin/nest_vars.sh" >> root/.bashrc
 
-
-# ---- additional requirements
-RUN apt-get install -y \
-    python3-numpy \
-    python3-scipy \
-    python3-matplotlib \
-    python3-pandas \
-    ipython3 \
-    jupyter
-
-RUN update-alternatives --install /usr/bin/ipython ipython /usr/bin/ipython3 10
-
-# installing serial h5py (deb package installs OpenMPI which may conflict with MPICH)
-RUN pip install h5py
+# clean up install/build files
+RUN rm v3.0.tar.gz
+RUN rm -r nest-simulator-3.0
 
 
-# ---- install neuron -----
-RUN pip install neuron
+# --- hybridLFPy ----
+
+FROM nest AS hybridlfpy
+
+RUN pip3 install git+https://github.com/INM-6/hybridLFPy.git@master#egg=hybridLFPy
 
 
-# ---- install LFPy@master -----
-RUN pip install git+https://github.com/LFPy/LFPy.git@master#egg=LFPy
+# ---- hybridLFPy + examples ----
 
+FROM hybridlfpy AS examples
 
-# --- Install hybridLFPy ----
-RUN pip install git+https://github.com/INM-6/hybridLFPy.git@nest3#egg=hybridLFPy
-
-
-# ---- Install additional dependencies for examples ----
 RUN pip3 install git+https://github.com/NeuralEnsemble/parameters@b95bac2bd17f03ce600541e435e270a1e1c5a478
-
-
-# Add NEST binary folder to PATH
-ENV PATH /opt/nest/bin:${PATH}
-
-# Add pyNEST to PYTHONPATH
-ENV PYTHONPATH /opt/nest/lib/python3.8/site-packages:${PYTHONPATH}
-
-# If runnign with Singularity, run the below line in the host.
-# PYTHONPATH set here doesn't carry over:
-# export SINGULARITYENV_PYTHONPATH=/opt/nest/lib/python3.8/site-packages
-# Alternatively, run "source /opt/local/bin/nest_vars.sh" while running the container

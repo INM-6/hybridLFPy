@@ -92,7 +92,7 @@ RUN rm -r nest-simulator-3.0
 
 FROM nest AS hybridlfpy
 
-RUN pip3 install git+https://github.com/INM-6/hybridLFPy.git@nest3#egg=hybridLFPy
+RUN pip3 install git+https://github.com/INM-6/hybridLFPy.git@master#egg=hybridLFPy
 
 
 # ---- hybridLFPy + examples ----
