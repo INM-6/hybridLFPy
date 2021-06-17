@@ -40,6 +40,7 @@ setup(
     description=('methods to calculate extracellular signals of neural '
                  'activity from spike events from spiking neuron networks'),
     long_description=long_description,
+    long_description_content_type='text/markdown',
     license='LICENSE',
     classifiers=[
         'License :: OSI Approved :: GNU General Public License (GPL)',
