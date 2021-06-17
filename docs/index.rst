@@ -6,6 +6,10 @@
 Welcome to the documentation of **hybridLFPy**!
 ===============================================
 
+.. toctree::
+    :maxdepth: 20
+    :caption: Contents:
+
 
 .. include:: readme.md
 
@@ -28,82 +32,80 @@ exemplified by a benchmark based on the Brunel-network example scaled up to
 
 
 
-========================
 Module :mod:`hybridLFPy`
 ========================
-
 .. automodule:: hybridLFPy
     :members:
     :show-inheritance:
     :undoc-members:
 
 
-    class :class:`CachedNetwork`
-    ============================
-    .. autoclass:: hybridLFPy.CachedNetwork
-        :members:
-        :show-inheritance:
-        :undoc-members:
+class :class:`CachedNetwork`
+============================
+.. autoclass:: hybridLFPy.CachedNetwork
+    :members:
+    :show-inheritance:
+    :undoc-members:
 
 
-    class :class:`CachedNoiseNetwork`
-    =================================
-    .. autoclass:: hybridLFPy.CachedNoiseNetwork
-        :members:
-        :show-inheritance:
-        :undoc-members:
+class :class:`CachedNoiseNetwork`
+=================================
+.. autoclass:: hybridLFPy.CachedNoiseNetwork
+    :members:
+    :show-inheritance:
+    :undoc-members:
 
 
-    class :class:`CachedFixedSpikesNetwork`
-    =======================================
-    .. autoclass:: hybridLFPy.CachedFixedSpikesNetwork
-        :members:
-        :show-inheritance:
-        :undoc-members:
+class :class:`CachedFixedSpikesNetwork`
+=======================================
+.. autoclass:: hybridLFPy.CachedFixedSpikesNetwork
+    :members:
+    :show-inheritance:
+    :undoc-members:
 
 
-    class :class:`PopulationSuper`
-    ==============================
-    .. autoclass:: hybridLFPy.PopulationSuper
-        :members:
-        :show-inheritance:
-        :undoc-members:
+class :class:`PopulationSuper`
+==============================
+.. autoclass:: hybridLFPy.PopulationSuper
+    :members:
+    :show-inheritance:
+    :undoc-members:
 
 
-    class :class:`Population`
-    =========================
-    .. autoclass:: hybridLFPy.Population
-        :members:
-        :show-inheritance:
-        :undoc-members:
+class :class:`Population`
+=========================
+.. autoclass:: hybridLFPy.Population
+    :members:
+    :show-inheritance:
+    :undoc-members:
 
 
-    class :class:`PostProcess`
-    ==========================
-    .. autoclass:: hybridLFPy.PostProcess
-        :members:
-        :show-inheritance:
-        :undoc-members:
+class :class:`PostProcess`
+==========================
+.. autoclass:: hybridLFPy.PostProcess
+    :members:
+    :show-inheritance:
+    :undoc-members:
 
 
-    class :class:`GDF`
-    ==================
-    .. autoclass:: hybridLFPy.GDF
-        :members:
-        :show-inheritance:
-        :undoc-members:
+class :class:`GDF`
+==================
+.. autoclass:: hybridLFPy.GDF
+    :members:
+    :show-inheritance:
+    :undoc-members:
 
 
-    submodule :mod:`helpers`
-    ========================
-    .. automodule:: hybridLFPy.helpers
-        :members:
-        :undoc-members:
+submodule :mod:`helpers`
+========================
+.. automodule:: hybridLFPy.helpers
+    :members:
+    :undoc-members:
 
 
-    submodulue :mod:`test`
-    ======================
-    .. autofunction:: hybridLFPy.test
+submodulue :mod:`test`
+======================
+.. autofunction:: hybridLFPy.test
 
 
 Indices and tables
