@@ -6,7 +6,7 @@ neuron network simulations.
 
 ## Project Status
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.45185.svg)](https://doi.org/10.5281/zenodo.45185)
+[![DOI](https://zenodo.org/badge/36443206.svg)](https://zenodo.org/badge/latestdoi/36443206)
 [![Documentation Status](https://readthedocs.org/projects/hybridlfpy/badge/?version=latest)](https://hybridLFPy.readthedocs.io/en/latest/?badge=latest)
 [![Upload Python Package](https://github.com/INM-6/hybridLFPy/workflows/Upload%20Python%20Package/badge.svg)](https://pypi.org/project/hybridLFPy)
 [![Python pytest](https://github.com/INM-6/hybridLFPy/workflows/Python%20pytest/badge.svg)](https://github.com/INM-6/hybridLFPy/actions/workflows/python-pytest.yml)
