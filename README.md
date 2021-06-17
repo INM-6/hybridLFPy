@@ -110,7 +110,13 @@ and issue the following (replace `<image-name>` with a name of your choosing):
 
 The `--mount` option can be used to mount a folder on the host to a target folder as:
 
-    $ docker run --mount type=bind,source="$(pwd)",target=/opt -it -p 5000:5000 <image-name>
+    $ docker run --mount type=bind,source="$(pwd)",target=/opt/hybridLFPy -it -p 5000:5000 <image-name>
+
+Then, code examples may be run as:
+
+    $ cd /opt/hybridLFPy/examples
+    $ nrnivmodl  # compile local .mod (NMODL) files
+    $ mpirun --allow-run-as-root python3 example_brunel.py
 
 
 ## Online documentation
