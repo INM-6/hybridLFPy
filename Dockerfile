@@ -70,16 +70,16 @@ RUN wget https://github.com/nest/nest-simulator/archive/v3.0.tar.gz && \
   cd  nest-build && \
   cmake -DCMAKE_INSTALL_PREFIX:PATH=/opt/nest/ \
         -Dwith-boost=ON \
-		    -Dwith-ltdl=ON \
-	      -Dwith-gsl=$WITH_GSL \
-	      -Dwith-readline=ON \
+        -Dwith-ltdl=ON \
+        -Dwith-gsl=$WITH_GSL \
+        -Dwith-readline=ON \
         -Dwith-python=ON \
         -Dwith-mpi=$WITH_MPI \
         -Dwith-openmp=$WITH_OMP \
         ../nest-simulator && \
   make -j4 && \
   make install && \
-  cd -
+  cd ..
 
 RUN echo "source /opt/nest/bin/nest_vars.sh" >> root/.bashrc
 
