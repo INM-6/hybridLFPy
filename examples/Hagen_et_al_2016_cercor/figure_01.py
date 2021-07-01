@@ -136,7 +136,7 @@ def fig_intro(
 
     # draw some arrows:
     ax = plt.gca()
-    ax.annotate("", xy=(0.27, 0.5), xytext=(.24, 0.5),
+    ax.annotate("", xy=(0.26, 0.5), xytext=(.23, 0.5),
                 xycoords="figure fraction",
                 arrowprops=dict(facecolor='black', arrowstyle='simple'),
                 )
@@ -144,7 +144,7 @@ def fig_intro(
                 xycoords="figure fraction",
                 arrowprops=dict(facecolor='black', arrowstyle='simple'),
                 )
-    ax.annotate("", xy=(0.78, 0.5), xytext=(.75, 0.5),
+    ax.annotate("", xy=(0.74, 0.5), xytext=(.71, 0.5),
                 xycoords="figure fraction",
                 arrowprops=dict(facecolor='black', arrowstyle='simple'),
                 )
