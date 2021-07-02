@@ -141,7 +141,7 @@ PS.update(dict(
     cellParams=dict(
         # excitory cells
         EX=dict(
-            morphology='morphologies/ex.hoc',
+            morphology='morphologies/ex.swc',
             v_init=BN.neuron_params['E_L'],
             cm=1.0,
             Ra=150,
@@ -158,7 +158,7 @@ PS.update(dict(
         ),
         # inhibitory cells
         IN=dict(
-            morphology='morphologies/in.hoc',
+            morphology='morphologies/in.swc',
             v_init=BN.neuron_params['E_L'],
             cm=1.0,
             Ra=150,
