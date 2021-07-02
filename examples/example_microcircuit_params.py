@@ -800,9 +800,11 @@ class multicompartment_params(point_neuron_network_params):
         testing = True
         if testing:
             self.PATH_m_y = os.path.join('morphologies', 'ballnsticks')
-            self.m_y = [Y + '_' + y + '.hoc' for Y, y in self.mapping_Yy]
+            self.m_y = [Y + '_' + y + '.swc' for Y, y in self.mapping_Yy]
         else:
-            self.PATH_m_y = os.path.join('morphologies', 'stretched')
+            self.PATH_m_y = os.path.join('Hagen_et_al_2016_cercor',
+                                         'morphologies',
+                                         'stretched')
             self.m_y = [
                 'L23E_oi24rpy1.hoc',
                 'L23I_oi38lbc1.hoc',
