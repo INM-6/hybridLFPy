@@ -86,6 +86,7 @@ RUN echo "source /opt/nest/bin/nest_vars.sh" >> root/.bashrc
 # clean up install/build files
 RUN rm v3.0.tar.gz
 RUN rm -r nest-simulator
+RUN rm -r nest-build
 
 
 # --- hybridLFPy ----
