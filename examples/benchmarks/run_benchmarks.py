@@ -21,7 +21,7 @@ PS0 = ParameterSpace(dict(
     GLOBALSEED=1234,
 
     # MPI pool size
-    NTASKS=ParameterRange([1, 2, 4, 8]),
+    NTASKS=ParameterRange([1, 2, 4, 8, 16, 32]),
 
     # population size scaling (multiplied with values in
     # populationParams['POP_SIZE']):
@@ -47,7 +47,7 @@ job_script_jusuf = """#!/bin/bash
 #SBATCH --time {}
 #SBATCH -o logs/{}_stdout.txt
 #SBATCH -e logs/{}_error.txt
-#SBATCH -N {}
+###SBATCH -N {}
 #SBATCH --ntasks {}
 ##################################################################
 # from here on we can run whatever command we want
@@ -81,14 +81,14 @@ if 'HOSTNAME' in env.keys() and env['HOSTNAME'].rfind('jusuf') >= 0:
 
         # create job script
         with open(os.path.join('jobs', '{}.job'.format(md5)), 'w') as f:
-            f.writelines(job.format(
+            f.writelines(job_script_jusuf.format(
                 ACCOUNT,
                 md5,
                 TIME,
                 md5,
                 md5,
                 LNODES,
-                NTASKS,
+                pset.NTASKS,
                 pset.SIM_SCRIPT,
                 md5
             ))
