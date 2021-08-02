@@ -21,7 +21,7 @@ PS0 = ParameterSpace(dict(
     GLOBALSEED=1234,
 
     # MPI pool size
-    NTASKS=ParameterRange([1, 2, 4, 8, 16, 32]),
+    NTASKS=ParameterRange([1, 2, 4, 8, 16, 32, 64, 128]),
 
     # population size scaling (multiplied with values in
     # populationParams['POP_SIZE']):
@@ -49,6 +49,7 @@ job_script_jusuf = """#!/bin/bash
 #SBATCH -e logs/{}_error.txt
 ###SBATCH -N {}
 #SBATCH --ntasks {}
+#SBATCH --cpus-per-task=2
 ##################################################################
 # from here on we can run whatever command we want
 unset DISPLAY # DISPLAY somehow problematic with Slurm
@@ -62,13 +63,15 @@ for dir in ['jobs', 'parameters', 'logs', 'output']:
 
 
 # slurm job settings (shared)
-ACCOUNT = 'icei-hbp-2020-0004'
+ACCOUNT = 'jinb33'  #'icei-hbp-2020-0004'
 TIME = '00:10:00'
 LNODES = 1
 
 env = os.environ
 
-if 'HOSTNAME' in env.keys() and env['HOSTNAME'].rfind('jusuf') >= 0:
+if 'HOSTNAME' in env.keys() and \
+   env['HOSTNAME'].rfind('jr') >= 0 or \
+   env['HOSTNAME'].rfind('jusuf') >= 0:
     # container for job IDs
     jobIDs = []
     for pset in PS0.iter_inner():
