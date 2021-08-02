@@ -117,7 +117,7 @@ neuron recorded from.
 Note: We record here all spike events.
 '''
 
-order = 128
+order = 256
 NE = 4 * order  # number of excitatory neurons
 NI = 1 * order  # number of inhibitory neurons
 N_neurons = NE + NI   # number of neurons in total
@@ -147,7 +147,7 @@ tauSyn = 0.5        # synaptic time constant in ms
 tauMem = 20.0       # time constant of membrane potential in ms
 CMem = 250.0        # capacitance of membrane in in pF
 theta = 20.0       # membrane threshold potential in mV
-J = 1.0        # postsynaptic amplitude in mV
+J = 1.0 * 100 / order        # postsynaptic amplitude in mV + 1/K weight scaling
 J_unit = ComputePSPnorm(tauMem, CMem, tauSyn)
 J_ex = J / J_unit  # amplitude of excitatory postsynaptic current
 J_in = -g * J_ex    # amplitude of inhibitory postsynaptic current

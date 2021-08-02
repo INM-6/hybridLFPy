@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 import os
 import numpy as np
 import hashlib
@@ -12,7 +14,7 @@ PS0 = ParameterSpace('PS0.txt')
 keys = PS0.range_keys()
 
 fig, ax = plt.subplots(1, 1, figsize=(8, 8))
-ax.set_title(f'# neurons: {}; host: {}'os.environ['HOST'])
+ax.set_title(f"network size: {5 * BN.order}; host: {os.environ['HOST']}")
 
 for i, SIM_SCRIPT in enumerate(PS0['SIM_SCRIPT']):
     times_pop = []
@@ -41,3 +43,7 @@ for i, SIM_SCRIPT in enumerate(PS0['SIM_SCRIPT']):
 ax.legend()
 ax.set_xlabel('NTASKS')
 ax.set_ylabel('time (ms)')
+
+fig.savefig('PS0.pdf')
+
+plt.show()
