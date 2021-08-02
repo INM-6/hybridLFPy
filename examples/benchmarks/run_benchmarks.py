@@ -62,16 +62,17 @@ for dir in ['jobs', 'parameters', 'logs', 'output']:
         os.mkdir(dir)
 
 
-# slurm job settings (shared)
-ACCOUNT = 'jinb33'  #'icei-hbp-2020-0004'
-TIME = '00:10:00'
-LNODES = 1
-
 env = os.environ
 
 if 'HOSTNAME' in env.keys() and \
    env['HOSTNAME'].rfind('jr') >= 0 or \
    env['HOSTNAME'].rfind('jusuf') >= 0:
+
+    # slurm job settings (shared)
+    ACCOUNT = 'jinb33' if env['HOSTNAME'].rfind('jr') >= 0 else 'icei-hbp-2020-0004'
+    TIME = '00:10:00'
+    LNODES = 1
+
     # container for job IDs
     jobIDs = []
     for pset in PS0.iter_inner():
