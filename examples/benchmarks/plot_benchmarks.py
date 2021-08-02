@@ -14,7 +14,12 @@ PS0 = ParameterSpace('PS0.txt')
 keys = PS0.range_keys()
 
 fig, ax = plt.subplots(1, 1, figsize=(8, 8))
-ax.set_title(f"network size: {5 * BN.order}; host: {os.environ['HOST']}")
+for h in ['HOST', 'HOSTNAME']:
+    if h in os.environ:
+        host = os.environ[h]
+        break
+
+ax.set_title(f"network size: {5 * BN.order}; host: {host}")
 
 for i, SIM_SCRIPT in enumerate(PS0['SIM_SCRIPT']):
     times_pop = []
