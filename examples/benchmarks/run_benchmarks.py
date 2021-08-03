@@ -82,8 +82,8 @@ if 'HOSTNAME' in env.keys() and \
         md5 = hashlib.md5(js).hexdigest()
 
         # walltime (360 seconds per 1 MPI threads and popscaling 1 and                                     
-        # neuron count 512*5)                                                                                          
-        wt = 360 * 1. / pset.NTASKS + 180
+        # neuron count 512*5)                                                                              
+        wt = 360 * 1. / pset.NTASKS + 240
         wt = '%i:%.2i:%.2i' % (wt // 3600,
                                    (wt - wt // 3600 * 3600) // 60,
                                    (wt - wt // 60 * 60))
