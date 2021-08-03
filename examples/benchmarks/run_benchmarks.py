@@ -21,7 +21,7 @@ PS0 = ParameterSpace(dict(
     GLOBALSEED=1234,
 
     # MPI pool size
-    NTASKS=ParameterRange([1, 2, 4, 8, 16, 32, 64, 128]),
+    NTASKS=ParameterRange([4, 8, 16, 32, 64, 128, 256, 512]),
 
     # population size scaling (multiplied with values in
     # populationParams['POP_SIZE']):
@@ -53,6 +53,7 @@ job_script_jusuf = """#!/bin/bash
 ##################################################################
 # from here on we can run whatever command we want
 unset DISPLAY # DISPLAY somehow problematic with Slurm
+# export OMP_NUM_THREADS=2
 srun --mpi=pmi2 python -u {} {}
 """
 
@@ -70,15 +71,23 @@ if 'HOSTNAME' in env.keys() and \
 
     # slurm job settings (shared)
     ACCOUNT = 'jinb33' if env['HOSTNAME'].rfind('jr') >= 0 else 'icei-hbp-2020-0004'
-    TIME = '00:10:00'
+    #TIME = '00:10:00'
     LNODES = 1
-
+    
     # container for job IDs
     jobIDs = []
     for pset in PS0.iter_inner():
         # sorted json dictionary
         js = json.dumps(pset, sort_keys=True).encode()
         md5 = hashlib.md5(js).hexdigest()
+
+        # walltime (360 seconds per 1 MPI threads and popscaling 1 and                                     
+        # neuron count 512*5)                                                                                          
+        wt = 360 * 1. / pset.NTASKS + 180
+        wt = '%i:%.2i:%.2i' % (wt // 3600,
+                                   (wt - wt // 3600 * 3600) // 60,
+                                   (wt - wt // 60 * 60))
+        TIME = wt
 
         # save parameter file
         pset.save(url=os.path.join('parameters', '{}.txt'.format(md5)))
