@@ -19,10 +19,10 @@ PS_reproducer = ParameterSpace(dict(
     GLOBALSEED=1234,
 
     # number of Neurons
-    POPULATION_SIZE=256,
+    POPULATION_SIZE=512,
 
     # MPI pool size
-    NTASKS=ParameterRange([2, 4, 8, 16, 32, 64, 128]),
+    NTASKS=ParameterRange([1, 2, 4, 8, 16, 32, 64, 128, 256]),
 
     NTHREADS=ParameterRange([1, 2]),
 
