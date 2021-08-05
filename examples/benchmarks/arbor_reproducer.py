@@ -317,7 +317,7 @@ class ArborPopulation(object):
         recipe = Recipe(cable_cell, weights=weights, times=times)
 
         # instantiate simulation
-        context = arbor.context(self.nthreads, None)
+        context = arbor.context(1, None)
         domains = arbor.partition_load_balance(recipe, context)
         sim = arbor.simulation(recipe, domains, context)
 
