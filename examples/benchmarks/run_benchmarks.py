@@ -21,14 +21,14 @@ PS0 = ParameterSpace(dict(
     GLOBALSEED=1234,
 
     # MPI pool size
-    NTASKS=ParameterRange([4, 8, 16, 32, 64, 128, 256, 512]),
+    NTASKS=ParameterRange([128, 256, 512, 1024, 2048, 4096]),
 
     # population size scaling (multiplied with values in
     # populationParams['POP_SIZE']):
     # POPSCALING=ParameterRange([1.]),
 
     # simulation scripts:
-    SIM_SCRIPT=ParameterRange(['example_brunel.py', 'example_brunel_arbor.py'])
+    SIM_SCRIPT=ParameterRange(['example_brunel.py']) #, 'example_brunel_arbor.py'])
 ))
 
 PS0.save('PS0.txt')
@@ -73,7 +73,7 @@ if 'HOSTNAME' in env.keys() and \
     ACCOUNT = 'jinb33' if env['HOSTNAME'].rfind('jr') >= 0 else 'icei-hbp-2020-0004'
     #TIME = '00:10:00'
     LNODES = 1
-    
+
     # container for job IDs
     jobIDs = []
     for pset in PS0.iter_inner():
@@ -81,9 +81,9 @@ if 'HOSTNAME' in env.keys() and \
         js = json.dumps(pset, sort_keys=True).encode()
         md5 = hashlib.md5(js).hexdigest()
 
-        # walltime (360 seconds per 1 MPI threads and popscaling 1 and                                     
-        # neuron count 512*5)                                                                              
-        wt = 360 * 1. / pset.NTASKS + 240
+        # walltime (360 seconds per 1 MPI threads and popscaling 1 and
+        # neuron count 512*5)
+        wt = 360 * 128. / pset.NTASKS + 240
         wt = '%i:%.2i:%.2i' % (wt // 3600,
                                    (wt - wt // 3600 * 3600) // 60,
                                    (wt - wt // 60 * 60))

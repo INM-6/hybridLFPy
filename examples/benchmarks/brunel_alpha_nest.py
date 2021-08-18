@@ -98,7 +98,7 @@ Assigning the simulation parameters to variables.
 '''
 
 dt = 0.1    # the resolution in ms
-simtime = 2000.0  # Simulation time in ms
+simtime = 1000.0  # Simulation time in ms
 delay = 1.5    # synaptic delay in ms
 
 '''
@@ -117,7 +117,7 @@ neuron recorded from.
 Note: We record here all spike events.
 '''
 
-order = 512
+order = 4096
 NE = 4 * order  # number of excitatory neurons
 NI = 1 * order  # number of inhibitory neurons
 N_neurons = NE + NI   # number of neurons in total
@@ -390,8 +390,8 @@ def simulate():
     multiplication by 1000.0 converts the unit 1/ms to 1/s=Hz.
     '''
 
-    rate_ex = events_ex / simtime * 1000.0 / N_neurons
-    rate_in = events_in / simtime * 1000.0 / N_neurons
+    rate_ex = events_ex / simtime * 1000.0 / NE
+    rate_in = events_in / simtime * 1000.0 / NI
 
     '''
     Reading out the number of connections established using the excitatory
