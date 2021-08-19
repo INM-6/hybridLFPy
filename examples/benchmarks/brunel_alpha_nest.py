@@ -98,7 +98,7 @@ Assigning the simulation parameters to variables.
 '''
 
 dt = 0.1    # the resolution in ms
-simtime = 1000.0  # Simulation time in ms
+simtime = 5000.0  # Simulation time in ms
 delay = 1.5    # synaptic delay in ms
 
 '''
@@ -117,7 +117,7 @@ neuron recorded from.
 Note: We record here all spike events.
 '''
 
-order = 4096
+order = 8192
 NE = 4 * order  # number of excitatory neurons
 NI = 1 * order  # number of inhibitory neurons
 N_neurons = NE + NI   # number of neurons in total
