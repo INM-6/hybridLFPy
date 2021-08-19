@@ -21,7 +21,7 @@ PS0 = ParameterSpace(dict(
     GLOBALSEED=1234,
 
     # MPI pool size
-    NTASKS=ParameterRange([128, 256, 512, 1024, 2048, 4096]),
+    NTASKS=ParameterRange([128, 256, 512]),
 
     # population size scaling (multiplied with values in
     # populationParams['POP_SIZE']):
@@ -83,7 +83,7 @@ if 'HOSTNAME' in env.keys() and \
 
         # walltime (360 seconds per 1 MPI threads and popscaling 1 and
         # neuron count 512*5)
-        wt = 360 * 128. / pset.NTASKS + 240
+        wt = 360 * 128. / pset.NTASKS + 360
         wt = '%i:%.2i:%.2i' % (wt // 3600,
                                    (wt - wt // 3600 * 3600) // 60,
                                    (wt - wt // 60 * 60))
