@@ -111,7 +111,7 @@ if not hasattr(neuron.h, 'AlphaISyn'):
 
 # set up file destinations differentiating between certain output
 savefolder = md5
-BN.spike_output_path = os.path.join(savefolder, 'spiking_output_path')
+# BN.spike_output_path = os.path.join(savefolder, 'spiking_output_path')
 PS = ParameterSet(dict(
     # Main folder of simulation output
     savefolder=savefolder,  # 'simulation_output_example_brunel',
@@ -323,7 +323,8 @@ if properrun:
 
 if properrun:
     # execute network simulation
-    BN.simulate()
+    # BN.simulate()
+    pass
 
 # wait for the network simulation to finish, resync MPI threads
 COMM.Barrier()
