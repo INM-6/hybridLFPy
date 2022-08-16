@@ -754,7 +754,7 @@ class ArborPopulation(Population):
         recipe = BaseRecipe(cable_cell)
 
         # instantiate simulation
-        context = arbor.context(2, None)
+        context = arbor.context(1, None)
         domains = arbor.partition_load_balance(recipe, context)
         sim = arbor.simulation(recipe, domains, context)
 
@@ -887,7 +887,7 @@ class ArborPopulation(Population):
         recipe = Recipe(cable_cell, weights=weights, times=times)
 
         # instantiate simulation
-        context = arbor.context(2, None)
+        context = arbor.context(1, None)
         domains = arbor.partition_load_balance(recipe, context)
         sim = arbor.simulation(recipe, domains, context)
 
