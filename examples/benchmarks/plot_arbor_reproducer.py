@@ -39,7 +39,7 @@ for i, CPUS_PER_TASK in enumerate(PS_reproducer['CPUS_PER_TASK']):
     ax.set_xticklabels([f'{n}' for n in NTASKS])
 
 ax.legend()
-ax.set_xlabel('# MPI processes"')
+ax.set_xlabel('# MPI tasks')
 ax.set_ylabel('time (ms)')
 
 fig.savefig('PS_reproducer.pdf')
