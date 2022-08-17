@@ -55,7 +55,7 @@ cellParams = dict(
             e_pas=-65,
             max_cv_length=10,  # µm
         )
-population_size = pset.POPULATION_SIZE
+population_size = pset.POPULATION_SIZE * SIZE
 synapse_count = 500
 nthreads = pset.NTHREADS
 
@@ -105,8 +105,8 @@ class BaseRecipe (arbor.recipe):
         self.iprobe_id = (0, 0)
 
         self.the_props = arbor.neuron_cable_properties()
-        self.the_cat = arbor.default_catalogue()
-        self.the_props.register(self.the_cat)
+        # self.the_cat = arbor.default_catalogue()
+        # self.the_props.register(self.the_cat)
 
     def num_cells(self):
         return 1
@@ -215,22 +215,19 @@ class ArborPopulation(object):
         tic = time()
 
         # cell decor
-        decor = arbor.decor()
-
-        # set initial voltage, temperature, axial resistivity, membrane capacitance
-        decor.set_property(
-            Vm=self.cellParams['v_init'],  # Initial membrane voltage [mV]
-            tempK=300,  # Temperature [Kelvin]
-            rL=self.cellParams['Ra'],  # Axial resistivity [Ω cm]
-            cm=self.cellParams['cm'] * 1E-2,  # Membrane capacitance [F/m**2]
+        decor = (
+                arbor.decor()
+                # set initial voltage, temperature, axial resistivity, membrane capacitance
+                .set_property(
+                    Vm=self.cellParams['v_init'],  # Initial membrane voltage (mV)
+                    tempK=300,  # Temperature (Kelvin)
+                    rL=self.cellParams['Ra'],  # Axial resistivity (Ω cm)
+                    cm=self.cellParams['cm'] * 1E-2,  # Membrane capacitance (F/m**2)
+                )
+                # set passive mechanism all over
+                # passive mech w. leak reversal potential (mV)
+                .paint("(all)", arbor.density(f"pas/e={self.cellParams['e_pas']}", {"g": self.cellParams['g_pas']}))
         )
-
-        # set passive mechanism all over
-        pas = arbor.mechanism(
-            'pas/e={}'.format(self.cellParams['e_pas'])
-            )  # passive mech w. leak reversal potential (mV)
-        pas.set('g', self.cellParams['g_pas'])  # leak conductivity (S/cm2)
-        decor.paint('(all)', pas)
 
         # number of CVs per branch
         policy = arbor.cv_policy_max_extent(self.cellParams['max_cv_length'])
@@ -271,7 +268,8 @@ class ArborPopulation(object):
         # instantiate simulation
         context = arbor.context()
         domains = arbor.partition_load_balance(recipe, context)
-        sim = arbor.simulation(recipe, domains, context)
+        # sim = arbor.simulation(recipe, domains, context)
+        sim = arbor.simulation(recipe, context, domains)
 
         # set up sampling on probes
         schedule = arbor.regular_schedule(self.dt)
@@ -301,10 +299,11 @@ class ArborPopulation(object):
         syn_loc_sets = np.random.choice(loc_sets, size=self.synapse_count)
 
         # create synapses at each loc_set
-        synapse = 'alphaisyn'   # workaround
+        # synapse = 'alphaisyn'   # workaround
+        synapse = 'expsyn_curr'
         synapse_params = {'tau': 5.}
         for i, loc_set in enumerate(syn_loc_sets):
-            decor.place(loc_set, arbor.mechanism(synapse, synapse_params), f'{i}')
+            decor.place(loc_set, arbor.synapse(synapse, synapse_params), f'{i}')
 
         # number of CVs per branch
         policy = arbor.cv_policy_max_extent(self.cellParams['max_cv_length'])
@@ -319,7 +318,7 @@ class ArborPopulation(object):
         # instantiate simulation
         context = arbor.context(1, None)
         domains = arbor.partition_load_balance(recipe, context)
-        sim = arbor.simulation(recipe, domains, context)
+        sim = arbor.simulation(recipe, context, domains)
 
         # set up sampling on probes
         schedule = arbor.regular_schedule(self.dt)
