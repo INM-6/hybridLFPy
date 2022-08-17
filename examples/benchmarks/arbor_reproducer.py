@@ -314,7 +314,6 @@ pop = ArborPopulation(
     tstop=tstop,
     population_size=population_size,
     synapse_count=synapse_count,
-    CPUs_per_task=CPUs_per_task
 )
 
 # run population simulation and collect the data
