@@ -37,6 +37,8 @@ for i, NTHREADS in enumerate(PS_reproducer['NTHREADS']):
 
     label = f"nthreads: {NTHREADS}"
     ax.loglog(NTASKS, times_run, ':o', label=label, base=2)
+    ax.set_xticks(NTASKS)
+    ax.set_xticklabels([f'{2**n}' for n in NTASKS])
 
 ax.legend()
 ax.set_xlabel('NTASKS')
