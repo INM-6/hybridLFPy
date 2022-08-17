@@ -23,8 +23,9 @@ PS_reproducer = ParameterSpace(dict(
 
     # MPI pool size
     NTASKS=ParameterRange([1, 2, 4, 8, 16, 32, 64, 128, 256, 512]),
+    # NTASKS=ParameterRange([1, 2, 4, 8]),
     
-    NTHREADS=ParameterRange([1, 2]),
+    NTHREADS=ParameterRange([1, 2, 4, 8]),
 
     # simulation scripts:
     SIM_SCRIPT='arbor_reproducer.py'
