@@ -317,9 +317,10 @@ class ArborPopulation(object):
         recipe = Recipe(cable_cell, weights=weights, times=times)
 
         # instantiate simulation
-        context = arbor.context(1, None)
-        domains = arbor.partition_load_balance(recipe, context)
-        sim = arbor.simulation(recipe, context, domains)
+        # context = arbor.context(1, None)
+        # domains = arbor.partition_load_balance(recipe, context)
+        # sim = arbor.simulation(recipe, context, domains)
+        sim = arbor.simulation(recipe)
 
         # set up sampling on probes
         schedule = arbor.regular_schedule(self.dt)
