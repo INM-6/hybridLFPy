@@ -41,7 +41,7 @@ for i, NTHREADS in enumerate(PS_reproducer['NTHREADS']):
     ax.set_xticklabels([f'{n}' for n in NTASKS])
 
 ax.legend()
-ax.set_xlabel('NTASKS')
+ax.set_xlabel('# MPI processes"')
 ax.set_ylabel('time (ms)')
 
 fig.savefig('PS_reproducer.pdf')

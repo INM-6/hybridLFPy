@@ -272,7 +272,8 @@ class ArborPopulation(object):
         sim = arbor.simulation(recipe, context, domains)
 
         # set up sampling on probes
-        schedule = arbor.regular_schedule(self.dt)
+        # schedule = arbor.regular_schedule(self.dt)
+        schedule = arbor.regular_schedule(1.)
         i_handle = sim.sample(recipe.iprobe_id, schedule, arbor.sampling_policy.exact)
 
         # need meta data locating each CV
