@@ -1,11 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-'''Define ParameterSpace for benchmarking of scaling with different MPI pools
+'''Define ParameterSpace for weak scaling with different MPI pools
 '''
 import os
 import numpy as np
-import operator
-import pickle
 import hashlib
 import subprocess as sp
 import json
@@ -18,14 +16,14 @@ PS_reproducer = ParameterSpace(dict(
     # allow different seeds for different network iterations
     GLOBALSEED=1234,
 
-    # number of neurons per thread
+    # number of neurons per MPI thread
     POPULATION_SIZE=32,
 
     # MPI pool size
-    NTASKS=ParameterRange([1, 2, 4, 8, 16, 32, 64, 128, 256, 512]),
-    # NTASKS=ParameterRange([1, 2, 4, 8]),
+    NTASKS=ParameterRange([1, 2, 4, 8, 10, 12, 16, 32, 64, 128, 256, 512]),
     
-    NTHREADS=ParameterRange([1, 2, 4, 8]),
+    # number of cores per MPI thread
+    CPUS_PER_TASK=ParameterRange([1, 2, 4, 8]),
 
     # simulation scripts:
     SIM_SCRIPT='arbor_reproducer.py'
@@ -44,8 +42,6 @@ job_script_hpc = """#!/bin/bash
 #SBATCH --ntasks {}
 #SBATCH --cpus-per-task={}
 ##################################################################
-# from here on we can run whatever command we want
-unset DISPLAY # DISPLAY somehow problematic with Slurm
 srun --mpi=pmi2 python -u {} {}
 """
 
@@ -53,7 +49,6 @@ srun --mpi=pmi2 python -u {} {}
 for dir in ['jobs', 'parameters', 'logs', 'output']:
     if not os.path.isdir(dir):
         os.mkdir(dir)
-
 
 env = os.environ
 
@@ -70,9 +65,7 @@ if 'HOSTNAME' in env.keys():
             js = json.dumps(pset, sort_keys=True).encode()
             md5 = hashlib.md5(js).hexdigest()
 
-            # walltime (360 seconds per 1 MPI threads and popscaling 1 and
-            # neuron count 512*5)
-            # wt = 360 * 1. / pset.NTASKS + 240
+            # walltime
             wt = 600
             wt = '%i:%.2i:%.2i' % (wt // 3600,
                                        (wt - wt // 3600 * 3600) // 60,
@@ -91,7 +84,7 @@ if 'HOSTNAME' in env.keys():
                     md5,
                     md5,
                     pset.NTASKS,
-                    pset.NTHREADS,
+                    pset.CPUS_PER_TASK,
                     pset.SIM_SCRIPT,
                     md5
                 ))

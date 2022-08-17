@@ -1,15 +1,8 @@
 #!/usr/bin/env python
 # coding: utf-8
-
-# In[1]:
-
-
-# %matplotlib inline
-
-
-# In[2]:
-
-
+'''Record transmembrane currents from populations of neurons 
+in an embarrassengly trivial manner
+'''
 from mpi4py import MPI
 from time import time
 import os
@@ -19,9 +12,6 @@ import arbor
 import scipy.stats
 from parameters import ParameterSet
 
-# In[3]:
-
-
 #######################################
 # Capture command line values
 #######################################
@@ -29,7 +19,6 @@ md5 = sys.argv[1]
 
 # load parameter file
 pset = ParameterSet(os.path.join('parameters', '{}.txt'.format(md5)))
-
 
 ################# Initialization of MPI stuff ############################
 COMM = MPI.COMM_WORLD
@@ -40,10 +29,7 @@ RANK = COMM.Get_rank()
 SEED = pset.GLOBALSEED
 np.random.seed(SEED)
 
-
-# In[4]:
-
-
+# some parameters
 tstop = 5000
 dt = 0.1
 cellParams = dict(
@@ -57,10 +43,7 @@ cellParams = dict(
         )
 population_size = pset.POPULATION_SIZE * SIZE
 synapse_count = 500
-nthreads = pset.NTHREADS
-
-
-# In[5]:
+CPUs_per_task = pset.CPUS_PER_TASK
 
 
 def get_activation_times_from_distribution(n, tstart=0., tstop=1.E6,
@@ -70,7 +53,7 @@ def get_activation_times_from_distribution(n, tstart=0., tstop=1.E6,
     """
     https://lfpy.readthedocs.io/en/latest/classes.html#LFPy.inputgenerators.get_activation_times_from_distribution
     """
-    assert hasattr(distribution, 'rvs'),         'distribution={} must have the attribute "rvs"'.format(distribution)
+    assert hasattr(distribution, 'rvs'), 'distribution={} must have the attribute "rvs"'.format(distribution)
 
     times = []
     if 'size' in rvs_args.keys():
@@ -93,9 +76,6 @@ def get_activation_times_from_distribution(n, tstart=0., tstop=1.E6,
     return times
 
 
-# In[6]:
-
-
 class BaseRecipe (arbor.recipe):
     def __init__(self, cell):
         super().__init__()
@@ -105,8 +85,6 @@ class BaseRecipe (arbor.recipe):
         self.iprobe_id = (0, 0)
 
         self.the_props = arbor.neuron_cable_properties()
-        # self.the_cat = arbor.default_catalogue()
-        # self.the_props.register(self.the_cat)
 
     def num_cells(self):
         return 1
@@ -138,9 +116,6 @@ class BaseRecipe (arbor.recipe):
         ]
 
 
-# In[7]:
-
-
 class Recipe(BaseRecipe):
     def __init__(self, cell, times=[[1.]], weights=[1.]):
         super().__init__(cell)
@@ -161,15 +136,9 @@ class Recipe(BaseRecipe):
         return events
 
 
-# In[8]:
-
-
 class DummyCell(object):
     def __init__(self, loc_sets):
         self.loc_sets = loc_sets
-
-
-# In[22]:
 
 
 class ArborPopulation(object):
@@ -177,15 +146,13 @@ class ArborPopulation(object):
                  dt=0.1, tstop=1000,
                  population_size=1280,
                  synapse_count=100,
-                 synapse_rate=20.,
-                 nthreads=2):
+                 synapse_rate=20.):
         self.cellParams=cellParams
         self.dt = dt
         self.tstop = tstop
         self.population_size = population_size
         self.synapse_count = synapse_count
         self.synapse_rate = synapse_rate
-        self.nthreads = nthreads
 
         self.cellindices = np.arange(self.population_size)
         self.rank_cellindices = self.cellindices[self.cellindices % SIZE == RANK]
@@ -207,10 +174,6 @@ class ArborPopulation(object):
         Returns
         -------
         None
-
-
-        See also
-        --------
         """
         tic = time()
 
@@ -226,7 +189,9 @@ class ArborPopulation(object):
                 )
                 # set passive mechanism all over
                 # passive mech w. leak reversal potential (mV)
-                .paint("(all)", arbor.density(f"pas/e={self.cellParams['e_pas']}", {"g": self.cellParams['g_pas']}))
+                .paint("(all)", 
+                       arbor.density(f"pas/e={self.cellParams['e_pas']}", 
+                                     {"g": self.cellParams['g_pas']}))
         )
 
         # number of CVs per branch
@@ -258,6 +223,11 @@ class ArborPopulation(object):
         # get transmembrane currents
         return self.get_I_m(loc_sets, cellindex, decor, morphology, labels)
 
+    def instantiate_sim(self, recipe):
+        context = arbor.context(threads=1, gpu_id=None, mpi=None)
+        domains = arbor.partition_load_balance(recipe, context)
+        return arbor.simulation(recipe, context, domains)
+
     def get_loc_sets(self, p, morphology, labels, decor):
         # create cell and set properties
         cable_cell = arbor.cable_cell(morphology, labels, decor)
@@ -266,13 +236,9 @@ class ArborPopulation(object):
         recipe = BaseRecipe(cable_cell)
 
         # instantiate simulation
-        context = arbor.context()
-        domains = arbor.partition_load_balance(recipe, context)
-        # sim = arbor.simulation(recipe, domains, context)
-        sim = arbor.simulation(recipe, context, domains)
+        sim = self.instantiate_sim(recipe)
 
         # set up sampling on probes
-        # schedule = arbor.regular_schedule(self.dt)
         schedule = arbor.regular_schedule(1.)
         i_handle = sim.sample(recipe.iprobe_id, schedule, arbor.sampling_policy.exact)
 
@@ -300,7 +266,6 @@ class ArborPopulation(object):
         syn_loc_sets = np.random.choice(loc_sets, size=self.synapse_count)
 
         # create synapses at each loc_set
-        # synapse = 'alphaisyn'   # workaround
         synapse = 'expsyn_curr'
         synapse_params = {'tau': 5.}
         for i, loc_set in enumerate(syn_loc_sets):
@@ -317,16 +282,13 @@ class ArborPopulation(object):
         recipe = Recipe(cable_cell, weights=weights, times=times)
 
         # instantiate simulation
-        # context = arbor.context(1, None)
-        # domains = arbor.partition_load_balance(recipe, context)
-        # sim = arbor.simulation(recipe, context, domains)
-        sim = arbor.simulation(recipe)
+        sim = self.instantiate_sim(recipe)
 
         # set up sampling on probes
-        schedule = arbor.regular_schedule(self.dt)
+        schedule = arbor.regular_schedule(1)
         i_handle = sim.sample(recipe.iprobe_id, schedule, arbor.sampling_policy.exact)
 
-        # run simulation of transmembrane currents
+        # run simulation of transmembrane currents with timing
         tic = time()
         self._bench_sim_run(sim)
         toc = time()
@@ -343,25 +305,20 @@ class ArborPopulation(object):
 
     def run(self):
         for cellindex in self.rank_cellindices:
-            self.cellsim(cellindex)
+            _ = self.cellsim(cellindex)
 
-
-# In[23]:
-
-
-# %%prun -s cumulative -q -l 20 -T prun
+# create population
 pop = ArborPopulation(
     cellParams=cellParams,
     dt=dt,
     tstop=tstop,
     population_size=population_size,
     synapse_count=synapse_count,
-    nthreads=nthreads
+    CPUs_per_task=CPUs_per_task
 )
 
 # run population simulation and collect the data
 pop.run()
-
 
 # compute mean time spent calling arbor.simulation.run() per MPI process
 if RANK == 0:
@@ -372,10 +329,10 @@ else:
 COMM.Reduce(pop.cumul_sim_time, tocc_run, op=MPI.SUM, root=0)
 if RANK == 0:
     tocc_run /= SIZE
-    with open(os.path.join('logs', f'MPI_SIZE_{SIZE}_NTHREADS_{nthreads}.txt'), 'w') as f:
+    with open(os.path.join('logs', f'NTASKS_{SIZE}_CPUS_PER_TASK_{CPUs_per_task}.txt'), 'w') as f:
         f.write(f'{float(tocc_run)}')
 
-    print(SIZE, nthreads, tocc_run)
+    print(SIZE, CPUs_per_task, tocc_run)
 
 # clean exit?
 COMM.Barrier()

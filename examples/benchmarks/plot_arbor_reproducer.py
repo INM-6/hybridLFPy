@@ -17,25 +17,23 @@ for h in ['HOST', 'HOSTNAME']:
         host = os.environ[h]
         break
 
-# ax.set_title(f"network size: {5 * BN.order}; host: {host}")
-
-for i, NTHREADS in enumerate(PS_reproducer['NTHREADS']):
+for i, CPUS_PER_TASK in enumerate(PS_reproducer['CPUS_PER_TASK']):
     times_run = []
     NTASKS = []
     for j, N in enumerate(PS_reproducer['NTASKS']):
         NTASKS.append(N)
         pset = ParameterSet(dict(NTASKS=N,
-                                 NTHREADS=NTHREADS,
+                                 CPUS_PER_TASK=CPUS_PER_TASK,
                                  GLOBALSEED=PS_reproducer['GLOBALSEED'],
                                  POPULATION_SIZE=PS_reproducer['POPULATION_SIZE'],
                                  ))
         js = json.dumps(pset, sort_keys=True).encode()
         md5 = hashlib.md5(js).hexdigest()
 
-        with open(os.path.join('logs', f'MPI_SIZE_{N}_NTHREADS_{NTHREADS}.txt'), 'r') as f:
+        with open(os.path.join('logs', f'NTASKS_{N}_CPUS_PER_TASK_{CPUS_PER_TASK}.txt'), 'r') as f:
             times_run.append(float(f.readline()))
 
-    label = f"nthreads: {NTHREADS}"
+    label = f"CPUs per task: {CPUS_PER_TASK}"
     ax.loglog(NTASKS, times_run, ':o', label=label, base=2)
     ax.set_xticks(NTASKS)
     ax.set_xticklabels([f'{n}' for n in NTASKS])
