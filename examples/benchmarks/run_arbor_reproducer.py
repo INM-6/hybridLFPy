@@ -17,7 +17,7 @@ PS_reproducer = ParameterSpace(dict(
     GLOBALSEED=1234,
 
     # number of neurons per MPI thread
-    POPULATION_SIZE=32,
+    POPULATION_SIZE=64,
 
     # MPI pool size
     NTASKS=ParameterRange([1, 2, 4, 8, 10, 12, 16, 32, 64, 128, 256, 512]),
@@ -26,7 +26,7 @@ PS_reproducer = ParameterSpace(dict(
     CPUS_PER_TASK=ParameterRange([1, 2, 4, 8]),
 
     # simulation scripts:
-    SIM_SCRIPT='arbor_reproducer.py'
+    SIM_SCRIPT='arbor_reproducer.py' 
 ))
 
 PS_reproducer.save('PS_reproducer.txt')
