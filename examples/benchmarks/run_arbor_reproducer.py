@@ -7,7 +7,7 @@ import numpy as np
 import hashlib
 import subprocess as sp
 import json
-from parameters import ParameterSpace, ParameterSet, ParameterRange
+from parameters import ParameterSpace, ParameterRange
 
 PSPACES = dict()
 
@@ -66,7 +66,7 @@ if 'HOSTNAME' in env.keys():
             md5 = hashlib.md5(js).hexdigest()
 
             # walltime
-            wt = 600
+            wt = 300  # s
             wt = '%i:%.2i:%.2i' % (wt // 3600,
                                        (wt - wt // 3600 * 3600) // 60,
                                        (wt - wt // 60 * 60))

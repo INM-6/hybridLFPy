@@ -250,6 +250,9 @@ class ArborPopulation(object):
             '(location {} {})'.format(c.branch, np.mean([c.prox, c.dist])) for c in I_m_meta
         ])
 
+        # clear
+        sim.reset()
+
         return loc_sets
 
     def get_I_m(self, loc_sets, cellindex, decor, morphology, labels):
@@ -296,6 +299,9 @@ class ArborPopulation(object):
 
         # extract I_m for each CV
         I_m_samples, _ = sim.samples(i_handle)[0]
+
+        # clear
+        sim.reset()
 
         # transmembrane currents in nA
         return I_m_samples[:, 1:]
