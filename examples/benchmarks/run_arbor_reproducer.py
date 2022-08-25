@@ -20,7 +20,7 @@ PS_reproducer = ParameterSpace(dict(
     POPULATION_SIZE=64,
 
     # MPI pool size
-    NTASKS=ParameterRange([1, 2, 4, 8, 10, 12, 16, 32, 64, 128, 256, 512]),
+    NTASKS=ParameterRange([1, 2, 4, 8, 16, 32, 64, 128, 256, 512]),
     
     # number of cores per MPI thread
     CPUS_PER_TASK=ParameterRange([1, 2, 4, 8]),
