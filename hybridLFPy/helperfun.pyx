@@ -42,8 +42,7 @@ cpdef list _getSpCell(np.ndarray[LTYPE_t, ndim=1, negative_indices=False] nodes,
 
     '''
     # C-declare local variables
-    cdef np.ndarray[LTYPE_t, ndim=1, negative_indices=False] spc
-    cdef LTYPE_t [:] inds
+    cdef np.ndarray[LTYPE_t, ndim=1, negative_indices=False] spc, inds
     cdef int n
     cdef list SpCell
 
