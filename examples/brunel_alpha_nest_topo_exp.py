@@ -144,7 +144,7 @@ conn_kernel_EX = {'exponential': {
 conn_dict_EX = {
     'rule': 'fixed_indegree',
     'indegree': CE,
-    'mask': {'circular': {'radius': 2000.0}},
+    'mask': {'circular': {'radius': mask_radius}},
     'allow_autapses': False,
     'allow_multapses': True,
 }
@@ -160,7 +160,7 @@ conn_kernel_IN = {'exponential': {
 conn_dict_IN = {
     'rule': 'fixed_indegree',
     'indegree': CI,
-    'mask': {'circular': {'radius': 2000.0}},
+    'mask': {'circular': {'radius': mask_radius}},
     'allow_autapses': False,
     'allow_multapses': True,
 }

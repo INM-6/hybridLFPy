@@ -42,16 +42,18 @@ cpdef list _getSpCell(np.ndarray[LTYPE_t, ndim=1, negative_indices=False] nodes,
 
     '''
     # C-declare local variables
-    cdef np.ndarray[LTYPE_t, ndim=1, negative_indices=False] spc
+    cdef np.ndarray[LTYPE_t, ndim=1, negative_indices=False] spc, inds
     cdef int n
     cdef list SpCell
+
+    inds = np.where(Pr > 0)[0]
 
     # fill in container with distance-dependent connections
     SpCell = []
     for n in range(numSyn.size):
         # numSyn[n]-size array with units picked according to distance-dependent
         # probability
-        spc = alias_method(nodes, Pr, numSyn[n])
+        spc = alias_method(nodes[inds], Pr[inds], numSyn[n])
         SpCell.append(spc)
 
     return SpCell
