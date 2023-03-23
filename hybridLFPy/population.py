@@ -934,6 +934,7 @@ class Population(PopulationSuper):
         tic = time()
 
         PopulationSuper.__init__(self, **kwargs)
+
         # set some class attributes
         self.X = X
         self.networkSim = networkSim
@@ -946,6 +947,9 @@ class Population(PopulationSuper):
         self.J_yX = J_yX
         self.tau_yX = tau_yX
 
+        # for computing the cumulative simulation times
+        self._cumulative_sim_time = 0.
+
         # Now loop over all cells in the population and assess
         # - number of synapses in each z-interval (from layerbounds)
         # - placement of synapses in each z-interval
@@ -954,12 +958,21 @@ class Population(PopulationSuper):
         # - postsynaptic compartment indices
         # - presynaptic cell indices
         # - synapse delays per connection
-        self.synIdx = self.get_all_synIdx()
-        self.SpCells = self.get_all_SpCells()
-        self.synDelays = self.get_all_synDelays()
+        # self.synIdx = self.get_all_synIdx()
+        # self.SpCells = self.get_all_SpCells()
+        # self.synDelays = self.get_all_synDelays()
+        self._init_activations()
 
         if RANK == 0:
             print("population initialized in %.2f seconds" % (time() - tic))
+
+    def _init_activations(self):
+        """
+        private method for instantiating incoming events
+        """
+        self.synIdx = self.get_all_synIdx()
+        self.SpCells = self.get_all_SpCells()
+        self.synDelays = self.get_all_synDelays()
 
     def get_all_synIdx(self):
         """
@@ -1280,6 +1293,8 @@ class Population(PopulationSuper):
             for probe in self.probes:
                 probe.cell = cell
 
+
+            ticc = time()
             if 'rec_imem' in self.simulationParams.keys():
                 try:
                     assert self.simulationParams['rec_imem']
@@ -1292,6 +1307,9 @@ class Population(PopulationSuper):
                     cell.simulate(probes=self.probes, **self.simulationParams)
             else:
                 cell.simulate(probes=self.probes, **self.simulationParams)
+
+            tocc = time()
+            self._cumulative_sim_time += tocc - ticc
 
             # make predictions
             # cell.simulate(probes=self.probes, **self.simulationParams)
