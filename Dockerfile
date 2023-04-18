@@ -18,8 +18,8 @@ RUN update-alternatives --install /usr/bin/python python /usr/bin/python3 10 && 
 
 RUN pip install mpi4py
 
-# Install NEST 3.1 (master branch @v3.1)
-RUN git clone --depth 1 -b v3.1 https://github.com/nest/nest-simulator && \
+# Install NEST 3.4 (master branch @v3.4)
+RUN git clone --depth 1 -b v3.4 https://github.com/nest/nest-simulator && \
   mkdir nest-build && \
   cd  nest-build && \
   cmake -DCMAKE_INSTALL_PREFIX:PATH=/opt/nest/ \
@@ -59,7 +59,7 @@ RUN pip install h5py
 RUN apt-get install -y \
     bison flex
 
-RUN git clone --depth 1 -b 8.0.0 https://github.com/neuronsimulator/nrn.git
+RUN git clone --depth 1 -b 8.2.2 https://github.com/neuronsimulator/nrn.git
 RUN mkdir nrn-bld && cd nrn-bld
 
 RUN cmake -DCMAKE_INSTALL_PREFIX:PATH=/opt/nrn/ \
