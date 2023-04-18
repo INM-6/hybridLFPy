@@ -369,10 +369,10 @@ def run_model():
 
         eevents = np.loadtxt(nest.GetStatus(espikes, 'filenames')[0][0],
                              skiprows=3,
-                             dtype=[('senders', np.int), ('times', np.float)])
+                             dtype=[('senders', int), ('times', float)])
         ievents = np.loadtxt(nest.GetStatus(ispikes, 'filenames')[0][0],
                              skiprows=3,
-                             dtype=[('senders', np.int), ('times', np.float)])
+                             dtype=[('senders', int), ('times', float)])
         X = []
         T = []
         for i, j in enumerate(nodes_ex):
