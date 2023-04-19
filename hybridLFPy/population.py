@@ -344,9 +344,6 @@ class PopulationSuper(object):
             else:
                 cell.simulate(probes=self.probes, **self.simulationParams)
 
-            # make predictions
-            # cell.simulate(probes=self.probes, **self.simulationParams)
-
             # downsample probe.data attribute and unset cell
             for probe in self.probes:
                 probe.data = ss.decimate(probe.data, q=self.decimatefrac)
@@ -366,8 +363,13 @@ class PopulationSuper(object):
 
             # collect probe output
             for probe in self.probes:
-                self.output[cellindex][probe.__class__.__name__] = \
-                    probe.data.copy()
+                if cellindex == self.RANK_CELLINDICES[0]:
+                    self.output[probe.__class__.__name__] = \
+                        probe.data.copy()
+                else:
+                    self.output[probe.__class__.__name__] += \
+                        probe.data.copy()
+                probe.data = None
 
             # clean up hoc namespace
             cell.__del__()
@@ -585,18 +587,14 @@ class PopulationSuper(object):
         """
         # broadcast output shape from RANK 0 data which is guarantied to exist
         if RANK == 0:
-            shape = self.output[self.RANK_CELLINDICES[0]][measure].shape
+            shape = self.output[measure].shape
         else:
             shape = None
         shape = COMM.bcast(shape, root=0)
 
         # compute the total LFP of cells on this RANK
         if self.RANK_CELLINDICES.size > 0:
-            for i, cellindex in enumerate(self.RANK_CELLINDICES):
-                if i == 0:
-                    data = self.output[cellindex][measure]
-                else:
-                    data += self.output[cellindex][measure]
+            data = self.output[measure]
         else:
             data = np.zeros(shape, dtype=np.float32)
 
@@ -761,10 +759,6 @@ class PopulationSuper(object):
         # collect single-cell attributes as defined in `savelist` and write
         # to files
         self.collect_savelist()
-
-        # collect probe measurements
-        for probe in self.probes:
-            self.collectSingleContribs(probe.__class__.__name__)
 
         # sum up single-cell predictions per probe and save
         for probe in self.probes:
@@ -1293,9 +1287,6 @@ class Population(PopulationSuper):
             else:
                 cell.simulate(probes=self.probes, **self.simulationParams)
 
-            # make predictions
-            # cell.simulate(probes=self.probes, **self.simulationParams)
-
             # downsample probe.data attribute and unset cell
             for probe in self.probes:
                 probe.data = ss.decimate(probe.data,
@@ -1317,8 +1308,13 @@ class Population(PopulationSuper):
 
             # collect probe output
             for probe in self.probes:
-                self.output[cellindex][probe.__class__.__name__] = \
-                    probe.data.copy()
+                if cellindex == self.RANK_CELLINDICES[0]:
+                    self.output[probe.__class__.__name__] = \
+                        probe.data.copy()
+                else:
+                    self.output[probe.__class__.__name__] += \
+                        probe.data.copy()
+                probe.data = None
 
             # clean up hoc namespace
             cell.__del__()
