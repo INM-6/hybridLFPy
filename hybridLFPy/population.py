@@ -596,11 +596,11 @@ class PopulationSuper(object):
         if self.RANK_CELLINDICES.size > 0:
             data = self.output[measure]
         else:
-            data = np.zeros(shape, dtype=np.float32)
+            data = np.zeros(shape, dtype=np.float64)
 
         # container for full LFP on RANK 0
         if RANK == 0:
-            DATA = np.zeros_like(data, dtype=np.float32)
+            DATA = np.zeros_like(data, dtype=np.float64)
         else:
             DATA = None
 
@@ -1290,8 +1290,7 @@ class Population(PopulationSuper):
             # downsample probe.data attribute and unset cell
             for probe in self.probes:
                 probe.data = ss.decimate(probe.data,
-                                         q=self.decimatefrac
-                                         ).astype(np.float32)
+                                         q=self.decimatefrac)
                 probe.cell = None
 
             # put all necessary cell output in output dict
