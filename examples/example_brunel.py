@@ -40,7 +40,6 @@ from mpi4py import MPI
 import h5py
 from parameters import ParameterSet
 from hybridLFPy import PostProcess, Population, CachedNetwork, setup_file_dest
-import nest  # import not used, but we load NEST anyway in order determine if
 import neuron  # NEURON compiled with MPI must be imported before NEST/mpi4py
 from time import time
 from matplotlib import gridspec
@@ -51,9 +50,8 @@ if 'DISPLAY' not in os.environ:
     import matplotlib
     matplotlib.use('Agg')
 import matplotlib.style
+
 matplotlib.style.use('classic')
-# to avoid being aware of MPI
-# network is run in parallel
 
 
 ########## matplotlib settings ###########################################
@@ -321,7 +319,6 @@ networkSim = CachedNetwork(
     cmap='rainbow_r',
     skiprows=3,
 )
-
 
 if RANK == 0:
     toc = time() - tic

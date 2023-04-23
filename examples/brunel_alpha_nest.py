@@ -58,15 +58,13 @@ function. Thus function will later be used to calibrate the synaptic
 weights.
 '''
 
-
-
-
-from scipy.optimize import fsolve
 import nest
 import nest.raster_plot
 import os
 import time
 from numpy import exp, random
+
+
 def LambertWm1(x):
     nest.ll_api.sli_push(x)
     nest.ll_api.sli_run('LambertWm1')
