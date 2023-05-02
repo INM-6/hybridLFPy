@@ -3,24 +3,21 @@ channels:
   - conda-forge
   - defaults
 dependencies:
-  - python>=3.7
-  # - lfpy>=2.1
-  # - nest-simulator=*=mpi*
-  #- openmpi-mpicc
+  - python>=3.8
+  - lfpy>=2.3
+  # - nest-simulator  # install from source to support MPI
   - c-compiler
   - cxx-compiler
-  - openmpi
+  - mpi4py
   - h5py
   - scipy
   - numpy
   - pytest
   - cython
-  - meautility
   - matplotlib
   - ipython
   - jupyter
   - ffmpeg
-  - neuron
   - pytest
   - pip
   - pip:

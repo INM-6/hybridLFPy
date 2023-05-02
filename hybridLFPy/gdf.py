@@ -157,7 +157,7 @@ class GDF(object):
         tic = now()
         for f in glob.glob(re):
             print(f)
-            if sys.version < "3.7":
+            while True:
                 try:
                     for data in self._blockread(f, skiprows):
                         self.cursor.executemany(
@@ -165,15 +165,6 @@ class GDF(object):
                         self.conn.commit()
                 except RuntimeError:
                     break
-            else:
-                while True:
-                    try:
-                        for data in self._blockread(f, skiprows):
-                            self.cursor.executemany(
-                                'INSERT INTO spikes VALUES (?, ?)', data)
-                            self.conn.commit()
-                    except RuntimeError:
-                        break
 
         toc = now()
         if self.debug:
