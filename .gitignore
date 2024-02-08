@@ -60,6 +60,13 @@ documentation/
 # Simulation output
 simulation_output_*/
 *.tar
+*.h5
+*.pdf
+*.gdf
+*.eps
+examples/benchmarks
+jobs
+logs
 
 # compiled NMODL files and folders
 x86_64/

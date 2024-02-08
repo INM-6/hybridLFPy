@@ -247,7 +247,7 @@ def setup_file_dest(params, clearDestination=True):
     """
     if RANK == 0:
         if not os.path.isdir(params.savefolder):
-            os.mkdir(params.savefolder)
+            os.makedirs(params.savefolder, exist_ok=True)
             assert(os.path.isdir(params.savefolder))
         else:
             if clearDestination:
@@ -257,35 +257,35 @@ def setup_file_dest(params, clearDestination=True):
                         os.system('find %s -delete' % params.savefolder)
                     except BaseException:
                         shutil.rmtree(params.savefolder)
-                os.mkdir(params.savefolder)
+                os.makedirs(params.savefolder, exist_ok=True)
                 assert(os.path.isdir(params.savefolder))
 
         if not os.path.isdir(params.sim_scripts_path):
             print('creating %s' % params.sim_scripts_path)
-            os.mkdir(params.sim_scripts_path)
+            os.makedirs(params.sim_scripts_path, exist_ok=True)
 
         if not os.path.isdir(params.cells_path):
             print('creating %s' % params.cells_path)
-            os.mkdir(params.cells_path)
+            os.makedirs(params.cells_path, exist_ok=True)
 
         if not os.path.isdir(params.figures_path):
             print('creating %s' % params.figures_path)
-            os.mkdir(params.figures_path)
+            os.makedirs(params.figures_path, exist_ok=True)
 
         if not os.path.isdir(params.populations_path):
             print('creating %s' % params.populations_path)
-            os.mkdir(params.populations_path)
+            os.makedirs(params.populations_path, exist_ok=True)
 
         try:
             if not os.path.isdir(params.raw_nest_output_path):
                 print('creating %s' % params.raw_nest_output_path)
-                os.mkdir(params.raw_nest_output_path)
+                os.makedirs(params.raw_nest_output_path, exist_ok=True)
         except BaseException:
             pass
 
         if not os.path.isdir(params.spike_output_path):
             print('creating %s' % params.spike_output_path)
-            os.mkdir(params.spike_output_path)
+            os.makedirs(params.spike_output_path, exist_ok=True)
 
         for f in ['cellsim16popsParams.py',
                   'cellsim16pops.py',

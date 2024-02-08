@@ -127,7 +127,7 @@ class GDF(object):
                     raise StopIteration
                 yield a
 
-    def create(self, re='brunel-py-ex-*.gdf', index=True, skiprows=0):
+    def create(self, re='brunel-py-ex-*.gdf', index=True, skiprows=0, simtime=None):
         """
         Create db from list of gdf file glob
 
@@ -140,7 +140,9 @@ class GDF(object):
             Create index on neurons for speed.
         skiprows : int
             Number of skipped first lines
-
+        simtime : float/int or None
+            if not None, stop reading of gdf files at simtime,
+            assuming that recorded spike times is monotonously increasing
 
         Returns
         -------
@@ -159,10 +161,18 @@ class GDF(object):
             print(f)
             while True:
                 try:
-                    for data in self._blockread(f, skiprows):
-                        self.cursor.executemany(
-                            'INSERT INTO spikes VALUES (?, ?)', data)
-                        self.conn.commit()
+                    if simtime is None:
+                        for data in self._blockread(f, skiprows):
+                            self.cursor.executemany(
+                                'INSERT INTO spikes VALUES (?, ?)', data)
+                            self.conn.commit()
+                    else:
+                        for data in self._blockread(f, skiprows):
+                            if data[1] > simtime:
+                                break
+                            self.cursor.executemany(
+                                'INSERT INTO spikes VALUES (?, ?)', data)
+                            self.conn.commit()
                 except RuntimeError:
                     break
 
