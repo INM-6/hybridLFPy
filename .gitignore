@@ -65,7 +65,6 @@ simulation_output_*/
 *.gdf
 *.eps
 examples/benchmarks
-exmaples/Hagen_et_al_2016_cercor
 jobs
 logs
 
