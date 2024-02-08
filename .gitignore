@@ -60,6 +60,14 @@ documentation/
 # Simulation output
 simulation_output_*/
 *.tar
+*.h5
+*.pdf
+*.gdf
+*.eps
+examples/benchmarks
+exmaples/Hagen_et_al_2016_cercor
+jobs
+logs
 
 # compiled NMODL files and folders
 x86_64/
